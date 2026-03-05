@@ -80,6 +80,7 @@ with st.sidebar:
     page = st.radio(
         "Navigation",
         [
+            "📂 Upload Contest Data",
             "🏠 Overview",
             "🗺️ Precinct Map",
             "🎯 Targeting",
@@ -119,7 +120,11 @@ except Exception as e:
     st.stop()
 
 # ── Page routing ─────────────────────────────────────────────────────────────
-if page == "🏠 Overview":
+if page == "📂 Upload Contest Data":
+    from ui.dashboard.data_upload_view import render_upload
+    render_upload()
+
+elif page == "🏠 Overview":
     from ui.dashboard.layout import render_overview
     render_overview(data)
 
