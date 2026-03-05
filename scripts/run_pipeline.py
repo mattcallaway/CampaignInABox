@@ -51,6 +51,9 @@ from scripts.lib.integrity import enforce_precinct_constraints, write_integrity_
 from scripts.lib.crosswalks import (
     discover_crosswalks, write_crosswalk_validation, update_needs_crosswalks
 )
+from scripts.lib.schema_normalize import normalize_precinct_columns, SchemaError
+from scripts.lib.join_guard import safe_merge, JoinExplosionError
+from scripts.lib.discovery import list_contests
 from scripts.geo.kepler_export import export_kepler_geojson as kepler_geojson_export
 from app.lib.state_manager import clear_stale
 from scripts.loaders.logger import RunLogger
@@ -403,15 +406,39 @@ def run_pipeline(
         # Allocation
         xwalk = next(iter(crosswalks.values()), None) if crosswalks else None
         if xwalk and membership_method != "area_weighted":
-            allocated_df = allocate_votes_crosswalk(
-                totals_df, xwalk, src_id_col="PrecinctID", tgt_id_col="MPREC_ID"
-            )
+            try:
+                allocated_df = safe_merge(
+                    totals_df, xwalk,
+                    on=next((c for c in ["PrecinctID", xwalk.columns[0]] if c in totals_df.columns), totals_df.columns[0]),
+                    how="left", expect="many_to_one",
+                    name=f"crosswalk_alloc/{sheet_name}",
+                    log_ctx=sheet_name,
+                    contest_id=_contest_id_for_diag if "_contest_id_for_diag" in dir() else "unknown",
+                    run_id=run_id, logger=logger,
+                )
+            except JoinExplosionError as _jex:
+                logger.warn(f"  [JOIN_GUARD] Explosion in crosswalk alloc: {_jex}. Falling back to area-weighted.")
+                allocated_df = area_weighted_fallback(totals_df, src_id_col="PrecinctID")
             method_used = "crosswalk"
         else:
             allocated_df = area_weighted_fallback(totals_df, src_id_col="PrecinctID")
             method_used = "area_weighted_fallback"
 
         logger.info(f"    Allocation: {method_used}, {len(allocated_df)} target precincts")
+
+        # Prompt 8.6: NORMALIZE_SCHEMA — map variant column names → canonical
+        logger.step_start(f"NORMALIZE_SCHEMA/{sheet_name}")
+        try:
+            _diag_id = _contest_id_for_diag if "_contest_id_for_diag" in dir() else "unknown"
+            allocated_df, _schema_report = normalize_precinct_columns(
+                allocated_df, context=sheet_name,
+                contest_id=_diag_id, run_id=run_id, logger=logger,
+            )
+            logger.step_done(f"NORMALIZE_SCHEMA/{sheet_name}",
+                             notes=[f"mapped {len(_schema_report['mapping'])} cols, inferred={_schema_report['inferred_contest_type']}"])
+        except SchemaError as _se:
+            logger.warn(f"  [SCHEMA] Non-fatal: {_se}")
+            logger.step_done(f"NORMALIZE_SCHEMA/{sheet_name}", notes=["schema warn — required fields may be absent"])
 
         # Sanity checks
         logger.step_start(f"SANITY/{sheet_name}")
@@ -445,10 +472,13 @@ def run_pipeline(
     if not all_model_dfs:
         logger.hard_fail("ALLOCATE_VOTES", "No model DataFrames produced")
 
-    # Prompt 8.5: INTEGRITY_ENFORCEMENT step
+    # Prompt 8.5/8.6: INTEGRITY_ENFORCEMENT step
     logger.step_start("INTEGRITY_ENFORCEMENT")
     _all_repair_reports: list[dict] = []
     _repaired_model_dfs: list = []
+    # Use _contest_id_for_diag if already defined, else build it
+    if "_contest_id_for_diag" not in dir():
+        _contest_id_for_diag = f"{year}_{state}_{county.lower().replace(chr(32), chr(95))}_{contest_slug}"
     for _mdf in all_model_dfs:
         _sheet = _mdf["SheetName"].iloc[0] if "SheetName" in _mdf.columns else "unknown"
         _mdf_repaired, _repair_report = enforce_precinct_constraints(
@@ -460,17 +490,23 @@ def run_pipeline(
             no_col="no_votes"   if "no_votes"  in _mdf.columns else None,
             log_ctx=_sheet,
             logger=logger,
+            contest_id=_contest_id_for_diag,
+            run_id=run_id,
         )
         _all_repair_reports.append(_repair_report)
         _repaired_model_dfs.append(_mdf_repaired)
     all_model_dfs = _repaired_model_dfs
-    # Use _contest_id_for_diag if already defined, else build it
-    if "_contest_id_for_diag" not in dir():
-        _contest_id_for_diag = f"{year}_{state}_{county.lower().replace(chr(32), chr(95))}_{contest_slug}"
     _primary_repair = _all_repair_reports[0] if _all_repair_reports else {}
-    write_integrity_report(_primary_repair, _contest_id_for_diag, run_id)
-    _n_repaired = _primary_repair.get("repaired_rows", 0)
-    logger.step_done("INTEGRITY_ENFORCEMENT", notes=[f"{_n_repaired} precinct(s) repaired"])
+    _n_repaired  = _primary_repair.get("repaired_rows",  0)
+    _n_critical  = _primary_repair.get("critical_rows",  0)
+    # Build integrity_meta dict — passed to strategy generator (Prompt 8.6)
+    _integrity_meta = {
+        "integrity_repairs_count":     _n_repaired,
+        "constraint_violations_count": _n_critical,
+        "join_guard_critical":         _primary_repair.get("join_guard_critical", False),
+    }
+    notes = [f"{_n_repaired} repair(s), {_n_critical} CRITICAL (registered=0) row(s)"]
+    logger.step_done("INTEGRITY_ENFORCEMENT", notes=notes)
 
     # ── Step 13: Feature Engineering ─────────────────────────────────────
     logger.step_start("FEATURE_ENGINEERING")
@@ -697,6 +733,7 @@ def run_pipeline(
             state=state,
             county=county,
             contest_slug=contest_slug,
+            integrity_meta=_integrity_meta,
             logger=logger,
         )
         if pack_dir:

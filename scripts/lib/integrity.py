@@ -1,19 +1,27 @@
 """
-scripts/lib/integrity.py
+scripts/lib/integrity.py  — Prompt 8.6 (updated)
 
-Precinct data integrity enforcement.
-Enforces: 0 ≤ ballots_cast ≤ registered, 0 ≤ yes+no ≤ ballots_cast.
-All repairs are logged and exported to diagnostics.
+Enforce precinct-level data constraints with deterministic repair.
 
-This is a guardrail step — runs after allocation, before feature engineering.
+Rules:
+  1.  registered, ballots_cast, yes_votes, no_votes → integers
+  2.  registered == 0 but ballots_cast > 0 → CRITICAL flag (do NOT repair)
+  3.  ballots_cast > registered > 0  → scale ballots/yes/no down
+  4.  yes + no > ballots_cast → scale yes/no down proportionally
+  5.  Recompute turnout_pct and support_pct after repair
+
+Outputs:
+  derived/diagnostics/<contest_id>__integrity_repairs.csv
+  reports/qa/<RUN_ID>__integrity_repairs.md
 """
 from __future__ import annotations
 
+import csv
 import datetime
+import math
 from pathlib import Path
 from typing import Optional
 
-import numpy as np
 import pandas as pd
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -28,201 +36,264 @@ def enforce_precinct_constraints(
     no_col: Optional[str] = "no_votes",
     log_ctx: str = "",
     logger=None,
+    contest_id: str = "unknown",
+    run_id: str = "unknown",
 ) -> tuple[pd.DataFrame, dict]:
     """
-    Enforce precinct-level constraints deterministically.
-
-    Rules:
-      1. registered → cast to integer (round if within 0.01, else log + round)
-      2. ballots_cast ≤ registered  (scale down if violated)
-      3. yes_votes + no_votes ≤ ballots_cast  (proportional scale-down)
-      4. All values ≥ 0
+    Apply constraint enforcement to a precinct DataFrame.
 
     Returns:
-      (repaired_df, repair_report_dict)
+        (df_fixed, repair_report)
+
+    The repair_report dict includes:
+        repaired_rows, critical_rows, before_totals, after_totals,
+        repairs (list of per-precinct records), join_guard_critical (bool)
     """
-    import pandas as pd
-    import numpy as np
-
-    out = df.copy()
+    df = df.copy()
     repairs: list[dict] = []
-    n_rows = len(out)
+    critical_rows: list[dict] = []
 
-    def _col(c: Optional[str]) -> Optional[str]:
-        return c if c and c in out.columns else None
+    # ── Helpers ───────────────────────────────────────────────────────────────
+    def _int(val):
+        try:
+            f = float(val)
+            return 0 if math.isnan(f) else max(0, int(f))
+        except Exception:
+            return 0
 
-    reg_c  = _col(registered_col)
-    bal_c  = _col(ballots_col)
-    yes_c  = _col(yes_col)
-    no_c   = _col(no_col)
-    id_c   = _col(id_col) or out.columns[0]
+    def _safe_pct(num, den):
+        try:
+            if den <= 0:
+                return 0.0
+            return round(float(num) / float(den), 6)
+        except Exception:
+            return 0.0
 
-    def _to_float(series: pd.Series) -> pd.Series:
-        return pd.to_numeric(series, errors="coerce").fillna(0)
+    # Check which columns exist
+    has_yes = yes_col and yes_col in df.columns
+    has_no  = no_col  and no_col  in df.columns
+    has_id  = id_col in df.columns
 
-    # ── 1. Cast registered to integer ─────────────────────────────────────────
-    if reg_c:
-        reg_f = _to_float(out[reg_c])
-        frac  = (reg_f - reg_f.round()).abs()
-        anomaly_mask = frac > 0.01
-        n_anom = anomaly_mask.sum()
-        if n_anom > 0:
-            sev = "high" if n_anom > 5 else "medium"
-            _log(logger, f"[INTEGRITY] {n_anom} non-integer registered values (severity={sev}) — rounding")
-            for pid in out.loc[anomaly_mask, id_c].tolist()[:5]:
-                repairs.append(dict(precinct_id=pid, rule="registered_not_integer", severity=sev))
-        out[reg_c] = reg_f.round().astype(int)
+    # Convert to numeric first
+    for col in [registered_col, ballots_col]:
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0)
+    for col in ([yes_col] if has_yes else []) + ([no_col] if has_no else []):
+        df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0)
 
-    # ── 2. ballots_cast ≤ registered ─────────────────────────────────────────
-    if reg_c and bal_c:
-        reg_v = _to_float(out[reg_c])
-        bal_v = _to_float(out[bal_c])
-        over_mask = (bal_v > reg_v) & (reg_v > 0)
-        n_over = over_mask.sum()
-        if n_over > 0:
-            _log(logger, f"[INTEGRITY] {n_over}/{n_rows} precincts have ballots_cast > registered — scaling down")
-            # Before totals
-            before_reg = reg_v.sum()
-            before_bal = bal_v.sum()
-            # Scale factor per row
-            sf = (reg_v / bal_v).clip(upper=1.0)
-            new_bal = (bal_v * sf.where(over_mask, 1.0)).round().astype(int)
-            # Also scale yes/no
-            if yes_c:
-                yes_v = _to_float(out[yes_c])
-                out[yes_c] = (yes_v * sf.where(over_mask, 1.0)).round().clip(lower=0).astype(int)
-            if no_c:
-                no_v = _to_float(out[no_c])
-                out[no_c] = (no_v * sf.where(over_mask, 1.0)).round().clip(lower=0).astype(int)
-            out[bal_c] = new_bal
-            for pid in out.loc[over_mask, id_c].tolist():
-                repairs.append(dict(precinct_id=pid, rule="ballots_exceeds_registered",
-                                    severity="high",
-                                    before_bal=float(bal_v[out.index[out[id_c]==pid]].iloc[0]) if any(out[id_c]==pid) else None,
-                                    after_bal=float(new_bal[out[id_c]==pid].iloc[0]) if any(out[id_c]==pid) else None))
-            _log(logger, f"[INTEGRITY]   County totals: registered={before_reg:,.0f}, "
-                          f"ballots before={before_bal:,.0f}, after={new_bal.sum():,.0f}")
+    # ── Countywide totals BEFORE ──────────────────────────────────────────────
+    before_totals = _compute_totals(df, registered_col, ballots_col,
+                                    yes_col if has_yes else None,
+                                    no_col  if has_no  else None)
 
-    # Re-read after scaling
-    if reg_c and bal_c:
-        reg_v = _to_float(out[reg_c])
-        bal_v = _to_float(out[bal_c])
+    # ── Per-row pass ──────────────────────────────────────────────────────────
+    for idx, row in df.iterrows():
+        pid     = row.get(id_col, idx) if has_id else idx
+        reg_raw = row[registered_col]
+        bal_raw = row[ballots_col]
+        yes_raw = row[yes_col] if has_yes else 0
+        no_raw  = row[no_col]  if has_no  else 0
 
-    # ── 3. yes + no ≤ ballots ─────────────────────────────────────────────────
-    if bal_c and yes_c and no_c:
-        bal_v2 = _to_float(out[bal_c])
-        yes_v  = _to_float(out[yes_c])
-        no_v   = _to_float(out[no_c])
-        total  = yes_v + no_v
-        over2  = total > bal_v2
-        n_over2 = over2.sum()
-        if n_over2 > 0:
-            _log(logger, f"[INTEGRITY] {n_over2} precincts have yes+no > ballots — scaling down")
-            sf2 = (bal_v2 / total.replace(0, np.nan)).clip(upper=1.0).fillna(1.0)
-            out[yes_c] = (yes_v * sf2).round().clip(lower=0).astype(int)
-            out[no_c]  = (no_v  * sf2).round().clip(lower=0).astype(int)
-            for pid in out.loc[over2, id_c].tolist():
-                repairs.append(dict(precinct_id=pid, rule="yes_no_exceeds_ballots", severity="medium"))
+        reg = _int(reg_raw)
+        bal = _int(bal_raw)
+        yes = _int(yes_raw)
+        no  = _int(no_raw)
 
-    # ── 4. Non-negative clamp ─────────────────────────────────────────────────
-    for c in [c for c in [reg_c, bal_c, yes_c, no_c] if c]:
-        out[c] = pd.to_numeric(out[c], errors="coerce").fillna(0).clip(lower=0)
-        if c in [reg_c, bal_c, yes_c, no_c]:
-            out[c] = out[c].round().astype(int)
+        changed = False
+        rule    = None
 
-    # ── 5. Recompute turnout_pct ───────────────────────────────────────────────
-    if reg_c and bal_c:
-        reg_safe = out[reg_c].replace(0, np.nan)
-        out["turnout_pct"] = (out[bal_c] / reg_safe).clip(0, 1).fillna(0).round(4)
+        # Rule 1: clamp negatives
+        if reg < 0:
+            reg = 0; changed = True; rule = "neg_reg"
+        if bal < 0:
+            bal = 0; changed = True; rule = rule or "neg_bal"
+        if yes < 0:
+            yes = 0; changed = True; rule = rule or "neg_yes"
+        if no < 0:
+            no  = 0; changed = True; rule = rule or "neg_no"
 
-    # ── 6. Recompute support_pct ──────────────────────────────────────────────
-    if yes_c and bal_c:
-        bal_safe = pd.to_numeric(out[bal_c], errors="coerce").replace(0, np.nan)
-        out["support_pct"] = (pd.to_numeric(out[yes_c], errors="coerce") / bal_safe).clip(0, 1).fillna(0.5).round(4)
+        # Rule 2: registered == 0 but ballots > 0 → CRITICAL, no repair
+        if reg == 0 and bal > 0:
+            critical_rows.append({
+                "precinct_id": pid,
+                "rule": "REG_ZERO_BALLOTS_NONZERO",
+                "registered": reg,
+                "ballots_cast": bal,
+                "note": "Likely join/extraction error — registered not mapped from workbook",
+            })
+            # Still write canonical integers (don't change values)
+            df.at[idx, registered_col] = reg
+            df.at[idx, ballots_col]    = bal
+            if has_yes: df.at[idx, yes_col] = yes
+            if has_no:  df.at[idx, no_col]  = no
+            continue
 
+        # Rule 3: ballots > registered (and registered > 0)
+        if reg > 0 and bal > reg:
+            scale = reg / bal
+            bal_new = reg
+            yes_new = math.floor(yes * scale) if has_yes else 0
+            no_new  = math.floor(no  * scale) if has_no  else 0
+            repairs.append({
+                "precinct_id":   pid,
+                "rule":          "BALLOTS_EXCEED_REG",
+                "reg_before":    reg, "bal_before": bal,
+                "yes_before":    yes, "no_before":  no,
+                "bal_after":     bal_new,
+                "yes_after":     yes_new, "no_after": no_new,
+                "scale_factor":  round(scale, 6),
+            })
+            bal = bal_new; yes = yes_new; no = no_new
+            changed = True; rule = "BALLOTS_EXCEED_REG"
+
+        # Rule 4: yes + no > ballots
+        if has_yes and has_no and (yes + no) > bal and bal > 0:
+            total_votes = yes + no
+            if total_votes > 0:
+                yes_new = math.floor(yes * bal / total_votes)
+                no_new  = bal - yes_new
+                repairs.append({
+                    "precinct_id": pid,
+                    "rule":        "YES_NO_EXCEED_BALLOTS",
+                    "reg_before":  reg, "bal_before": bal,
+                    "yes_before":  yes, "no_before":  no,
+                    "yes_after":   yes_new, "no_after": no_new,
+                    "scale_factor": round(bal / total_votes, 6),
+                })
+                yes = yes_new; no = no_new
+                changed = True; rule = rule or "YES_NO_EXCEED_BALLOTS"
+
+        # Write back integers
+        df.at[idx, registered_col] = reg
+        df.at[idx, ballots_col]    = bal
+        if has_yes: df.at[idx, yes_col] = yes
+        if has_no:  df.at[idx, no_col]  = no
+
+    # ── Recompute derived metrics ─────────────────────────────────────────────
+    if "turnout_pct" in df.columns:
+        df["turnout_pct"] = df.apply(
+            lambda r: _safe_pct(r[ballots_col], r[registered_col]), axis=1
+        )
+    if "support_pct" in df.columns and has_yes:
+        df["support_pct"] = df.apply(
+            lambda r: _safe_pct(r[yes_col], r[ballots_col]), axis=1
+        )
+
+    # ── Countywide totals AFTER ───────────────────────────────────────────────
+    after_totals = _compute_totals(df, registered_col, ballots_col,
+                                   yes_col if has_yes else None,
+                                   no_col  if has_no  else None)
+
+    # ── Summary logging ───────────────────────────────────────────────────────
+    n_repaired  = len(repairs)
+    n_critical  = len(critical_rows)
+
+    if logger:
+        if n_critical:
+            logger.warn(
+                f"  [INTEGRITY] {n_critical} precinct(s) CRITICAL — "
+                f"registered=0 but ballots>0. Indicates data extraction issue."
+            )
+        if n_repaired:
+            logger.info(f"  [INTEGRITY] {n_repaired} precinct(s) repaired (scaling applied)")
+        if n_repaired == 0 and n_critical == 0:
+            logger.info(f"  [INTEGRITY] All {len(df)} precincts pass constraints — no repairs needed")
+
+    # ── Build report ──────────────────────────────────────────────────────────
     report = {
-        "total_rows": n_rows,
-        "repaired_rows": len(set(r["precinct_id"] for r in repairs)),
-        "repairs": repairs,
-        "log_ctx": log_ctx,
-        "timestamp": datetime.datetime.now().isoformat(),
+        "context":          log_ctx,
+        "contest_id":       contest_id,
+        "run_id":           run_id,
+        "timestamp":        datetime.datetime.now().isoformat(),
+        "total_rows":       len(df),
+        "repaired_rows":    n_repaired,
+        "critical_rows":    n_critical,
+        "join_guard_critical": False,   # set True externally if JoinExplosionError caught
+        "before_totals":    before_totals,
+        "after_totals":     after_totals,
+        "repairs":          repairs[:50],
+        "critical_list":    critical_rows[:50],
     }
 
-    if repairs:
-        _log(logger, f"[INTEGRITY] Total repairs: {len(repairs)} events across {report['repaired_rows']} precincts")
-    else:
-        _log(logger, f"[INTEGRITY] All {n_rows} precincts pass constraints — no repairs needed")
+    _write_integrity_report(report, contest_id, run_id)
 
-    return out, report
+    return df, report
 
 
-def write_integrity_report(
-    report: dict,
-    contest_id: str,
-    run_id: str,
-) -> dict[str, Path]:
-    """Write diagnostics CSV and QA markdown for use by audit tools."""
-    import pandas as pd
+def _compute_totals(df, reg_col, bal_col, yes_col, no_col) -> dict:
+    totals = {
+        "registered":   int(pd.to_numeric(df.get(reg_col, pd.Series()), errors="coerce").fillna(0).sum()),
+        "ballots_cast": int(pd.to_numeric(df.get(bal_col, pd.Series()), errors="coerce").fillna(0).sum()),
+    }
+    if yes_col and yes_col in df.columns:
+        totals["yes_votes"] = int(pd.to_numeric(df[yes_col], errors="coerce").fillna(0).sum())
+    if no_col and no_col in df.columns:
+        totals["no_votes"] = int(pd.to_numeric(df[no_col], errors="coerce").fillna(0).sum())
+    return totals
 
-    paths: dict[str, Path] = {}
+
+def _write_integrity_report(report: dict, contest_id: str, run_id: str) -> None:
+    """Write CSV diagnostics and Markdown QA report."""
     diag_dir = BASE_DIR / "derived" / "diagnostics"
-    qa_dir   = BASE_DIR / "reports" / "qa"
     diag_dir.mkdir(parents=True, exist_ok=True)
+    qa_dir = BASE_DIR / "reports" / "qa"
     qa_dir.mkdir(parents=True, exist_ok=True)
 
-    # CSV
-    repairs = report.get("repairs", [])
-    if repairs:
-        df = pd.DataFrame(repairs)
-    else:
-        df = pd.DataFrame(columns=["precinct_id", "rule", "severity"])
+    # CSV (repairs + criticals)
     csv_path = diag_dir / f"{contest_id}__integrity_repairs.csv"
-    df.to_csv(csv_path, index=False)
-    paths["integrity_repairs_csv"] = csv_path
+    all_rows = report["repairs"] + report.get("critical_list", [])
+    if all_rows:
+        fieldnames = sorted({k for r in all_rows for k in r.keys()})
+        with open(csv_path, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
+            writer.writeheader()
+            writer.writerows(all_rows)
 
-    # Markdown QA
-    n_repaired = report.get("repaired_rows", 0)
-    n_total    = report.get("total_rows", 0)
-    status     = "✅ No violations" if n_repaired == 0 else f"⚠️ {n_repaired}/{n_total} precincts repaired"
-    rules_used = list({r["rule"] for r in repairs})
+    # Markdown
+    bt = report["before_totals"]
+    at = report["after_totals"]
 
-    md = f"""# Integrity Repair Report
-**Contest:** `{contest_id}`
-**Run ID:** `{run_id}`
-**Generated:** {report['timestamp']}
+    md = [
+        f"# Integrity Repair Report",
+        f"**Contest:** `{contest_id}`  **Run:** `{run_id}`  **Context:** {report.get('context', '')}",
+        f"\n## Summary",
+        f"- Total precincts: {report['total_rows']}",
+        f"- Repaired: {report['repaired_rows']}",
+        f"- Critical (NOT repaired — data quality issue): {report['critical_rows']}",
+        f"\n## Countywide Totals",
+        "| Metric | Before | After |",
+        "|---|---|---|",
+        f"| Registered | {bt.get('registered', 0):,} | {at.get('registered', 0):,} |",
+        f"| Ballots Cast | {bt.get('ballots_cast', 0):,} | {at.get('ballots_cast', 0):,} |",
+    ]
+    if "yes_votes" in bt:
+        md.append(f"| Yes Votes | {bt.get('yes_votes', 0):,} | {at.get('yes_votes', 0):,} |")
+    if "no_votes" in bt:
+        md.append(f"| No Votes | {bt.get('no_votes', 0):,} | {at.get('no_votes', 0):,} |")
 
-## Status: {status}
+    if report["critical_rows"]:
+        md.append(f"\n## ⚠️ Critical Rows (Not Repaired)")
+        md.append("| Precinct | Rule | Registered | Ballots | Note |")
+        md.append("|---|---|---|---|---|")
+        for r in report.get("critical_list", [])[:20]:
+            md.append(
+                f"| {r.get('precinct_id', '?')} | {r.get('rule', '?')} "
+                f"| {r.get('registered', 0)} | {r.get('ballots_cast', 0)} | {r.get('note', '')} |"
+            )
+    if report["repaired_rows"]:
+        md.append(f"\n## Repaired Precincts (top 50)")
+        md.append("| Precinct | Rule | Bal Before | Bal After | Scale |")
+        md.append("|---|---|---|---|---|")
+        for r in report["repairs"][:50]:
+            md.append(
+                f"| {r.get('precinct_id', '?')} | {r.get('rule', '?')} "
+                f"| {r.get('bal_before', 0)} | {r.get('bal_after', 0)} "
+                f"| {r.get('scale_factor', 1.0):.4f} |"
+            )
 
-| Rule | Count |
-|---|---|
-""" + "\n".join(
-        f"| {rule} | {sum(1 for r in repairs if r['rule']==rule)} |"
-        for rule in sorted(rules_used)
-    ) + ("""
-| _(no repairs)_ | — |""" if not rules_used else "") + f"""
-
-## Rule Definitions
-
-| Rule | Description |
-|---|---|
-| `registered_not_integer` | Fractional `registered` value; rounded to nearest integer |
-| `ballots_exceeds_registered` | `ballots_cast > registered`; proportionally scaled down |
-| `yes_no_exceeds_ballots` | `yes_votes + no_votes > ballots_cast`; proportionally scaled down |
-
-_Output: `derived/diagnostics/{contest_id}__integrity_repairs.csv`_
-"""
-    qa_path = qa_dir / f"{run_id}__integrity_repairs.md"
-    qa_path.write_text(md, encoding="utf-8")
-    paths["integrity_qa_md"] = qa_path
-
-    return paths
+    md_path = qa_dir / f"{run_id}__integrity_repairs.md"
+    md_path.write_text("\n".join(md), encoding="utf-8")
 
 
-def _log(logger, msg: str) -> None:
-    if logger:
-        try:
-            logger.info(msg)
-        except Exception:
-            print(msg)
-    else:
-        print(msg)
+# Backward-compat alias
+write_integrity_report = _write_integrity_report
