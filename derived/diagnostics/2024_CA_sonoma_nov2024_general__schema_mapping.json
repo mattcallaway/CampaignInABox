@@ -1,7 +1,7 @@
 {
   "context": "Sheet1",
   "contest_id": "2024_CA_sonoma_nov2024_general",
-  "run_id": "2026-03-05__040056__0e0e8b52__msi",
+  "run_id": "2026-03-05__042220__46073f09__msi",
   "original_columns": [
     "PrecinctID_Raw",
     "MPREC_ID",
@@ -37,5 +37,5 @@
     "support_pct"
   ],
   "status": "ok",
-  "timestamp": "2026-03-05T04:00:57.110701"
+  "timestamp": "2026-03-05T04:22:21.191684"
 }
