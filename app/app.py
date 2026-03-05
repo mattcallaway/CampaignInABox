@@ -160,7 +160,10 @@ with st.sidebar:
             "🔄 Update Center", 
             "🕰️ Version Browser",
             "▶️ Run Pipeline",
+            "📈 Modeling & Forecasts",
+            "🗺️ Ops Planner",
             "📊 Outputs Browser", 
+            "🎯 Strategy Generator",
             "📋 Logs & NEEDS",
             "📜 County Registry"
         ],
@@ -733,6 +736,49 @@ elif page == "▶️ Run Pipeline":
             ["auto", "crosswalk", "area_weighted"],
             help="auto: use crosswalk if available, else area_weighted",
         )
+        st.divider()
+        st.subheader("Targeting Settings")
+        
+        target_mode = "Neutral"
+        target_candidate = None
+        
+        # If a contest is selected, show its specifics
+        current_contest = None
+        if chosen and chosen != "— pick —":
+            idx = contest_opts.index(str(chosen))
+            current_contest = contests[idx]
+            
+        if current_contest:
+            c_type = current_contest.get("type", "unknown")
+            st.info(f"**Contest Type:** {c_type}")
+            
+            if c_type == "candidate_race":
+                candidates = current_contest.get("candidates", [])
+                if candidates:
+                    target_mode = st.radio("Targeting Mode", ["Neutral", "Target Candidate"])
+                    if target_mode == "Target Candidate":
+                        target_candidate = st.selectbox("Select Target Candidate", candidates)
+                else:
+                    st.warning("No candidates found in contest.json")
+            elif c_type == "ballot_measure":
+                st.info("Modeling for YES support by default.")
+        else:
+            st.caption("Select a discovered contest to configure targeting.")
+
+        st.divider()
+        contest_mode_ui = st.selectbox(
+            "Contest Mode",
+            ["auto", "measure", "candidate"],
+            index=0,
+            help="auto: infer from data headers. Override only if needed.",
+        )
+        n_regions_ui = st.slider(
+            "Strategic Regions",
+            min_value=3, max_value=25, value=10,
+            help="Number of geographic/political regions to cluster precincts into.",
+        )
+
+        st.divider()
         no_commit = not st.checkbox(
             "Git commit outputs", value=False,
             help="If checked, derived outputs will be auto-committed to git",
@@ -806,8 +852,10 @@ elif page == "▶️ Run Pipeline":
                     staging_dir=staging_dir or None,
                     membership_method=membership,
                     no_commit=no_commit,
+                    target_candidate=target_candidate,
                     rebuild_targets_only=run_targets,
                     rebuild_maps_only=run_maps,
+                    contest_mode=contest_mode_ui,
                 )
 
                 for line in gen:
@@ -877,7 +925,317 @@ elif page == "▶️ Run Pipeline":
 
 
 # ═════════════════════════════════════════════════════════════════════════════
-# PAGE 6: OUTPUTS BROWSER
+# PAGE 5.5: MODELING & FORECASTS
+# ═════════════════════════════════════════════════════════════════════════════
+elif page == "📈 Modeling & Forecasts":
+    st.markdown("""
+    <div class='ciab-header'>
+        <h1>📈 Modeling & Forecasts</h1>
+        <p>Strategic targeting, scenario-based forecasting, and field turfs</p>
+    </div>""", unsafe_allow_html=True)
+
+    col1, col2 = st.columns([1, 2])
+    
+    with col1:
+        st.subheader("Scenario Settings")
+        config_path = BASE_DIR / "config" / "forecast_scenarios.yaml"
+        if config_path.exists():
+            with open(config_path, "r", encoding="utf-8") as f:
+                scenarios_cfg = yaml.safe_load(f)
+            
+            st.markdown("Edit scenario parameters below:")
+            
+            # Simple list editor
+            updated_scn = []
+            for i, scn in enumerate(scenarios_cfg.get("scenarios", [])):
+                with st.expander(f"⚙️ {scn['name']}", expanded=(i==0)):
+                    name = st.text_input("Name", value=scn["name"], key=f"scn_name_{i}")
+                    to_mult = st.number_input("Turnout Multiplier", value=float(scn.get("turnout_multiplier", 1.0)), step=0.01, key=f"scn_to_{i}")
+                    sup_lift = st.number_input("Support Lift", value=float(scn.get("support_lift", 0.0)), step=0.01, key=f"scn_sup_{i}")
+                    updated_scn.append({
+                        "id": scn["id"],
+                        "name": name,
+                        "turnout_multiplier": to_mult,
+                        "support_lift": sup_lift,
+                        "description": scn.get("description", "")
+                    })
+            
+            if st.button("💾 Save Scenario Config", type="primary"):
+                with open(config_path, "w", encoding="utf-8") as f:
+                    yaml.dump({"scenarios": updated_scn}, f)
+                st.success("Config saved! Re-run pipeline to see changes.")
+                # Log the config change
+                with open(BASE_DIR / "logs" / "config_changes.log", "a") as f:
+                    f.write(f"{time.ctime()} - Modified forecast_scenarios.yaml\n")
+
+    with col2:
+        st.subheader("Modeling Results")
+        latest_run = get_latest_run_id()
+        if not latest_run:
+            st.info("No runs found. Execute the pipeline to see modeling results.")
+        else:
+            st.markdown(f"**Latest Run:** `{latest_run}`")
+            
+            # Use discover_run_artifacts to find modeling files
+            # Since we don't have a specific county/contest selected in this page, 
+            # we'll look for the most recent run artifacts globally or from the latest run log
+            log_arts = discover_log_artifacts()
+            
+            # 1. Diagnostics View
+            diag_content = read_latest_artifact("model_diagnostics.md")
+            if diag_content:
+                with st.expander("🔬 Model Diagnostics"):
+                    st.markdown(diag_content)
+            
+            # 2. Forecast Summary
+            f_summary = read_latest_artifact("scenario_forecasts.csv")
+            if f_summary:
+                with st.expander("🔮 Forecast Summary"):
+                    try:
+                        import pandas as pd
+                        import io
+                        df_f = pd.read_csv(io.StringIO(f_summary))
+                        st.dataframe(df_f, use_container_width=True, hide_index=True)
+                    except Exception:
+                        st.text(f_summary)
+            
+            # 3. Quick Downloads
+            st.divider()
+            st.subheader("📎 Quick Downloads")
+            
+            # We filter for the most important modeling artifacts
+            important_keys = ["precinct_model", "precinct_universes", "top_30_walk_turfs", "scenario_forecasts"]
+            
+            # Need to find the actual paths. We'll use a hack to find them in the latest run outputs
+            # Or just use the browser-like discovery
+            
+            counties = discover_counties()
+            found_any = False
+            for c in counties:
+                arts = discover_run_artifacts(c)
+                # Filter for latest run only
+                latest_arts = [a for a in arts if latest_run in a["name"]]
+                if latest_arts:
+                    for a in latest_arts:
+                        if any(k in a["name"] for k in important_keys):
+                            found_any = True
+                            st.download_button(
+                                f"⬇️ {a['name']}",
+                                data=a["path"].read_bytes(),
+                                file_name=a["name"],
+                                key=f"quick_dl_{a['name']}"
+                            )
+            if not found_any:
+                st.info("No modeling artifacts found for the latest run. Ensure 'FEATURE_ENGINEERING' and 'SCORING_V2' steps passed in run.log.")
+
+# ═════════════════════════════════════════════════════════════════════════════
+# PAGE 6: OPS PLANNER  (v3)
+# ═════════════════════════════════════════════════════════════════════════════
+elif page == "🗺️ Ops Planner":
+    st.markdown("""
+    <div class='ciab-header'>
+        <h1>🗺️ Campaign Ops Planner</h1>
+        <p>Strategic regions, field program math, scenarios, and turf packs</p>
+    </div>""", unsafe_allow_html=True)
+
+    import yaml
+
+    # Load field_ops config
+    ops_cfg_path = BASE_DIR / "config" / "field_ops.yaml"
+    ops_cfg_default = {
+        "doors_per_hour": 15,
+        "hours_per_shift": 3,
+        "contact_rate": 0.4,
+        "persuasion_effect_per_contact": 0.03,
+        "turnout_lift_per_contact": 0.05,
+        "volunteers_per_turf": 2,
+        "turf_min_doors": 100,
+        "turf_max_doors": 400,
+    }
+    ops_cfg = ops_cfg_default.copy()
+    if ops_cfg_path.exists():
+        with open(ops_cfg_path) as f:
+            ops_cfg.update(yaml.safe_load(f) or {})
+
+    # Contest selector
+    contests = discover_contests()
+    if not contests:
+        st.info("No contests found. Run the pipeline first.")
+    else:
+        tab_overview, tab_fieldmath, tab_sim, tab_turfs = st.tabs(
+            ["🗾 Region Overview", "🧮 Field Math", "📊 Scenarios", "📦 Turf Packs"]
+        )
+
+        c_opts = [f"{c['county']} / {c['year']} / {c['contest_slug']}" for c in contests]
+        sel_contest = st.selectbox("Contest", c_opts, key="ops_contest")
+        parts = sel_contest.split(" / ")
+        sel_county, sel_year, sel_slug = parts[0], parts[1], parts[2]
+        sel_state = "CA"
+
+        # ── Look up latest derived/ops for this contest
+        ops_dir = BASE_DIR / "derived" / "ops" / sel_state / sel_county
+        # Find the most recent slug folder matching
+        candidate_dirs = list(ops_dir.glob(f"*{sel_slug}*")) if ops_dir.exists() else []
+        slug_dir = sorted(candidate_dirs)[-1] if candidate_dirs else None
+
+        def load_ops_csv(name: str):
+            if slug_dir is None:
+                return pd.DataFrame()
+            files = list(slug_dir.glob(f"*__{name}.csv"))
+            if not files:
+                return pd.DataFrame()
+            return pd.read_csv(sorted(files)[-1])
+
+        regions_df    = load_ops_csv("regions")
+        field_plan_df = load_ops_csv("field_plan")
+        sims_df       = load_ops_csv("simulation_results")
+
+        # ── Tab: Region Overview ──────────────────────────────────────────────
+        with tab_overview:
+            if regions_df.empty:
+                st.info("No region data found. Run the pipeline to generate ops outputs.")
+            else:
+                st.markdown(f"**{len(regions_df)} precincts** assigned to strategic regions")
+                n_regions = regions_df["region_id"].nunique() if "region_id" in regions_df.columns else 0
+                st.metric("Regions", n_regions)
+
+                if "region_id" in regions_df.columns:
+                    summary = regions_df.groupby("region_id").agg(
+                        Precincts=("canonical_precinct_id", "count"),
+                        Registered=("registered", "sum") if "registered" in regions_df.columns else ("region_id", "count"),
+                        AvgSupport=("support_pct", "mean") if "support_pct" in regions_df.columns else ("region_id", "count"),
+                    ).reset_index()
+                    st.dataframe(summary, use_container_width=True, hide_index=True)
+                else:
+                    st.dataframe(regions_df.head(50), use_container_width=True)
+
+                # Show region markdown summary if it exists
+                if slug_dir:
+                    md_files = list(slug_dir.glob("*__region_summary.md"))
+                    if md_files:
+                        st.markdown("---")
+                        st.markdown(sorted(md_files)[-1].read_text())
+
+        # ── Tab: Field Math ───────────────────────────────────────────────────
+        with tab_fieldmath:
+            st.subheader("⚙️ Configuration")
+            c1, c2, c3 = st.columns(3)
+            with c1:
+                doors_hr  = st.slider("Doors / Hour",         5,  30,  int(ops_cfg["doors_per_hour"]),   key="ops_dph")
+                hrs_shift = st.slider("Hours / Shift",        1,   8,  int(ops_cfg["hours_per_shift"]),   key="ops_hps")
+            with c2:
+                contact_r = st.slider("Contact Rate",         0.1, 0.9, float(ops_cfg["contact_rate"]),  key="ops_cr",  step=0.05)
+                vols_turf = st.slider("Volunteers / Turf",    1,   10,  int(ops_cfg["volunteers_per_turf"]), key="ops_vpt")
+            with c3:
+                n_shifts  = st.number_input("Total Shifts Available", min_value=1, max_value=500, value=50, key="ops_shifts")
+
+            # Real-time math
+            doors_shift  = doors_hr * hrs_shift
+            contacts_shift = doors_shift * contact_r
+            total_doors    = doors_shift * n_shifts
+            total_contacts = total_doors * contact_r
+
+            st.divider()
+            st.subheader("📐 Real-Time Field Math")
+            mc1, mc2, mc3, mc4 = st.columns(4)
+            mc1.metric("Doors/Shift",     f"{doors_shift:,}")
+            mc2.metric("Contacts/Shift",  f"{contacts_shift:.0f}")
+            mc3.metric("Total Doors",     f"{total_doors:,}")
+            mc4.metric("Total Contacts",  f"{total_contacts:.0f}")
+
+            if not field_plan_df.empty:
+                st.divider()
+                st.subheader("Precinct Field Plan (Latest Run)")
+                display_cols = [c for c in ["canonical_precinct_id", "region_id", "universe_name",
+                                            "est_doors", "shifts_needed", "volunteers_needed",
+                                            "expected_contacts", "expected_net_gain"]
+                                if c in field_plan_df.columns]
+                st.dataframe(field_plan_df[display_cols].head(200), use_container_width=True, hide_index=True)
+
+                csv_fp = field_plan_df.to_csv(index=False).encode()
+                st.download_button("⬇️ Download Field Plan CSV", csv_fp, "field_plan.csv", "text/csv")
+            else:
+                st.info("No field plan found for this contest. Run pipeline first.")
+
+        # ── Tab: Scenarios ────────────────────────────────────────────────────
+        with tab_sim:
+            if sims_df.empty:
+                st.info("No simulation results found. Run pipeline first.")
+            else:
+                st.subheader("Campaign Scenario Projections")
+
+                scenario_cols = [c for c in sims_df.columns if "scenario" in c.lower() or "projected" in c.lower()
+                                 or "margin" in c.lower() or "win" in c.lower() or "net_gain" in c.lower()]
+                if scenario_cols:
+                    agg = sims_df[scenario_cols].sum(numeric_only=True)
+                    for col, val in agg.items():
+                        label = col.replace("_", " ").title()
+                        st.metric(label, f"{val:,.0f}")
+                else:
+                    st.dataframe(sims_df.head(100), use_container_width=True)
+
+                csv_sim = sims_df.to_csv(index=False).encode()
+                st.download_button("⬇️ Download Simulation CSV", csv_sim, "simulation_results.csv", "text/csv")
+
+        # ── Tab: Turf Packs ───────────────────────────────────────────────────
+        with tab_turfs:
+            st.subheader("📦 Download Turf Packs")
+
+            turfs_dir = BASE_DIR / "derived" / "turfs" / sel_state / sel_county
+            turf_pack_dirs = list(turfs_dir.glob(f"*{sel_slug}*__turf_packs")) if turfs_dir.exists() else []
+
+            if not turf_pack_dirs:
+                st.info("No turf packs found. Run pipeline to generate.")
+            else:
+                tp_dir = sorted(turf_pack_dirs)[-1]
+                turf_files = sorted(tp_dir.glob("*.csv"))
+                turf_md    = sorted(tp_dir.glob("*_summary.md"))
+
+                st.markdown(f"**{len(turf_files)} CSV turf packs found** in `{tp_dir.name}`")
+
+                # Show a preview picker
+                if turf_files:
+                    sel_turf = st.selectbox("Preview Turf", [f.name for f in turf_files], key="ops_turf_pick")
+                    pkl_path  = tp_dir / sel_turf
+                    pkl_df    = pd.read_csv(pkl_path)
+                    st.dataframe(pkl_df, use_container_width=True, hide_index=True)
+
+                    # Download individual turf
+                    st.download_button(
+                        f"⬇️ Download {sel_turf}",
+                        pkl_df.to_csv(index=False).encode(),
+                        sel_turf,
+                        "text/csv",
+                    )
+
+                # Show matching MD summary
+                if turf_md:
+                    sel_md_name = sel_turf.replace(".csv", "_summary.md") if turf_files else None
+                    sel_md = tp_dir / sel_md_name if sel_md_name and (tp_dir / sel_md_name).exists() else None
+                    if sel_md:
+                        with st.expander("📋 Turf Summary Briefing"):
+                            st.markdown(sel_md.read_text())
+
+                # Option to re-run turf generation on-demand
+                st.divider()
+                st.markdown("**Re-generate Turf Packs** (uses latest derived ops data)")
+                if st.button("♻️ Regenerate Turf Packs", use_container_width=True):
+                    from scripts.turfs.turf_generator import generate_turfs
+                    from scripts.turfs.turf_packer    import generate_turf_packs
+                    if not field_plan_df.empty:
+                        with st.spinner("Generating…"):
+                            new_turfs = generate_turfs(field_plan_df)
+                            run_ts    = datetime.datetime.now().strftime("%Y-%m-%d__%H%M%S")
+                            new_tp_dir = turfs_dir / f"{sel_slug}__turf_packs__{run_ts}"
+                            generate_turf_packs(field_plan_df, new_turfs, new_tp_dir, run_ts)
+                        st.success(f"✅ Generated {len(new_turfs)} turf packs → `{new_tp_dir}`")
+                        st.rerun()
+                    else:
+                        st.warning("No field plan found. Run pipeline first.")
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+# PAGE 7: OUTPUTS BROWSER
 # ═════════════════════════════════════════════════════════════════════════════
 elif page == "📊 Outputs Browser":
     st.markdown("""
@@ -951,6 +1309,145 @@ elif page == "📊 Outputs Browser":
                 )
     else:
         st.info("No pipeline runs yet.")
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+# PAGE: STRATEGY GENERATOR
+# ═════════════════════════════════════════════════════════════════════════════
+elif page == "🎯 Strategy Generator":
+    st.markdown("""
+    <div class='ciab-header'>
+        <h1>🎯 Campaign Strategy Generator</h1>
+        <p>Generate a complete, campaign-ready Strategy Pack from existing model outputs</p>
+    </div>""", unsafe_allow_html=True)
+
+    from scripts.strategy.strategy_generator import (
+        run_strategy_generator, load_inputs, infer_contest_mode, DEFAULT_WEEKS
+    )
+
+    contests = discover_contests()
+    if not contests:
+        st.info("No contests found. Run the pipeline first to generate model outputs.")
+    else:
+        col_cfg, col_main = st.columns([1, 2])
+
+        with col_cfg:
+            st.subheader("⚙️ Configuration")
+            c_opts = [f"{c['county']} / {c['year']} / {c['contest_slug']}" for c in contests]
+            sel = st.selectbox("Contest", c_opts, key="sg_contest")
+            parts = sel.split(" / ")
+            sg_county, sg_year, sg_slug = parts[0], parts[1], parts[2]
+
+            sg_mode = st.selectbox(
+                "Contest Mode",
+                ["auto", "measure", "candidate"],
+                index=0,
+                key="sg_mode",
+                help="auto: infer from data",
+            )
+            sg_weeks = st.slider("Field Plan Weeks", 1, 12, DEFAULT_WEEKS, key="sg_weeks")
+
+            # Build contest_id for discovery
+            sg_contest_id = f"{sg_year}_CA_{sg_county.lower().replace(' ', '_')}_{sg_slug}"
+
+            # ── Data completeness badge ───────────────────────────────────────
+            st.divider()
+            st.subheader("📊 Data Completeness")
+            inp_preview = load_inputs(sg_contest_id)
+            dm = inp_preview["derived_mode"]
+            badge_color = {"full": "#16A34A", "partial": "#D97706", "degraded": "#DC2626", "blocked": "#6B7280"}
+            badge_label = {"full": "✅ Full", "partial": "⚠️ Partial", "degraded": "🔴 Degraded", "blocked": "❌ Blocked"}
+            st.markdown(
+                f"<div style='padding:8px 14px;border-radius:8px;background:{badge_color.get(dm,'#888')};color:white;font-weight:bold;display:inline-block'>"
+                f"{badge_label.get(dm, dm)}</div>",
+                unsafe_allow_html=True,
+            )
+            st.divider()
+            st.caption("**Found:**")
+            for k in inp_preview["inputs_found"]:
+                st.caption(f"  ✅ {k}")
+            if inp_preview["inputs_missing"]:
+                st.caption("**Missing:**")
+                for k in inp_preview["inputs_missing"]:
+                    st.caption(f"  ❌ {k}")
+
+        with col_main:
+            st.subheader("🚀 Generate Strategy Pack")
+
+            if dm == "blocked":
+                st.error("❌ Required inputs missing — run the pipeline first to generate target_ranking.csv and forecasts.")
+            else:
+                if st.button("🎯 Generate Strategy Pack", type="primary", use_container_width=True):
+                    run_ts = datetime.datetime.now().strftime("%Y-%m-%d__%H%M%S")
+                    with st.spinner("Generating strategy pack…"):
+                        try:
+                            pack_dir = run_strategy_generator(
+                                contest_id=sg_contest_id,
+                                run_id=run_ts,
+                                contest_mode=sg_mode,
+                                weeks=sg_weeks,
+                            )
+                            if pack_dir:
+                                st.session_state["sg_pack_dir"] = str(pack_dir)
+                                st.success(f"✅ Strategy Pack generated → `{pack_dir}`")
+                                st.rerun()
+                            else:
+                                st.error("Strategy generator returned no output — check pipeline logs.")
+                        except Exception as e:
+                            st.error(f"Error: {e}")
+
+            # ── Display existing pack ─────────────────────────────────────────
+            # Look for a recent pack (from session or filesystem)
+            pack_root = BASE_DIR / "derived" / "strategy_packs" / sg_contest_id
+            existing_packs = sorted(pack_root.iterdir(), reverse=True) if pack_root.exists() else []
+
+            if "sg_pack_dir" in st.session_state:
+                display_pack = Path(st.session_state["sg_pack_dir"])
+            elif existing_packs:
+                display_pack = existing_packs[0]
+            else:
+                display_pack = None
+
+            if display_pack and display_pack.exists():
+                st.divider()
+                
+                # Pack selector if multiple
+                if len(existing_packs) > 1:
+                    pack_names = [p.name for p in existing_packs]
+                    chosen = st.selectbox("Strategy Pack Version", pack_names, key="sg_pack_ver")
+                    display_pack = pack_root / chosen
+
+                st.markdown(f"**Pack:** `{display_pack.name}`")
+
+                # ── Render STRATEGY_SUMMARY.md ───────────────────────────────
+                summary_md = display_pack / "STRATEGY_SUMMARY.md"
+                if summary_md.exists():
+                    with st.expander("📄 Strategy Summary", expanded=True):
+                        st.markdown(summary_md.read_text(encoding="utf-8"))
+
+                # ── Download buttons ─────────────────────────────────────────
+                st.divider()
+                st.markdown("**📦 Download Strategy Pack**")
+                dl_cols = st.columns(4)
+                artifacts = [
+                    ("TOP_TARGETS.csv",   "🎯 Targets",    "text/csv"),
+                    ("TOP_TURFS.csv",     "🗺️ Turfs",      "text/csv"),
+                    ("FIELD_PACE.csv",    "📅 Field Pace", "text/csv"),
+                    ("STRATEGY_META.json","⚙️ Meta JSON",  "application/json"),
+                ]
+                for i, (fname, label, mime) in enumerate(artifacts):
+                    fp = display_pack / fname
+                    with dl_cols[i]:
+                        if fp.exists():
+                            st.download_button(
+                                label=label,
+                                data=fp.read_bytes(),
+                                file_name=fname,
+                                mime=mime,
+                                use_container_width=True,
+                            )
+                        else:
+                            st.caption(f"_{fname} not found_")
 
 
 # ═════════════════════════════════════════════════════════════════════════════

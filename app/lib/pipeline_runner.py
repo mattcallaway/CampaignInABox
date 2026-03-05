@@ -23,6 +23,10 @@ def build_args(
     staging_dir: str | None = None,
     membership_method: str = "auto",
     no_commit: bool = True,
+    target_candidate: str | None = None,
+    rebuild_targets_only: bool = False,
+    rebuild_maps_only: bool = False,
+    contest_mode: str = "auto",
 ) -> list[str]:
     args = [
         PYTHON, str(PIPELINE_SCRIPT),
@@ -39,6 +43,14 @@ def build_args(
         args += ["--staging-dir", staging_dir]
     if no_commit:
         args.append("--no-commit")
+    if target_candidate:
+        args += ["--target-candidate", target_candidate]
+    if rebuild_targets_only:
+        args.append("--rebuild-targets-only")
+    if rebuild_maps_only:
+        args.append("--rebuild-maps-only")
+    if contest_mode and contest_mode != "auto":
+        args += ["--contest-mode", contest_mode]
     return args
 
 
@@ -51,6 +63,10 @@ def run_pipeline_streaming(
     staging_dir: str | None = None,
     membership_method: str = "auto",
     no_commit: bool = False,
+    target_candidate: str | None = None,
+    rebuild_targets_only: bool = False,
+    rebuild_maps_only: bool = False,
+    contest_mode: str = "auto",
 ) -> Generator[str, None, None]:
     """
     Stream pipeline output line by line.
@@ -58,7 +74,9 @@ def run_pipeline_streaming(
     Last yielded line is either '__SUCCESS__' or '__FAIL__:<code>'.
     """
     args = build_args(county, year, contest_slug, state, detail_path,
-                      staging_dir, membership_method, no_commit)
+                      staging_dir, membership_method, no_commit,
+                      target_candidate, rebuild_targets_only, rebuild_maps_only,
+                      contest_mode)
 
     proc = subprocess.Popen(
         args,
