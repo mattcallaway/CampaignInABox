@@ -1,0 +1,53 @@
+# config/advanced_modeling.yaml
+# Campaign In A Box — Advanced Modeling Engine (Prompt 10)
+#
+# These are PRIOR-DRIVEN defaults. They are proof-of-concept estimates
+# derived from published field-experiment literature (Green & Gerber, 2015).
+# THEY ARE NOT CALIBRATED TO THIS SPECIFIC CONTEST.
+# Always review the model card before acting on these numbers.
+
+# ── Contact + effort assumptions ─────────────────────────────────────────────
+effort:
+  doors_per_shift: 100            # doors attempted per canvasser shift
+  contact_rate: 0.18              # fraction of doors resulting in a contact
+  persuasion_contact_rate: 0.55   # fraction of contacts in persuasion universe
+  turnout_contact_rate: 0.45      # fraction of contacts in low-turnout universe
+
+# ── Elasticity priors ─────────────────────────────────────────────────────────
+# Mean/SD of lift per individual contact (prior, not calibrated)
+elasticity:
+  persuasion_lift_per_contact_mean: 0.006   # +0.6 pp persuasion lift per contact
+  persuasion_lift_per_contact_sd:   0.003
+  turnout_lift_per_contact_mean:    0.004   # +0.4 pp turnout lift per contact
+  turnout_lift_per_contact_sd:      0.002
+
+# ── Diminishing-returns curve (saturating exponential) ────────────────────────
+# lift(contacts) = max_lift * (1 - exp(-k * contacts))
+curves:
+  max_turnout_lift_pct:   0.08    # absolute maximum turnout lift (+8 pp)
+  max_persuasion_lift_pct: 0.06   # absolute maximum persuasion lift (+6 pp)
+  k_turnout:   0.0008             # controls how quickly turnout saturates
+  k_persuasion: 0.0010            # controls how quickly persuasion saturates
+
+# ── Persuasion direction ──────────────────────────────────────────────────────
+# +1 = field program increases YES/target-candidate share
+persuasion_direction: 1
+
+# ── Uncertainty controls ──────────────────────────────────────────────────────
+simulation:
+  monte_carlo_iterations: 2000
+  seed: 1337
+
+# ── Optimizer constraints ─────────────────────────────────────────────────────
+optimizer:
+  min_shifts_per_region: 0
+  max_shifts_per_region: 999
+  max_total_shifts: 100           # overridable at runtime
+
+# ── Scenario definitions ──────────────────────────────────────────────────────
+scenarios:
+  baseline: 0
+  lite:     20
+  medium:   50
+  heavy:    100
+  # user_budget: set at runtime via --max-shifts flag
