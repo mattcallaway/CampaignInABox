@@ -16,10 +16,13 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
+from scripts.lib.naming import normalize_jurisdiction_name
+
 # ── Index CSV columns ─────────────────────────────────────────────────────────
 INDEX_COLUMNS = [
     "boundary_type",
     "jurisdiction_name",
+    "jurisdiction_slug",
     "level",
     "file_path",
     "id_field_name",
@@ -31,6 +34,7 @@ MEMBERSHIP_COLUMNS = [
     "mprec",
     "boundary_type",
     "jurisdiction_name",
+    "jurisdiction_slug",
     "level",
     "boundary_id",
     "boundary_name",
@@ -91,9 +95,11 @@ def scan_boundary_files(data_root: Path, county: str) -> list[dict]:
             continue
         for f in sorted(folder.iterdir()):
             if f.is_file() and f.suffix.lower() in {".geojson", ".gpkg", ".shp"} and f.name != ".gitkeep":
+                norm_name, norm_slug = normalize_jurisdiction_name(f.stem)
                 rows.append({
                     "boundary_type":    boundary_type,
-                    "jurisdiction_name": f.stem,
+                    "jurisdiction_name": norm_name,
+                    "jurisdiction_slug": norm_slug,
                     "level":            boundary_type,
                     "file_path":        str(f),
                     "id_field_name":    "",   # to be filled after inspection
@@ -144,6 +150,7 @@ def build_membership_table(
                 "mprec":             mprec_id,
                 "boundary_type":     row.get("boundary_type", ""),
                 "jurisdiction_name": row.get("jurisdiction_name", ""),
+                "jurisdiction_slug": row.get("jurisdiction_slug", ""),
                 "level":             row.get("level", ""),
                 "boundary_id":       "",      # filled after spatial join
                 "boundary_name":     "",      # filled after spatial join

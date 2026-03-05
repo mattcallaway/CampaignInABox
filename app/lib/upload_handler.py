@@ -11,6 +11,8 @@ import shutil
 from datetime import datetime, timezone
 from pathlib import Path
 
+from scripts.lib.naming import normalize_contest_slug, generate_contest_id
+
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DATA_ROOT = BASE_DIR / "data"
 VOTES_ROOT = BASE_DIR / "votes"
@@ -202,17 +204,33 @@ def save_votes_file(
 
     # Contest JSON placeholder
     contest_json = dest_dir / "contest.json"
-    if not contest_json.exists():
-        payload = {
-            "contest_slug": contest_slug,
-            "year": year,
-            "state": state,
-            "county": county,
-            "detail_file": dest_name,
-            "created_at": datetime.now(timezone.utc).isoformat(),
-            "contest_type": "unknown",
-        }
-        contest_json.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    
+    # ALWAYS read existing to preserve or init new
+    payload = {}
+    if contest_json.exists():
+        try:
+            payload = json.loads(contest_json.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+
+    # Ensure canonical IDs are stamped
+    canonical_slug = normalize_contest_slug(contest_slug)
+    contest_id = generate_contest_id(year, state, county.lower().replace(" ", "_"), canonical_slug)
+
+    payload["contest_slug"] = canonical_slug
+    payload["contest_id"] = contest_id
+    payload["year"] = year
+    payload["state"] = state
+    payload["county"] = county
+    payload["detail_file"] = dest_name
+    payload["original_filename"] = uploaded_file.name
+    
+    if "created_at" not in payload:
+        payload["created_at"] = datetime.now(timezone.utc).isoformat()
+    if "contest_type" not in payload:
+        payload["contest_type"] = "unknown"
+
+    contest_json.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
     # Votes manifest
     manifest = dest_dir / "manifest.json"

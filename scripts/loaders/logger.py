@@ -29,6 +29,7 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+from scripts.lib.naming import normalize_county, generate_contest_id
 
 
 def generate_run_id() -> str:
@@ -259,6 +260,9 @@ class RunLogger:
         run_status: str = "success",
     ):
         """Write all log artifacts and refresh logs/latest/."""
+        # Derive canonical naming for serialization
+        county_name, self._county_slug, self._county_fips = normalize_county(county)
+        self._contest_id = generate_contest_id(str(datetime.now().year), state, self._county_slug, contest_slug) if contest_slug else None
         elapsed = self._elapsed()
         self._emit(
             "INFO ",
@@ -289,6 +293,9 @@ class RunLogger:
             "run_status": run_status,
             "total_elapsed_s": elapsed_s,
             "started_at": self.start_time.isoformat(),
+            "county_fips": getattr(self, "_county_fips", "N/A"),
+            "county_slug": getattr(self, "_county_slug", "N/A"),
+            "contest_id": getattr(self, "_contest_id", "N/A"),
             "input_hashes": self._input_hashes,
             "output_hashes": self._output_hashes,
             "coverage": self._coverage,

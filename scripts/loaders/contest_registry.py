@@ -9,6 +9,7 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
+from scripts.lib.naming import normalize_contest_slug, generate_contest_id
 
 UNKNOWN = "unknown"
 
@@ -45,8 +46,13 @@ def scaffold_contest_json(
         except Exception:
             existing = {}
 
+    # Enforce normalization
+    canonical_slug = normalize_contest_slug(contest_slug)
+    contest_id = generate_contest_id(str(year), state, county.lower().replace(" ", "_"), canonical_slug)
+
     data = {
-        "contest_slug":       contest_slug,
+        "contest_slug":       canonical_slug,
+        "contest_id":         contest_id,
         "contest_name":       contest_name if contest_name != UNKNOWN else existing.get("contest_name", UNKNOWN),
         "contest_type":       contest_type if contest_type != UNKNOWN else existing.get("contest_type", UNKNOWN),
         "jurisdiction_scope": jurisdiction_scope if jurisdiction_scope != UNKNOWN else existing.get("jurisdiction_scope", UNKNOWN),

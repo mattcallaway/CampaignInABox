@@ -1,0 +1,111 @@
+{
+  "generated_at": "2026-03-05T06:45:46.617723+00:00",
+  "state": "CA",
+  "county": "SAMPLE_COUNTY",
+  "county_dir": "C:\\Users\\Mathew C\\Campaign In A Box\\Campaign in a box Data\\CA\\SAMPLE_COUNTY",
+  "canonical_geography": "NONE",
+  "categories": {
+    "MPREC_GeoPackage": {
+      "label": "MPREC GeoPackage",
+      "folder": "C:\\Users\\Mathew C\\Campaign In A Box\\Campaign in a box Data\\CA\\SAMPLE_COUNTY\\MPREC_GeoPackage",
+      "present": false,
+      "files": []
+    },
+    "MPREC_GeoJSON": {
+      "label": "MPREC GeoJSON",
+      "folder": "C:\\Users\\Mathew C\\Campaign In A Box\\Campaign in a box Data\\CA\\SAMPLE_COUNTY\\MPREC_GeoJSON",
+      "present": false,
+      "files": []
+    },
+    "MPREC_Shapefile": {
+      "label": "MPREC Shapefile",
+      "folder": "C:\\Users\\Mathew C\\Campaign In A Box\\Campaign in a box Data\\CA\\SAMPLE_COUNTY\\MPREC_Shapefile",
+      "present": false,
+      "files": []
+    },
+    "SRPREC_GeoPackage": {
+      "label": "SRPREC GeoPackage",
+      "folder": "C:\\Users\\Mathew C\\Campaign In A Box\\Campaign in a box Data\\CA\\SAMPLE_COUNTY\\SRPREC_GeoPackage",
+      "present": false,
+      "files": []
+    },
+    "SRPREC_GeoJSON": {
+      "label": "SRPREC GeoJSON",
+      "folder": "C:\\Users\\Mathew C\\Campaign In A Box\\Campaign in a box Data\\CA\\SAMPLE_COUNTY\\SRPREC_GeoJSON",
+      "present": false,
+      "files": []
+    },
+    "SRPREC_Shapefile": {
+      "label": "SRPREC Shapefile",
+      "folder": "C:\\Users\\Mathew C\\Campaign In A Box\\Campaign in a box Data\\CA\\SAMPLE_COUNTY\\SRPREC_Shapefile",
+      "present": false,
+      "files": []
+    },
+    "SRPREC_TO_2020_BLK": {
+      "label": "SRPREC TO 2020 BLK",
+      "folder": "C:\\Users\\Mathew C\\Campaign In A Box\\Campaign in a box Data\\CA\\SAMPLE_COUNTY\\SRPREC_TO_2020_BLK",
+      "present": false,
+      "files": []
+    },
+    "RGPREC_TO_2020_BLK": {
+      "label": "RGPREC TO 2020 BLK",
+      "folder": "C:\\Users\\Mathew C\\Campaign In A Box\\Campaign in a box Data\\CA\\SAMPLE_COUNTY\\RGPREC_TO_2020_BLK",
+      "present": false,
+      "files": []
+    },
+    "2020_BLK_TO_MPREC": {
+      "label": "2020 BLK TO MPREC",
+      "folder": "C:\\Users\\Mathew C\\Campaign In A Box\\Campaign in a box Data\\CA\\SAMPLE_COUNTY\\2020_BLK_TO_MPREC",
+      "present": false,
+      "files": []
+    },
+    "RG_to_RR_to_SR_to_SVPREC": {
+      "label": "RG to RR to SR to SVPREC",
+      "folder": "C:\\Users\\Mathew C\\Campaign In A Box\\Campaign in a box Data\\CA\\SAMPLE_COUNTY\\RG_to_RR_to_SR_to_SVPREC",
+      "present": false,
+      "files": []
+    },
+    "MPREC_to_SRPREC": {
+      "label": "MPREC to SRPREC",
+      "folder": "C:\\Users\\Mathew C\\Campaign In A Box\\Campaign in a box Data\\CA\\SAMPLE_COUNTY\\MPREC_to_SRPREC",
+      "present": false,
+      "files": []
+    },
+    "SRPREC_to_CITY": {
+      "label": "SRPREC to CITY",
+      "folder": "C:\\Users\\Mathew C\\Campaign In A Box\\Campaign in a box Data\\CA\\SAMPLE_COUNTY\\SRPREC_to_CITY",
+      "present": false,
+      "files": []
+    }
+  },
+  "missing_categories": [
+    "MPREC_GeoPackage",
+    "MPREC_GeoJSON",
+    "MPREC_Shapefile",
+    "SRPREC_GeoPackage",
+    "SRPREC_GeoJSON",
+    "SRPREC_Shapefile",
+    "SRPREC_TO_2020_BLK",
+    "RGPREC_TO_2020_BLK",
+    "2020_BLK_TO_MPREC",
+    "RG_to_RR_to_SR_to_SVPREC",
+    "MPREC_to_SRPREC",
+    "SRPREC_to_CITY"
+  ],
+  "present_categories": [],
+  "known_id_fields": [
+    "MPREC_ID",
+    "MasterPrecinctID",
+    "mrprc_id",
+    "SRPREC_ID",
+    "SrPrecinctID",
+    "GEOID",
+    "GEOID20"
+  ],
+  "normalization_rules": {
+    "id_type": "string",
+    "left_pad": true,
+    "pad_char": "0",
+    "note": "All precinct IDs normalized to zero-padded strings. Never float."
+  }
+}

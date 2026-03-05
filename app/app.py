@@ -32,8 +32,9 @@ from .lib.output_browser import (
     discover_run_artifacts, discover_log_artifacts, discover_all_run_logs,
     read_file_safe, get_needs_summary,
 )
-from .lib.state_manager import get_stale_status
+from .lib.state_manager import get_stale_status, mark_pipeline_success
 from .lib.archiver import list_archives
+from scripts.lib.naming import normalize_county, normalize_contest_slug, generate_contest_id
 from scripts.lib.hashing import _sha256_bytes
 
 # ── Page config ───────────────────────────────────────────────────────────────
@@ -209,10 +210,15 @@ if page == "🏛️ Jurisdiction":
 
         if county_input:
             if st.button("✅ Create / Initialize County", type="primary", use_container_width=True):
-                with st.spinner(f"Initializing {county_input}…"):
-                    geo_dir = initialize_county(county_input, state)
-                st.success(f"✅ County **{county_input}** initialized at `{geo_dir}`")
-                st.rerun()
+                try:
+                    name, slug, fips = normalize_county(county_input)
+                    with st.spinner(f"Initializing {name} ({fips})…"):
+                        geo_dir = initialize_county(name, state)
+                    st.success(f"✅ County **{name}** initialized at `{geo_dir}`\n\nCanonical Slug: `{slug}` | FIPS: `{fips}`")
+                    time.sleep(1.5)
+                    st.rerun()
+                except ValueError as e:
+                    st.error(f"❌ {e}")
 
     with col2:
         if county_input:
@@ -362,12 +368,8 @@ elif page == "📤 Upload New Data":
 
         if detail_file:
             # Auto-suggest contest slug from filename
-            auto_slug = (
-                Path(detail_file.name).stem
-                .lower()
-                .replace(" ", "_")
-                .replace("-", "_")
-            )
+            raw_slug = Path(detail_file.name).stem
+            auto_slug = normalize_contest_slug(raw_slug)
             if auto_slug in ("detail", ""):
                 auto_slug = f"contest_{year}"
 
@@ -378,15 +380,29 @@ elif page == "📤 Upload New Data":
             help="Used as folder name under votes/<year>/CA/<county>/",
         )
 
+        if contest_slug:
+            # Preview normalization
+            canon_slug = normalize_contest_slug(contest_slug)
+            if canon_slug != contest_slug:
+                st.info(f"💡 Slug will be normalized to: `{canon_slug}`")
+            
+            try:
+                _, c_slug, _ = normalize_county(county)
+                cid = generate_contest_id(year, "CA", c_slug, canon_slug)
+                st.caption(f"Canonical Contest ID: `{cid}`")
+            except Exception:
+                pass
+
         if detail_file and contest_slug and year:
             st.info(
                 f"Will write to: `votes/{year}/CA/{county}/{contest_slug}/detail{Path(detail_file.name).suffix}`"
             )
             if st.button("💾 Save Election Results", type="primary", use_container_width=True):
+                canon_slug = normalize_contest_slug(contest_slug)
                 with st.spinner("Saving…"):
-                    dest, cj = save_votes_file(detail_file, year, county, contest_slug)
-                st.success(f"✅ Saved `{dest.name}` to `votes/{year}/CA/{county}/{contest_slug}/`")
-                st.markdown(f"  • `contest.json` placeholder created at: `{cj}`")
+                    dest, cj = save_votes_file(detail_file, year, county, canon_slug)
+                st.success(f"✅ Saved `{dest.name}` to `votes/{year}/CA/{county}/{canon_slug}/`")
+                st.markdown(f"  • `contest.json` updated with canonical identifiers at: `{cj}`")
 
     # ── Tab C: Voter File ─────────────────────────────────────────────────────
     with tab_c:
@@ -547,17 +563,17 @@ elif page == "🕰️ Version Browser":
                         archives = list_archives("votes", county, year=year, contest=c_slug)
                         
                         if not archives:
-                    st.info("No archived versions found for this contest.")
-                else:
-                    st.markdown(f"**Found {len(archives)} archived versions:**")
-                    for arch in archives:
-                        with st.expander(f"📁 Timestamp: {arch.name}"):
-                            files = list(arch.iterdir())
-                            for f in files:
-                                st.markdown(f"- `{f.name}` ({f.stat().st_size:,} bytes)")
-                            
-                            if st.button(f"Rollback to {arch.name}", key=f"rb_{arch.name}"):
-                                st.warning("Rollback functionality is scaffolded but requires UI bypass or manual replace implementation under the hood. For now, download the archive file and re-upload via Update Center.")
+                            st.info("No archived versions found for this contest.")
+                        else:
+                            st.markdown(f"**Found {len(archives)} archived versions:**")
+                            for arch in archives:
+                                with st.expander(f"📁 Timestamp: {arch.name}"):
+                                    files = list(arch.iterdir())
+                                    for f in files:
+                                        st.markdown(f"- `{f.name}` ({f.stat().st_size:,} bytes)")
+                                    
+                                    if st.button(f"Rollback to {arch.name}", key=f"rb_{arch.name}"):
+                                        st.warning("Rollback functionality is scaffolded but requires UI bypass or manual replace implementation under the hood. For now, download the archive file and re-upload via Update Center.")
                                 
         elif domain == "Geography":
             archives = list_archives("geography", county)
@@ -640,6 +656,14 @@ elif page == "▶️ Run Pipeline":
         st.divider()
         # Status badge
         if county and county != "— select —" and contest_slug:
+            try:
+                c_name, c_slug, c_fips = normalize_county(county)
+                norm_contest = normalize_contest_slug(contest_slug)
+                cid = generate_contest_id(year, "CA", c_slug, norm_contest)
+                st.markdown(f"**Context Identifiers:**<br><span style='font-size: 0.9em'>County FIPS: `{c_fips}` | Contest ID: `{cid}`</span>", unsafe_allow_html=True)
+            except Exception:
+                pass
+                
             geo_status = get_geography_status(county)
             n_present  = sum(v for v in geo_status.values())
             has_geo    = n_present > 0

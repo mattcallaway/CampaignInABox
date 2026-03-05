@@ -137,7 +137,7 @@ def parse_sheet(
     }
 
 
-def aggregate_to_precinct_totals(parsed: dict) -> pd.DataFrame:
+def aggregate_to_precinct_totals(parsed: dict, logger=None) -> pd.DataFrame:
     """
     Aggregate vote methods into per-precinct totals.
     Returns DataFrame with columns:
@@ -157,10 +157,18 @@ def aggregate_to_precinct_totals(parsed: dict) -> pd.DataFrame:
 
     result = pd.DataFrame()
     if prec_col:
-        result["PrecinctID"] = df[prec_col].astype(str).str.strip()
-        # Normalize IDs
-        from ..modeling.precinct_model import normalize_id_series
-        result["PrecinctID"] = normalize_id_series(result["PrecinctID"])
+        raw_series = df[prec_col].astype(str).str.strip()
+        result["PrecinctID_Raw"] = raw_series
+        
+        from scripts.lib.naming import normalize_precinct_id
+        # We don't pad to 7 by default for vote file precinct IDs unless they strictly match a known mprec standard, but we'll apply base normalization.
+        norm_series = raw_series.apply(lambda x: normalize_precinct_id(x, pad_to=0))
+        result["PrecinctID"] = norm_series
+        
+        if logger:
+            mismatches = result[result["PrecinctID_Raw"] != result["PrecinctID"]]
+            for _, row in mismatches.iterrows():
+                logger.warning(f"Precinct normalization modified raw ID: '{row['PrecinctID_Raw']}' -> '{row['PrecinctID']}'")
 
     def _to_num(col):
         return pd.to_numeric(df[col], errors="coerce").fillna(0) if col and col in df.columns else 0
@@ -205,6 +213,7 @@ def allocate_votes_crosswalk(
         src = str(row[src_id_col]).strip()
         targets = crosswalk.get(src, [(src, 1.0)])  # identity fallback
         for tgt, weight in targets:
+            # We enforce MPREC/target ID normalization in the crosswalk/boundary loader, so we just use the mapped string.
             rec = {tgt_id_col: tgt}
             for col in numeric_cols:
                 rec[col] = row[col] * weight
@@ -342,7 +351,7 @@ def parse_contest_workbook(
         _log(f"Parsing sheet: {sheet_name!r}")
         try:
             parsed = parse_sheet(sheet_name, rows)
-            totals = aggregate_to_precinct_totals(parsed)
+            totals = aggregate_to_precinct_totals(parsed, logger=logger)
             parsed["totals_df"] = totals
             parsed_sheets.append(parsed)
             sheet_names.append(sheet_name)
