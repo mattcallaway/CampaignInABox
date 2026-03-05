@@ -1,0 +1,2 @@
+﻿# NOTE: Optimal allocation is empty because all precincts in sample data have registered=0.
+entity_type,entity_id,shifts_assigned,contacts_estimated,turnout_lift,persuasion_lift,expected_net_gain_votes

@@ -1,0 +1,20 @@
+{
+  "run_id": "2026-03-05__042220__46073f09__msi",
+  "contest_id": "2026_CA_sonoma_nov2024_general",
+  "state": "unknown",
+  "county": "unknown",
+  "export_created_at": "2026-03-05T04:31:03.597975",
+  "advanced_modeling": {
+    "advanced_scenarios_found": true,
+    "optimal_allocation_found": true,
+    "model_card_found": true
+  },
+  "strategy_pack": {
+    "strategy_meta_found": true,
+    "advanced_modeling_used": false
+  },
+  "audit": {
+    "audit_json_found": true,
+    "audit_md_found": true
+  }
+}
