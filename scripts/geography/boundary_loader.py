@@ -101,7 +101,7 @@ def _find_geom_file(county_dir: Path, categories: list[str]) -> Path | None:
 
 
 def load_canonical_geometry(
-    data_root: str | Path,
+    county_geo_dir_or_data_root: str | Path,
     state: str,
     county: str,
     logger=None,
@@ -109,58 +109,60 @@ def load_canonical_geometry(
     """
     Load canonical precinct geometry for the jurisdiction.
 
+    Supports two path conventions:
+      A) New:  county_geo_dir_or_data_root = data/CA/counties (parent of county)
+               -> looks in <arg>/<county>/geography/precinct_shapes/
+      B) Old:  county_geo_dir_or_data_root = Campaign in a box Data
+               -> looks in <arg>/<state>/<county>/
+
     Returns:
         (gdf_or_stub, geography_level, id_column)
         geography_level: 'MPREC' | 'SRPREC' | 'NONE'
 
-    Raises:
-        RuntimeError — HARD FAIL if geometry cannot be loaded and geopandas is available.
-        Returns stub dict if geopandas is unavailable (so pipeline can log NEEDS).
+    Hard-fails if geopandas available but no files exist.
+    Returns stub dict if geopandas is unavailable.
     """
-    data_root = Path(data_root)
-    county_dir = data_root / state / county
+    root = Path(county_geo_dir_or_data_root)
 
     def _log(msg, level="INFO"):
         if logger:
             getattr(logger, level.lower(), logger.info)(msg)
 
-    # Try MPREC first, then SRPREC
-    for geom_categories, level in [
-        (MPREC_GEOM_CATEGORIES, "MPREC"),
-        (SRPREC_GEOM_CATEGORIES, "SRPREC"),
-    ]:
-        geom_file = _find_geom_file(county_dir, geom_categories)
-        if geom_file:
-            if not _HAS_GEOPANDAS:
-                _log(
-                    f"geopandas not installed; geometry file found at {geom_file} "
-                    "but cannot be loaded. Flagging as NEEDS.",
-                    "WARN",
-                )
-                return {"_stub": True, "_file": str(geom_file)}, level, None
+    # Resolve the county geometry search root — try new path first, then old
+    candidates_roots = [
+        root / county / "geography" / "precinct_shapes",   # new: data/CA/counties/
+        root / state / county,                              # old: Campaign in a box Data/CA/
+    ]
 
-            try:
-                _log(f"Loading {level} geometry from: {geom_file}")
-                gdf = gpd.read_file(str(geom_file))
-                _log(f"Loaded {len(gdf)} features from {geom_file.name}")
-
-                # Detect and normalize ID column
-                id_col = detect_id_column(list(gdf.columns))
-                if id_col:
-                    gdf[id_col] = normalize_id_column(gdf[id_col])
-                    _log(f"Normalized ID column '{id_col}' → zero-padded strings")
-                else:
-                    _log("No recognized ID column found in geometry", "WARN")
-
-                return gdf, level, id_col
-            except Exception as e:
-                _log(f"Failed to load {geom_file}: {e}", "WARN")
-                continue
-
-    # No geometry found at all
-    _log(f"No geometry files found for {state}/{county}", "WARN")
-    if _HAS_GEOPANDAS:
-        # HARD FAIL only if geopandas is available but no files exist
-        # (caller decides based on pipeline mode whether to hard_fail)
+    def _try_load(county_dir: Path):
+        for geom_categories, level in [
+            (MPREC_GEOM_CATEGORIES, "MPREC"),
+            (SRPREC_GEOM_CATEGORIES, "SRPREC"),
+        ]:
+            geom_file = _find_geom_file(county_dir, geom_categories)
+            if geom_file:
+                if not _HAS_GEOPANDAS:
+                    _log(f"geopandas not installed; found {geom_file} but cannot load", "WARN")
+                    return {"_stub": True, "_file": str(geom_file)}, level, None
+                try:
+                    _log(f"Loading {level} geometry from: {geom_file}")
+                    gdf = gpd.read_file(str(geom_file))
+                    _log(f"Loaded {len(gdf)} features from {geom_file.name}")
+                    id_col = detect_id_column(list(gdf.columns))
+                    if id_col:
+                        gdf[id_col] = normalize_id_column(gdf[id_col])
+                        _log(f"Normalized ID column '{id_col}'")
+                    return gdf, level, id_col
+                except Exception as e:
+                    _log(f"Failed to load {geom_file}: {e}", "WARN")
         return None, "NONE", None
-    return {"_stub": True, "_file": None}, "NONE", None
+
+    for candidate_root in candidates_roots:
+        if candidate_root.is_dir():
+            gdf, level, id_col = _try_load(candidate_root)
+            if gdf is not None:
+                return gdf, level, id_col
+
+    _log(f"No geometry files found for {state}/{county}", "WARN")
+    return None, "NONE", None
+
