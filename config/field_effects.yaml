@@ -1,0 +1,23 @@
+# field_effects.yaml
+# Modeled lift assumptions for field operations (GOTV and persuasion).
+
+gotv:
+  door_knock_lift:   0.025   # +2.5 pp turnout per contacted household
+  phone_bank_lift:   0.010
+  mail_piece_lift:   0.005
+  sms_lift:          0.003
+
+persuasion:
+  door_knock_swing:  0.020   # +2 pp yes/candidate swing per contact
+  phone_bank_swing:  0.008
+  mail_piece_swing:  0.004
+  digital_ad_swing:  0.002
+
+targeting:
+  universe_min_score:  0.30   # only include precincts above this composite score
+  max_doors_per_day:   80     # field capacity planning assumption per canvasser
+  contact_rate:        0.55   # assumed door answer rate
+
+notes: >
+  All lift values are defaults only. Override per race in model_parameters.yaml
+  or via CLI flag --field-lift-override.

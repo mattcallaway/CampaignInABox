@@ -1,0 +1,54 @@
+run_id: 20260304_224546_3d3ba634
+timestamp: '2026-03-05T06:45:46.807Z'
+state: CA
+county: SAMPLE_COUNTY
+needs:
+- category: geopandas_library
+  status: missing
+  blocks:
+  - geometry_load
+  - kepler_export
+- category: SRPREC_TO_2020_BLK
+  status: missing
+  blocks:
+  - crosswalk_SRPREC_TO_2020_BLK
+  expected_path: C:\Users\Mathew C\Campaign In A Box\Campaign in a box Data\CA\SAMPLE_COUNTY\SRPREC_TO_2020_BLK
+- category: RGPREC_TO_2020_BLK
+  status: missing
+  blocks:
+  - crosswalk_RGPREC_TO_2020_BLK
+  expected_path: C:\Users\Mathew C\Campaign In A Box\Campaign in a box Data\CA\SAMPLE_COUNTY\RGPREC_TO_2020_BLK
+- category: 2020_BLK_TO_MPREC
+  status: missing
+  blocks:
+  - crosswalk_2020_BLK_TO_MPREC
+  expected_path: C:\Users\Mathew C\Campaign In A Box\Campaign in a box Data\CA\SAMPLE_COUNTY\2020_BLK_TO_MPREC
+- category: RG_to_RR_to_SR_to_SVPREC
+  status: missing
+  blocks:
+  - crosswalk_RG_to_RR_to_SR_to_SVPREC
+  expected_path: C:\Users\Mathew C\Campaign In A Box\Campaign in a box Data\CA\SAMPLE_COUNTY\RG_to_RR_to_SR_to_SVPREC
+- category: MPREC_to_SRPREC
+  status: missing
+  blocks:
+  - crosswalk_MPREC_to_SRPREC
+  expected_path: C:\Users\Mathew C\Campaign In A Box\Campaign in a box Data\CA\SAMPLE_COUNTY\MPREC_to_SRPREC
+- category: SRPREC_to_CITY
+  status: missing
+  blocks:
+  - crosswalk_SRPREC_to_CITY
+  expected_path: C:\Users\Mathew C\Campaign In A Box\Campaign in a box Data\CA\SAMPLE_COUNTY\SRPREC_to_CITY
+- category: geometry_for_kepler
+  status: blocked
+  blocks:
+  - kepler_geojson
+  expected_path: C:\Users\Mathew C\Campaign In A Box\Campaign in a box Data\CA\SAMPLE_COUNTY\MPREC_GeoJSON
+- category: geometry_for_kepler
+  status: blocked
+  blocks:
+  - kepler_geojson
+  expected_path: C:\Users\Mathew C\Campaign In A Box\Campaign in a box Data\CA\SAMPLE_COUNTY\MPREC_GeoJSON
+coverage:
+  sheets_parsed: 2
+  precinct_rows_Measure A: 5
+  precinct_rows_DA Race: 5

@@ -1,0 +1,18 @@
+# forecasting.yaml
+# Parameters for turnout curve and swing estimation.
+
+turnout_model:
+  method: linear_regression   # options: linear_regression | historical_average | prophet
+  look_back_elections: 3       # number of prior elections to incorporate
+  presidential_year_boost: 1.0
+  governor_year_boost:    0.85
+  off_cycle_factor:       0.60
+
+swing_model:
+  method: uniform_swing        # options: uniform_swing | proportional | elastic
+  base_partisanship_source: registration_pct  # or: prior_election_margin
+  elasticity_coefficient: 0.50
+
+confidence_intervals:
+  enabled: true
+  alpha: 0.10                  # 90% CI

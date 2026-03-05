@@ -1,0 +1,27 @@
+# model_parameters.yaml
+# Weights and thresholds for precinct scoring and targeting tier assignment.
+
+scoring:
+  weights:
+    turnout_pct:   0.30   # historical turnout importance
+    yes_pct:       0.35   # ballot measure support (or candidate margin)
+    registered:    0.15   # raw voter pool size
+    swing_index:   0.20   # estimated persuadability (0-1 scale)
+
+  thresholds:
+    tier_1_cutoff: 0.75   # top quartile — highest priority
+    tier_2_cutoff: 0.50   # second quartile
+    tier_3_cutoff: 0.25   # third quartile
+
+turnout:
+  baseline_off_year_factor: 0.70  # relative to presidential year
+  mail_ballot_weight: 1.0
+  in_person_weight:   1.0
+
+allocation:
+  area_weighted_tolerance: 0.02   # max fractional error allowed
+  crosswalk_sum_tolerance:  0.001  # crosswalk weights must sum to 1 ± this
+
+sanity:
+  max_ballots_over_registered_pct: 0.0   # hard-fail threshold
+  max_yes_no_over_ballots_pct:      0.005  # 0.5% float tolerance

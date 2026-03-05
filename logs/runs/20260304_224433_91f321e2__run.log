@@ -1,0 +1,11 @@
+[2026-03-05T06:44:33.129Z] [INFO] ========================================================================
+  Campaign In A Box — Pipeline Run
+  RUN_ID  : 20260304_224433_91f321e2
+  Started : 2026-03-05T06:44:33.128945+00:00
+========================================================================
+[2026-03-05T06:44:33.129Z] [INFO ] Pipeline starting
+[2026-03-05T06:44:33.129Z] [INFO ]   state=CA  county=SAMPLE_COUNTY
+[2026-03-05T06:44:33.129Z] [INFO ]   contest_file=votes/2024/CA/SAMPLE_COUNTY/MEASURE_A/detail.xlsx
+[2026-03-05T06:44:33.129Z] [INFO ]   membership_method=auto
+[2026-03-05T06:44:33.129Z] [INFO ]   base_dir=C:\Users\Mathew C\Campaign In A Box
+[2026-03-05T06:44:33.132Z] [STEP ] START  → DISCOVER_INPUTS

@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+.env
+.venv
+venv/
+env/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.suo
+*.user
+
+# Raw voter files (sensitive; never commit)
+voters/**/*.csv
+voters/**/*.tsv
+voters/**/*.txt
+voters/**/*.zip
+
+# Temp / scratch
+_scaffold.ps1
+tmp/
+scratch/
+*.tmp
+*.bak
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Large raw data (use LFS rules above for GIS)
+# raw xlsx/xls vote files ARE committed (small; source of truth)
