@@ -68,12 +68,20 @@ def load_inputs(contest_id: str, run_id: Optional[str] = None) -> dict:
         return pd.DataFrame(), None
 
     # ── Required inputs ───────────────────────────────────────────────────────
+    # Try campaign_targets first, then precinct_models (which is where the pipeline actually writes)
     targets_df, targets_path = try_load(
         derived / "campaign_targets",
         f"*{contest_id}*target_ranking*.csv",
         "*target_ranking*.csv",
         "*scored_model*.csv",
     )
+    if targets_df.empty:
+        # Fallback: pipeline writes scored models to derived/precinct_models/
+        targets_df, targets_path = try_load(
+            derived / "precinct_models",
+            "*precinct_model*.csv",
+            "*.csv",
+        )
     turfs_df, turfs_path = try_load(
         derived / "turfs",
         f"*{contest_id}*turfs*.csv",
