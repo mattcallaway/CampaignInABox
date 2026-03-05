@@ -1,0 +1,94 @@
+run_id: 2026-03-04__230432__6e40c8bc__msi
+timestamp: '2026-03-05T07:04:32.794Z'
+state: CA
+county: Sonoma
+needs:
+- category: MPREC GeoJSON
+  status: missing
+  blocks:
+  - geometry_load
+  - kepler_export
+  - precinct_model
+  expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\MPREC_GeoJSON
+- category: MPREC GeoPackage
+  status: missing
+  blocks:
+  - geometry_load
+  - kepler_export
+  - precinct_model
+  expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\MPREC_GeoPackage
+- category: MPREC Shapefile
+  status: missing
+  blocks:
+  - geometry_load
+  - kepler_export
+  - precinct_model
+  expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\MPREC_Shapefile
+- category: SRPREC GeoJSON
+  status: missing
+  blocks:
+  - geometry_load
+  - kepler_export
+  - precinct_model
+  expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\SRPREC_GeoJSON
+- category: SRPREC GeoPackage
+  status: missing
+  blocks:
+  - geometry_load
+  - kepler_export
+  - precinct_model
+  expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\SRPREC_GeoPackage
+- category: SRPREC Shapefile
+  status: missing
+  blocks:
+  - geometry_load
+  - kepler_export
+  - precinct_model
+  expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\SRPREC_Shapefile
+- category: 2020 BLK TO MPREC
+  status: missing
+  blocks:
+  - crosswalk_2020_BLK_TO_MPREC
+  expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\crosswalks
+- category: RGPREC TO 2020 BLK
+  status: missing
+  blocks:
+  - crosswalk_RGPREC_TO_2020_BLK
+  expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\crosswalks
+- category: SRPREC TO 2020 BLK
+  status: missing
+  blocks:
+  - crosswalk_SRPREC_TO_2020_BLK
+  expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\crosswalks
+- category: RG to RR to SR to SVPREC
+  status: missing
+  blocks:
+  - crosswalk_allocation
+  expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\crosswalks
+- category: MPREC to SRPREC
+  status: missing
+  blocks:
+  - crosswalk_allocation
+  expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\crosswalks
+- category: SRPREC to CITY
+  status: missing
+  blocks:
+  - crosswalk_SRPREC_to_CITY
+  expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\crosswalks
+- category: geometry_for_kepler
+  status: blocked
+  blocks:
+  - kepler_geojson
+  expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\MPREC_GeoJSON
+- category: geometry_for_kepler
+  status: blocked
+  blocks:
+  - kepler_geojson
+  expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\MPREC_GeoJSON
+coverage:
+  canonical_geometry: NONE
+  categories_present: 0
+  categories_missing: 12
+  sheets_parsed: 2
+  rows_Measure A: 5
+  rows_DA Race: 5

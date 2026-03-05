@@ -1,0 +1,51 @@
+[2026-03-05T07:04:16.221Z] [INFO] ========================================================================
+  Campaign In A Box — Pipeline Run
+  RUN_ID  : 2026-03-04__230416__6e40c8bc__msi
+  Started : 2026-03-05T07:04:16.220538+00:00
+========================================================================
+[2026-03-05T07:04:16.221Z] [INFO ] Pipeline v2 starting
+[2026-03-05T07:04:16.221Z] [INFO ]   state=CA  county=Sonoma  year=2024  contest_slug=nov2024_general
+[2026-03-05T07:04:16.221Z] [INFO ]   membership_method=auto  log_level=verbose
+[2026-03-05T07:04:16.223Z] [STEP ] SKIP   [SKIP] INGEST_STAGING -- No --staging-dir provided; skipping ingestion
+[2026-03-05T07:04:16.223Z] [STEP ] START  -> SCAFFOLD_BOUNDARY_INDEX
+[2026-03-05T07:04:16.224Z] [INFO ]   Scaffolded boundary index: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\boundary_index\boundaries_index.csv
+[2026-03-05T07:04:16.225Z] [WARN ]   Boundary index scaffolded (no boundary files found yet)
+[2026-03-05T07:04:16.231Z] [INFO ]   output: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\boundary_index\boundaries_index.csv  [sha256:8057bff9429d...]
+[2026-03-05T07:04:16.231Z] [STEP ] DONE   [OK] SCAFFOLD_BOUNDARY_INDEX (0.011s)
+[2026-03-05T07:04:16.231Z] [STEP ] START  -> VALIDATE_GEOGRAPHY
+[2026-03-05T07:04:16.231Z] [INFO ]   expected: data/CA/counties/Sonoma/geography/precinct_shapes/
+[2026-03-05T07:04:16.231Z] [INFO ]   expected: data/CA/counties/Sonoma/geography/crosswalks/
+[2026-03-05T07:04:16.232Z] [WARN ]   [missing] MPREC GeoJSON -- expected at: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\MPREC_GeoJSON
+[2026-03-05T07:04:16.232Z] [WARN ]   [missing] MPREC GeoPackage -- expected at: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\MPREC_GeoPackage
+[2026-03-05T07:04:16.232Z] [WARN ]   [missing] MPREC Shapefile -- expected at: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\MPREC_Shapefile
+[2026-03-05T07:04:16.232Z] [WARN ]   [missing] SRPREC GeoJSON -- expected at: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\SRPREC_GeoJSON
+[2026-03-05T07:04:16.232Z] [WARN ]   [missing] SRPREC GeoPackage -- expected at: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\SRPREC_GeoPackage
+[2026-03-05T07:04:16.233Z] [WARN ]   [missing] SRPREC Shapefile -- expected at: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\SRPREC_Shapefile
+[2026-03-05T07:04:16.233Z] [WARN ]   [missing] 2020 BLK TO MPREC -- expected at: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\crosswalks
+[2026-03-05T07:04:16.233Z] [WARN ]   [missing] RGPREC TO 2020 BLK -- expected at: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\crosswalks
+[2026-03-05T07:04:16.233Z] [WARN ]   [missing] SRPREC TO 2020 BLK -- expected at: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\crosswalks
+[2026-03-05T07:04:16.233Z] [WARN ]   [missing] RG to RR to SR to SVPREC -- expected at: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\crosswalks
+[2026-03-05T07:04:16.234Z] [WARN ]   [missing] MPREC to SRPREC -- expected at: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\crosswalks
+[2026-03-05T07:04:16.234Z] [WARN ]   [missing] SRPREC to CITY -- expected at: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\crosswalks
+[2026-03-05T07:04:16.234Z] [INFO ] Geography validation: 0/12 present, canonical=NONE
+[2026-03-05T07:04:16.234Z] [WARN ]   NEED: MPREC GeoJSON [missing] -- blocks: geometry_load, kepler_export, precinct_model
+[2026-03-05T07:04:16.234Z] [WARN ]   NEED: MPREC GeoPackage [missing] -- blocks: geometry_load, kepler_export, precinct_model
+[2026-03-05T07:04:16.234Z] [WARN ]   NEED: MPREC Shapefile [missing] -- blocks: geometry_load, kepler_export, precinct_model
+[2026-03-05T07:04:16.234Z] [WARN ]   NEED: SRPREC GeoJSON [missing] -- blocks: geometry_load, kepler_export, precinct_model
+[2026-03-05T07:04:16.234Z] [WARN ]   NEED: SRPREC GeoPackage [missing] -- blocks: geometry_load, kepler_export, precinct_model
+[2026-03-05T07:04:16.234Z] [WARN ]   NEED: SRPREC Shapefile [missing] -- blocks: geometry_load, kepler_export, precinct_model
+[2026-03-05T07:04:16.234Z] [WARN ]   NEED: 2020 BLK TO MPREC [missing] -- blocks: crosswalk_2020_BLK_TO_MPREC
+[2026-03-05T07:04:16.234Z] [WARN ]   NEED: RGPREC TO 2020 BLK [missing] -- blocks: crosswalk_RGPREC_TO_2020_BLK
+[2026-03-05T07:04:16.234Z] [WARN ]   NEED: SRPREC TO 2020 BLK [missing] -- blocks: crosswalk_SRPREC_TO_2020_BLK
+[2026-03-05T07:04:16.234Z] [WARN ]   NEED: RG to RR to SR to SVPREC [missing] -- blocks: crosswalk_allocation
+[2026-03-05T07:04:16.234Z] [WARN ]   NEED: MPREC to SRPREC [missing] -- blocks: crosswalk_allocation
+[2026-03-05T07:04:16.234Z] [WARN ]   NEED: SRPREC to CITY [missing] -- blocks: crosswalk_SRPREC_to_CITY
+[2026-03-05T07:04:16.234Z] [STEP ] DONE   [OK] VALIDATE_GEOGRAPHY (0.014s)
+[2026-03-05T07:04:16.234Z] [STEP ] START  -> VALIDATE_VOTES
+[2026-03-05T07:04:16.234Z] [INFO ]   expected: votes/2024/CA/Sonoma/nov2024_general/detail.xlsx
+[2026-03-05T07:04:16.234Z] [WARN ]   [missing] votes: no detail.xlsx/xls in C:\Users\Mathew C\Campaign In A Box\votes\2024\CA\Sonoma\nov2024_general
+[2026-03-05T07:04:16.234Z] [WARN ]   NEED: detail.xlsx [missing] -- blocks: parse_contest, allocate_votes, export_model
+[2026-03-05T07:04:16.234Z] [STEP ] SKIP   [SKIP] VALIDATE_VOTES -- blocked: missing votes — detail.xlsx not found
+[2026-03-05T07:04:16.234Z] [INFO ] ========================================================================
+  Run complete — PARTIAL  elapsed: 0.014s
+========================================================================
