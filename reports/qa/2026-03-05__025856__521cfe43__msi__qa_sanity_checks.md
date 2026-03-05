@@ -1,0 +1,13 @@
+# QA Sanity Checks
+
+**RUN_ID**: `2026-03-05__025856__521cfe43__msi`  |  **CA/Sonoma/nov2024_general**
+
+**Result**: 1/1 checks passed
+
+## ✓ Passed
+
+- ✓ **Non-empty model**: 10 rows
+
+## ✗ Failed
+
+_None — all checks passed._

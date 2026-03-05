@@ -1,0 +1,240 @@
+{
+  "system_status": "WARN",
+  "run_id": "2026-03-05__011400__audit",
+  "audit_id": "2026-03-05__021124__post_prompt7_full_audit",
+  "prior_audit_id": "2026-03-05__014616__post_prompt6_audit",
+  "timestamp": "2026-03-05 02:11:24",
+  "pipeline": {
+    "ingestion": true,
+    "features": true,
+    "targets": true,
+    "turfs": true,
+    "forecasts": true,
+    "ops": false,
+    "simulation": false,
+    "strategy_generator": false
+  },
+  "dirs": {
+    "data": true,
+    "votes": true,
+    "derived/features": true,
+    "derived/universes": true,
+    "derived/campaign_targets": true,
+    "derived/turfs": true,
+    "derived/forecasts": true,
+    "derived/ops": false,
+    "derived/diagnostics": true,
+    "derived/strategy_packs": false,
+    "logs": true,
+    "needs": true,
+    "config": true,
+    "scripts": true
+  },
+  "ingestion": {
+    "contests": [
+      {
+        "path": "votes\\2024\\CA\\Sonoma\\nov2024_general\\contest.json",
+        "title": "",
+        "choices": [],
+        "precinct_count": 0,
+        "total_registered": 0,
+        "total_ballots": 0,
+        "detail_xlsx": true
+      },
+      {
+        "path": "votes\\2024\\CA\\SAMPLE_COUNTY\\MEASURE_A\\contest.json",
+        "title": "",
+        "choices": [],
+        "precinct_count": 0,
+        "total_registered": 0,
+        "total_ballots": 0,
+        "detail_xlsx": true
+      }
+    ],
+    "issues": []
+  },
+  "geo": {
+    "geopandas_installed": false,
+    "mprec_geojson": true,
+    "srprec_geojson": true,
+    "boundary_index": false,
+    "geometry_parsed": false
+  },
+  "crosswalk": {
+    "SRPREC_TO_2020_BLK": "found",
+    "RGPREC_TO_2020_BLK": "found",
+    "2020_BLK_TO_MPREC": "found",
+    "MPREC_to_SRPREC": "found",
+    "SRPREC_to_CITY": "found",
+    "RG_to_RR_to_SR_to_SVPREC": "found"
+  },
+  "features": {
+    "file_found": true,
+    "row_count": 5,
+    "missing_cols": [
+      "canonical_precinct_id",
+      "registered",
+      "ballots_cast",
+      "turnout_pct",
+      "support_pct"
+    ],
+    "violations": [],
+    "path": "derived\\precinct_models\\CA\\Sonoma\\Sonoma_2024_nov2024_general__Measure A\\2026-03-04__230432__6e40c8bc__msi__precinct_model.csv"
+  },
+  "universes": {
+    "file_found": true,
+    "row_count": 10,
+    "universe_names": [
+      "Turnout Opportunity"
+    ],
+    "missing_cols": [
+      "precinct_id"
+    ]
+  },
+  "targets": {
+    "file_found": true,
+    "row_count": 5,
+    "missing_cols": [
+      "target_score",
+      "persuasion_potential",
+      "turnout_opportunity",
+      "tier",
+      "walk_priority_rank",
+      "confidence_level"
+    ],
+    "tier_dist": {}
+  },
+  "turfs": {
+    "file_found": true,
+    "turf_count": 1,
+    "missing_cols": [
+      "expected_contacts"
+    ]
+  },
+  "forecasts": {
+    "files": [
+      "derived\\forecasts\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__010336__74fbdd60__msi__scenario_forecasts.csv",
+      "derived\\forecasts\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__010708__74fbdd60__msi__scenario_forecasts.csv"
+    ],
+    "scenarios_found": [],
+    "scenarios_missing": [
+      "baseline",
+      "field_program_light",
+      "field_program_medium",
+      "field_program_heavy"
+    ],
+    "row_count": 0
+  },
+  "ops": {
+    "dir_exists": false,
+    "regions_csv": false,
+    "field_plan_csv": false,
+    "net_gain_csv": false,
+    "region_count": 0,
+    "field_plan_rows": 0,
+    "missing_fields": []
+  },
+  "simulation": {
+    "file_found": false,
+    "scenarios": [],
+    "missing_cols": [],
+    "row_count": 0
+  },
+  "strategy_pack": {
+    "exists": false,
+    "packs_found": [],
+    "files": {},
+    "meta_missing": []
+  },
+  "strategy_decisions": {
+    "has_top_targets": false,
+    "has_top_turfs": false,
+    "has_field_pace": false,
+    "has_win_path": false,
+    "notes": [
+      "No strategy pack found"
+    ]
+  },
+  "ui": {
+    "app_found": true,
+    "checks": {
+      "strategy_generator_panel": true,
+      "contest_selector": true,
+      "contest_mode_toggle": true,
+      "generate_button": true,
+      "download_buttons": true,
+      "strategy_fn_import": true,
+      "completeness_badge": true
+    },
+    "pass_count": 7,
+    "total_checks": 7
+  },
+  "needs_detail": {
+    "file_found": true,
+    "entries": [
+      "meta",
+      "jurisdictions",
+      "runs"
+    ],
+    "strategy_generator_status": null
+  },
+  "model_summary": {
+    "precinct_count": 5,
+    "turf_count": 1,
+    "region_count": 0,
+    "scenario_count": 0
+  },
+  "constraint_violations": [],
+  "needs_status": [
+    {
+      "key": "strategy_generator",
+      "status": null
+    }
+  ],
+  "repo_metrics": {
+    "total_files": 251,
+    "python_files": 63,
+    "geo_files": 12,
+    "vote_files": 2,
+    "derived_outputs": 27,
+    "strategy_packs": 0,
+    "largest_files": [
+      {
+        "path": "Campaign In A Box.zip",
+        "bytes": 27077351
+      },
+      {
+        "path": "data\\CA\\counties\\Sonoma\\geography\\precinct_shapes\\MPREC_GeoJSON\\mprec_097_g24_v01.geojson",
+        "bytes": 22390061
+      },
+      {
+        "path": "Campaign In A Box Data\\Campaign In A Box\\mprec_097_g24_v01.geojson",
+        "bytes": 22390061
+      },
+      {
+        "path": "data\\CA\\counties\\Sonoma\\geography\\precinct_shapes\\SRPREC_GeoJSON\\srprec_097_g24_v01.geojson",
+        "bytes": 16379431
+      },
+      {
+        "path": "Campaign In A Box Data\\Campaign In A Box\\srprec_097_g24_v01.geojson",
+        "bytes": 16379431
+      }
+    ],
+    "missing_configs": []
+  },
+  "issues": [
+    {
+      "severity": "low",
+      "file": "scripts\\loaders\\contest_parser.py",
+      "line": 214,
+      "description": "BARE_EXCEPT: except:"
+    }
+  ],
+  "recommendations": [
+    "Create missing directories: ['derived/ops', 'derived/strategy_packs'] \u2014 run pipeline to populate.",
+    "derived/ops/ missing or empty \u2014 run v3 pipeline to generate regions + field plan.",
+    "No simulation_results.csv \u2014 confirm simulate_scenarios() is called in pipeline.",
+    "geopandas not installed \u2014 run `pip install geopandas` or `uv add geopandas`.",
+    "Scenario engine missing scenarios: ['baseline', 'field_program_light', 'field_program_medium', 'field_program_heavy']"
+  ]
+}

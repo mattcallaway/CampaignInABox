@@ -1,0 +1,56 @@
+{
+  "contest_id": "2024_CA_sonoma_nov2024_general",
+  "run_id": "2026-03-05__030049__521cfe43__msi",
+  "generated_at": "2026-03-05T03:00:50.227711",
+  "contest_mode": "measure",
+  "mode_reason": "explicit override: measure",
+  "derived_mode": "full",
+  "forecast_mode": "both",
+  "inputs_found": {
+    "target_ranking": {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\precinct_models\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__030049__521cfe43__msi__precinct_model.csv",
+      "hash": "2b1c9ca11862b12c"
+    },
+    "walk_turfs": {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\turfs\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__030049__521cfe43__msi__top_30_walk_turfs.csv",
+      "hash": "28f0496cae1ef8a8"
+    },
+    "scenario_forecasts": {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\forecasts\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__030049__521cfe43__msi__scenario_forecasts.csv",
+      "hash": "492109e47a98f677"
+    },
+    "precinct_universes": {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\universes\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__030049__521cfe43__msi__precinct_universes.csv",
+      "hash": "6c6cca65b6daf461"
+    },
+    "regions": {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\ops\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__030049__521cfe43__msi__regions.csv",
+      "hash": "e316b774bb1a2448"
+    },
+    "field_plan": {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\ops\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__030049__521cfe43__msi__field_plan.csv",
+      "hash": "2b1c9ca11862b12c"
+    },
+    "simulation_results": {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\ops\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__030049__521cfe43__msi__simulation_results.csv",
+      "hash": "aa92d28f92088166"
+    }
+  },
+  "inputs_missing": [],
+  "model_summary": {
+    "precinct_count": 10,
+    "turf_count": 1,
+    "region_count": 0,
+    "scenario_count": 4
+  },
+  "topline_metrics": {
+    "baseline_turnout": null,
+    "baseline_support": 0.6,
+    "baseline_margin": 1000.0,
+    "win_number": 2501.0,
+    "best_case_margin": 0.0,
+    "worst_case_margin": 0.0,
+    "win_probability": null
+  },
+  "recommended_strategy": "Tight race. Balanced approach: persuasion for undecideds, turnout for supporters."
+}

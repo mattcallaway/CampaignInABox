@@ -1,0 +1,164 @@
+{
+  "run_id": "2026-03-05__004110__0d822f43__msi",
+  "run_status": "success",
+  "total_elapsed_s": 0.14,
+  "started_at": "2026-03-05T08:41:10.806817+00:00",
+  "county_name": "Sonoma",
+  "county_fips": "097",
+  "county_slug": "sonoma",
+  "contest_id": "2026_CA_sonoma_nov2024_general",
+  "registry_version": "1.0",
+  "input_hashes": {
+    "detail.xlsx": "15704823393468d92320aa97921477eaf973390d438d022adb310ed46dc053db"
+  },
+  "output_hashes": {
+    "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\boundary_index\\boundaries_index.csv": "b4dff0e71c422e612069cecc47bc83d6f5c0027631171e9fa736bf40cb029e7a",
+    "C:\\Users\\Mathew C\\Campaign In A Box\\votes\\2024\\CA\\Sonoma\\nov2024_general\\contest.json": "39bcb9a42a30886788d6fe0445f687c57f8e0f184125bb8a6c043327aad4f305",
+    "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\precinct_models\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__004110__0d822f43__msi__precinct_model.csv": "972c11ed94e24664c3ed1f5d84b6a5e433b7c0ac3daa823394b1c6bd326a368e",
+    "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\campaign_targets\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__004110__0d822f43__msi__targeting_list.csv": "9cc7a850ef7e134aaa2af4dc8c812010fa23b14616ddd4db9636393cdcd55623",
+    "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\district_aggregates\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__004110__0d822f43__msi__district_aggregates.csv": "8859f7d371481d337092bae30893f9a49ed2d37aed226e5f89fbeb3458adbbad"
+  },
+  "coverage": {
+    "canonical_geometry": "MPREC",
+    "categories_present": 12,
+    "categories_missing": 0,
+    "sheets_parsed": 1,
+    "rows_Sheet1": 10
+  },
+  "steps": [
+    {
+      "step": "INGEST_STAGING",
+      "status": "skipped",
+      "elapsed_s": 0.003,
+      "reason": "No --staging-dir provided; skipping ingestion"
+    },
+    {
+      "step": "SCAFFOLD_BOUNDARY_INDEX",
+      "status": "done",
+      "elapsed_s": 0.006,
+      "outputs": [
+        "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\boundary_index\\boundaries_index.csv"
+      ],
+      "hashes_out": {
+        "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\boundary_index\\boundaries_index.csv": "b4dff0e71c422e612069cecc47bc83d6f5c0027631171e9fa736bf40cb029e7a"
+      },
+      "notes": []
+    },
+    {
+      "step": "VALIDATE_GEOGRAPHY",
+      "status": "done",
+      "elapsed_s": 0.009,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": []
+    },
+    {
+      "step": "VALIDATE_VOTES",
+      "status": "done",
+      "elapsed_s": 0.011,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": []
+    },
+    {
+      "step": "LOAD_GEOMETRY",
+      "status": "skipped",
+      "elapsed_s": 0.011,
+      "reason": "No usable geometry (geopandas unavailable or files missing)"
+    },
+    {
+      "step": "LOAD_CROSSWALKS",
+      "status": "skipped",
+      "elapsed_s": 0.058,
+      "reason": "No crosswalk files; using identity mapping"
+    },
+    {
+      "step": "SCAFFOLD_CONTEST_JSON",
+      "status": "done",
+      "elapsed_s": 0.073,
+      "outputs": [
+        "C:\\Users\\Mathew C\\Campaign In A Box\\votes\\2024\\CA\\Sonoma\\nov2024_general\\contest.json"
+      ],
+      "hashes_out": {
+        "C:\\Users\\Mathew C\\Campaign In A Box\\votes\\2024\\CA\\Sonoma\\nov2024_general\\contest.json": "74ecc2e52dcf45fe6e78fa76a3cffba5d2dfce201875d331f17f676457783d73"
+      },
+      "notes": []
+    },
+    {
+      "step": "PARSE_CONTEST",
+      "status": "done",
+      "elapsed_s": 0.095,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": []
+    },
+    {
+      "step": "SANITY/Sheet1",
+      "status": "done",
+      "elapsed_s": 0.096,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": []
+    },
+    {
+      "step": "BUILD_MODEL/Sheet1",
+      "status": "done",
+      "elapsed_s": 0.105,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": []
+    },
+    {
+      "step": "ALLOCATE_VOTES",
+      "status": "done",
+      "elapsed_s": 0.105,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": []
+    },
+    {
+      "step": "KEPLER/Sheet1",
+      "status": "skipped",
+      "elapsed_s": 0.119,
+      "reason": "No geometry (boundary files missing or geopandas unavailable)"
+    },
+    {
+      "step": "EXPORT_OUTPUTS",
+      "status": "done",
+      "elapsed_s": 0.14,
+      "outputs": [
+        "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\boundary_index\\boundaries_index.csv",
+        "C:\\Users\\Mathew C\\Campaign In A Box\\votes\\2024\\CA\\Sonoma\\nov2024_general\\contest.json",
+        "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\precinct_models\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__004110__0d822f43__msi__precinct_model.csv",
+        "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\campaign_targets\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__004110__0d822f43__msi__targeting_list.csv",
+        "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\district_aggregates\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__004110__0d822f43__msi__district_aggregates.csv"
+      ],
+      "hashes_out": {
+        "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\boundary_index\\boundaries_index.csv": "b4dff0e71c422e612069cecc47bc83d6f5c0027631171e9fa736bf40cb029e7a",
+        "C:\\Users\\Mathew C\\Campaign In A Box\\votes\\2024\\CA\\Sonoma\\nov2024_general\\contest.json": "39bcb9a42a30886788d6fe0445f687c57f8e0f184125bb8a6c043327aad4f305",
+        "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\precinct_models\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__004110__0d822f43__msi__precinct_model.csv": "972c11ed94e24664c3ed1f5d84b6a5e433b7c0ac3daa823394b1c6bd326a368e",
+        "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\campaign_targets\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__004110__0d822f43__msi__targeting_list.csv": "9cc7a850ef7e134aaa2af4dc8c812010fa23b14616ddd4db9636393cdcd55623",
+        "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\district_aggregates\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__004110__0d822f43__msi__district_aggregates.csv": "8859f7d371481d337092bae30893f9a49ed2d37aed226e5f89fbeb3458adbbad"
+      },
+      "notes": []
+    }
+  ],
+  "needs": [
+    {
+      "category": "geopandas_library",
+      "status": "missing",
+      "blocks": [
+        "geometry_load",
+        "kepler_export"
+      ]
+    },
+    {
+      "category": "geometry_for_kepler",
+      "status": "blocked",
+      "blocks": [
+        "kepler_geojson"
+      ],
+      "expected_path": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\precinct_shapes\\MPREC_GeoJSON"
+    }
+  ]
+}

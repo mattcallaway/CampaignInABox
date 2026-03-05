@@ -1,0 +1,21 @@
+run_id: 2026-03-05__004110__0d822f43__msi
+timestamp: '2026-03-05T08:41:10.973Z'
+state: CA
+county: Sonoma
+needs:
+- category: geopandas_library
+  status: missing
+  blocks:
+  - geometry_load
+  - kepler_export
+- category: geometry_for_kepler
+  status: blocked
+  blocks:
+  - kepler_geojson
+  expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\MPREC_GeoJSON
+coverage:
+  canonical_geometry: MPREC
+  categories_present: 12
+  categories_missing: 0
+  sheets_parsed: 1
+  rows_Sheet1: 10

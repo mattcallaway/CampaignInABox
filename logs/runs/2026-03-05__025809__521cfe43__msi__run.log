@@ -1,0 +1,93 @@
+[2026-03-05T10:58:09.603Z] [INFO] ========================================================================
+  Campaign In A Box — Pipeline Run
+  RUN_ID  : 2026-03-05__025809__521cfe43__msi
+  Started : 2026-03-05T10:58:09.603289+00:00
+========================================================================
+[2026-03-05T10:58:09.604Z] [INFO ] Pipeline v2 starting
+[2026-03-05T10:58:09.604Z] [INFO ]   state=CA  county=Sonoma  year=2024  contest_slug=nov2024_general
+[2026-03-05T10:58:09.604Z] [INFO ]   membership_method=auto  log_level=verbose
+[2026-03-05T10:58:09.607Z] [STEP ] SKIP   [SKIP] INGEST_STAGING -- No --staging-dir provided; skipping ingestion
+[2026-03-05T10:58:09.607Z] [STEP ] START  -> SCAFFOLD_BOUNDARY_INDEX
+[2026-03-05T10:58:09.607Z] [INFO ]   Boundary index exists: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\boundary_index\boundaries_index.csv
+[2026-03-05T10:58:09.609Z] [WARN ]   Boundary index scaffolded (no boundary files found yet)
+[2026-03-05T10:58:09.610Z] [INFO ]   output: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\boundary_index\boundaries_index.csv  [sha256:b4dff0e71c42...]
+[2026-03-05T10:58:09.610Z] [STEP ] DONE   [OK] SCAFFOLD_BOUNDARY_INDEX (0.007s)
+[2026-03-05T10:58:09.610Z] [STEP ] START  -> VALIDATE_GEOGRAPHY
+[2026-03-05T10:58:09.610Z] [INFO ]   expected: data/CA/counties/Sonoma/geography/precinct_shapes/
+[2026-03-05T10:58:09.610Z] [INFO ]   expected: data/CA/counties/Sonoma/geography/crosswalks/
+[2026-03-05T10:58:09.610Z] [INFO ]   [present] MPREC GeoJSON
+[2026-03-05T10:58:09.611Z] [INFO ]   [present] MPREC GeoPackage
+[2026-03-05T10:58:09.611Z] [INFO ]   [present] MPREC Shapefile
+[2026-03-05T10:58:09.611Z] [INFO ]   [present] SRPREC GeoJSON
+[2026-03-05T10:58:09.612Z] [INFO ]   [present] SRPREC GeoPackage
+[2026-03-05T10:58:09.612Z] [INFO ]   [present] SRPREC Shapefile
+[2026-03-05T10:58:09.612Z] [INFO ]   [present] 2020 BLK TO MPREC
+[2026-03-05T10:58:09.612Z] [INFO ]   [present] RGPREC TO 2020 BLK
+[2026-03-05T10:58:09.613Z] [INFO ]   [present] SRPREC TO 2020 BLK
+[2026-03-05T10:58:09.613Z] [INFO ]   [present] RG to RR to SR to SVPREC
+[2026-03-05T10:58:09.613Z] [INFO ]   [present] MPREC to SRPREC
+[2026-03-05T10:58:09.613Z] [INFO ]   [present] SRPREC to CITY
+[2026-03-05T10:58:09.613Z] [INFO ] Geography validation: 12/12 present, canonical=MPREC
+[2026-03-05T10:58:09.613Z] [STEP ] DONE   [OK] VALIDATE_GEOGRAPHY (0.011s)
+[2026-03-05T10:58:09.613Z] [STEP ] START  -> VALIDATE_VOTES
+[2026-03-05T10:58:09.614Z] [INFO ]   expected: votes/2024/CA/Sonoma/nov2024_general/detail.xlsx
+[2026-03-05T10:58:09.614Z] [INFO ]   [present] votes: C:\Users\Mathew C\Campaign In A Box\votes\2024\CA\Sonoma\nov2024_general\detail.xlsx
+[2026-03-05T10:58:09.614Z] [INFO ]   input: detail.xlsx -> C:\Users\Mathew C\Campaign In A Box\votes\2024\CA\Sonoma\nov2024_general\detail.xlsx  [sha256:157048233934...]
+[2026-03-05T10:58:09.614Z] [STEP ] DONE   [OK] VALIDATE_VOTES (0.011s)
+[2026-03-05T10:58:09.614Z] [STEP ] START  -> LOAD_GEOMETRY
+[2026-03-05T10:58:09.614Z] [INFO ]   expected: MPREC preferred; SRPREC fallback
+[2026-03-05T10:58:09.614Z] [WARN ] geopandas not installed; found C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\MPREC_GeoJSON\mprec_097_g24_v01.geojson but cannot load
+[2026-03-05T10:58:09.614Z] [STEP ] SKIP   [SKIP] LOAD_GEOMETRY -- No usable geometry (geopandas unavailable or files missing)
+[2026-03-05T10:58:09.614Z] [WARN ]   NEED: geopandas_library [missing] -- blocks: geometry_load, kepler_export
+[2026-03-05T10:58:09.614Z] [STEP ] START  -> LOAD_CROSSWALKS
+[2026-03-05T10:58:09.638Z] [WARN ] Cannot detect source/target columns in blk_mprec_097_g24_v01.csv: ['block', 'mprec', 'pct_block']
+[2026-03-05T10:58:09.658Z] [WARN ] Cannot detect source/target columns in blk_mprec_097_g24_v01.csv: ['block', 'mprec', 'pct_block']
+[2026-03-05T10:58:09.771Z] [INFO ]   [CROSSWALKS] Discovered 4/6 crosswalks
+[2026-03-05T10:58:09.771Z] [STEP ] SKIP   [SKIP] LOAD_CROSSWALKS -- No crosswalk files; using identity mapping
+[2026-03-05T10:58:09.771Z] [STEP ] START  -> SCAFFOLD_CONTEST_JSON
+[2026-03-05T10:58:09.784Z] [INFO ]   output: C:\Users\Mathew C\Campaign In A Box\votes\2024\CA\Sonoma\nov2024_general\contest.json  [sha256:934f6b856a04...]
+[2026-03-05T10:58:09.784Z] [STEP ] DONE   [OK] SCAFFOLD_CONTEST_JSON (0.182s)
+[2026-03-05T10:58:09.784Z] [STEP ] START  -> PARSE_CONTEST
+[2026-03-05T10:58:09.784Z] [INFO ]   expected: Detect sheet types; aggregate vote methods
+[2026-03-05T10:58:09.795Z] [INFO ] Parsing sheet: 'Sheet1'
+[2026-03-05T10:58:09.801Z] [INFO ]   -> 10 precincts, type=ballot_measure
+[2026-03-05T10:58:09.802Z] [STEP ] DONE   [OK] PARSE_CONTEST (0.199s)
+[2026-03-05T10:58:09.802Z] [INFO ] Contest Mode: MEASURE (Inferred MEASURE (found YES/NO headers))
+[2026-03-05T10:58:09.802Z] [INFO ] [PATHWAY] contest_mode=measure  contest_mode_reason=Inferred MEASURE (found YES/NO headers)
+[2026-03-05T10:58:09.802Z] [STEP ] START  -> ALLOCATE_VOTES
+[2026-03-05T10:58:09.802Z] [INFO ]   Sheet 'Sheet1': 10 precincts, type=ballot_measure
+[2026-03-05T10:58:09.802Z] [INFO ]     Allocation: area_weighted_fallback, 10 target precincts
+[2026-03-05T10:58:09.802Z] [STEP ] START  -> SANITY/Sheet1
+[2026-03-05T10:58:09.802Z] [INFO ]   SANITY [OK] Non-empty model: 10 rows
+[2026-03-05T10:58:09.802Z] [STEP ] DONE   [OK] SANITY/Sheet1 (0.2s)
+[2026-03-05T10:58:09.802Z] [STEP ] START  -> BUILD_MODEL/Sheet1
+[2026-03-05T10:58:09.811Z] [STEP ] DONE   [OK] BUILD_MODEL/Sheet1 (0.208s)
+[2026-03-05T10:58:09.811Z] [STEP ] DONE   [OK] ALLOCATE_VOTES (0.208s)
+[2026-03-05T10:58:09.811Z] [STEP ] START  -> INTEGRITY_ENFORCEMENT
+[2026-03-05T10:58:09.812Z] [INFO ] [INTEGRITY] All 10 precincts pass constraints — no repairs needed
+[2026-03-05T10:58:09.814Z] [STEP ] DONE   [OK] INTEGRITY_ENFORCEMENT (0.211s)
+[2026-03-05T10:58:09.814Z] [STEP ] START  -> FEATURE_ENGINEERING
+[2026-03-05T10:58:09.814Z] [WARN ] Voter file not found at C:\Users\Mathew C\Campaign In A Box\voters\CA\Sonoma\voters.csv
+[2026-03-05T10:58:09.822Z] [STEP ] DONE   [OK] FEATURE_ENGINEERING (0.219s)
+[2026-03-05T10:58:09.822Z] [STEP ] START  -> UNIVERSE_BUILDING
+[2026-03-05T10:58:09.831Z] [STEP ] DONE   [OK] UNIVERSE_BUILDING (0.228s)
+[2026-03-05T10:58:09.831Z] [STEP ] START  -> SCORING_V2
+[2026-03-05T10:58:09.835Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-05T10:58:09.839Z] [STEP ] DONE   [OK] SCORING_V2 (0.236s)
+[2026-03-05T10:58:09.839Z] [STEP ] START  -> REGION_CLUSTERING
+[2026-03-05T10:58:09.839Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-05T10:58:09.842Z] [STEP ] DONE   [OK] REGION_CLUSTERING (0.24s)
+[2026-03-05T10:58:09.842Z] [STEP ] START  -> FIELD_PLANNING
+[2026-03-05T10:58:09.846Z] [STEP ] DONE   [OK] FIELD_PLANNING (0.243s)
+[2026-03-05T10:58:09.846Z] [STEP ] START  -> SIMULATION
+[2026-03-05T10:58:09.847Z] [STEP ] DONE   [OK] SIMULATION (0.244s)
+[2026-03-05T10:58:09.847Z] [STEP ] START  -> VOTER_UNIVERSE_EXPORT
+[2026-03-05T10:58:09.847Z] [STEP ] SKIP   [SKIP] VOTER_UNIVERSE_EXPORT -- No voter file present
+[2026-03-05T10:58:09.847Z] [STEP ] START  -> FORECAST_GENERATION
+[2026-03-05T10:58:09.859Z] [STEP ] DONE   [OK] FORECAST_GENERATION (0.256s)
+[2026-03-05T10:58:09.859Z] [STEP ] START  -> TURF_GENERATION
+[2026-03-05T10:58:09.863Z] [STEP ] DONE   [OK] TURF_GENERATION (0.261s)
+[2026-03-05T10:58:09.863Z] [STEP ] START  -> EXPORT_V2_OUTPUTS
+[2026-03-05T10:58:09.865Z] [WARN ] [DEPS] Optional package 'geopandas' is not installed. Feature 'kepler_export' will be skipped. To enable: `pip install geopandas  # or: uv add geopandas`
+[2026-03-05T10:58:09.895Z] [INFO ] [KEPLER] Skipped: geopandas not installed
+[2026-03-05T10:58:09.903Z] [INFO ]   Generated turf packs in C:\Users\Mathew C\Campaign In A Box\derived\turfs\CA\Sonoma\Sonoma_2024_nov2024_general\2026-03-05__025809__521cfe43__msi__turf_packs

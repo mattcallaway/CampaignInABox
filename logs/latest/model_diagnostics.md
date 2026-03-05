@@ -1,0 +1,21 @@
+# Model Diagnostics & QA
+
+**Contest:** nov2024_general
+**Anomalies Found:** 11 (0 critical)
+
+## Anomaly Details
+
+| precinct_id      | type                  | detail                | severity   |
+|:-----------------|:----------------------|:----------------------|:-----------|
+| Precinct 0510000 | OVERVOTE              | Ballots(500) > Reg(0) | HIGH       |
+| Precinct 0510001 | OVERVOTE              | Ballots(500) > Reg(0) | HIGH       |
+| Precinct 0510002 | OVERVOTE              | Ballots(500) > Reg(0) | HIGH       |
+| Precinct 0510003 | OVERVOTE              | Ballots(500) > Reg(0) | HIGH       |
+| Precinct 0510004 | OVERVOTE              | Ballots(500) > Reg(0) | HIGH       |
+| Precinct 0510005 | OVERVOTE              | Ballots(500) > Reg(0) | HIGH       |
+| Precinct 0510006 | OVERVOTE              | Ballots(500) > Reg(0) | HIGH       |
+| Precinct 0510007 | OVERVOTE              | Ballots(500) > Reg(0) | HIGH       |
+| Precinct 0510008 | OVERVOTE              | Ballots(500) > Reg(0) | HIGH       |
+| Precinct 0510009 | OVERVOTE              | Ballots(500) > Reg(0) | HIGH       |
+| TURF_001         | LOW_REGISTRATION_TURF | Registered(0) < 100   | MEDIUM     |
+

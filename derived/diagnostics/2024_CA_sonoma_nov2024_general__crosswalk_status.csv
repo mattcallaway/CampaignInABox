@@ -1,0 +1,7 @@
+crosswalk,description,status,path,row_count,unique_keys,pct_null,missing_cols,blocks
+SRPREC_TO_2020_BLK,SRPREC → 2020 Census Block mapping,missing,,0,0,,,block_weighted_allocation
+RGPREC_TO_2020_BLK,RGPREC → 2020 Census Block mapping,missing,,0,0,,,rgprec_weighted_allocation
+2020_BLK_TO_MPREC,2020 Census Block → MPREC mapping,found,data\CA\counties\Sonoma\geography\crosswalks\blk_mprec_097_g24_v01.csv,13752,0,,BLOCK20; MPREC_ID,block_to_mprec_join
+MPREC_to_SRPREC,MPREC → SRPREC reverse mapping,found,data\CA\counties\Sonoma\geography\crosswalks\mprec_srprec_097_g24.csv,1403,0,,MPREC_ID; SRPREC_ID,mprec_to_srprec_join
+SRPREC_to_CITY,SRPREC → City/Jurisdiction mapping,found,data\CA\counties\Sonoma\geography\crosswalks\c097_g24_srprec_to_city.csv,471,0,,SRPREC_ID,city_aggregation
+RG_to_RR_to_SR_to_SVPREC,RG → RR → SR → SVPREC chain mapping,found,data\CA\counties\Sonoma\geography\crosswalks\c097_rg_rr_sr_svprec_g24.csv,2812,0,,RGPREC_ID; SVPREC_ID,rg_to_svprec_join

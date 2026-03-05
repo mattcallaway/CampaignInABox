@@ -1,0 +1,272 @@
+# Post-Prompt-7 Full System Audit
+
+**Audit ID:** `2026-03-05__021124__post_prompt7_full_audit`  
+**Run ID:** `2026-03-05__011400__audit`  
+**System Status:** ⚠️ **WARN**  
+**Timestamp:** 2026-03-05 02:11:24
+
+---
+
+## 1. Executive Summary
+
+| Metric | Value |
+|---|---|
+| Contests Detected | 2 |
+| Precincts Modeled | 5 |
+| Turfs Generated | 1 |
+| Strategic Regions | 0 |
+| Scenarios Simulated | 0 |
+| Strategy Packs | 0 |
+| Constraint Violations | 0 |
+| Code Issues | 1 |
+
+**Verdict:** ⚠️ `WARN`
+
+---
+
+## 2. Pipeline Health
+
+| Step | Status |
+|---|---|
+| Ingestion | ✅ |
+| Features | ✅ |
+| Targets | ✅ |
+| Turfs | ✅ |
+| Forecasts | ✅ |
+| Ops | ❌ |
+| Simulation | ❌ |
+| Strategy Generator | ❌ |
+
+---
+
+## 3. Required Directories
+
+| Directory | Exists |
+|---|---|
+| `data` | ✅ |
+| `votes` | ✅ |
+| `derived/features` | ✅ |
+| `derived/universes` | ✅ |
+| `derived/campaign_targets` | ✅ |
+| `derived/turfs` | ✅ |
+| `derived/forecasts` | ✅ |
+| `derived/ops` | ❌ |
+| `derived/diagnostics` | ✅ |
+| `derived/strategy_packs` | ❌ |
+| `logs` | ✅ |
+| `needs` | ✅ |
+| `config` | ✅ |
+| `scripts` | ✅ |
+
+---
+
+## 4. Data Ingestion
+
+Contests found: **2**
+
+- `votes\2024\CA\Sonoma\nov2024_general\contest.json` —  (0 precincts, 0 registered)
+- `votes\2024\CA\SAMPLE_COUNTY\MEASURE_A\contest.json` —  (0 precincts, 0 registered)
+
+
+---
+
+## 5. Geography System
+
+| Check | Result |
+|---|---|
+| geopandas installed | ❌ |
+| MPREC geojson | ✅ |
+| SRPREC geojson | ✅ |
+| Boundary index | ❌ |
+| Geometry parsed | ❌ |
+| MPREC precinct count | N/A |
+
+Issues: None
+
+---
+
+## 6. Crosswalk System
+
+| Crosswalk | Status |
+|---|---|
+| SRPREC_TO_2020_BLK | ✅ |
+| RGPREC_TO_2020_BLK | ✅ |
+| 2020_BLK_TO_MPREC | ✅ |
+| MPREC_to_SRPREC | ✅ |
+| SRPREC_to_CITY | ✅ |
+| RG_to_RR_to_SR_to_SVPREC | ✅ |
+
+
+---
+
+## 7. Feature Engineering
+
+| Check | Value |
+|---|---|
+| File found | ✅ |
+| Row count | 5 |
+| Missing cols | canonical_precinct_id, registered, ballots_cast, turnout_pct, support_pct |
+| Violations | None |
+
+---
+
+## 8. Universe Generation
+
+| Check | Value |
+|---|---|
+| File found | ✅ |
+| Row count | 10 |
+| Universe names | Turnout Opportunity |
+
+---
+
+## 9. Target Scoring
+
+| Check | Value |
+|---|---|
+| File found | ✅ |
+| Row count | 5 |
+| Missing cols | target_score, persuasion_potential, turnout_opportunity, tier, walk_priority_rank, confidence_level |
+| Tier distribution | {} |
+
+---
+
+## 10. Turf Generation
+
+| Check | Value |
+|---|---|
+| File found | ✅ |
+| Turf count | 1 |
+| Missing cols | expected_contacts |
+
+---
+
+## 11. Forecast Engine
+
+Forecast files found: 2  
+Scenarios found: None  
+Scenarios missing: baseline, field_program_light, field_program_medium, field_program_heavy
+
+---
+
+## 12. Operations Planning
+
+| Check | Result |
+|---|---|
+| derived/ops/ exists | ❌ |
+| regions.csv | ❌ |
+| field_plan.csv | ❌ |
+| net_gain_by_entity.csv | ❌ |
+| Region count | 0 |
+| Field plan rows | 0 |
+
+---
+
+## 13. Simulation Engine
+
+| Check | Result |
+|---|---|
+| File found | ❌ |
+| Scenarios | None |
+| Row count | 0 |
+| Missing cols | None |
+
+---
+
+## 14. Strategy Generator
+
+| File | Present |
+|---|---|
+
+
+**STRATEGY_META.json summary:**
+
+| Field | Value |
+|---|---|
+| contest_id | N/A |
+| contest_mode | N/A |
+| derived_mode | N/A |
+| baseline_support | N/A |
+| baseline_turnout | N/A |
+| baseline_margin | N/A |
+| win_number | N/A |
+| precinct_count | N/A |
+| turf_count | N/A |
+| region_count | N/A |
+| inputs_missing | None |
+
+---
+
+## 15. Strategy Decision Quality
+
+| Decision | Produced |
+|---|---|
+| Top precinct targets | ❌ |
+| Top turfs | ❌ |
+| Field pace plan | ❌ |
+| Win path summary | ❌ |
+
+Notes: No strategy pack found
+
+---
+
+## 16. UI Integration
+
+| Check | Pass |
+|---|---|
+| strategy generator panel | ✅ |
+| contest selector | ✅ |
+| contest mode toggle | ✅ |
+| generate button | ✅ |
+| download buttons | ✅ |
+| strategy fn import | ✅ |
+| completeness badge | ✅ |
+
+Score: **7/7**
+
+---
+
+## 17. NEEDS System
+
+File found: ✅  
+Entries: meta, jurisdictions, runs  
+strategy_generator status: `None`
+
+---
+
+## 18. Code Quality
+
+
+| Severity | File | Line | Description |
+|---|---|---|---|
+| LOW | `scripts\loaders\contest_parser.py` | 214 | BARE_EXCEPT: except: |
+*Top 1 of 1 total (all medium/low)*
+
+
+---
+
+## 19. Repository Health
+
+| Metric | Count |
+|---|---|
+| Total files | 251 |
+| Python files | 63 |
+| Geo files | 12 |
+| Vote files | 2 |
+| Derived outputs | 27 |
+| Strategy pack files | 0 |
+| Missing configs | None |
+
+---
+
+## 20. Recommended Fixes
+
+1. Create missing directories: ['derived/ops', 'derived/strategy_packs'] — run pipeline to populate.
+2. derived/ops/ missing or empty — run v3 pipeline to generate regions + field plan.
+3. No simulation_results.csv — confirm simulate_scenarios() is called in pipeline.
+4. geopandas not installed — run `pip install geopandas` or `uv add geopandas`.
+5. Scenario engine missing scenarios: ['baseline', 'field_program_light', 'field_program_medium', 'field_program_heavy']
+
+---
+
+*Generated by `scripts/tools/audit_post_prompt7.py` at 2026-03-05 02:11:24*

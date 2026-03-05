@@ -1,0 +1,10 @@
+{
+  "audit_id": "2026-03-05__030222__post_prompt8_full_audit",
+  "files": [
+    "audit_report.json",
+    "audit_report.md",
+    "needs.yaml",
+    "strategy_meta.json",
+    "strategy_summary.md"
+  ]
+}

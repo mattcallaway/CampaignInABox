@@ -1,0 +1,82 @@
+{
+    "state": "CA",
+    "version": "1.0",
+    "generated_at": "2026-03-04",
+    "counties": [
+        {
+            "county_fips": "097",
+            "county_name": "Sonoma",
+            "county_slug": "sonoma",
+            "cities": [
+                {
+                    "city_name": "Santa Rosa",
+                    "city_slug": "santa_rosa",
+                    "aliases": [
+                        "santarosa",
+                        "santa rosa city",
+                        "city of santa rosa"
+                    ]
+                },
+                {
+                    "city_name": "Petaluma",
+                    "city_slug": "petaluma",
+                    "aliases": [
+                        "city of petaluma"
+                    ]
+                },
+                {
+                    "city_name": "Sonoma",
+                    "city_slug": "sonoma",
+                    "aliases": [
+                        "sonoma city",
+                        "city of sonoma"
+                    ]
+                },
+                {
+                    "city_name": "Sebastopol",
+                    "city_slug": "sebastopol",
+                    "aliases": [
+                        "city of sebastopol"
+                    ]
+                },
+                {
+                    "city_name": "Rohnert Park",
+                    "city_slug": "rohnert_park",
+                    "aliases": [
+                        "rohnertpark",
+                        "city of rohnert park"
+                    ]
+                },
+                {
+                    "city_name": "Windsor",
+                    "city_slug": "windsor",
+                    "aliases": [
+                        "town of windsor",
+                        "windsor town"
+                    ]
+                },
+                {
+                    "city_name": "Healdsburg",
+                    "city_slug": "healdsburg",
+                    "aliases": [
+                        "city of healdsburg"
+                    ]
+                },
+                {
+                    "city_name": "Cotati",
+                    "city_slug": "cotati",
+                    "aliases": [
+                        "city of cotati"
+                    ]
+                },
+                {
+                    "city_name": "Cloverdale",
+                    "city_slug": "cloverdale",
+                    "aliases": [
+                        "city of cloverdale"
+                    ]
+                }
+            ]
+        }
+    ]
+}
