@@ -11,9 +11,12 @@ import re
 from pathlib import Path
 
 import pandas as pd
+import json
 
+from .targeting_engine import compute_targeting_metrics
 
 # ---------------------------------------------------------------------------
+
 # ID normalization helpers
 # ---------------------------------------------------------------------------
 
@@ -97,53 +100,18 @@ def build_precinct_model(
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0)
 
-    # Turnout
-    df["TurnoutPct"] = 0.0
-    mask = df["Registered"] > 0
-    df.loc[mask, "TurnoutPct"] = (
-        df.loc[mask, "BallotsCast"] / df.loc[mask, "Registered"]
-    ).clip(0, 1)
-
-    # YesPct / MarginPct (depending on contest type)
-    if "Yes" in df.columns and "No" in df.columns:
-        df["Yes"] = pd.to_numeric(df["Yes"], errors="coerce").fillna(0)
-        df["No"]  = pd.to_numeric(df["No"],  errors="coerce").fillna(0)
-        total_yesno = df["Yes"] + df["No"]
-        df["YesPct"] = 0.0
-        mask2 = total_yesno > 0
-        df.loc[mask2, "YesPct"] = (df.loc[mask2, "Yes"] / total_yesno.loc[mask2]).clip(0, 1)
-    else:
-        df["YesPct"] = None  # Candidate race — handled separately
-
-    # Swing index placeholder (uniform for now; will be replaced with model)
-    df["SwingIndex"] = 0.5
-
-    # Composite score
-    turnout_norm = df["TurnoutPct"].clip(0, 1)
-    yes_norm     = df["YesPct"].fillna(0.5).clip(0, 1) if "YesPct" in df.columns else 0.5
-    reg_norm     = (df["Registered"] / df["Registered"].max()).clip(0, 1) if df["Registered"].max() > 0 else 0.0
-
-    df["CompositeScore"] = (
-        weights.get("turnout_pct", 0.30) * turnout_norm
-        + weights.get("yes_pct",     0.35) * yes_norm
-        + weights.get("registered",  0.15) * reg_norm
-        + weights.get("swing_index", 0.20) * df["SwingIndex"]
-    ).round(6)
-
-    # Tier assignment
-    def _tier(score: float) -> int:
-        if score >= thresholds.get("tier_1_cutoff", 0.75):
-            return 1
-        if score >= thresholds.get("tier_2_cutoff", 0.50):
-            return 2
-        if score >= thresholds.get("tier_3_cutoff", 0.25):
-            return 3
-        return 4
-
-    df["Tier"] = df["CompositeScore"].apply(_tier)
+    # Use the targeting engine
+    df = compute_targeting_metrics(
+        df, 
+        weights=config.get("scoring", {}).get("weights", {}),
+        thresholds=config.get("scoring", {}).get("thresholds", {}),
+        contest_type=config.get("contest_type", "ballot_measure"),
+        target_candidate=config.get("target_candidate")
+    )
 
     # Rank (1 = highest priority)
-    df["Rank"] = df["CompositeScore"].rank(ascending=False, method="min").astype(int)
+    if "TargetScore" in df.columns:
+        df["Rank"] = df["TargetScore"].rank(ascending=False, method="min").astype(int)
 
     # Geography level tag
     df["GeographyLevel"] = geography_level
@@ -151,6 +119,7 @@ def build_precinct_model(
     # Join geometry if provided
     if gdf is not None and geo_id_col is not None and not isinstance(gdf, dict):
         try:
+            # gdf is expected to be a GeoDataFrame
             geo_df = gdf[[geo_id_col, "geometry"]].copy()
             geo_df[geo_id_col] = normalize_id_series(geo_df[geo_id_col].astype(str))
             df = df.merge(
@@ -172,8 +141,8 @@ def build_targeting_list(model_df: pd.DataFrame, min_score: float = 0.30) -> pd.
     """
     cols = [
         c for c in [
-            "Rank", "Tier", "CompositeScore",
-            "TurnoutPct", "YesPct", "SwingIndex",
+            "Rank", "TargetTier", "TargetScore",
+            "TurnoutPct", "SupportPct", "SwingIndex",
             "Registered", "BallotsCast",
             "GeographyLevel",
         ]
@@ -186,7 +155,7 @@ def build_targeting_list(model_df: pd.DataFrame, min_score: float = 0.30) -> pd.
 
     targeting = (
         model_df[cols]
-        .loc[model_df["CompositeScore"] >= min_score]
+        .loc[model_df["TargetScore"] >= min_score]
         .sort_values("Rank")
         .reset_index(drop=True)
     )

@@ -1,0 +1,16 @@
+run_id: 2026-03-05__025856__521cfe43__msi
+timestamp: '2026-03-05T10:58:57.590Z'
+state: CA
+county: Sonoma
+needs:
+- category: geopandas_library
+  status: missing
+  blocks:
+  - geometry_load
+  - kepler_export
+coverage:
+  canonical_geometry: MPREC
+  categories_present: 12
+  categories_missing: 0
+  sheets_parsed: 1
+  rows_Sheet1: 10

@@ -95,6 +95,7 @@ class RunLogger:
         self._coverage: dict[str, Any] = {}
         self._current_step: dict | None = None
         self._city_metadata: dict | None = None
+        self._registered_artifacts: list[tuple[Path, str | None]] = []
 
         # Open log file
         self.log_path.parent.mkdir(parents=True, exist_ok=True)
@@ -259,6 +260,12 @@ class RunLogger:
 
     def set_coverage(self, key: str, value: Any):
         self._coverage[key] = value
+
+    def register_artifact(self, path: str | Path, alias: str | None = None):
+        """Register an artifact for the run and copy to latest/."""
+        path = Path(path)
+        if path.exists():
+            self._registered_artifacts.append((path, alias))
 
     # ------------------------------------------------------------------
     # Finalization
@@ -501,6 +508,12 @@ class RunLogger:
         for src, dst in copies:
             if src.exists():
                 shutil.copy2(src, dst)
+        
+        # Copy registered extra artifacts
+        for src, alias in self._registered_artifacts:
+            if src.exists():
+                dst_name = alias if alias else src.name
+                shutil.copy2(src, self.latest_dir / dst_name)
 
         # Write RUN_ID.txt
         (self.latest_dir / "RUN_ID.txt").write_text(self.run_id + "\n", encoding="utf-8")

@@ -88,30 +88,57 @@ def export_district_aggregates(
     out_dir.mkdir(parents=True, exist_ok=True)
 
     agg_cols = {}
-    for col in ["Registered", "BallotsCast", "Yes", "No"]:
+    for col in ["registered", "ballots_cast", "yes_votes", "no_votes", "target_choice_votes"]:
         if col in df.columns:
             agg_cols[col] = "sum"
     if not agg_cols:
-        agg_cols["BallotsCast"] = "sum"
+         # Fallback to older naming if not canonicalized yet
+         for col in ["Registered", "BallotsCast", "Yes", "No"]:
+            if col in df.columns:
+                agg_cols[col] = "sum"
+
+    if not agg_cols:
+        agg_cols["ballots_cast"] = "sum" if "ballots_cast" in df.columns else "sum"
 
     # Simple countywide aggregate (one row)
     agg = df[list(agg_cols.keys())].agg("sum").to_frame().T
-    agg.insert(0, "Scope", "countywide")
-    agg.insert(1, "State", state)
-    agg.insert(2, "County", county)
-    agg.insert(3, "ContestSlug", contest_slug)
-
-    # Add computed pcts
-    if "BallotsCast" in agg.columns and "Registered" in agg.columns:
-        total_reg = agg["Registered"].sum()
-        total_bal = agg["BallotsCast"].sum()
-        agg["TurnoutPct"] = (total_bal / total_reg).round(6) if total_reg > 0 else 0.0
-    if "Yes" in agg.columns and "No" in agg.columns:
-        total_yn = agg["Yes"].sum() + agg["No"].sum()
-        agg["YesPct"] = (agg["Yes"].sum() / total_yn).round(6) if total_yn > 0 else 0.0
+    agg.insert(0, "scope", "countywide")
+    agg.insert(1, "state", state)
+    agg.insert(2, "county", county)
+    agg.insert(3, "contest_slug", contest_slug)
 
     out_path = out_dir / f"{run_id}__district_aggregates.csv"
     agg.to_csv(out_path, index=False, encoding="utf-8")
+    return out_path
+
+
+def export_universes(df: pd.DataFrame, base_dir: Path, run_id: str, state: str, county: str, slug: str) -> Path:
+    out_dir = base_dir / "derived" / "universes" / state / county / slug
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / f"{run_id}__precinct_universes.csv"
+    df.to_csv(out_path, index=False)
+    return out_path
+
+def export_turfs(df: pd.DataFrame, base_dir: Path, run_id: str, state: str, county: str, slug: str) -> Path:
+    out_dir = base_dir / "derived" / "turfs" / state / county / slug
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / f"{run_id}__top_30_walk_turfs.csv"
+    df.to_csv(out_path, index=False)
+    return out_path
+
+def export_forecasts(df: pd.DataFrame, base_dir: Path, run_id: str, state: str, county: str, slug: str) -> Path:
+    out_dir = base_dir / "derived" / "forecasts" / state / county / slug
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / f"{run_id}__scenario_forecasts.csv"
+    df.to_csv(out_path, index=False)
+    return out_path
+
+
+def export_ops_artifact(df: pd.DataFrame, name: str, base_dir: Path, run_id: str, state: str, county: str, slug: str) -> Path:
+    out_dir = base_dir / "derived" / "ops" / state / county / slug
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / f"{run_id}__{name}.csv"
+    df.to_csv(out_path, index=False)
     return out_path
 
 
@@ -143,8 +170,9 @@ def export_kepler_geojson(
             if c != "geometry" and not (hasattr(df[c], "dtype") and str(df[c].dtype) == "geometry")
         ]
         kepler_props = [
-            "Registered", "BallotsCast", "TurnoutPct", "YesPct",
-            "CompositeScore", "Tier", "Rank", "SwingIndex", "GeographyLevel",
+            "registered", "ballots_cast", "turnout_pct", "support_pct",
+            "persuasion_potential", "turnout_opportunity", "target_score",
+            "target_tier", "walk_priority_rank", "universe_name", "confidence_level",
         ]
         # Prefer kepler-specific columns first
         ordered = [c for c in kepler_props if c in prop_cols]
@@ -183,8 +211,8 @@ def export_kepler_geojson(
                 "contest_slug": contest_slug,
                 "generated_at": datetime.now(timezone.utc).isoformat(),
                 "kepler_config_hint": {
-                    "color_by": "CompositeScore",
-                    "tooltip_fields": ["Registered", "BallotsCast", "TurnoutPct", "YesPct", "Tier"],
+                    "color_by": "TargetScore",
+                    "tooltip_fields": ["Registered", "BallotsCast", "TurnoutPct", "SupportPct", "TargetTier"],
                 },
             },
         }
