@@ -30,6 +30,11 @@ geopandas_library:
   - geo_join
   install_hint: 'pip install geopandas  # or: uv add geopandas'
   status: missing
+join_cardinality_guard:
+  blocks: []
+  notes: join_guard.safe_merge() wraps allocation merge; explosion > 1.05x triggers
+    CRITICAL halt
+  status: complete
 jurisdictions:
   CA/SAMPLE_COUNTY:
     last_run_id: 20260304_224546_3d3ba634
@@ -80,7 +85,7 @@ jurisdictions:
       expected_path: C:\Users\Mathew C\Campaign In A Box\Campaign in a box Data\CA\SAMPLE_COUNTY\MPREC_GeoJSON
       status: blocked
   CA/Sonoma:
-    last_run_id: 2026-03-05__030049__521cfe43__msi
+    last_run_id: 2026-03-05__033937__f4a083ab__msi
     needs:
     - category: geopandas_library
       status: missing
@@ -88,8 +93,18 @@ jurisdictions:
       - geometry_load
       - kepler_export
 meta:
-  last_run_id: 2026-03-05__030049__521cfe43__msi
-  last_updated: '2026-03-05T11:00:50.307Z'
+  last_run_id: 2026-03-05__033937__f4a083ab__msi
+  last_updated: '2026-03-05T11:39:37.611Z'
+model_integrity:
+  blocks: []
+  notes: INTEGRITY_ENFORCEMENT runs post-NORMALIZE_SCHEMA; registered=0 rows flagged
+    CRITICAL (not repaired)
+  status: complete
+operations_planner:
+  blocks: []
+  notes: region_builder + field_plan_engine â€” region_name, registered_total, avg_target_score,
+    doors_to_knock, volunteers_needed, weeks_required now emitted
+  status: complete
 runs:
 - artifacts:
     needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\20260304_224546_3d3ba634__needs_snapshot.yaml
@@ -190,21 +205,50 @@ runs:
   state: CA
   status: success
   timestamp: '2026-03-05T10:58:57.579Z'
-- run_id: 2026-03-05__030049__521cfe43__msi
+- artifacts:
+    needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-05__030049__521cfe43__msi__needs_snapshot.yaml
+    pathway_json: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-05__030049__521cfe43__msi__pathway.json
+    qa_report: C:\Users\Mathew C\Campaign In A Box\reports\qa\2026-03-05__030049__521cfe43__msi__qa_sanity_checks.md
+    run_log: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-05__030049__521cfe43__msi__run.log
+    validation_report: C:\Users\Mathew C\Campaign In A Box\reports\validation\2026-03-05__030049__521cfe43__msi__validation_report.md
+  county: Sonoma
+  run_id: 2026-03-05__030049__521cfe43__msi
+  state: CA
+  status: success
   timestamp: '2026-03-05T11:00:50.307Z'
+- run_id: 2026-03-05__033937__f4a083ab__msi
+  timestamp: '2026-03-05T11:39:37.611Z'
   state: CA
   county: Sonoma
   status: success
   artifacts:
-    run_log: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-05__030049__521cfe43__msi__run.log
-    pathway_json: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-05__030049__521cfe43__msi__pathway.json
-    validation_report: C:\Users\Mathew C\Campaign In A Box\reports\validation\2026-03-05__030049__521cfe43__msi__validation_report.md
-    qa_report: C:\Users\Mathew C\Campaign In A Box\reports\qa\2026-03-05__030049__521cfe43__msi__qa_sanity_checks.md
-    needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-05__030049__521cfe43__msi__needs_snapshot.yaml
+    run_log: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-05__033937__f4a083ab__msi__run.log
+    pathway_json: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-05__033937__f4a083ab__msi__pathway.json
+    validation_report: C:\Users\Mathew C\Campaign In A Box\reports\validation\2026-03-05__033937__f4a083ab__msi__validation_report.md
+    qa_report: C:\Users\Mathew C\Campaign In A Box\reports\qa\2026-03-05__033937__f4a083ab__msi__qa_sanity_checks.md
+    needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-05__033937__f4a083ab__msi__needs_snapshot.yaml
+schema_normalization:
+  blocks: []
+  notes: NORMALIZE_SCHEMA step runs per-sheet after allocation, before sanity checks
+  status: complete
+simulation_engine:
+  blocks: []
+  notes: Monte Carlo 4000 rows, 4 scenarios, 1000 iter â€” last verified 2026-03-05
+  status: complete
 strategy_generator:
   2024_CA_sonoma_nov2024_general:
     derived_mode: full
-    last_run_id: 2026-03-05__030049__521cfe43__msi
+    last_run_id: 2026-03-05__033937__f4a083ab__msi
     missing_inputs: []
-    notes: Generated at 2026-03-05T03:00:50.263394
+    notes: Generated at 2026-03-05T03:39:37.571157
     status: complete
+strategy_meta_completeness:
+  blocks: []
+  notes: STRATEGY_META.json now includes top-level precinct_count, turf_count, region_count,
+    scenario_count
+  status: complete
+ui_contest_selector:
+  blocks: []
+  notes: app.py Strategy Generator panel has key="contest_selector" on st.selectbox
+    + discovery.py utility
+  status: complete

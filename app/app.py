@@ -1334,7 +1334,7 @@ elif page == "🎯 Strategy Generator":
         with col_cfg:
             st.subheader("⚙️ Configuration")
             c_opts = [f"{c['county']} / {c['year']} / {c['contest_slug']}" for c in contests]
-            sel = st.selectbox("Contest", c_opts, key="sg_contest")
+            sel = st.selectbox("Contest", c_opts, key="contest_selector")
             parts = sel.split(" / ")
             sg_county, sg_year, sg_slug = parts[0], parts[1], parts[2]
 
