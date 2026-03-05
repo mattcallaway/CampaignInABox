@@ -62,6 +62,13 @@ from engine.integrity.integrity_repairs import (
 )
 from engine.audit.post_prompt86_audit import run_post_prompt86_audit
 from engine.audit.artifact_validator import validate_artifacts
+# Prompt 10: Advanced Modeling Engine
+from engine.advanced_modeling.universe_allocation import estimate_universes
+from engine.advanced_modeling.lift_models import apply_lifts, apply_lifts_mc
+from engine.advanced_modeling.optimizer import optimize_allocation
+from engine.advanced_modeling.scenarios import run_advanced_scenarios
+from engine.advanced_modeling.model_card import write_model_card
+from engine.advanced_modeling.qa_checks import run_qa_checks
 from scripts.geo.kepler_export import export_kepler_geojson as kepler_geojson_export
 from app.lib.state_manager import clear_stale
 from scripts.loaders.logger import RunLogger
@@ -852,6 +859,115 @@ def run_pipeline(
     except Exception as _e:
         logger.warn(f"POST_RUN_AUDIT non-fatal: {_e}")
         logger.step_done("POST_RUN_AUDIT", notes=["error"])
+
+    # ── Prompt 10: ADVANCED_MODELING stage group ────────────────────────────────────
+    import yaml as _yaml
+    _adv_cfg_path = Path(__file__).resolve().parent.parent / "config" / "advanced_modeling.yaml"
+    try:
+        _adv_cfg = _yaml.safe_load(_adv_cfg_path.read_text(encoding="utf-8")) if _adv_cfg_path.exists() else {}
+    except Exception:
+        _adv_cfg = {}
+
+    _adv_out_dir  = Path(str(Path(__file__).resolve().parent.parent)) / "derived" / "advanced_modeling" / _contest_id_for_diag
+    _adv_out_dir.mkdir(parents=True, exist_ok=True)
+
+    # Entities DF for optimizer (region-level aggregates)
+    _region_model = all_model_dfs[0] if all_model_dfs else pd.DataFrame()
+    _entities_df  = (
+        _region_model.groupby("region_id", as_index=False).agg(
+            registered_total=("registered", "sum"),
+            avg_turnout_pct=("turnout_pct", "mean"),
+            avg_support_pct=("support_pct", "mean"),
+            avg_target_score=("target_score", "mean"),
+        ).rename(columns={"region_id": "entity_id"})
+        if not _region_model.empty and all(c in _region_model.columns
+            for c in ["region_id","registered","turnout_pct","support_pct"])
+        else pd.DataFrame()
+    )
+
+    _adv_universe = pd.DataFrame()
+    _adv_alloc    = pd.DataFrame()
+    _adv_curve    = pd.DataFrame()
+    _adv_scenarios= pd.DataFrame()
+    _adv_sim_sum  = pd.DataFrame()
+    _adv_used     = False
+
+    # Step A: ADVANCED_UNIVERSE_ESTIMATES
+    logger.step_start("ADVANCED_UNIVERSE_ESTIMATES")
+    try:
+        _adv_universe = estimate_universes(
+            _region_model, run_id, _contest_id_for_diag, out_dir=_adv_out_dir,
+        )
+        logger.step_done("ADVANCED_UNIVERSE_ESTIMATES",
+                         notes=[f"{len(_adv_universe)} precincts with universe estimates"])
+    except Exception as _e:
+        logger.warn(f"ADVANCED_UNIVERSE_ESTIMATES non-fatal: {_e}")
+        logger.step_done("ADVANCED_UNIVERSE_ESTIMATES", notes=["error — degraded"])
+
+    # Step B: OPTIMIZER
+    logger.step_start("OPTIMIZER")
+    try:
+        _adv_alloc, _adv_curve = optimize_allocation(
+            _entities_df, _adv_cfg, run_id, _contest_id_for_diag,
+            out_dir=_adv_out_dir, entity_type="region",
+        )
+        total_alloc = _adv_alloc["shifts_assigned"].sum() if not _adv_alloc.empty else 0
+        logger.step_done("OPTIMIZER", notes=[f"{total_alloc} shifts allocated"])
+    except Exception as _e:
+        logger.warn(f"OPTIMIZER non-fatal: {_e}")
+        logger.step_done("OPTIMIZER", notes=["error — degraded"])
+
+    # Step C: ADVANCED_LIFT_MODEL
+    logger.step_start("ADVANCED_LIFT_MODEL")
+    try:
+        if not _adv_universe.empty and not _adv_alloc.empty:
+            _adv_universe["contacts_estimated"] = 0.0
+            if "entity_id" in _adv_alloc.columns and "region_id" in _adv_universe.columns:
+                _cmap = _adv_alloc.set_index("entity_id")["contacts_estimated"].to_dict()
+                _szs  = _adv_universe.groupby("region_id")["region_id"].transform("count").clip(lower=1)
+                _adv_universe["contacts_estimated"] = (
+                    _adv_universe["region_id"].map(_cmap).fillna(0) / _szs
+                )
+            _adv_universe = apply_lifts(_adv_universe, "contacts_estimated", _adv_cfg)
+            _adv_used = True
+        logger.step_done("ADVANCED_LIFT_MODEL",
+                         notes=[f"lifted={'yes' if _adv_used else 'no'}"])
+    except Exception as _e:
+        logger.warn(f"ADVANCED_LIFT_MODEL non-fatal: {_e}")
+        logger.step_done("ADVANCED_LIFT_MODEL", notes=["error — degraded"])
+
+    # Step D: ADVANCED_SCENARIOS
+    logger.step_start("ADVANCED_SCENARIOS")
+    try:
+        _adv_scenarios, _adv_sim_sum = run_advanced_scenarios(
+            _adv_universe, _entities_df, _adv_cfg, run_id, _contest_id_for_diag,
+            out_dir=_adv_out_dir, entity_type="region",
+        )
+        logger.step_done("ADVANCED_SCENARIOS",
+                         notes=[f"{len(_adv_scenarios)} scenarios, {len(_adv_sim_sum)} MC summaries"])
+    except Exception as _e:
+        logger.warn(f"ADVANCED_SCENARIOS non-fatal: {_e}")
+        logger.step_done("ADVANCED_SCENARIOS", notes=["error — degraded"])
+
+    # Step E: ADVANCED_QA + MODEL CARD
+    logger.step_start("ADVANCED_QA")
+    try:
+        _adv_qa = run_qa_checks(
+            _adv_scenarios, _adv_alloc, _adv_curve, _adv_universe, _adv_cfg,
+            run_id, _contest_id_for_diag,
+        )
+        # Build scenarios_summary dict for model card
+        _scen_summary = {}
+        for _, row in _adv_sim_sum.iterrows():
+            _scen_summary[row.get("scenario","?")] = row.to_dict()
+        _mc_path = write_model_card(run_id, _contest_id_for_diag, _adv_cfg, _scen_summary)
+        all_artifacts.append(_mc_path)
+        logger.step_done("ADVANCED_QA",
+                         notes=[f"PASS={_adv_qa['pass_count']}, WARN={_adv_qa['warn_count']}",
+                                 f"model_card={_mc_path.name}"])
+    except Exception as _e:
+        logger.warn(f"ADVANCED_QA non-fatal: {_e}")
+        logger.step_done("ADVANCED_QA", notes=["error"])
 
     # ── Finalize + commit ────────────────────────────────────────
     logger.finalize(state, county, contest_slug, run_status="success")

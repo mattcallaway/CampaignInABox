@@ -626,6 +626,10 @@ def write_strategy_pack(
             "forecast_source": "derived/forecasts"       if not inputs.get("simulations",        pd.DataFrame()).empty else "none",
             "universe_source": "derived/universes"       if not inputs.get("precinct_universes", pd.DataFrame()).empty else "none",
         },
+        # Prompt 10: Advanced Modeling Engine
+        "advanced_modeling_used":         inputs.get("advanced_modeling_used", False),
+        "allocation_scenario_selected":   inputs.get("allocation_scenario_selected", "heavy"),
+        "expected_net_gain_from_field":   inputs.get("expected_net_gain_from_field", 0),
     }
     (out_root / "STRATEGY_META.json").write_text(json.dumps(meta, indent=2, default=str), encoding="utf-8")
 
