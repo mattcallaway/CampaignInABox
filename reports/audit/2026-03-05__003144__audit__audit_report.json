@@ -1,0 +1,58 @@
+{
+    "audit_run_id": "2026-03-05__003144__audit",
+    "timestamp_utc": "2026-03-05T08:31:44Z",
+    "status": "PASS",
+    "compliance_scores": {
+        "structure": 0.92,
+        "registry": 1.0,
+        "logging": 1.0,
+        "logic": 0.95,
+        "naming": 0.90
+    },
+    "findings": [
+        {
+            "id": "F1",
+            "severity": "low",
+            "category": "environment",
+            "detail": "Missing archive/ folder",
+            "fixed": true
+        },
+        {
+            "id": "F2",
+            "severity": "low",
+            "category": "naming",
+            "detail": "Naming drift (CompositeScore -> TargetScore) detected in stale artifacts",
+            "fixed": "mitigated (code updated)"
+        },
+        {
+            "id": "F3",
+            "severity": "med",
+            "category": "logic",
+            "detail": "Rollback logic scaffolded but not implemented in UI",
+            "fixed": false
+        },
+        {
+            "id": "F4",
+            "severity": "low",
+            "category": "artifact",
+            "detail": "manifest.json missing in local Sonoma geography folder",
+            "fixed": false
+        }
+    ],
+    "registry_verification": {
+        "counties_ca_count": 58,
+        "sonoma_cities_count": 9,
+        "status": "COMPLIANT"
+    },
+    "git_status": {
+        "lfs_active": true,
+        "lfs_tracking": [
+            ".geojson",
+            ".gpkg",
+            ".shp",
+            ".shx",
+            ".dbf",
+            ".zip"
+        ]
+    }
+}

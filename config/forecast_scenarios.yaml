@@ -1,0 +1,33 @@
+# config/forecast_scenarios.yaml
+# Scenarios for the Forecasting Engine
+
+scenarios:
+  - id: "baseline"
+    name: "Baseline (Observed)"
+    turnout_multiplier: 1.0
+    support_lift: 0.0
+    description: "Current observed results projected forward."
+
+  - id: "optimistic_turnout"
+    name: "Optimistic Turnout (+10%)"
+    turnout_multiplier: 1.10
+    support_lift: 0.0
+    description: "Assumes 10% higher turnout overall across all precincts."
+
+  - id: "pessimistic_turnout"
+    name: "Pessimistic Turnout (-15%)"
+    turnout_multiplier: 0.85
+    support_lift: 0.0
+    description: "Assumes a 15% drop in turnout due to weather or suppression."
+
+  - id: "persuasion_lift_low"
+    name: "Incremental Persuasion (+2%)"
+    turnout_multiplier: 1.0
+    support_lift: 0.02
+    description: "Assumes field efforts yield a 2% lift in support among undecideds."
+
+  - id: "persuasion_lift_high"
+    name: "Strong Field Success (+5%)"
+    turnout_multiplier: 1.05
+    support_lift: 0.05
+    description: "Assumes highly effective mobilization and persuasion (+5% support, +5% turnout)."

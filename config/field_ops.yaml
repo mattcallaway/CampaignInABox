@@ -1,0 +1,13 @@
+# operational parameters for field campaign planning
+# used for doorway/shift/volunteer math
+
+doors_per_hour: 20
+hours_per_shift: 3
+contact_rate: 0.25 # 25% door-to-contact conversion
+persuasion_effect_per_contact: 0.02 # 2% delta support among contacted persuadables
+turnout_effect_per_contact: 0.05 # 5% delta turnout among contacted base voters
+volunteers_per_turf_per_weekend: 2
+max_precincts_per_turf: 12
+min_registered_per_turf: 100
+target_shift_count_per_weekend: 5
+walkability_penalty: 0.0 # placeholder for future refinement

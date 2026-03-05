@@ -1,0 +1,458 @@
+{
+  "system_status": "WARN",
+  "run_id": "\u00ff\u00fe2\u00000\u00002\u00006\u0000-\u00000\u00003\u0000-\u00000\u00005\u0000_\u0000_\u00000\u00001\u00001\u00004\u00000\u00000\u0000_\u0000_\u0000a\u0000u\u0000d\u0000i\u0000t\u0000\n\u0000\n\u0000",
+  "audit_id": "2026-03-05__014616__post_prompt6_audit",
+  "prior_audit_id": "2026-03-05__011400__audit__audit_report",
+  "timestamp": "2026-03-05 01:46:16",
+  "contests_detected": [
+    {
+      "contest_id": "2024__CA__SAMPLE_COUNTY__MEASURE_A",
+      "county": "SAMPLE_COUNTY",
+      "year": "2024",
+      "slug": "MEASURE_A",
+      "features": false,
+      "universes": false,
+      "targets": false,
+      "turfs": false,
+      "ops": false,
+      "forecast": false,
+      "diagnostics": false
+    },
+    {
+      "contest_id": "2024_CA_sonoma_nov2024_general",
+      "county": "Sonoma",
+      "year": "2024",
+      "slug": "nov2024_general",
+      "features": false,
+      "universes": false,
+      "targets": false,
+      "turfs": false,
+      "ops": false,
+      "forecast": false,
+      "diagnostics": false
+    }
+  ],
+  "derived_directories": {
+    "features": {
+      "exists": true,
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\features"
+    },
+    "universes": {
+      "exists": true,
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\universes"
+    },
+    "campaign_targets": {
+      "exists": true,
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\campaign_targets"
+    },
+    "turfs": {
+      "exists": true,
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\turfs"
+    },
+    "forecasts": {
+      "exists": true,
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\forecasts"
+    },
+    "ops": {
+      "exists": false,
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\ops"
+    },
+    "diagnostics": {
+      "exists": true,
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\diagnostics"
+    }
+  },
+  "constraint_violations": [],
+  "contest_mode_system": {
+    "supports_auto": true,
+    "supports_measure": true,
+    "supports_candidate": true,
+    "mode_detected": null,
+    "mode_override": null
+  },
+  "ops_layer": {
+    "regions_csv": false,
+    "field_plan_csv": false,
+    "net_gain_csv": false,
+    "regions_count": 0,
+    "field_plan_rows": 0,
+    "missing_fields": [
+      "derived/ops/ directory missing"
+    ]
+  },
+  "scenario_engine": {
+    "sim_file_found": false,
+    "scenarios_found": [],
+    "scenarios_missing": [
+      "baseline",
+      "field_program_light",
+      "field_program_medium",
+      "field_program_heavy"
+    ],
+    "row_count": 0
+  },
+  "model_summary": {
+    "contest_count": 2,
+    "precinct_count": "see_field_plan_rows",
+    "turf_count": 2,
+    "region_count": 0,
+    "scenario_count": 0,
+    "field_plan_rows": 0
+  },
+  "repo_metrics": {
+    "total_files": 242,
+    "python_files": 61,
+    "geo_files": 12,
+    "vote_files": 2,
+    "derived_outputs": 27,
+    "largest_files": [
+      {
+        "path": "Campaign In A Box.zip",
+        "size_bytes": 27077351
+      },
+      {
+        "path": "data\\CA\\counties\\Sonoma\\geography\\precinct_shapes\\MPREC_GeoJSON\\mprec_097_g24_v01.geojson",
+        "size_bytes": 22390061
+      },
+      {
+        "path": "Campaign In A Box Data\\Campaign In A Box\\mprec_097_g24_v01.geojson",
+        "size_bytes": 22390061
+      },
+      {
+        "path": "data\\CA\\counties\\Sonoma\\geography\\precinct_shapes\\SRPREC_GeoJSON\\srprec_097_g24_v01.geojson",
+        "size_bytes": 16379431
+      },
+      {
+        "path": "Campaign In A Box Data\\Campaign In A Box\\srprec_097_g24_v01.geojson",
+        "size_bytes": 16379431
+      }
+    ],
+    "missing_configs": []
+  },
+  "issues": [
+    {
+      "severity": "medium",
+      "file": "scripts\\_create_sample_data.py",
+      "line": 31,
+      "description": "NAMING_DRIFT: \"Precinct_ID\", \"Precinct Name\", \"Registered\","
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\_create_sample_data.py",
+      "line": 70,
+      "description": "NAMING_DRIFT: \"Precinct_ID\", \"Precinct Name\", \"Registered\", \"Ballots Cast\","
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\aggregation\\vote_allocator.py",
+      "line": 17,
+      "description": "NAMING_DRIFT: from ..lib.naming import normalize_precinct_id"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\aggregation\\vote_allocator.py",
+      "line": 46,
+      "description": "NAMING_DRIFT: result[\"PrecinctID\"] = raw_series.apply(lambda x: normalize_precinct_id(x, pad_to=0))"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\features\\feature_builder.py",
+      "line": 31,
+      "description": "NAMING_DRIFT: target_cols = [\"canonical_precinct_id\", \"registered\", \"ballots_cast\", \"turnout_pct\", \"support_pct\"]"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\features\\voter_features.py",
+      "line": 90,
+      "description": "NAMING_DRIFT: precinct_agg = precinct_agg.rename(columns={precinct_col: \"canonical_precinct_id\"})"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\geography\\boundary_loader.py",
+      "line": 48,
+      "description": "NAMING_DRIFT: \"GEOID\", \"GEOID20\", \"PRECINCT_ID\", \"PREC_ID\","
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\lib\\naming.py",
+      "line": 43,
+      "description": "NAMING_DRIFT: def normalize_precinct_id(val: any, pad_to: int = 0) -> str:"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\lib\\schema.py",
+      "line": 28,
+      "description": "NAMING_DRIFT: # e.g. \"mprec\" -> \"canonical_precinct_id\""
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\loaders\\contest_parser.py",
+      "line": 21,
+      "description": "NAMING_DRIFT: from ..lib.naming import normalize_precinct_id"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\loaders\\contest_parser.py",
+      "line": 25,
+      "description": "NAMING_DRIFT: \"precinct\", \"precinct_id\", \"mprec_id\", \"srprec_id\", \"prec_id\","
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\loaders\\contest_parser.py",
+      "line": 81,
+      "description": "NAMING_DRIFT: Returns {precinct_id: registered_count}."
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\loaders\\contest_parser.py",
+      "line": 129,
+      "description": "NAMING_DRIFT: p_id = normalize_precinct_id(p_raw, pad_to=0)"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\loaders\\contest_parser.py",
+      "line": 140,
+      "description": "NAMING_DRIFT: Determines contest_title, precinct_id col, and choice cols."
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\loaders\\contest_parser.py",
+      "line": 208,
+      "description": "NAMING_DRIFT: p_norm = normalize_precinct_id(p_raw, pad_to=0)"
+    },
+    {
+      "severity": "low",
+      "file": "scripts\\loaders\\contest_parser.py",
+      "line": 214,
+      "description": "BARE_EXCEPT: except:"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\loaders\\contest_registry.py",
+      "line": 85,
+      "description": "NAMING_DRIFT: \"PRECINCT\", \"PRECINCT_ID\", \"MPREC_ID\", \"SRPREC_ID\", \"TOTAL\", \"BALLOTS\","
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\ops\\field_plan_engine.py",
+      "line": 35,
+      "description": "NAMING_DRIFT: plan_df = pd.merge(plan_df, voter_features[[\"canonical_precinct_id\", \"household_count\"]],"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\ops\\field_plan_engine.py",
+      "line": 36,
+      "description": "NAMING_DRIFT: on=\"canonical_precinct_id\", how=\"left\")"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\ops\\region_builder.py",
+      "line": 21,
+      "description": "NAMING_DRIFT: df must contain: canonical_precinct_id, turnout_pct, support_pct, registered."
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\ops\\region_builder.py",
+      "line": 69,
+      "description": "NAMING_DRIFT: res_df = df[[\"canonical_precinct_id\"]].copy()"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\ops\\region_builder.py",
+      "line": 82,
+      "description": "NAMING_DRIFT: merged = pd.merge(df, regions_df, on=\"canonical_precinct_id\")"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\ops\\region_builder.py",
+      "line": 89,
+      "description": "NAMING_DRIFT: \"canonical_precinct_id\": \"count\","
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\ops\\region_builder.py",
+      "line": 98,
+      "description": "NAMING_DRIFT: summary_rows.append(f\"| {rid} | {row['canonical_precinct_id']} | {int(row['registered']):,} | {row['turnout_pct']:.1%} |"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\run_pipeline.py",
+      "line": 446,
+      "description": "NAMING_DRIFT: merged = pd.merge(base_features, voter_features_df, on=\"canonical_precinct_id\", how=\"left\")"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\run_pipeline.py",
+      "line": 470,
+      "description": "NAMING_DRIFT: scored_df = pd.merge(scored_df, uni_df, on=\"canonical_precinct_id\", how=\"left\")"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\run_pipeline.py",
+      "line": 475,
+      "description": "NAMING_DRIFT: scored_df = pd.merge(scored_df, m_df[[\"canonical_precinct_id\", \"geometry\"]], on=\"canonical_precinct_id\", how=\"left\")"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\run_pipeline.py",
+      "line": 494,
+      "description": "NAMING_DRIFT: merged = pd.merge(scored_df, r_df, on=\"canonical_precinct_id\", how=\"left\")"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\run_pipeline.py",
+      "line": 548,
+      "description": "NAMING_DRIFT: k_path = export_kepler_geojson(plan_df, BASE_DIR, run_id, state, county, slug_out, id_col=\"canonical_precinct_id\")"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\run_pipeline.py",
+      "line": 552,
+      "description": "NAMING_DRIFT: uni_sum_path = export_universes(plan_df[[\"canonical_precinct_id\", \"universe_name\", \"universe_reason\", \"key_metrics_snaps"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\tests\\diagnostics.py",
+      "line": 33,
+      "description": "NAMING_DRIFT: \"precinct_id\": row[\"canonical_precinct_id\"],"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\tests\\diagnostics.py",
+      "line": 44,
+      "description": "NAMING_DRIFT: \"precinct_id\": row[\"canonical_precinct_id\"],"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\tests\\diagnostics.py",
+      "line": 55,
+      "description": "NAMING_DRIFT: \"precinct_id\": row[\"canonical_precinct_id\"],"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\tests\\diagnostics.py",
+      "line": 63,
+      "description": "NAMING_DRIFT: if not df[\"canonical_precinct_id\"].empty:"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\tests\\diagnostics.py",
+      "line": 64,
+      "description": "NAMING_DRIFT: sample = str(df[\"canonical_precinct_id\"].iloc[0])"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\tests\\diagnostics.py",
+      "line": 67,
+      "description": "NAMING_DRIFT: \"precinct_id\": \"GLOBAL\","
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\tests\\diagnostics.py",
+      "line": 88,
+      "description": "NAMING_DRIFT: \"precinct_id\": row[\"turf_id\"],"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\tests\\diagnostics.py",
+      "line": 100,
+      "description": "NAMING_DRIFT: \"precinct_id\": row[\"canonical_precinct_id\"],"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\tests\\diagnostics.py",
+      "line": 112,
+      "description": "NAMING_DRIFT: \"precinct_id\": row[\"canonical_precinct_id\"],"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\tools\\audit_post_prompt6.py",
+      "line": 126,
+      "description": "NAMING_DRIFT: \"features\":     (\"model_features.csv\",    [\"canonical_precinct_id\", \"registered\", \"ballots_cast\", \"turnout_pct\", \"suppor"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\tools\\audit_post_prompt6.py",
+      "line": 127,
+      "description": "NAMING_DRIFT: \"universes\":    (\"precinct_universes.csv\", [\"precinct_id\", \"universe_name\", \"universe_reason\"]),"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\tools\\audit_post_prompt6.py",
+      "line": 132,
+      "description": "NAMING_DRIFT: \"diagnostics\":  (\"anomaly_table.csv\",      [\"precinct_id\", \"issue_type\", \"severity\", \"description\"]),"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\tools\\audit_post_prompt6.py",
+      "line": 407,
+      "description": "NAMING_DRIFT: NAMING_ISSUES = re.compile(r\"\\bPRECINCT_ID\\b|precinct_ID\\b|CanonicalPrecinct\\b\", re.IGNORECASE)"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\turfs\\turf_generator.py",
+      "line": 37,
+      "description": "NAMING_DRIFT: p_id = row[\"canonical_precinct_id\"]"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\turfs\\turf_generator.py",
+      "line": 50,
+      "description": "NAMING_DRIFT: \"avg_target_score\": round(df.loc[df[\"canonical_precinct_id\"].isin(current_turf_ids), \"target_score\"].mean(), 3)"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\turfs\\turf_generator.py",
+      "line": 64,
+      "description": "NAMING_DRIFT: \"avg_target_score\": round(df.loc[df[\"canonical_precinct_id\"].isin(current_turf_ids), \"target_score\"].mean(), 3)"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\turfs\\turf_packer.py",
+      "line": 26,
+      "description": "NAMING_DRIFT: turf_precincts = plan_df[plan_df[\"canonical_precinct_id\"].isin(p_ids)]"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\turfs\\turf_packer.py",
+      "line": 50,
+      "description": "NAMING_DRIFT: md_content += f\"| {p['canonical_precinct_id']} | {int(p['registered'])} | {p['support_pct']:.1%} | {p['turnout_pct']:.1%"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\universes\\universe_builder.py",
+      "line": 72,
+      "description": "NAMING_DRIFT: return df[[\"canonical_precinct_id\", \"universe_name\", \"universe_reason\", \"key_metrics_snapshot\"]]"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\universes\\voter_universe_exporter.py",
+      "line": 28,
+      "description": "NAMING_DRIFT: if \"canonical_precinct_id\" not in voter_df.columns:"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\universes\\voter_universe_exporter.py",
+      "line": 29,
+      "description": "NAMING_DRIFT: if logger: logger.error(\"  Voter DF missing canonical_precinct_id; cannot map universes\")"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\universes\\voter_universe_exporter.py",
+      "line": 34,
+      "description": "NAMING_DRIFT: precinct_universes[[\"canonical_precinct_id\", \"universe_name\"]],"
+    },
+    {
+      "severity": "medium",
+      "file": "scripts\\universes\\voter_universe_exporter.py",
+      "line": 35,
+      "description": "NAMING_DRIFT: on=\"canonical_precinct_id\","
+    }
+  ],
+  "recommendations": [
+    "Create missing derived directories: ['ops']. Run pipeline to populate.",
+    "Run pipeline to generate regions.csv \u2014 region clustering may not have executed yet.",
+    "Run pipeline to generate field_plan.csv \u2014 check that field_plan_engine.py step is reachable.",
+    "Scenario engine missing: ['baseline', 'field_program_light', 'field_program_medium', 'field_program_heavy']. Check simulation_engine.py scenario loop."
+  ]
+}

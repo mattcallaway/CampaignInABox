@@ -1,0 +1,34 @@
+# config/schema_registry.yaml
+# Canonical field mapping for Campaign In A Box v2
+
+mappings:
+  # Base Precinct Identifiers
+  canonical_precinct_id: ["mprec", "srprec", "mprec_id", "srprec_id", "precinct_id", "precinctid", "precinct"]
+  registered: ["registered_voters", "reg", "total_registered"]
+  ballots_cast: ["ballots_cast", "total_votes", "votes_cast", "ballotscast"]
+  turnout_pct: ["turnout_pct", "turnoutpct", "to_pct"]
+
+  # Measure Mode
+  yes_votes: ["yes", "yes_count"]
+  no_votes: ["no", "no_count"]
+  support_pct: ["yes_pct", "support_pct", "SupportPct", "yes_percent"]
+
+  # Candidate Mode
+  target_choice_votes: ["target_votes", "candidate_votes"]
+  target_choice_pct: ["target_pct", "candidate_pct"]
+
+  # Modeling Outputs
+  target_score: ["target_score", "compositescore", "priority_score"]
+  walk_priority: ["walk_priority", "walk_rank"]
+  turnout_opportunity: ["turnout_opportunity", "turnout_potential"]
+  persuasion_potential: ["persuasion_potential", "swing_potential"]
+
+  # Voter File Aggregates
+  dem_pct_reg: ["dem_pct", "registered_democrat_pct"]
+  rep_pct_reg: ["rep_pct", "registered_republican_pct"]
+  age_mean: ["age_mean", "average_age"]
+  propensity_general_mean: ["propensity_mean", "general_turnout_propensity"]
+
+rules:
+  require_finite: ["target_score", "turnout_pct", "support_pct"]
+  scale_0_1: ["turnout_pct", "support_pct", "target_score", "persuasion_potential"]

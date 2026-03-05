@@ -1,0 +1,43 @@
+# config/universe_rules.yaml
+# Rule definitions for precinct universes
+
+universes:
+  - name: "Persuasion Universe"
+    reason: "Mid-support rate with high concentration of registered voters"
+    rules:
+      - field: "support_pct"
+        op: "between"
+        value: [0.45, 0.60]
+      - field: "registered"
+        op: "gt"
+        value: 100
+
+  - name: "Base Mobilization Universe"
+    reason: "High support but significant turnout shortfall"
+    rules:
+      - field: "support_pct"
+        op: "gt"
+        value: 0.65
+      - field: "turnout_pct"
+        op: "lt"
+        value: 0.55
+
+  - name: "Turnout Opportunity"
+    reason: "Low turnout areas with enough baseline support to be worth investment"
+    rules:
+      - field: "turnout_pct"
+        op: "lt"
+        value: 0.40
+      - field: "support_pct"
+        op: "gt"
+        value: 0.40
+
+  - name: "Base Protection"
+    reason: "Highest support and high turnout; focus on maintenance and VBM sign-up"
+    rules:
+      - field: "support_pct"
+        op: "gt"
+        value: 0.70
+      - field: "turnout_pct"
+        op: "gt"
+        value: 0.75

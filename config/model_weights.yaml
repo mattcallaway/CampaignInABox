@@ -1,0 +1,23 @@
+# config/model_weights.yaml
+# Weights used by the Scoring + Targeting Engine
+
+scoring_weights:
+  persuasion_potential:
+    weight: 1.0
+    formula: "persuasion_potential * support_density"
+  turnout_opportunity:
+    weight: 0.8
+    formula: "turnout_opportunity * registered"
+  expected_support_votes:
+    weight: 0.5
+    formula: "support_pct * registered"
+
+thresholds:
+  tier_1: 0.85
+  tier_2: 0.70
+  tier_3: 0.45
+  tier_4: 0.00
+
+parameters:
+  min_score: 0.1
+  walk_capacity_per_turf: 300

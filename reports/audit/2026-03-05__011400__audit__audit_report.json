@@ -1,0 +1,34 @@
+{
+    "run_id": "2026-03-05__011400__audit",
+    "date": "2026-03-05",
+    "overall_status": "PASS",
+    "requirements": {
+        "P1_pipeline_scaffolding": true,
+        "P2_logging_contract": true,
+        "P3_registry_compliance": true,
+        "P4_voter_file_integration": true,
+        "P5_modeling_v2_engine": true
+    },
+    "findings": [
+        {
+            "severity": "LOW",
+            "file": "scripts/loaders/contest_parser.py",
+            "line": 218,
+            "message": "FIXME found: potential fallback to 'FIXME' for contest_id",
+            "impact": "contest_id might be mislabeled if not provided in manifest"
+        },
+        {
+            "severity": "LOW",
+            "file": "Campaign In A Box Data/",
+            "line": 0,
+            "message": "Folder naming drift (capitalization)",
+            "impact": "Minor inconsistency"
+        }
+    ],
+    "stats": {
+        "counties_validated": 58,
+        "sonoma_cities_validated": 9,
+        "geography_layers_detected": 12,
+        "precincts_processed": 10
+    }
+}
