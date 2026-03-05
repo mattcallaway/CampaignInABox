@@ -1,0 +1,7 @@
+{
+  "geopandas_installed": false,
+  "mprec_geojson_found": true,
+  "srprec_geojson_found": true,
+  "geometry_parsed": false,
+  "precinct_count_from_geometry": 0
+}

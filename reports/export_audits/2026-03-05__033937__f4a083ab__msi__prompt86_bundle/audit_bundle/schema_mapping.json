@@ -1,0 +1,41 @@
+{
+  "context": "Sheet1",
+  "contest_id": "2024_CA_sonoma_nov2024_general",
+  "run_id": "2026-03-05__033937__f4a083ab__msi",
+  "original_columns": [
+    "PrecinctID_Raw",
+    "MPREC_ID",
+    "YES",
+    "NO",
+    "BallotsCast",
+    "Registered"
+  ],
+  "mapping": {
+    "MPREC_ID": "canonical_precinct_id",
+    "Registered": "registered",
+    "BallotsCast": "ballots_cast",
+    "YES": "yes_votes",
+    "NO": "no_votes"
+  },
+  "missing_optional": [
+    "support_pct",
+    "turnout_pct"
+  ],
+  "inferred_columns": [
+    "turnout_pct",
+    "support_pct"
+  ],
+  "inferred_contest_type": "ballot_measure",
+  "final_columns": [
+    "PrecinctID_Raw",
+    "canonical_precinct_id",
+    "yes_votes",
+    "no_votes",
+    "ballots_cast",
+    "registered",
+    "turnout_pct",
+    "support_pct"
+  ],
+  "status": "ok",
+  "timestamp": "2026-03-05T03:39:37.286760"
+}

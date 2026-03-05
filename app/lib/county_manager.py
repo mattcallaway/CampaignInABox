@@ -113,12 +113,24 @@ def discover_contests(state: str = "CA") -> list[dict]:
                     if c.exists():
                         detail = c
                         break
+                # Peek at contest.json
+                meta = {}
+                cj = contest_dir / "contest.json"
+                if cj.exists():
+                    try:
+                        meta = json.loads(cj.read_text(encoding="utf-8"))
+                    except Exception:
+                        pass
+
                 results.append({
                     "year": year_dir.name,
                     "county": county_dir.name,
                     "contest_slug": contest_dir.name,
                     "detail_path": str(detail) if detail else None,
                     "has_votes": detail is not None,
+                    "type": meta.get("contest_type", "unknown"),
+                    "candidates": meta.get("candidates", []),
+                    "measures": meta.get("measures", []),
                 })
     return results
 

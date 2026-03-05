@@ -1,0 +1,30 @@
+{
+  "total_files": 572,
+  "python_files": 64,
+  "geo_files": 8,
+  "vote_files": 2,
+  "derived_outputs": 116,
+  "strategy_packs": 30,
+  "largest_files": [
+    {
+      "path": "Campaign In A Box.zip",
+      "bytes": 27077351
+    },
+    {
+      "path": "data\\CA\\counties\\Sonoma\\geography\\precinct_shapes\\MPREC_GeoJSON\\mprec_097_g24_v01.geojson",
+      "bytes": 22390061
+    },
+    {
+      "path": "Campaign In A Box Data\\Campaign In A Box\\mprec_097_g24_v01.geojson",
+      "bytes": 22390061
+    },
+    {
+      "path": "data\\CA\\counties\\Sonoma\\geography\\precinct_shapes\\SRPREC_GeoJSON\\srprec_097_g24_v01.geojson",
+      "bytes": 16379431
+    },
+    {
+      "path": "Campaign In A Box Data\\Campaign In A Box\\srprec_097_g24_v01.geojson",
+      "bytes": 16379431
+    }
+  ]
+}

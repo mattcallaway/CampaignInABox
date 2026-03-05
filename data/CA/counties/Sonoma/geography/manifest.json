@@ -1,0 +1,228 @@
+{
+  "generated_at": "2026-03-05T08:36:01.618432+00:00",
+  "county": "Sonoma",
+  "state": "CA",
+  "geography_dir": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography",
+  "canonical_geography": "MPREC",
+  "categories_present": [
+    "MPREC GeoJSON",
+    "MPREC GeoPackage",
+    "MPREC Shapefile",
+    "SRPREC GeoJSON",
+    "SRPREC GeoPackage",
+    "SRPREC Shapefile",
+    "2020 BLK TO MPREC",
+    "RGPREC TO 2020 BLK",
+    "SRPREC TO 2020 BLK",
+    "RG to RR to SR to SVPREC",
+    "MPREC to SRPREC",
+    "SRPREC to CITY"
+  ],
+  "categories_missing": [],
+  "known_id_fields": [
+    "MPREC_ID",
+    "MasterPrecinctID",
+    "mrprc_id",
+    "SRPREC_ID",
+    "SrPrecinctID",
+    "GEOID",
+    "GEOID20"
+  ],
+  "normalization_rules": {
+    "id_type": "string",
+    "left_pad": true,
+    "pad_char": "0",
+    "note": "IDs normalized to zero-padded strings. Never float."
+  },
+  "files": [
+    {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\crosswalks\\blk_mprec_097_g24_v01.csv",
+      "filename": "blk_mprec_097_g24_v01.csv",
+      "size_bytes": 466211,
+      "sha256": "8f29db4719151262d3b1ded43abf1857bf4f97b479c4c4a73e3fcf05788d1b30",
+      "category_label": "2020 BLK TO MPREC",
+      "category_folder": "crosswalks",
+      "source_path": "Campaign In A Box Data\\Campaign In A Box\\blk_mprec_097_g24_v01.csv"
+    },
+    {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\crosswalks\\c097_g24_rg_blk_map.csv",
+      "filename": "c097_g24_rg_blk_map.csv",
+      "size_bytes": 552560,
+      "sha256": "611f4833fb3c6101d69b4ea46f569c2fdd763486218a54afcdb04ecff88b5668",
+      "category_label": "RGPREC TO 2020 BLK",
+      "category_folder": "crosswalks",
+      "source_path": "Campaign In A Box Data\\Campaign In A Box\\c097_g24_rg_blk_map.csv"
+    },
+    {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\crosswalks\\c097_g24_sr_blk_map.csv",
+      "filename": "c097_g24_sr_blk_map.csv",
+      "size_bytes": 493653,
+      "sha256": "31ed0adde072fff59c2d10f0980df74d7c3a3b4bb34fdd3dbb9cee2ec53b5e61",
+      "category_label": "SRPREC TO 2020 BLK",
+      "category_folder": "crosswalks",
+      "source_path": "Campaign In A Box Data\\Campaign In A Box\\c097_g24_sr_blk_map.csv"
+    },
+    {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\crosswalks\\c097_g24_srprec_to_city.csv",
+      "filename": "c097_g24_srprec_to_city.csv",
+      "size_bytes": 18377,
+      "sha256": "bebec40a24eb85c9521611dec7df80e2eceadc828261152ccbfc9b7c7ca58996",
+      "category_label": "SRPREC to CITY",
+      "category_folder": "crosswalks",
+      "source_path": "Campaign In A Box Data\\Campaign In A Box\\c097_g24_srprec_to_city.csv"
+    },
+    {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\crosswalks\\c097_rg_rr_sr_svprec_g24.csv",
+      "filename": "c097_rg_rr_sr_svprec_g24.csv",
+      "size_bytes": 91422,
+      "sha256": "12edf0ba6f4ffc077f419aedb645e4d454b3302cd67e48e9fe1e4ea083b43990",
+      "category_label": "RG to RR to SR to SVPREC",
+      "category_folder": "crosswalks",
+      "source_path": "Campaign In A Box Data\\Campaign In A Box\\c097_rg_rr_sr_svprec_g24.csv"
+    },
+    {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\precinct_shapes\\MPREC_GeoJSON\\mprec_097_g24_v01.geojson",
+      "filename": "mprec_097_g24_v01.geojson",
+      "size_bytes": 22390061,
+      "sha256": "1c52d36f438cdf80971d6edd7eb3f5d685776d0c461ddd09ec21d86bb24e8b21",
+      "category_label": "MPREC GeoJSON",
+      "category_folder": "precinct_shapes/MPREC_GeoJSON",
+      "source_path": "Campaign In A Box Data\\Campaign In A Box\\mprec_097_g24_v01.geojson"
+    },
+    {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\precinct_shapes\\MPREC_GeoPackage\\mprec_097_g24_v01.gpkg",
+      "filename": "mprec_097_g24_v01.gpkg",
+      "size_bytes": 9203712,
+      "sha256": "879733cf28455274fb28083abe43088557695f80d71043786268c23f93bc3536",
+      "category_label": "MPREC GeoPackage",
+      "category_folder": "precinct_shapes/MPREC_GeoPackage",
+      "source_path": "Campaign In A Box Data\\Campaign In A Box\\mprec_097_g24_v01.gpkg"
+    },
+    {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\precinct_shapes\\MPREC_Shapefile\\mprec_097_g24_v01.shp",
+      "filename": "mprec_097_g24_v01.shp",
+      "size_bytes": 7979596,
+      "sha256": "73e61dca6f57cfdc8a855d7e1a23030f451ba529a7120d2704e4428d91244979",
+      "category_label": "MPREC Shapefile",
+      "category_folder": "precinct_shapes/MPREC_Shapefile",
+      "source_path": "Campaign In A Box Data\\Campaign In A Box\\mprec_097_g24_v01.shp"
+    },
+    {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\precinct_shapes\\MPREC_Shapefile\\mprec_097_g24_v01.prj",
+      "filename": "mprec_097_g24_v01.prj",
+      "size_bytes": 167,
+      "sha256": "84cf5b9a3c1a444f83ac30ff76f8c5035990223027ba69b2f4d628388adcbd65",
+      "category_label": "MPREC Shapefile",
+      "category_folder": "precinct_shapes/MPREC_Shapefile",
+      "source_path": "Campaign In A Box Data\\Campaign In A Box\\mprec_097_g24_v01.prj"
+    },
+    {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\precinct_shapes\\MPREC_Shapefile\\mprec_097_g24_v01.shx",
+      "filename": "mprec_097_g24_v01.shx",
+      "size_bytes": 11340,
+      "sha256": "2c37c3fd0c073fa73e7466a99bfb8da251651162d0bb42dea1ccb0dbc45ed422",
+      "category_label": "MPREC Shapefile",
+      "category_folder": "precinct_shapes/MPREC_Shapefile",
+      "source_path": "Campaign In A Box Data\\Campaign In A Box\\mprec_097_g24_v01.shx"
+    },
+    {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\precinct_shapes\\MPREC_Shapefile\\mprec_097_g24_v01.qix",
+      "filename": "mprec_097_g24_v01.qix",
+      "size_bytes": 42596,
+      "sha256": "63cc5f5aad81d52d40755526522a976b345d19ddb52b024bf0f69a97de114a34",
+      "category_label": "MPREC Shapefile",
+      "category_folder": "precinct_shapes/MPREC_Shapefile",
+      "source_path": "Campaign In A Box Data\\Campaign In A Box\\mprec_097_g24_v01.qix"
+    },
+    {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\precinct_shapes\\MPREC_Shapefile\\mprec_097_g24_v01.dbf",
+      "filename": "mprec_097_g24_v01.dbf",
+      "size_bytes": 28198,
+      "sha256": "98c4852e939dedca790f9b6def9be7a798c5ca22f2a5acaa1c0cff03359a920f",
+      "category_label": "MPREC Shapefile",
+      "category_folder": "precinct_shapes/MPREC_Shapefile",
+      "source_path": "Campaign In A Box Data\\Campaign In A Box\\mprec_097_g24_v01.dbf"
+    },
+    {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\precinct_shapes\\MPREC_Shapefile\\mprec_097_g24_v01.cpg",
+      "filename": "mprec_097_g24_v01.cpg",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "category_label": "MPREC Shapefile",
+      "category_folder": "precinct_shapes/MPREC_Shapefile",
+      "source_path": "Campaign In A Box Data\\Campaign In A Box\\mprec_097_g24_v01.cpg"
+    },
+    {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\crosswalks\\mprec_srprec_097_g24.csv",
+      "filename": "mprec_srprec_097_g24.csv",
+      "size_bytes": 28073,
+      "sha256": "4b830130bd669aab5f5403b8b47d4cecc2bdb41c8f74e8127b523981d7286bed",
+      "category_label": "MPREC to SRPREC",
+      "category_folder": "crosswalks",
+      "source_path": "Campaign In A Box Data\\Campaign In A Box\\mprec_srprec_097_g24.csv"
+    },
+    {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\precinct_shapes\\SRPREC_GeoJSON\\srprec_097_g24_v01.geojson",
+      "filename": "srprec_097_g24_v01.geojson",
+      "size_bytes": 16379431,
+      "sha256": "f7508b61042e9c2b34055fbff8fcd2172d19e42fda6d0f47e0f4363c71ed6050",
+      "category_label": "SRPREC GeoJSON",
+      "category_folder": "precinct_shapes/SRPREC_GeoJSON",
+      "source_path": "Campaign In A Box Data\\Campaign In A Box\\srprec_097_g24_v01.geojson"
+    },
+    {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\precinct_shapes\\SRPREC_GeoPackage\\srprec_097_g24_v01.gpkg",
+      "filename": "srprec_097_g24_v01.gpkg",
+      "size_bytes": 6393856,
+      "sha256": "d47faf49096ff630baa16db15059feceea4e41a7f17ffe3a516e3904f74f071f",
+      "category_label": "SRPREC GeoPackage",
+      "category_folder": "precinct_shapes/SRPREC_GeoPackage",
+      "source_path": "Campaign In A Box Data\\Campaign In A Box\\srprec_097_g24_v01.gpkg"
+    },
+    {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\precinct_shapes\\SRPREC_Shapefile\\srprec_097_g24_v01.shp",
+      "filename": "srprec_097_g24_v01.shp",
+      "size_bytes": 5861236,
+      "sha256": "92e2f73ffb183599382aecd3d3c7926a5130fe9806d633e0625923b53a4964e3",
+      "category_label": "SRPREC Shapefile",
+      "category_folder": "precinct_shapes/SRPREC_Shapefile",
+      "source_path": "Campaign In A Box Data\\Campaign In A Box\\srprec_097_g24_v01.shp"
+    },
+    {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\precinct_shapes\\SRPREC_Shapefile\\srprec_097_g24_v01.prj",
+      "filename": "srprec_097_g24_v01.prj",
+      "size_bytes": 167,
+      "sha256": "84cf5b9a3c1a444f83ac30ff76f8c5035990223027ba69b2f4d628388adcbd65",
+      "category_label": "SRPREC Shapefile",
+      "category_folder": "precinct_shapes/SRPREC_Shapefile",
+      "source_path": "Campaign In A Box Data\\Campaign In A Box\\srprec_097_g24_v01.prj"
+    },
+    {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\precinct_shapes\\SRPREC_Shapefile\\srprec_097_g24_v01.shx",
+      "filename": "srprec_097_g24_v01.shx",
+      "size_bytes": 4140,
+      "sha256": "ebb319312b5706efb573075d83b12006eeba6cfd1c0a120049993bff25396c6a",
+      "category_label": "SRPREC Shapefile",
+      "category_folder": "precinct_shapes/SRPREC_Shapefile",
+      "source_path": "Campaign In A Box Data\\Campaign In A Box\\srprec_097_g24_v01.shx"
+    },
+    {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\precinct_shapes\\SRPREC_Shapefile\\srprec_097_g24_v01.dbf",
+      "filename": "srprec_097_g24_v01.dbf",
+      "size_bytes": 10198,
+      "sha256": "5b5b6ccc424e8c769faf8292ad51683b961d5e3ac450d2b76e9f0707c852702b",
+      "category_label": "SRPREC Shapefile",
+      "category_folder": "precinct_shapes/SRPREC_Shapefile",
+      "source_path": "Campaign In A Box Data\\Campaign In A Box\\srprec_097_g24_v01.dbf"
+    },
+    {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\precinct_shapes\\SRPREC_Shapefile\\srprec_097_g24_v01.cpg",
+      "filename": "srprec_097_g24_v01.cpg",
+      "size_bytes": 4,
+      "sha256": "788181d3e6c41241e68b21d3b3826e3d2c4800ba621dff4e8b0f1bae3be798a9",
+      "category_label": "SRPREC Shapefile",
+      "category_folder": "precinct_shapes/SRPREC_Shapefile",
+      "source_path": "Campaign In A Box Data\\Campaign In A Box\\srprec_097_g24_v01.cpg"
+    }
+  ]
+}
