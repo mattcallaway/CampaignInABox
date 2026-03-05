@@ -1,6 +1,6 @@
 meta:
-  last_updated: '2026-03-05T08:36:01.649Z'
-  last_run_id: 2026-03-05__003601__b03e3511__msi
+  last_updated: '2026-03-05T08:41:10.965Z'
+  last_run_id: 2026-03-05__004110__0d822f43__msi
 jurisdictions:
   CA/SAMPLE_COUNTY:
     last_run_id: 20260304_224546_3d3ba634
@@ -51,15 +51,18 @@ jurisdictions:
       - kepler_geojson
       expected_path: C:\Users\Mathew C\Campaign In A Box\Campaign in a box Data\CA\SAMPLE_COUNTY\MPREC_GeoJSON
   CA/Sonoma:
-    last_run_id: 2026-03-05__003601__b03e3511__msi
+    last_run_id: 2026-03-05__004110__0d822f43__msi
     needs:
-    - category: detail.xlsx
+    - category: geopandas_library
       status: missing
       blocks:
-      - parse_contest
-      - allocate_votes
-      - export_model
-      expected_path: C:\Users\Mathew C\Campaign In A Box\votes\2024\CA\Sonoma\nov2024_general\detail.xlsx
+      - geometry_load
+      - kepler_export
+    - category: geometry_for_kepler
+      status: blocked
+      blocks:
+      - kepler_geojson
+      expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\MPREC_GeoJSON
 runs:
 - run_id: 20260304_224546_3d3ba634
   timestamp: '2026-03-05T06:45:46.799Z'
@@ -105,3 +108,14 @@ runs:
     validation_report: C:\Users\Mathew C\Campaign In A Box\reports\validation\2026-03-05__003601__b03e3511__msi__validation_report.md
     qa_report: C:\Users\Mathew C\Campaign In A Box\reports\qa\2026-03-05__003601__b03e3511__msi__qa_sanity_checks.md
     needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-05__003601__b03e3511__msi__needs_snapshot.yaml
+- run_id: 2026-03-05__004110__0d822f43__msi
+  timestamp: '2026-03-05T08:41:10.965Z'
+  state: CA
+  county: Sonoma
+  status: success
+  artifacts:
+    run_log: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-05__004110__0d822f43__msi__run.log
+    pathway_json: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-05__004110__0d822f43__msi__pathway.json
+    validation_report: C:\Users\Mathew C\Campaign In A Box\reports\validation\2026-03-05__004110__0d822f43__msi__validation_report.md
+    qa_report: C:\Users\Mathew C\Campaign In A Box\reports\qa\2026-03-05__004110__0d822f43__msi__qa_sanity_checks.md
+    needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-05__004110__0d822f43__msi__needs_snapshot.yaml
