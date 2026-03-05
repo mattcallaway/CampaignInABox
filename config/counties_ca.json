@@ -1,0 +1,651 @@
+{
+  "state": "CA",
+  "version": "1.0",
+  "generated_at": "2026-03-04",
+  "counties": [
+    {
+      "county_name": "Alameda",
+      "county_slug": "alameda",
+      "county_fips": "001",
+      "aliases": [
+        "alameda county",
+        "county of alameda",
+        "001",
+        "c001"
+      ]
+    },
+    {
+      "county_name": "Alpine",
+      "county_slug": "alpine",
+      "county_fips": "003",
+      "aliases": [
+        "alpine county",
+        "county of alpine",
+        "003",
+        "c003"
+      ]
+    },
+    {
+      "county_name": "Amador",
+      "county_slug": "amador",
+      "county_fips": "005",
+      "aliases": [
+        "amador county",
+        "county of amador",
+        "005",
+        "c005"
+      ]
+    },
+    {
+      "county_name": "Butte",
+      "county_slug": "butte",
+      "county_fips": "007",
+      "aliases": [
+        "butte county",
+        "county of butte",
+        "007",
+        "c007"
+      ]
+    },
+    {
+      "county_name": "Calaveras",
+      "county_slug": "calaveras",
+      "county_fips": "009",
+      "aliases": [
+        "calaveras county",
+        "county of calaveras",
+        "009",
+        "c009"
+      ]
+    },
+    {
+      "county_name": "Colusa",
+      "county_slug": "colusa",
+      "county_fips": "011",
+      "aliases": [
+        "colusa county",
+        "county of colusa",
+        "011",
+        "c011"
+      ]
+    },
+    {
+      "county_name": "Contra Costa",
+      "county_slug": "contra_costa",
+      "county_fips": "013",
+      "aliases": [
+        "contra costa county",
+        "county of contra costa",
+        "013",
+        "c013"
+      ]
+    },
+    {
+      "county_name": "Del Norte",
+      "county_slug": "del_norte",
+      "county_fips": "015",
+      "aliases": [
+        "del norte county",
+        "county of del norte",
+        "015",
+        "c015"
+      ]
+    },
+    {
+      "county_name": "El Dorado",
+      "county_slug": "el_dorado",
+      "county_fips": "017",
+      "aliases": [
+        "el dorado county",
+        "county of el dorado",
+        "017",
+        "c017"
+      ]
+    },
+    {
+      "county_name": "Fresno",
+      "county_slug": "fresno",
+      "county_fips": "019",
+      "aliases": [
+        "fresno county",
+        "county of fresno",
+        "019",
+        "c019"
+      ]
+    },
+    {
+      "county_name": "Glenn",
+      "county_slug": "glenn",
+      "county_fips": "021",
+      "aliases": [
+        "glenn county",
+        "county of glenn",
+        "021",
+        "c021"
+      ]
+    },
+    {
+      "county_name": "Humboldt",
+      "county_slug": "humboldt",
+      "county_fips": "023",
+      "aliases": [
+        "humboldt county",
+        "county of humboldt",
+        "023",
+        "c023"
+      ]
+    },
+    {
+      "county_name": "Imperial",
+      "county_slug": "imperial",
+      "county_fips": "025",
+      "aliases": [
+        "imperial county",
+        "county of imperial",
+        "025",
+        "c025"
+      ]
+    },
+    {
+      "county_name": "Inyo",
+      "county_slug": "inyo",
+      "county_fips": "027",
+      "aliases": [
+        "inyo county",
+        "county of inyo",
+        "027",
+        "c027"
+      ]
+    },
+    {
+      "county_name": "Kern",
+      "county_slug": "kern",
+      "county_fips": "029",
+      "aliases": [
+        "kern county",
+        "county of kern",
+        "029",
+        "c029"
+      ]
+    },
+    {
+      "county_name": "Kings",
+      "county_slug": "kings",
+      "county_fips": "031",
+      "aliases": [
+        "kings county",
+        "county of kings",
+        "031",
+        "c031"
+      ]
+    },
+    {
+      "county_name": "Lake",
+      "county_slug": "lake",
+      "county_fips": "033",
+      "aliases": [
+        "lake county",
+        "county of lake",
+        "033",
+        "c033"
+      ]
+    },
+    {
+      "county_name": "Lassen",
+      "county_slug": "lassen",
+      "county_fips": "035",
+      "aliases": [
+        "lassen county",
+        "county of lassen",
+        "035",
+        "c035"
+      ]
+    },
+    {
+      "county_name": "Los Angeles",
+      "county_slug": "los_angeles",
+      "county_fips": "037",
+      "aliases": [
+        "los angeles county",
+        "county of los angeles",
+        "037",
+        "c037",
+        "la",
+        "l.a.",
+        "la county"
+      ]
+    },
+    {
+      "county_name": "Madera",
+      "county_slug": "madera",
+      "county_fips": "039",
+      "aliases": [
+        "madera county",
+        "county of madera",
+        "039",
+        "c039"
+      ]
+    },
+    {
+      "county_name": "Marin",
+      "county_slug": "marin",
+      "county_fips": "041",
+      "aliases": [
+        "marin county",
+        "county of marin",
+        "041",
+        "c041"
+      ]
+    },
+    {
+      "county_name": "Mariposa",
+      "county_slug": "mariposa",
+      "county_fips": "043",
+      "aliases": [
+        "mariposa county",
+        "county of mariposa",
+        "043",
+        "c043"
+      ]
+    },
+    {
+      "county_name": "Mendocino",
+      "county_slug": "mendocino",
+      "county_fips": "045",
+      "aliases": [
+        "mendocino county",
+        "county of mendocino",
+        "045",
+        "c045"
+      ]
+    },
+    {
+      "county_name": "Merced",
+      "county_slug": "merced",
+      "county_fips": "047",
+      "aliases": [
+        "merced county",
+        "county of merced",
+        "047",
+        "c047"
+      ]
+    },
+    {
+      "county_name": "Modoc",
+      "county_slug": "modoc",
+      "county_fips": "049",
+      "aliases": [
+        "modoc county",
+        "county of modoc",
+        "049",
+        "c049"
+      ]
+    },
+    {
+      "county_name": "Mono",
+      "county_slug": "mono",
+      "county_fips": "051",
+      "aliases": [
+        "mono county",
+        "county of mono",
+        "051",
+        "c051"
+      ]
+    },
+    {
+      "county_name": "Monterey",
+      "county_slug": "monterey",
+      "county_fips": "053",
+      "aliases": [
+        "monterey county",
+        "county of monterey",
+        "053",
+        "c053"
+      ]
+    },
+    {
+      "county_name": "Napa",
+      "county_slug": "napa",
+      "county_fips": "055",
+      "aliases": [
+        "napa county",
+        "county of napa",
+        "055",
+        "c055"
+      ]
+    },
+    {
+      "county_name": "Nevada",
+      "county_slug": "nevada",
+      "county_fips": "057",
+      "aliases": [
+        "nevada county",
+        "county of nevada",
+        "057",
+        "c057"
+      ]
+    },
+    {
+      "county_name": "Orange",
+      "county_slug": "orange",
+      "county_fips": "059",
+      "aliases": [
+        "orange county",
+        "county of orange",
+        "059",
+        "c059"
+      ]
+    },
+    {
+      "county_name": "Placer",
+      "county_slug": "placer",
+      "county_fips": "061",
+      "aliases": [
+        "placer county",
+        "county of placer",
+        "061",
+        "c061"
+      ]
+    },
+    {
+      "county_name": "Plumas",
+      "county_slug": "plumas",
+      "county_fips": "063",
+      "aliases": [
+        "plumas county",
+        "county of plumas",
+        "063",
+        "c063"
+      ]
+    },
+    {
+      "county_name": "Riverside",
+      "county_slug": "riverside",
+      "county_fips": "065",
+      "aliases": [
+        "riverside county",
+        "county of riverside",
+        "065",
+        "c065"
+      ]
+    },
+    {
+      "county_name": "Sacramento",
+      "county_slug": "sacramento",
+      "county_fips": "067",
+      "aliases": [
+        "sacramento county",
+        "county of sacramento",
+        "067",
+        "c067"
+      ]
+    },
+    {
+      "county_name": "San Benito",
+      "county_slug": "san_benito",
+      "county_fips": "069",
+      "aliases": [
+        "san benito county",
+        "county of san benito",
+        "069",
+        "c069"
+      ]
+    },
+    {
+      "county_name": "San Bernardino",
+      "county_slug": "san_bernardino",
+      "county_fips": "071",
+      "aliases": [
+        "san bernardino county",
+        "county of san bernardino",
+        "071",
+        "c071"
+      ]
+    },
+    {
+      "county_name": "San Diego",
+      "county_slug": "san_diego",
+      "county_fips": "073",
+      "aliases": [
+        "san diego county",
+        "county of san diego",
+        "073",
+        "c073"
+      ]
+    },
+    {
+      "county_name": "San Francisco",
+      "county_slug": "san_francisco",
+      "county_fips": "075",
+      "aliases": [
+        "san francisco county",
+        "county of san francisco",
+        "075",
+        "c075",
+        "sf",
+        "s.f.",
+        "sf county"
+      ]
+    },
+    {
+      "county_name": "San Joaquin",
+      "county_slug": "san_joaquin",
+      "county_fips": "077",
+      "aliases": [
+        "san joaquin county",
+        "county of san joaquin",
+        "077",
+        "c077"
+      ]
+    },
+    {
+      "county_name": "San Luis Obispo",
+      "county_slug": "san_luis_obispo",
+      "county_fips": "079",
+      "aliases": [
+        "san luis obispo county",
+        "county of san luis obispo",
+        "079",
+        "c079"
+      ]
+    },
+    {
+      "county_name": "San Mateo",
+      "county_slug": "san_mateo",
+      "county_fips": "081",
+      "aliases": [
+        "san mateo county",
+        "county of san mateo",
+        "081",
+        "c081"
+      ]
+    },
+    {
+      "county_name": "Santa Barbara",
+      "county_slug": "santa_barbara",
+      "county_fips": "083",
+      "aliases": [
+        "santa barbara county",
+        "county of santa barbara",
+        "083",
+        "c083"
+      ]
+    },
+    {
+      "county_name": "Santa Clara",
+      "county_slug": "santa_clara",
+      "county_fips": "085",
+      "aliases": [
+        "santa clara county",
+        "county of santa clara",
+        "085",
+        "c085"
+      ]
+    },
+    {
+      "county_name": "Santa Cruz",
+      "county_slug": "santa_cruz",
+      "county_fips": "087",
+      "aliases": [
+        "santa cruz county",
+        "county of santa cruz",
+        "087",
+        "c087"
+      ]
+    },
+    {
+      "county_name": "Shasta",
+      "county_slug": "shasta",
+      "county_fips": "089",
+      "aliases": [
+        "shasta county",
+        "county of shasta",
+        "089",
+        "c089"
+      ]
+    },
+    {
+      "county_name": "Sierra",
+      "county_slug": "sierra",
+      "county_fips": "091",
+      "aliases": [
+        "sierra county",
+        "county of sierra",
+        "091",
+        "c091"
+      ]
+    },
+    {
+      "county_name": "Siskiyou",
+      "county_slug": "siskiyou",
+      "county_fips": "093",
+      "aliases": [
+        "siskiyou county",
+        "county of siskiyou",
+        "093",
+        "c093"
+      ]
+    },
+    {
+      "county_name": "Solano",
+      "county_slug": "solano",
+      "county_fips": "095",
+      "aliases": [
+        "solano county",
+        "county of solano",
+        "095",
+        "c095"
+      ]
+    },
+    {
+      "county_name": "Sonoma",
+      "county_slug": "sonoma",
+      "county_fips": "097",
+      "aliases": [
+        "sonoma county",
+        "county of sonoma",
+        "097",
+        "c097"
+      ]
+    },
+    {
+      "county_name": "Stanislaus",
+      "county_slug": "stanislaus",
+      "county_fips": "099",
+      "aliases": [
+        "stanislaus county",
+        "county of stanislaus",
+        "099",
+        "c099"
+      ]
+    },
+    {
+      "county_name": "Sutter",
+      "county_slug": "sutter",
+      "county_fips": "101",
+      "aliases": [
+        "sutter county",
+        "county of sutter",
+        "101",
+        "c101"
+      ]
+    },
+    {
+      "county_name": "Tehama",
+      "county_slug": "tehama",
+      "county_fips": "103",
+      "aliases": [
+        "tehama county",
+        "county of tehama",
+        "103",
+        "c103"
+      ]
+    },
+    {
+      "county_name": "Trinity",
+      "county_slug": "trinity",
+      "county_fips": "105",
+      "aliases": [
+        "trinity county",
+        "county of trinity",
+        "105",
+        "c105"
+      ]
+    },
+    {
+      "county_name": "Tulare",
+      "county_slug": "tulare",
+      "county_fips": "107",
+      "aliases": [
+        "tulare county",
+        "county of tulare",
+        "107",
+        "c107"
+      ]
+    },
+    {
+      "county_name": "Tuolumne",
+      "county_slug": "tuolumne",
+      "county_fips": "109",
+      "aliases": [
+        "tuolumne county",
+        "county of tuolumne",
+        "109",
+        "c109"
+      ]
+    },
+    {
+      "county_name": "Ventura",
+      "county_slug": "ventura",
+      "county_fips": "111",
+      "aliases": [
+        "ventura county",
+        "county of ventura",
+        "111",
+        "c111"
+      ]
+    },
+    {
+      "county_name": "Yolo",
+      "county_slug": "yolo",
+      "county_fips": "113",
+      "aliases": [
+        "yolo county",
+        "county of yolo",
+        "113",
+        "c113"
+      ]
+    },
+    {
+      "county_name": "Yuba",
+      "county_slug": "yuba",
+      "county_fips": "115",
+      "aliases": [
+        "yuba county",
+        "county of yuba",
+        "115",
+        "c115"
+      ]
+    }
+  ]
+}

@@ -261,7 +261,16 @@ class RunLogger:
     ):
         """Write all log artifacts and refresh logs/latest/."""
         # Derive canonical naming for serialization
-        county_name, self._county_slug, self._county_fips = normalize_county(county)
+        # Derive canonical naming for serialization
+        from scripts.lib.county_registry import load_county_registry, normalize_county_input
+        reg = load_county_registry()
+        c_record = normalize_county_input(county)
+        self._county_name = c_record["county_name"]
+        self._county_slug = c_record["county_slug"]
+        self._county_fips = c_record["county_fips"]
+        self._registry_version = reg.version
+        
+        from scripts.lib.naming import generate_contest_id
         self._contest_id = generate_contest_id(str(datetime.now().year), state, self._county_slug, contest_slug) if contest_slug else None
         elapsed = self._elapsed()
         self._emit(
@@ -293,9 +302,11 @@ class RunLogger:
             "run_status": run_status,
             "total_elapsed_s": elapsed_s,
             "started_at": self.start_time.isoformat(),
+            "county_name": getattr(self, "_county_name", "N/A"),
             "county_fips": getattr(self, "_county_fips", "N/A"),
             "county_slug": getattr(self, "_county_slug", "N/A"),
             "contest_id": getattr(self, "_contest_id", "N/A"),
+            "registry_version": getattr(self, "_registry_version", "N/A"),
             "input_hashes": self._input_hashes,
             "output_hashes": self._output_hashes,
             "coverage": self._coverage,

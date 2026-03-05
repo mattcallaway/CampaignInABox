@@ -161,7 +161,8 @@ with st.sidebar:
             "🕰️ Version Browser",
             "▶️ Run Pipeline",
             "📊 Outputs Browser", 
-            "📋 Logs & NEEDS"
+            "📋 Logs & NEEDS",
+            "📜 County Registry"
         ],
         label_visibility="collapsed",
     )
@@ -194,27 +195,46 @@ if page == "🏛️ Jurisdiction":
     col1, col2 = st.columns([1, 2])
     with col1:
         st.subheader("Create / Select County")
+        
+        from scripts.lib.county_registry import load_county_registry
+        reg = load_county_registry()
+        all_counties_fmt = [f"{c['county_name']} ({c['county_fips']})" for c in reg.get_all()]
+        
         existing = discover_counties()
-        county_input = st.text_input(
-            "County name", placeholder="e.g. Sonoma",
-            help="Type any CA county name — capitalization matters for folder path",
+        # Prepend visually which ones are initialized
+        
+        county_sel = st.selectbox(
+            "Select California County", 
+            ["— select —"] + all_counties_fmt,
+            help="Select any of the 58 canonical CA counties."
         )
+        
         if existing:
-            selected_from_list = st.selectbox(
-                "Or pick an initialized county", ["— select —"] + existing
+            selected_from_exists = st.selectbox(
+                "Or quickly pick an initialized county", ["— select —"] + [f"{e} (initialized)" for e in existing]
             )
-            if selected_from_list != "— select —" and not county_input:
-                county_input = selected_from_list
+            if selected_from_exists != "— select —" and county_sel == "— select —":
+                county_sel = selected_from_exists.replace(" (initialized)", "")
+                # the input gets matched below via normalization anyway
+
+        county_input = ""
+        if county_sel != "— select —":
+            county_input = county_sel.split(" (")[0]
 
         state = "CA"
 
         if county_input:
-            if st.button("✅ Create / Initialize County", type="primary", use_container_width=True):
+            if st.button("✅ Initialize / Verify County", type="primary", use_container_width=True):
+                from scripts.lib.county_registry import normalize_county_input
                 try:
-                    name, slug, fips = normalize_county(county_input)
+                    c_record = normalize_county_input(county_input)
+                    name = c_record['county_name']
+                    slug = c_record['county_slug']
+                    fips = c_record['county_fips']
+                    
                     with st.spinner(f"Initializing {name} ({fips})…"):
                         geo_dir = initialize_county(name, state)
-                    st.success(f"✅ County **{name}** initialized at `{geo_dir}`\n\nCanonical Slug: `{slug}` | FIPS: `{fips}`")
+                    st.success(f"✅ County **{name}** verified at `{geo_dir}`\n\nCanonical Slug: `{slug}` | FIPS: `{fips}`")
                     time.sleep(1.5)
                     st.rerun()
                 except ValueError as e:
@@ -325,32 +345,50 @@ elif page == "📤 Upload New Data":
             exts = {Path(f.name).suffix.lower() for f in uploaded}
             st.write(f"**{len(uploaded)} file(s) selected:** {', '.join(f.name for f in uploaded)}")
 
-            if st.button("💾 Save to County Geography", type="primary", use_container_width=True):
-                # Initialize county if not exist
-                initialize_county(county)
-                with st.spinner("Saving files…"):
-                    saved, warnings = save_geography_files(uploaded, category, county)
+            from app.lib.upload_handler import detect_county_from_filenames
+            detected_county, method = detect_county_from_filenames([f.name for f in uploaded])
+            
+            target_county = county
+            if detected_county and detected_county != county:
+                st.info(f"🔍 **Auto-detected county:** `{detected_county}` (via {method}).")
+                target_county = detected_county
 
-                if warnings:
-                    for w in warnings:
-                        st.warning(f"⚠️ {w}")
+            if not target_county:
+                st.error("❌ Need a county to proceed. Please select/type one above, or ensure your filenames contain FIPS codes (e.g. c097_).")
+            else:
+                from scripts.lib.county_registry import normalize_county_input
+                try:
+                    c_record = normalize_county_input(target_county)
+                    final_county = c_record['county_name']
+                    
+                    if st.button(f"💾 Save to {final_county} Geography", type="primary", use_container_width=True):
+                        # Initialize county if not exist
+                        initialize_county(final_county)
+                        with st.spinner("Saving files…"):
+                            saved, warnings = save_geography_files(uploaded, category, final_county, detection_method=method)
 
-                st.success(f"✅ Saved {len(saved)} file(s) to `{category}` for **{county}**")
-                for rec in saved:
-                    st.markdown(
-                        f"  • `{rec['filename']}` — {rec['size_bytes']:,} bytes — "
-                        f"sha256:`{rec['sha256'][:12]}…`"
-                    )
+                        if warnings:
+                            for w in warnings:
+                                st.warning(f"⚠️ {w}")
 
-                # Refresh status
-                st.subheader("Updated Geography Status")
-                status = get_geography_status(county)
-                for label in ALL_CATEGORY_LABELS:
-                    ok = status[label]
-                    st.markdown(
-                        f"{'✅' if ok else '❌'} **{label}**",
-                        unsafe_allow_html=False,
-                    )
+                        st.success(f"✅ Saved {len(saved)} file(s) to `{category}` for **{final_county}**")
+                        for rec in saved:
+                            st.markdown(
+                                f"  • `{rec['filename']}` — {rec['size_bytes']:,} bytes — "
+                                f"sha256:`{rec['sha256'][:12]}…`"
+                            )
+
+                        # Refresh status
+                        st.subheader("Updated Geography Status")
+                        status = get_geography_status(final_county)
+                        for label in ALL_CATEGORY_LABELS:
+                            ok = status[label]
+                            st.markdown(
+                                f"{'✅' if ok else '❌'} **{label}**",
+                                unsafe_allow_html=False,
+                            )
+                except ValueError as e:
+                    st.error(f"❌ {e}")
 
     # ── Tab B: Election Results ───────────────────────────────────────────────
     with tab_b:
@@ -1052,3 +1090,39 @@ elif page == "📋 Logs & NEEDS":
                     # Quick log tail
                     tail = "\n".join(log_content.splitlines()[-15:]) if log_content else ""
                     st.code(tail, language=None)
+
+# ═════════════════════════════════════════════════════════════════════════════
+# PAGE 7: COUNTY REGISTRY
+# ═════════════════════════════════════════════════════════════════════════════
+elif page == "📜 County Registry":
+    st.markdown("""
+    <div class='ciab-header'>
+        <h1>📜 California County Registry</h1>
+        <p>Canonical Single Source of Truth for CA Counties</p>
+    </div>""", unsafe_allow_html=True)
+    
+    from scripts.lib.county_registry import load_county_registry
+    reg = load_county_registry()
+    counties = reg.get_all()
+    
+    st.markdown(f"**Registry Version:** `{reg.version}`  |  **Total Counties:** `{len(counties)}`")
+    
+    import pandas as pd
+    df = pd.DataFrame([{
+        "FIPS": c["county_fips"],
+        "Name": c["county_name"],
+        "Slug": c["county_slug"],
+        "Aliases": ", ".join(c["aliases"])
+    } for c in counties])
+    
+    st.dataframe(
+        df,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "FIPS": st.column_config.TextColumn("FIPS", width="small"),
+            "Name": st.column_config.TextColumn("Name (Title Case)", width="medium"),
+            "Slug": st.column_config.TextColumn("Canonical Slug", width="medium"),
+            "Aliases": st.column_config.TextColumn("Recognized Aliases", width="large"),
+        }
+    )

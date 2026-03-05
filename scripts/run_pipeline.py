@@ -511,9 +511,17 @@ def main():
         sys.exit(0)
 
     try:
+        from scripts.lib.county_registry import normalize_county_input
+        c_record = normalize_county_input(args.county)
+        resolved_county = c_record["county_name"]
+    except ValueError as e:
+        print(f"\n[CLI ERROR] {e}", file=sys.stderr)
+        sys.exit(1)
+
+    try:
         run_pipeline(
             state=args.state,
-            county=args.county,
+            county=resolved_county,
             year=args.year,
             contest_slug=args.contest_slug,
             detail_path_override=args.detail_path,

@@ -9,9 +9,11 @@ import hashlib
 import json
 import shutil
 from datetime import datetime, timezone
+import re
 from pathlib import Path
 
 from scripts.lib.naming import normalize_contest_slug, generate_contest_id
+from scripts.lib.county_registry import get_county_by_fips
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DATA_ROOT = BASE_DIR / "data"
@@ -36,6 +38,25 @@ CATEGORY_TO_FOLDER = {
     "SRPREC to CITY":            "crosswalks",
 }
 
+def detect_county_from_filenames(filenames: list[str]) -> tuple[str | None, str]:
+    """
+    Looks for pattern c###_ or _###_ where ### is a 3-digit FIPS code.
+    Returns (Canonical County Name, detection_method_string).
+    """
+    for fname in filenames:
+        # Match 'c' followed by 3 digits then underscore/dot
+        match = re.search(r'(?:^|[^a-zA-Z0-9])c(\d{3})(?:_|\.)', fname, re.IGNORECASE)
+        if not match:
+            # Match underscore followed by 3 digits then underscore/dot
+            match = re.search(r'_(\d{3})(?:_|\.)', fname)
+            
+        if match:
+            fips = match.group(1)
+            record = get_county_by_fips(fips)
+            if record:
+                return record["county_name"], f"regex match on {fname} for FIPS {fips}"
+    return None, "explicit selection"
+
 
 def _sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
@@ -59,6 +80,7 @@ def save_geography_files(
     category: str,
     county: str,
     state: str = "CA",
+    detection_method: str = "explicit selection",
 ) -> tuple[list[dict], list[str]]:
     """
     Save uploaded geography/crosswalk files to correct folder.
@@ -84,6 +106,11 @@ def save_geography_files(
                     missing.append(req_ext)
             if missing:
                 warnings.append(f"Shapefile bundle incomplete for '{shp.name}': missing {missing}")
+                
+    # Log the registry resolution and detection method
+    from scripts.lib.county_registry import normalize_county_input
+    c_record = normalize_county_input(county)
+    print(f"[INGESTION] County detected via {detection_method}. Resolved: {c_record}")
 
     # Generate a single timestamp for this batch upload
     from datetime import datetime, timezone

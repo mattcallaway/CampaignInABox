@@ -8,43 +8,15 @@ Enforces normalization rules to prevent drift, duplication, and ambiguity.
 import re
 from pathlib import Path
 
-# CA County FIPS lookup table (3 digits)
-CA_COUNTY_FIPS = {
-    "Alameda": "001", "Alpine": "003", "Amador": "005", "Butte": "007", "Calaveras": "009", 
-    "Colusa": "011", "Contra Costa": "013", "Del Norte": "015", "El Dorado": "017", "Fresno": "019", 
-    "Glenn": "021", "Humboldt": "023", "Imperial": "025", "Inyo": "027", "Kern": "029", 
-    "Kings": "031", "Lake": "033", "Lassen": "035", "Los Angeles": "037", "Madera": "039", 
-    "Marin": "041", "Mariposa": "043", "Mendocino": "045", "Merced": "047", "Modoc": "049", 
-    "Mono": "051", "Monterey": "053", "Napa": "055", "Nevada": "057", "Orange": "059", 
-    "Placer": "061", "Plumas": "063", "Riverside": "065", "Sacramento": "067", "San Benito": "069", 
-    "San Bernardino": "071", "San Diego": "073", "San Francisco": "075", "San Joaquin": "077", 
-    "San Luis Obispo": "079", "San Mateo": "081", "Santa Barbara": "083", "Santa Clara": "085", 
-    "Santa Cruz": "087", "Shasta": "089", "Sierra": "091", "Siskiyou": "093", "Solano": "095", 
-    "Sonoma": "097", "Stanislaus": "099", "Sutter": "101", "Tehama": "103", "Trinity": "105", 
-    "Tulare": "107", "Tuolumne": "109", "Ventura": "111", "Yolo": "113", "Yuba": "115"
-}
+from .county_registry import normalize_county_input
 
 def normalize_county(name: str) -> tuple[str, str, str]:
     """
     Given a county name string, returns Title Case name, slug, and FIPS.
     Raises ValueError if county is not recognized as a CA county.
     """
-    norm = name.strip().title()
-    
-    # special cases
-    if norm.lower() == "la" or norm.lower() == "l.a.":
-        norm = "Los Angeles"
-    if norm.lower() == "sf" or norm.lower() == "s.f.":
-        norm = "San Francisco"
-        
-    for k in CA_COUNTY_FIPS.keys():
-        if k.lower() == norm.lower():
-            true_name = k
-            slug = k.lower().replace(" ", "_")
-            fips = CA_COUNTY_FIPS[k]
-            return true_name, slug, fips
-            
-    raise ValueError(f"Unrecognized California county: '{name}'")
+    record = normalize_county_input(name)
+    return record["county_name"], record["county_slug"], record["county_fips"]
 
 
 def normalize_contest_slug(slug: str) -> str:
