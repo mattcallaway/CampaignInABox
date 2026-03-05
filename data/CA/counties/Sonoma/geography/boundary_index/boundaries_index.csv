@@ -1,1 +1,1 @@
-boundary_type,jurisdiction_name,level,file_path,id_field_name,name_field_name
+boundary_type,jurisdiction_name,jurisdiction_slug,level,file_path,id_field_name,name_field_name,source_agency,source_date,version

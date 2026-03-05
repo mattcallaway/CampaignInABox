@@ -1,5 +1,6 @@
 {
   "contest_slug": "nov2024_general",
+  "contest_id": "2024_CA_sonoma_nov2024_general",
   "contest_name": "unknown",
   "contest_type": "ballot_measure",
   "jurisdiction_scope": "unknown",
@@ -7,10 +8,9 @@
   "state": "CA",
   "county": "Sonoma",
   "source_notes": "",
-  "last_updated": "2026-03-05T07:04:32.703764+00:00",
+  "last_updated": "2026-03-05T08:41:10.901117+00:00",
   "sheets_detected": [
-    "Measure A",
-    "DA Race"
+    "Sheet1"
   ],
   "candidates": [
     "Mail JOHNSON",
@@ -24,6 +24,6 @@
     "RAMIREZ"
   ],
   "measures": [
-    "Measure A"
+    "Sheet1"
   ]
 }
