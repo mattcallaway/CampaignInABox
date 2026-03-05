@@ -27,6 +27,9 @@ INDEX_COLUMNS = [
     "file_path",
     "id_field_name",
     "name_field_name",
+    "source_agency",
+    "source_date",
+    "version",
 ]
 
 # ── Membership table columns ──────────────────────────────────────────────────
@@ -104,6 +107,9 @@ def scan_boundary_files(data_root: Path, county: str) -> list[dict]:
                     "file_path":        str(f),
                     "id_field_name":    "",   # to be filled after inspection
                     "name_field_name":  "",
+                    "source_agency":    "",
+                    "source_date":      "",
+                    "version":          "",
                 })
     return rows
 
@@ -111,14 +117,38 @@ def scan_boundary_files(data_root: Path, county: str) -> list[dict]:
 def refresh_boundary_index(data_root: Path, county: str, log=None) -> Path:
     """
     Scan boundary folders, update/write boundaries_index.csv.
+    Preserves custom metadata (jurisdiction_slug, agency, etc.) for existing files.
     Returns path written.
     """
     def _log(msg, level="INFO"):
         if log:
             getattr(log, level.lower(), log.info)(msg)
 
-    rows = scan_boundary_files(data_root, county)
     index_path = get_boundary_index_path(data_root, county)
+    
+    # Load existing to preserve manual overrides and metadata
+    existing_map = {}
+    if index_path.exists():
+        with open(index_path, "r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for r in reader:
+                existing_map[r.get("file_path", "")] = r
+
+    rows = scan_boundary_files(data_root, county)
+    
+    # Merge existing metadata into scanned rows
+    for row in rows:
+        fp = row["file_path"]
+        if fp in existing_map:
+            old = existing_map[fp]
+            row["jurisdiction_name"] = old.get("jurisdiction_name", row["jurisdiction_name"])
+            row["jurisdiction_slug"] = old.get("jurisdiction_slug", row["jurisdiction_slug"])
+            row["id_field_name"]     = old.get("id_field_name", row["id_field_name"])
+            row["name_field_name"]   = old.get("name_field_name", row["name_field_name"])
+            row["source_agency"]     = old.get("source_agency", row["source_agency"])
+            row["source_date"]       = old.get("source_date", row["source_date"])
+            row["version"]           = old.get("version", row["version"])
+
     index_path.parent.mkdir(parents=True, exist_ok=True)
 
     with open(index_path, "w", newline="", encoding="utf-8") as f:

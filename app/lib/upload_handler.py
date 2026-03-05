@@ -160,13 +160,131 @@ def save_geography_files(
         )
 
     # Refresh manifest
-    _update_geo_manifest(county, state, saved)
+    from app.lib.county_manager import update_jurisdiction_manifest
+    update_jurisdiction_manifest(county, state)
 
     # Mark stale
     if saved:
         mark_stale(context_key, f"Geography replaced: {category}", domains_stale)
 
     return saved, warnings
+
+
+def save_city_boundary_files(
+    uploaded_files: list,
+    county: str,
+    city_name: str,
+    city_slug: str,
+    level: str,
+    state: str = "CA",
+) -> tuple[list[dict], list[str]]:
+    """
+    Save city council boundaries.
+    1. Keeps original files in data/CA/counties/../boundaries/city_council/
+    2. Writes a canonical derived copy to derived/normalized_boundaries/city_council/...geojson
+    3. Updates boundary_index.csv with explicit city name and slug.
+    """
+    category = "City Council Boundaries"
+    dest_dir = DATA_ROOT / state / "counties" / county / "geography" / "boundaries" / "city_council"
+    dest_dir.mkdir(parents=True, exist_ok=True)
+    
+    saved: list[dict] = []
+    warnings: list[str] = []
+    
+    # 1) Save raw files
+    shp_path = None
+    geojson_path = None
+    
+    from datetime import datetime, timezone
+    now_ts = datetime.now(timezone.utc).strftime("%Y-%m-%d__%H%M%S")
+    
+    for uf in uploaded_files:
+        data = uf.getvalue()
+        dest = dest_dir / uf.name
+        if dest.exists():
+            archive_file(dest, now_ts, "geography", county, state=state)
+        dest.write_bytes(data)
+        
+        saved.append({"filename": uf.name, "path": str(dest)})
+        ext = dest.suffix.lower()
+        if ext == ".shp":
+            shp_path = dest
+        elif ext == ".geojson":
+            geojson_path = dest
+
+    # 2) Standardized derived output
+    from scripts.lib.county_registry import get_county_by_name_or_alias
+    c_rec = get_county_by_name_or_alias(county)
+    county_slug = c_rec["county_slug"] if c_rec else county.lower().replace(" ","_")
+    
+    derived_dir = BASE_DIR / "derived" / "normalized_boundaries" / "city_council"
+    derived_dir.mkdir(parents=True, exist_ok=True)
+    derived_out = derived_dir / f"{county_slug}__{city_slug}__{level}.geojson"
+    
+    converted = False
+    if geojson_path:
+        shutil.copy2(geojson_path, derived_out)
+        converted = True
+    elif shp_path:
+        try:
+            import geopandas as gpd
+            gdf = gpd.read_file(shp_path)
+            gdf.to_file(derived_out, driver="GeoJSON")
+            converted = True
+        except ImportError:
+            warnings.append("geopandas not installed; could not create derived .geojson from .shp")
+        except Exception as e:
+            warnings.append(f"Failed to convert shapefile to geojson: {e}")
+            
+    # 3) Update boundary_index.csv
+    # We will write/update the row specifically for these files
+    from scripts.validation.boundary_index import get_boundary_index_path, INDEX_COLUMNS
+    import csv
+    
+    index_path = get_boundary_index_path(DATA_ROOT, county)
+    index_path.parent.mkdir(parents=True, exist_ok=True)
+    
+    existing_rows = []
+    if index_path.exists():
+        with open(index_path, "r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            existing_rows = list(reader)
+            
+    # Remove old rows that match the very files we just uploaded, then append new
+    uploaded_names = {u.name for u in uploaded_files}
+    new_rows = [r for r in existing_rows if Path(r.get("file_path", "")).name not in uploaded_names]
+    
+    # We only create index rows for the loadable spatial files (.shp, .geojson, .gpkg)
+    for res in saved:
+        p = Path(res["path"])
+        if p.suffix.lower() in {".shp", ".geojson", ".gpkg"}:
+            new_rows.append({
+                "boundary_type": "city_council",
+                "jurisdiction_name": city_name,
+                "jurisdiction_slug": city_slug,
+                "level": level,
+                "file_path": str(p),
+                "id_field_name": "",
+                "name_field_name": "",
+                "source_agency": "",
+                "source_date": now_ts.split("__")[0],
+                "version": "1.0",
+            })
+            
+    with open(index_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=INDEX_COLUMNS)
+        writer.writeheader()
+        writer.writerows(new_rows)
+        
+    mark_stale(f"{state}/{county}", f"City Boundaries updated: {city_name} {level}", ["maps", "memberships"])
+    
+    # Update jurisdiction manifest
+    from app.lib.county_manager import update_jurisdiction_manifest
+    update_jurisdiction_manifest(county, state)
+
+    return saved, warnings
+
+
 
 
 def save_votes_file(

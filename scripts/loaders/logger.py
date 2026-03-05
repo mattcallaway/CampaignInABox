@@ -94,6 +94,7 @@ class RunLogger:
         self._output_hashes: dict[str, str] = {}
         self._coverage: dict[str, Any] = {}
         self._current_step: dict | None = None
+        self._city_metadata: dict | None = None
 
         # Open log file
         self.log_path.parent.mkdir(parents=True, exist_ok=True)
@@ -142,6 +143,17 @@ class RunLogger:
 
     def error(self, msg: str):
         self._emit("ERROR", msg)
+
+    def log_city_usage(self, user_input: str, city_name: str, city_slug: str, level: str, registry_version: str):
+        """Log when city boundary normalization and usage occurs."""
+        self._emit("INFO ", f"City boundary used: {city_name} (normalized from '{user_input}')")
+        self._city_metadata = {
+            "city_name": city_name,
+            "city_slug": city_slug,
+            "boundary_type": "city",
+            "level": level,
+            "registry_version": registry_version,
+        }
 
     def step_start(self, step_name: str, expected: list[str] | None = None):
         """Mark the start of a pipeline DAG step."""
@@ -313,6 +325,9 @@ class RunLogger:
             "steps": self._pathway,
             "needs": self._needs_entries,
         }
+        if self._city_metadata:
+            data.update(self._city_metadata)
+            
         self.pathway_path.parent.mkdir(parents=True, exist_ok=True)
         with open(self.pathway_path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, default=str)

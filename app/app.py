@@ -325,70 +325,117 @@ elif page == "📤 Upload New Data":
             "Select the correct category so files are routed to the right folder."
         )
 
-        category = st.selectbox("File category", ALL_CATEGORY_LABELS)
-        is_shapefile = "Shapefile" in category
+        category_options = ALL_CATEGORY_LABELS + ["City Council Boundaries"]
+        category = st.selectbox("File category", category_options)
+        
+        if category == "City Council Boundaries":
+            st.info("📦 **City Council Boundaries**: Upload `.shp` bundle or `.geojson`. A standardized copy will be generated in `derived/normalized_boundaries/city_council/`.")
+            from scripts.lib.county_registry import normalize_county_input
+            try:
+                c_record = normalize_county_input(county)
+                final_county = c_record['county_name']
+                fips = c_record['county_fips']
+                
+                from scripts.lib.city_registry import load_city_registry
+                registry = load_city_registry()
+                cities = registry.get_all_for_county(fips)
+                
+                if not cities:
+                    st.warning(f"No cities registered in `cities_by_county_ca.json` for {final_county} ({fips}).")
+                else:
+                    city_options = ["— select —"] + [f"{c['city_name']} ({c['city_slug']})" for c in cities]
+                    city_sel = st.selectbox("Select City", city_options)
+                    level = st.selectbox("Level", ["ward", "district"])
+                    
+                    uploaded = st.file_uploader(
+                        f"Choose files for: **City Council Boundaries**",
+                        accept_multiple_files=True,
+                        key=f"geo_upload_{category}",
+                    )
+                    
+                    if uploaded and city_sel != "— select —":
+                        city_name = city_sel.split(" (")[0]
+                        city_record = next(c for c in cities if c["city_name"] == city_name)
+                        
+                        if st.button(f"💾 Save {city_name} Boundaries", type="primary", use_container_width=True):
+                            from app.lib.upload_handler import save_city_boundary_files
+                            with st.spinner("Saving..."):
+                                saved, warnings = save_city_boundary_files(
+                                    uploaded, final_county, city_record["city_name"], city_record["city_slug"], level, state="CA"
+                                )
+                            if warnings:
+                                for w in warnings:
+                                    st.warning(f"⚠️ {w}")
+                            st.success(f"✅ Saved {len(saved)} files to `boundaries/city_council` for **{city_name}**")
+                            for rec in saved:
+                                st.markdown(f"  • `{rec['filename']}` ({rec['path']})")
+            except ValueError as e:
+                st.error(f"❌ {e}")
+                
+        else:
+            is_shapefile = "Shapefile" in category
 
-        if is_shapefile:
-            st.info(
-                "📦 **Shapefile bundle**: upload `.shp`, `.shx`, `.dbf` together "
-                "(also `.prj`, `.cpg`, `.qix` if available). "
-                "The UI will warn if required sidecar files are missing."
+            if is_shapefile:
+                st.info(
+                    "📦 **Shapefile bundle**: upload `.shp`, `.shx`, `.dbf` together "
+                    "(also `.prj`, `.cpg`, `.qix` if available). "
+                    "The UI will warn if required sidecar files are missing."
+                )
+
+            uploaded = st.file_uploader(
+                f"Choose files for: **{category}**",
+                accept_multiple_files=True,
+                key=f"geo_upload_{category}",
             )
 
-        uploaded = st.file_uploader(
-            f"Choose files for: **{category}**",
-            accept_multiple_files=True,
-            key=f"geo_upload_{category}",
-        )
+            if uploaded:
+                exts = {Path(f.name).suffix.lower() for f in uploaded}
+                st.write(f"**{len(uploaded)} file(s) selected:** {', '.join(f.name for f in uploaded)}")
 
-        if uploaded:
-            exts = {Path(f.name).suffix.lower() for f in uploaded}
-            st.write(f"**{len(uploaded)} file(s) selected:** {', '.join(f.name for f in uploaded)}")
+                from app.lib.upload_handler import detect_county_from_filenames
+                detected_county, method = detect_county_from_filenames([f.name for f in uploaded])
+                
+                target_county = county
+                if detected_county and detected_county != county:
+                    st.info(f"🔍 **Auto-detected county:** `{detected_county}` (via {method}).")
+                    target_county = detected_county
 
-            from app.lib.upload_handler import detect_county_from_filenames
-            detected_county, method = detect_county_from_filenames([f.name for f in uploaded])
-            
-            target_county = county
-            if detected_county and detected_county != county:
-                st.info(f"🔍 **Auto-detected county:** `{detected_county}` (via {method}).")
-                target_county = detected_county
+                if not target_county:
+                    st.error("❌ Need a county to proceed. Please select/type one above, or ensure your filenames contain FIPS codes (e.g. c097_).")
+                else:
+                    from scripts.lib.county_registry import normalize_county_input
+                    try:
+                        c_record = normalize_county_input(target_county)
+                        final_county = c_record['county_name']
+                        
+                        if st.button(f"💾 Save to {final_county} Geography", type="primary", use_container_width=True):
+                            # Initialize county if not exist
+                            initialize_county(final_county)
+                            with st.spinner("Saving files…"):
+                                saved, warnings = save_geography_files(uploaded, category, final_county, detection_method=method)
 
-            if not target_county:
-                st.error("❌ Need a county to proceed. Please select/type one above, or ensure your filenames contain FIPS codes (e.g. c097_).")
-            else:
-                from scripts.lib.county_registry import normalize_county_input
-                try:
-                    c_record = normalize_county_input(target_county)
-                    final_county = c_record['county_name']
-                    
-                    if st.button(f"💾 Save to {final_county} Geography", type="primary", use_container_width=True):
-                        # Initialize county if not exist
-                        initialize_county(final_county)
-                        with st.spinner("Saving files…"):
-                            saved, warnings = save_geography_files(uploaded, category, final_county, detection_method=method)
+                            if warnings:
+                                for w in warnings:
+                                    st.warning(f"⚠️ {w}")
 
-                        if warnings:
-                            for w in warnings:
-                                st.warning(f"⚠️ {w}")
+                            st.success(f"✅ Saved {len(saved)} file(s) to `{category}` for **{final_county}**")
+                            for rec in saved:
+                                st.markdown(
+                                    f"  • `{rec['filename']}` — {rec['size_bytes']:,} bytes — "
+                                    f"sha256:`{rec['sha256'][:12]}…`"
+                                )
 
-                        st.success(f"✅ Saved {len(saved)} file(s) to `{category}` for **{final_county}**")
-                        for rec in saved:
-                            st.markdown(
-                                f"  • `{rec['filename']}` — {rec['size_bytes']:,} bytes — "
-                                f"sha256:`{rec['sha256'][:12]}…`"
-                            )
-
-                        # Refresh status
-                        st.subheader("Updated Geography Status")
-                        status = get_geography_status(final_county)
-                        for label in ALL_CATEGORY_LABELS:
-                            ok = status[label]
-                            st.markdown(
-                                f"{'✅' if ok else '❌'} **{label}**",
-                                unsafe_allow_html=False,
-                            )
-                except ValueError as e:
-                    st.error(f"❌ {e}")
+                            # Refresh status
+                            st.subheader("Updated Geography Status")
+                            status = get_geography_status(final_county)
+                            for label in ALL_CATEGORY_LABELS:
+                                ok = status[label]
+                                st.markdown(
+                                    f"{'✅' if ok else '❌'} **{label}**",
+                                    unsafe_allow_html=False,
+                                )
+                    except ValueError as e:
+                        st.error(f"❌ {e}")
 
     # ── Tab B: Election Results ───────────────────────────────────────────────
     with tab_b:
