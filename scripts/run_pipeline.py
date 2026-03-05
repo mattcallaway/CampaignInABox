@@ -65,13 +65,32 @@ from scripts.aggregation.vote_allocator import (
     area_weighted_fallback,
     run_sanity_checks,
 )
-from scripts.modeling.precinct_model import build_precinct_model, build_targeting_list
+from scripts.modeling.precinct_model import build_precinct_model
+from scripts.lib.schema import canonicalize_df, validate_schema
+from scripts.features.feature_builder import build_precinct_base_features
+from scripts.features.voter_features import aggregate_voter_file
+from scripts.universes.universe_builder import apply_universe_rules
+from scripts.modeling.scoring_engine_v2 import run_scoring_v2
+from scripts.forecasts.forecast_engine import run_forecasts
+from scripts.turfs.turf_generator import generate_turfs
+from scripts.tests.diagnostics import run_diagnostics, run_ops_diagnostics, generate_diagnostic_summary
+from scripts.ops.region_builder import build_strategic_regions, generate_region_summary
+from scripts.ops.field_plan_engine import compute_field_plan, summarize_field_plan
+from scripts.ops.simulation_engine import run_net_gain_simulation, simulate_scenarios
+from scripts.turfs.turf_packer import generate_turf_packs
+from scripts.strategy.strategy_generator import run_strategy_generator
+
 from scripts.exports.exporter import (
     export_precinct_model,
     export_targeting_list,
     export_district_aggregates,
     export_kepler_geojson,
+    export_universes,
+    export_turfs,
+    export_forecasts,
+    export_ops_artifact,
 )
+from scripts.universes.voter_universe_exporter import export_voter_universes
 from scripts.loaders.contest_registry import scaffold_contest_json, update_contest_from_parse
 
 import pandas as pd
@@ -112,32 +131,30 @@ REQUIRED_DIRS = [
     "data/CA/counties/Sonoma/geography/precinct_shapes/SRPREC_GeoPackage",
     "data/CA/counties/Sonoma/geography/precinct_shapes/SRPREC_Shapefile",
     "data/CA/counties/Sonoma/geography/crosswalks",
-    "data/CA/counties/Sonoma/geography/boundaries/supervisorial",
-    "data/CA/counties/Sonoma/geography/boundaries/city_council",
-    "data/CA/counties/Sonoma/geography/boundaries/school",
     "data/CA/counties/Sonoma/geography/boundary_index",
     "votes",
     "voters",
-    "derived/normalized_boundaries",
-    "derived/memberships",
-    "derived/precinct_models",
-    "derived/district_aggregates",
+    "derived/features",
+    "derived/universes",
+    "derived/forecasts",
+    "derived/turfs",
+    "derived/diagnostics",
     "derived/campaign_targets",
     "derived/maps",
     "derived/reports",
+    "derived/ops",
+    "derived/strategy_packs",
     "logs/runs",
     "logs/latest",
     "reports/validation",
     "reports/qa",
     "needs/history",
     "config",
-    "scripts/lib",
-    "scripts/validation",
-    "scripts/loaders",
-    "scripts/geography",
-    "scripts/modeling",
-    "scripts/aggregation",
-    "scripts/exports",
+    "scripts/features",
+    "scripts/universes",
+    "scripts/forecasts",
+    "scripts/turfs",
+    "scripts/tests",
 ]
 
 
@@ -167,6 +184,8 @@ def run_pipeline(
     rebuild_memberships_only: bool = False,
     rebuild_maps_only: bool = False,
     rebuild_targets_only: bool = False,
+    target_candidate: str | None = None,
+    contest_mode: str = "auto",
 ) -> str:
     """Execute the full pipeline. Returns RUN_ID on success."""
     context_key = f"{state}/{county}/{year}/{contest_slug}"
@@ -179,6 +198,7 @@ def run_pipeline(
     logger.info(f"  membership_method={membership_method}  log_level={log_level}")
 
     config    = load_config("model_parameters")
+    ops_config = load_config("field_ops")
     data_root = BASE_DIR / "data"
     votes_root = BASE_DIR / "votes"
     all_artifacts: list[Path] = []
@@ -328,8 +348,27 @@ def run_pipeline(
         config=config,
         logger=logger,
     )
+    detected_types = [p["contest_type"] for p in parsed_sheets]
     logger.set_coverage("sheets_parsed", len(parsed_sheets))
     logger.step_done("PARSE_CONTEST")
+
+    # ── Step 8.5: Determine Contest Mode ──────────────────────────────────
+    final_mode = contest_mode.lower()
+    if final_mode == "auto":
+        # Heuristic: if any sheet is candidate_race, the whole run is candidate
+        if "candidate_race" in detected_types:
+            final_mode = "candidate"
+            reason = "Inferred CANDIDATE (found candidate_race headers)"
+        else:
+            final_mode = "measure"
+            reason = "Inferred MEASURE (found YES/NO headers)"
+    else:
+        reason = f"Explicit override: {final_mode.upper()}"
+
+    logger.info(f"Contest Mode: {final_mode.upper()} ({reason})")
+    # Store in pathway
+    logger._pathway["contest_mode"] = final_mode
+    logger._pathway["contest_mode_reason"] = reason
 
     # ── Steps 9-12: Allocate → Sanity → Model → Export (per sheet) ───────
     logger.step_start("ALLOCATE_VOTES")
@@ -369,9 +408,16 @@ def run_pipeline(
         # Build model
         logger.step_start(f"BUILD_MODEL/{sheet_name}")
         id_col = "MPREC_ID" if "MPREC_ID" in allocated_df.columns else allocated_df.columns[0]
+        
+        # Merge target candidate into config
+        run_config = config.copy()
+        if target_candidate:
+            run_config["target_candidate"] = target_candidate
+        run_config["contest_type"] = contest_type
+
         model_df = build_precinct_model(
             allocated_df, canvas_id_col=id_col,
-            geography_level=geo_level, gdf=gdf, geo_id_col=geo_id_col, config=config,
+            geography_level=geo_level, gdf=gdf, geo_id_col=geo_id_col, config=run_config,
         )
         model_df["SheetName"]   = sheet_name
         model_df["ContestType"] = contest_type
@@ -384,43 +430,215 @@ def run_pipeline(
     if not all_model_dfs:
         logger.hard_fail("ALLOCATE_VOTES", "No model DataFrames produced")
 
-    # ── Step 13: Export outputs ───────────────────────────────────────────
-    logger.step_start("EXPORT_OUTPUTS")
-    field_config = load_config("field_effects")
-    min_score    = field_config.get("targeting", {}).get("universe_min_score", 0.30)
-
+    # ── Step 13: Feature Engineering ─────────────────────────────────────
+    logger.step_start("FEATURE_ENGINEERING")
+    all_combined_features = []
+    
+    # Voter file check
+    voter_file_path = BASE_DIR / "voters" / state / county / "voters.csv" # Standard path
+    voter_features_df = aggregate_voter_file(voter_file_path, county, logger=logger)
+    
     for model_df in all_model_dfs:
-        sname    = model_df["SheetName"].iloc[0]
-        slug_out = f"{county}_{year}_{contest_slug}"
-        if len(all_model_dfs) > 1:
-            slug_out += f"__{sname}"
+        sname = model_df["SheetName"].iloc[0]
+        # Base contest features
+        base_features = build_precinct_base_features(model_df, f"{contest_slug}__{sname}")
+        
+        # Merge with voter file if present
+        if not voter_features_df.empty:
+            merged = pd.merge(base_features, voter_features_df, on="canonical_precinct_id", how="left")
+            logger.info(f"  Merged voter features for sheet {sname}")
+        else:
+            merged = base_features
+            
+        all_combined_features.append((sname, merged))
+        
+    logger.step_done("FEATURE_ENGINEERING")
 
-        csv_path = export_precinct_model(model_df, BASE_DIR, run_id, state, county, slug_out)
-        all_artifacts.append(csv_path)
-        logger.info(f"  Precinct model: {csv_path.name}")
+    # ── Step 14: Universe Building ────────────────────────────────────────
+    logger.step_start("UNIVERSE_BUILDING")
+    all_universes = []
+    for sname, feat_df in all_combined_features:
+        uni_df = apply_universe_rules(feat_df)
+        all_universes.append((sname, uni_df))
+    logger.step_done("UNIVERSE_BUILDING")
 
-        if not rebuild_maps_only:
-            targeting_df = build_targeting_list(model_df, min_score=min_score)
-            tgt_path = export_targeting_list(targeting_df, BASE_DIR, run_id, state, county, slug_out)
-            all_artifacts.append(tgt_path)
-            logger.info(f"  Targeting list: {tgt_path.name} ({len(targeting_df)} rows)")
+    # ── Step 15: Scoring (v2) ─────────────────────────────────────────────
+    logger.step_start("SCORING_V2")
+    all_scored_dfs = []
+    for sname, feat_df in all_combined_features:
+        scored_df = run_scoring_v2(feat_df, logger=logger)
+        # Attach universe info
+        uni_df = next(u[1] for u in all_universes if u[0] == sname)
+        scored_df = pd.merge(scored_df, uni_df, on="canonical_precinct_id", how="left")
+        
+        # Re-attach geometry
+        m_df = next(m for m in all_model_dfs if m["SheetName"].iloc[0] == sname)
+        if "geometry" in m_df.columns:
+            scored_df = pd.merge(scored_df, m_df[["canonical_precinct_id", "geometry"]], on="canonical_precinct_id", how="left")
+            
+        all_scored_dfs.append((sname, scored_df))
+    logger.step_done("SCORING_V2")
 
-        if not (rebuild_maps_only or rebuild_targets_only):
-            agg_path = export_district_aggregates(model_df, BASE_DIR, run_id, state, county, slug_out)
-            all_artifacts.append(agg_path)
-            logger.info(f"  District aggregates: {agg_path.name}")
+    # ── Step 17: Strategic Region Clustering (v3) ─────────────────────────
+    logger.step_start("REGION_CLUSTERING")
+    all_regions = []
+    for sname, scored_df in all_scored_dfs:
+        r_df = build_strategic_regions(scored_df, n_regions=10, logger=logger)
+        all_regions.append((sname, r_df))
+    logger.step_done("REGION_CLUSTERING")
 
-        if not rebuild_targets_only:
-            kepler_path = export_kepler_geojson(model_df, BASE_DIR, run_id, state, county, slug_out, id_col=id_col)
-            if kepler_path:
-                all_artifacts.append(kepler_path)
-                logger.info(f"  Kepler GeoJSON: {kepler_path.name}")
-            else:
-                logger.step_skip(f"KEPLER/{sname}", reason="No geometry (boundary files missing or geopandas unavailable)")
-                logger.register_need("geometry_for_kepler", "blocked", ["kepler_geojson"],
-                                      path=str(county_geo_dir / "precinct_shapes" / "MPREC_GeoJSON"))
+    # ── Step 18: Field Operations Planning (v3) ───────────────────────────
+    logger.step_start("FIELD_PLANNING")
+    all_field_plans = []
+    for sname, scored_df in all_scored_dfs:
+        # Merge region_id
+        r_df = next(r[1] for r in all_regions if r[0] == sname)
+        merged = pd.merge(scored_df, r_df, on="canonical_precinct_id", how="left")
+        
+        # Compute plan
+        plan_df = compute_field_plan(merged, ops_config)
+        
+        # Net Gain Modeling
+        plan_df = run_net_gain_simulation(plan_df, ops_config, contest_mode=final_mode)
+        
+        all_field_plans.append((sname, plan_df))
+    logger.step_done("FIELD_PLANNING")
 
-    logger.step_done("EXPORT_OUTPUTS", outputs=all_artifacts)
+    # ── Step 19: Scenario Simulation (v3) ─────────────────────────────────
+    logger.step_start("SIMULATION")
+    all_sim_results = []
+    for sname, plan_df in all_field_plans:
+        results_df = simulate_scenarios(plan_df, ops_config)
+        all_sim_results.append((sname, results_df))
+    logger.step_done("SIMULATION")
+
+    # ── Step 20: Voter Universe Export (v3) ───────────────────────────────
+    logger.step_start("VOTER_UNIVERSE_EXPORT")
+    if not voter_features_df.empty and voter_file_path.exists():
+        try:
+            # Re-load raw voters for individual export
+            voter_df = pd.read_csv(voter_file_path)
+            for sname, plan_df in all_field_plans:
+                out_dir = BASE_DIR / "derived" / "universes" / state / county / contest_slug / f"{sname}__voter_lists"
+                export_voter_universes(voter_df, plan_df, out_dir, run_id, logger=logger)
+            logger.step_done("VOTER_UNIVERSE_EXPORT")
+        except Exception as e:
+            logger.warn(f"Voter universe export failed: {e}")
+            logger.step_skip("VOTER_UNIVERSE_EXPORT", reason=str(e))
+    else:
+        logger.step_skip("VOTER_UNIVERSE_EXPORT", reason="No voter file present")
+
+    # ── Step 21: Turf Generation ──────────────────────────────────────────
+    logger.step_start("TURF_GENERATION")
+    all_turfs = []
+    for sname, plan_df in all_field_plans:
+        # We pass plan_df because it has region_id and target metrics
+        t_df = generate_turfs(plan_df)
+        all_turfs.append((sname, t_df))
+    logger.step_done("TURF_GENERATION")
+
+    # ── Step 22: Exporting (v3) ───────────────────────────────────────────
+    logger.step_start("EXPORT_V2_OUTPUTS")
+    for sname, plan_df in all_field_plans:
+        slug_out = f"{county}_{year}_{contest_slug}" if len(all_field_plans) == 1 else f"{county}_{year}_{contest_slug}__{sname}"
+        
+        # 1. Scored Model (with Regions/Ops)
+        path = export_precinct_model(plan_df, BASE_DIR, run_id, state, county, slug_out)
+        all_artifacts.append(path)
+        
+        # 2. Kepler
+        k_path = export_kepler_geojson(plan_df, BASE_DIR, run_id, state, county, slug_out, id_col="canonical_precinct_id")
+        if k_path: all_artifacts.append(k_path)
+        
+        # 3. Universes Summary
+        uni_sum_path = export_universes(plan_df[["canonical_precinct_id", "universe_name", "universe_reason", "key_metrics_snapshot"]], BASE_DIR, run_id, state, county, slug_out)
+        all_artifacts.append(uni_sum_path)
+        
+        # 4. Forecasts
+        f_path = export_forecasts(next(f[1] for f in all_forecasts if f[0] == sname), BASE_DIR, run_id, state, county, slug_out)
+        all_artifacts.append(f_path)
+        logger.register_artifact(f_path, "scenario_forecasts.csv")
+        
+        # 5. Turfs
+        t_path = export_turfs(next(t[1] for t in all_turfs if t[0] == sname), BASE_DIR, run_id, state, county, slug_out)
+        all_artifacts.append(t_path)
+
+        # 6. Turf Packs (v3)
+        tp_dir = BASE_DIR / "derived" / "turfs" / state / county / slug_out / f"{run_id}__turf_packs"
+        generate_turf_packs(plan_df, next(t[1] for t in all_turfs if t[0] == sname), tp_dir, run_id)
+        # We don't append individual turf packs to all_artifacts as they are many, but we note the directory exists
+        logger.info(f"  Generated turf packs in {tp_dir}")
+
+        # ── v3 Ops ──
+        # Regions Artifact
+        r_df = next(r[1] for r in all_regions if r[0] == sname)
+        r_path = export_ops_artifact(r_df, "regions", BASE_DIR, run_id, state, county, slug_out)
+        all_artifacts.append(r_path)
+        
+        # Region Summary (Markdown)
+        r_sum_md = generate_region_summary(plan_df, r_df)
+        r_sum_path = BASE_DIR / "derived" / "ops" / state / county / slug_out / f"{run_id}__region_summary.md"
+        r_sum_path.parent.mkdir(parents=True, exist_ok=True)
+        r_sum_path.write_text(r_sum_md)
+        all_artifacts.append(r_sum_path)
+
+        # Field Plan
+        fp_path = export_ops_artifact(plan_df, "field_plan", BASE_DIR, run_id, state, county, slug_out)
+        all_artifacts.append(fp_path)
+        
+        # Simulation
+        sim_df = next(s[1] for s in all_sim_results if s[0] == sname)
+        sim_path = export_ops_artifact(sim_df, "simulation_results", BASE_DIR, run_id, state, county, slug_out)
+        all_artifacts.append(sim_path)
+        logger.register_artifact(sim_path, "simulation_results.csv")
+        
+    logger.step_done("EXPORT_V2_OUTPUTS")
+
+    # ── Step 23: Diagnostics ─────────────────────────────────────────────
+    logger.step_start("DIAGNOSTICS")
+    for sname, plan_df in all_field_plans:
+        # Regular diagnostics
+        anom_df = run_diagnostics(plan_df, f"{contest_slug}__{sname}", logger=logger)
+        
+        # Ops diagnostics (v3)
+        ops_anom_df = run_ops_diagnostics(plan_df, next(t[1] for t in all_turfs if t[0] == sname), logger=logger)
+        
+        # Combine
+        combined_anom = pd.concat([anom_df, ops_anom_df], ignore_index=True)
+        
+        if not combined_anom.empty:
+            anom_path = BASE_DIR / "derived" / "diagnostics" / f"{run_id}__{sname}__anomalies.csv"
+            combined_anom.to_csv(anom_path, index=False)
+            all_artifacts.append(anom_path)
+            
+        diag_report = generate_diagnostic_summary(combined_anom, {"contest_slug": contest_slug})
+        diag_path = BASE_DIR / "reports" / "qa" / f"{run_id}__{sname}__model_diagnostics.md"
+        with open(diag_path, "w", encoding="utf-8") as f:
+            f.write(diag_report)
+        all_artifacts.append(diag_path)
+        logger.register_artifact(diag_path, "model_diagnostics.md")
+    logger.step_done("DIAGNOSTICS")
+
+    # ── Step 24: Strategy Generator ───────────────────────────────────────────
+    logger.step_start("STRATEGY_GENERATOR")
+    # Build a contest_id to pass — matches what the generator uses for discovery
+    _strategy_contest_id = f"{year}_CA_{county.lower().replace(' ', '_')}_{contest_slug}"
+    try:
+        pack_dir = run_strategy_generator(
+            contest_id=_strategy_contest_id,
+            run_id=run_id,
+            contest_mode=final_mode,
+            logger=logger,
+        )
+        if pack_dir:
+            all_artifacts.append(pack_dir / "STRATEGY_SUMMARY.md")
+            logger.register_artifact(pack_dir / "STRATEGY_META.json", "strategy_meta.json")
+            logger.step_done("STRATEGY_GENERATOR")
+        else:
+            logger.step_skip("STRATEGY_GENERATOR", reason="Insufficient derived inputs (degraded/blocked)")
+    except Exception as e:
+        logger.warn(f"Strategy generator failed (non-fatal): {e}")
+        logger.step_skip("STRATEGY_GENERATOR", reason=str(e))
 
     # ── Step 14: Finalize + commit ────────────────────────────────────────
     logger.finalize(state, county, contest_slug, run_status="success")
@@ -497,6 +715,11 @@ def main():
     parser.add_argument("--rebuild-memberships", action="store_true", help="Rebuild memberships and all downstream")
     parser.add_argument("--rebuild-maps-only", action="store_true", help="Only rebuild maps")
     parser.add_argument("--rebuild-targets-only", action="store_true", help="Only rebuild campaign targets")
+    parser.add_argument("--target-candidate", dest="target_candidate", default=None,
+                        help="Select target candidate for scoring (candidate races only)")
+    parser.add_argument("--contest-mode", dest="contest_mode",
+                        choices=["auto", "measure", "candidate"], default="auto",
+                        help="Specify contest mode (default: auto)")
     parser.set_defaults(commit=True)
 
     args = parser.parse_args()
@@ -532,6 +755,8 @@ def main():
             rebuild_memberships_only=args.rebuild_memberships,
             rebuild_maps_only=args.rebuild_maps_only,
             rebuild_targets_only=args.rebuild_targets_only,
+            target_candidate=args.target_candidate,
+            contest_mode=args.contest_mode,
         )
     except RuntimeError as e:
         print(f"\n[PIPELINE HARD FAIL] {e}", file=sys.stderr)
