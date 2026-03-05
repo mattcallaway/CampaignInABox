@@ -1,0 +1,36 @@
+# config/allocation.yaml
+# Allocation method selection for precinct vote apportionment.
+
+# ── Method Selection ──────────────────────────────────────────────────────────
+# Options:
+#   precinct_direct        — use precinct-level registration/ballots directly
+#                            (preferred when contest results include per-precinct data)
+#   block_weighted_area    — weight by geographic area using block crosswalk
+#                            (requires 2020_BLK_TO_MPREC crosswalk)
+#   block_weighted_population — weight by population proxy using block crosswalk
+#                            (requires 2020_BLK_TO_MPREC + population data)
+
+allocation_method: "precinct_direct"
+
+# ── Fallback Rules ────────────────────────────────────────────────────────────
+# If the preferred method is not viable, use these in order:
+fallback_chain:
+  - "precinct_direct"
+  - "block_weighted_area"
+  - "area_weighted_fallback"
+
+# ── Join Cardinality Checks ───────────────────────────────────────────────────
+# Hard-fail if row count multiplies by more than this factor after a join.
+cardinality_max_multiplier: 1.5
+
+# ── Registration Integrity ────────────────────────────────────────────────────
+# Maximum allowed difference between observed registration and census estimate.
+# If the discrepancy exceeds this threshold, log a high-severity anomaly.
+registration_discrepancy_threshold: 0.10  # 10%
+
+# ── Constraint Enforcement ────────────────────────────────────────────────────
+# Whether to auto-repair constraint violations (true) or hard-fail (false).
+auto_repair_violations: true
+
+# Log level for repairs: info | warn | error
+repair_log_level: "warn"

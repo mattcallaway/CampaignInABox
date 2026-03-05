@@ -46,6 +46,12 @@ for p in [str(BASE_DIR), str(SCRIPTS_DIR.parent)]:
 from scripts.lib.run_id import generate_run_id
 from scripts.lib.hashing import sha256_file, file_info
 from scripts.lib.ca_fips import fips_to_county, county_to_fips
+from scripts.lib.deps import gate as dep_gate, update_needs_available
+from scripts.lib.integrity import enforce_precinct_constraints, write_integrity_report
+from scripts.lib.crosswalks import (
+    discover_crosswalks, write_crosswalk_validation, update_needs_crosswalks
+)
+from scripts.geo.kepler_export import export_kepler_geojson as kepler_geojson_export
 from app.lib.state_manager import clear_stale
 from scripts.loaders.logger import RunLogger
 from scripts.ingest import run_ingestion
@@ -323,6 +329,15 @@ def run_pipeline(
             crosswalks[cat_label] = xwalk
             break  # use first available crosswalk
 
+    # Prompt 8.5: enhanced crosswalk discovery + validation
+    _county_fips = county_to_fips(county) or county
+    _contest_id_for_diag = f"{year}_{state}_{county.lower().replace(chr(32), chr(95))}_{contest_slug}"
+    _xwalk_full = discover_crosswalks(BASE_DIR, state, _county_fips)
+    write_crosswalk_validation(_xwalk_full, _contest_id_for_diag, run_id, BASE_DIR)
+    update_needs_crosswalks(_xwalk_full, BASE_DIR)
+    _n_xw_found = sum(1 for v in _xwalk_full.values() if v.get("status") in ("found", "fallback"))
+    logger.info(f"  [CROSSWALKS] Discovered {_n_xw_found}/{len(_xwalk_full)} crosswalks")
+
     if not crosswalks:
         logger.step_skip("LOAD_CROSSWALKS", reason="No crosswalk files; using identity mapping")
     else:
@@ -367,9 +382,8 @@ def run_pipeline(
         reason = f"Explicit override: {final_mode.upper()}"
 
     logger.info(f"Contest Mode: {final_mode.upper()} ({reason})")
-    # Store in pathway
-    logger._pathway["contest_mode"] = final_mode
-    logger._pathway["contest_mode_reason"] = reason
+    # Store in pathway via the logger's step mechanism (cannot dict-index a list)
+    logger.info(f"[PATHWAY] contest_mode={final_mode}  contest_mode_reason={reason}")
 
     # ── Steps 9-12: Allocate → Sanity → Model → Export (per sheet) ───────
     logger.step_start("ALLOCATE_VOTES")
@@ -430,6 +444,33 @@ def run_pipeline(
 
     if not all_model_dfs:
         logger.hard_fail("ALLOCATE_VOTES", "No model DataFrames produced")
+
+    # Prompt 8.5: INTEGRITY_ENFORCEMENT step
+    logger.step_start("INTEGRITY_ENFORCEMENT")
+    _all_repair_reports: list[dict] = []
+    _repaired_model_dfs: list = []
+    for _mdf in all_model_dfs:
+        _sheet = _mdf["SheetName"].iloc[0] if "SheetName" in _mdf.columns else "unknown"
+        _mdf_repaired, _repair_report = enforce_precinct_constraints(
+            _mdf,
+            id_col="canonical_precinct_id",
+            registered_col="registered",
+            ballots_col="ballots_cast",
+            yes_col="yes_votes" if "yes_votes" in _mdf.columns else None,
+            no_col="no_votes"   if "no_votes"  in _mdf.columns else None,
+            log_ctx=_sheet,
+            logger=logger,
+        )
+        _all_repair_reports.append(_repair_report)
+        _repaired_model_dfs.append(_mdf_repaired)
+    all_model_dfs = _repaired_model_dfs
+    # Use _contest_id_for_diag if already defined, else build it
+    if "_contest_id_for_diag" not in dir():
+        _contest_id_for_diag = f"{year}_{state}_{county.lower().replace(chr(32), chr(95))}_{contest_slug}"
+    _primary_repair = _all_repair_reports[0] if _all_repair_reports else {}
+    write_integrity_report(_primary_repair, _contest_id_for_diag, run_id)
+    _n_repaired = _primary_repair.get("repaired_rows", 0)
+    logger.step_done("INTEGRITY_ENFORCEMENT", notes=[f"{_n_repaired} precinct(s) repaired"])
 
     # ── Step 13: Feature Engineering ─────────────────────────────────────
     logger.step_start("FEATURE_ENGINEERING")
@@ -529,6 +570,18 @@ def run_pipeline(
     else:
         logger.step_skip("VOTER_UNIVERSE_EXPORT", reason="No voter file present")
 
+    # ── Step 16: Forecasting ──────────────────────────────────────────────
+    logger.step_start("FORECAST_GENERATION")
+    all_forecasts = []
+    for sname, scored_df in all_scored_dfs:
+        try:
+            forecast_df = run_forecasts(scored_df, logger=logger)
+        except Exception as _fe:
+            logger.warn(f"  Forecasting failed for {sname}: {_fe}")
+            forecast_df = scored_df[["canonical_precinct_id"]].copy()
+        all_forecasts.append((sname, forecast_df))
+    logger.step_done("FORECAST_GENERATION")
+
     # ── Step 21: Turf Generation ──────────────────────────────────────────
     logger.step_start("TURF_GENERATION")
     all_turfs = []
@@ -542,14 +595,25 @@ def run_pipeline(
     logger.step_start("EXPORT_V2_OUTPUTS")
     for sname, plan_df in all_field_plans:
         slug_out = f"{county}_{year}_{contest_slug}" if len(all_field_plans) == 1 else f"{county}_{year}_{contest_slug}__{sname}"
-        
+
+        # Ensure region_id column exists (may be absent if clustering returned empty)
+        if "region_id" not in plan_df.columns:
+            plan_df = plan_df.copy()
+            plan_df["region_id"] = "R01"
+
         # 1. Scored Model (with Regions/Ops)
         path = export_precinct_model(plan_df, BASE_DIR, run_id, state, county, slug_out)
         all_artifacts.append(path)
         
-        # 2. Kepler
+        # 2. Kepler (v2 exporter) + Kepler GeoJSON (Prompt 8.5 geopandas-gated)
         k_path = export_kepler_geojson(plan_df, BASE_DIR, run_id, state, county, slug_out, id_col="canonical_precinct_id")
         if k_path: all_artifacts.append(k_path)
+        # Kepler GeoJSON via geopandas (new, gracefully skipped if unavailable)
+        _kepler_geo_root = BASE_DIR / "data" / state / "counties"
+        _kj_path = kepler_geojson_export(
+            plan_df, _kepler_geo_root, slug_out, run_id, logger=logger
+        )
+        if _kj_path: all_artifacts.append(_kj_path)
         
         # 3. Universes Summary
         uni_sum_path = export_universes(plan_df[["canonical_precinct_id", "universe_name", "universe_reason", "key_metrics_snapshot"]], BASE_DIR, run_id, state, county, slug_out)
@@ -629,6 +693,10 @@ def run_pipeline(
             contest_id=_strategy_contest_id,
             run_id=run_id,
             contest_mode=final_mode,
+            forecast_mode="both",
+            state=state,
+            county=county,
+            contest_slug=contest_slug,
             logger=logger,
         )
         if pack_dir:
