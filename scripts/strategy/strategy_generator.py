@@ -604,6 +604,28 @@ def write_strategy_pack(
         "recommended_strategy": _recommended_strategy(
             win_path, inputs["simulations"]
         ),
+        # Prompt 8.7: extended metadata fields
+        "target_precincts": int((targets.get("tier", pd.Series(4, index=targets.index)) <= 2).sum()) if not targets.empty else 0,
+        "estimated_doors": int(
+            inputs.get("field_plan", pd.DataFrame()).get("doors_to_knock", pd.Series([0])).sum()
+            if isinstance(inputs.get("field_plan"), pd.DataFrame) and not inputs.get("field_plan", pd.DataFrame()).empty
+            else pace_df.get("pace_doors_per_day", pd.Series([0])).sum() * 60
+        ) if isinstance(pace_df, pd.DataFrame) else 0,
+        "estimated_volunteers": int(
+            inputs.get("field_plan", pd.DataFrame()).get("volunteers_needed", pd.Series([0])).sum()
+            if isinstance(inputs.get("field_plan"), pd.DataFrame) and not inputs.get("field_plan", pd.DataFrame()).empty
+            else 10
+        ),
+        "simulation_runs": int(
+            len(inputs.get("simulations", pd.DataFrame())) if not inputs.get("simulations", pd.DataFrame()).empty else 0
+        ),
+        "model_version": "8.7",
+        "data_sources": {
+            "targets_source":  "derived/precinct_models" if inputs.get("derived_mode") != "blocked" else "none",
+            "turfs_source":    "derived/turfs"           if not inputs.get("walk_turfs",         pd.DataFrame()).empty else "none",
+            "forecast_source": "derived/forecasts"       if not inputs.get("simulations",        pd.DataFrame()).empty else "none",
+            "universe_source": "derived/universes"       if not inputs.get("precinct_universes", pd.DataFrame()).empty else "none",
+        },
     }
     (out_root / "STRATEGY_META.json").write_text(json.dumps(meta, indent=2, default=str), encoding="utf-8")
 

@@ -129,9 +129,13 @@ def populate_bundle(bundle: Path, info: dict) -> tuple[list, list]:
     cp(_find_latest(qa_dir,   "*integrity_repairs*.md"), "integrity_repairs.md")
     cp(_find_latest(diag_dir, "*integrity_repairs*.csv"), "integrity_repairs.csv")
 
-    # Join guard
+    # Join guard (engine/integrity — Prompt 8.7)
     cp(_find_latest(qa_dir,   "*join_guard*.md"), "join_guard.md")
     cp(_find_latest(diag_dir, "*join_guard*.csv"), "join_guard.csv")
+
+    # Prompt 8.7: artifact validation + geometry validation
+    cp(_find_latest(val_dir, "*artifact_validation*.md"),  "artifact_validation.md")
+    cp(_find_latest(val_dir, "*geometry_validation*.md"),  "geometry_validation.md")
 
     # Schema mapping
     cp(_find_latest(qa_dir,   "*schema_mapping*.md"), "schema_mapping.md")
@@ -165,7 +169,7 @@ def populate_bundle(bundle: Path, info: dict) -> tuple[list, list]:
 
     # Strategy pack outputs
     strategy_files = ["STRATEGY_SUMMARY.md", "TOP_TARGETS.csv", "TOP_TURFS.csv",
-                      "FIELD_PLAN.csv", "SIMULATION_RESULTS.csv", "FIELD_PACE.csv", "FIELD_PACE.csv"]
+                      "FIELD_PLAN.csv", "SIMULATION_RESULTS.csv", "FIELD_PACE.csv"]
     sp_meta_path = Path(info.get("_latest_strategy_meta", "")) if info.get("_latest_strategy_meta") else None
     sp_dir = sp_meta_path.parent if sp_meta_path and sp_meta_path.exists() else None
     for sf in set(strategy_files):

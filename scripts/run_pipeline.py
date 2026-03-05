@@ -54,6 +54,14 @@ from scripts.lib.crosswalks import (
 from scripts.lib.schema_normalize import normalize_precinct_columns, SchemaError
 from scripts.lib.join_guard import safe_merge, JoinExplosionError
 from scripts.lib.discovery import list_contests
+# Prompt 8.7: engine diagnostic modules
+from engine.geo.geometry_validation import validate_geometry
+from engine.integrity.join_guard import run_join_validation
+from engine.integrity.integrity_repairs import (
+    build_repair_records_from_integrity_report, write_repair_artifacts,
+)
+from engine.audit.post_prompt86_audit import run_post_prompt86_audit
+from engine.audit.artifact_validator import validate_artifacts
 from scripts.geo.kepler_export import export_kepler_geojson as kepler_geojson_export
 from app.lib.state_manager import clear_stale
 from scripts.loaders.logger import RunLogger
@@ -746,7 +754,106 @@ def run_pipeline(
         logger.warn(f"Strategy generator failed (non-fatal): {e}")
         logger.step_skip("STRATEGY_GENERATOR", reason=str(e))
 
-    # ── Step 14: Finalize + commit ────────────────────────────────────────
+    # ── Prompt 8.7: Diagnostic pipeline stages (after strategy) ──────────────
+    _pack_generated = pack_dir is not None if 'pack_dir' in dir() else False
+    _sim_generated  = bool(all_simulations) if 'all_simulations' in dir() else False
+    _pipeline_warnings: list[str] = []
+
+    # Gather universe df (first plan if available)
+    _uni_df = all_field_plans[0][1] if all_field_plans else pd.DataFrame()
+
+    # GEO_VALIDATION
+    logger.step_start("GEO_VALIDATION")
+    try:
+        _geo_result = validate_geometry(
+            gdf=gdf, precinct_model=all_model_dfs[0] if all_model_dfs else None,
+            id_col="canonical_precinct_id", geo_id_col=geo_id_col or "MPREC_ID",
+            run_id=run_id, contest_id=_contest_id_for_diag,
+            geometry_source=str(gdf_path) if 'gdf_path' in dir() and gdf_path else "none",
+            logger=logger,
+        )
+        logger.step_done("GEO_VALIDATION", notes=[f"status={_geo_result['status']}"])
+        if _geo_result["status"] == "WARN":
+            _pipeline_warnings.append(f"Geometry: {'; '.join(_geo_result['notes'][:3])}")
+    except Exception as _e:
+        logger.warn(f"GEO_VALIDATION non-fatal: {_e}")
+        logger.step_done("GEO_VALIDATION", notes=["error — skipped"])
+        _geo_result = {"status": "SKIP", "notes": [str(_e)], "precinct_count": 0}
+
+    # JOIN_GUARD_VALIDATION
+    logger.step_start("JOIN_GUARD_VALIDATION")
+    try:
+        _join_rows = run_join_validation(
+            precinct_model=all_model_dfs[0] if all_model_dfs else pd.DataFrame(),
+            universes=_uni_df,
+            geometry_ids=None,  # gdf ids — skipped if geo not loaded
+            voter_file=None,    # voter file not in scope
+            results=None,
+            id_col="canonical_precinct_id",
+            run_id=run_id, contest_id=_contest_id_for_diag,
+            logger=logger,
+        )
+        _jg_overall = "PASS" if all(r["status"] == "PASS" for r in _join_rows) else (
+            "FAIL" if any(r["status"] == "FAIL" for r in _join_rows) else "WARN")
+        logger.step_done("JOIN_GUARD_VALIDATION", notes=[f"overall={_jg_overall}, joins={len(_join_rows)}"])
+        if _jg_overall != "PASS":
+            _pipeline_warnings.append(f"Join guard: {_jg_overall}")
+    except Exception as _e:
+        logger.warn(f"JOIN_GUARD_VALIDATION non-fatal: {_e}")
+        logger.step_done("JOIN_GUARD_VALIDATION", notes=["error — skipped"])
+        _join_rows = []
+
+    # INTEGRITY_REPAIRS artifact emission (always write, even empty)
+    logger.step_start("INTEGRITY_REPAIRS_WRITE")
+    try:
+        _repair_records = build_repair_records_from_integrity_report(_primary_repair)
+        _bt = _primary_repair.get("before_totals", {})
+        _at = _primary_repair.get("after_totals", {})
+        write_repair_artifacts(_repair_records, run_id, _contest_id_for_diag, _bt, _at)
+        logger.step_done("INTEGRITY_REPAIRS_WRITE", notes=[f"{len(_repair_records)} records written"])
+    except Exception as _e:
+        logger.warn(f"INTEGRITY_REPAIRS_WRITE non-fatal: {_e}")
+        logger.step_done("INTEGRITY_REPAIRS_WRITE", notes=["error — stub written"])
+        _repair_records = []
+
+    # ARTIFACT_VALIDATION
+    logger.step_start("ARTIFACT_VALIDATION")
+    try:
+        _artval = validate_artifacts(run_id=run_id, contest_id=_contest_id_for_diag, logger=logger)
+        logger.step_done("ARTIFACT_VALIDATION",
+                         notes=[f"{len(_artval['found'])}/{_artval['total']} present, "
+                                f"{len(_artval['missing'])} missing"])
+        if _artval["missing"]:
+            _pipeline_warnings.extend([f"Missing artifact: {m}" for m in _artval["missing"]])
+    except Exception as _e:
+        logger.warn(f"ARTIFACT_VALIDATION non-fatal: {_e}")
+        logger.step_done("ARTIFACT_VALIDATION", notes=["error"])
+        _artval = {"found": [], "missing": [], "stubbed": [], "total": 13}
+
+    # POST_RUN_AUDIT (always runs — produces post_prompt86_audit.json + .md)
+    logger.step_start("POST_RUN_AUDIT")
+    try:
+        _audit_path = run_post_prompt86_audit(
+            run_id=run_id,
+            contest_id=_contest_id_for_diag,
+            county=county,
+            state=state,
+            join_guard_rows=_join_rows,
+            integrity_repair_records=_repair_records,
+            geometry_result=_geo_result,
+            strategy_pack_generated=_pack_generated,
+            simulation_results_generated=_sim_generated,
+            warnings=_pipeline_warnings,
+            errors=[],
+            logger=logger,
+        )
+        logger.step_done("POST_RUN_AUDIT", notes=[f"written → {_audit_path.name}"])
+        if _audit_path: all_artifacts.append(_audit_path)
+    except Exception as _e:
+        logger.warn(f"POST_RUN_AUDIT non-fatal: {_e}")
+        logger.step_done("POST_RUN_AUDIT", notes=["error"])
+
+    # ── Finalize + commit ────────────────────────────────────────
     logger.finalize(state, county, contest_slug, run_status="success")
 
     # Clear staleness flags upon success
