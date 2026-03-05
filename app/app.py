@@ -1345,6 +1345,13 @@ elif page == "🎯 Strategy Generator":
                 key="sg_mode",
                 help="auto: infer from data",
             )
+            sg_forecast_mode = st.selectbox(
+                "Forecast Mode",
+                ["both", "deterministic", "monte_carlo"],
+                index=0,
+                key="sg_forecast_mode",
+                help="both: run deterministic + Monte Carlo simulation",
+            )
             sg_weeks = st.slider("Field Plan Weeks", 1, 12, DEFAULT_WEEKS, key="sg_weeks")
 
             # Build contest_id for discovery
@@ -1385,7 +1392,11 @@ elif page == "🎯 Strategy Generator":
                                 contest_id=sg_contest_id,
                                 run_id=run_ts,
                                 contest_mode=sg_mode,
+                                forecast_mode=sg_forecast_mode,
                                 weeks=sg_weeks,
+                                state="CA",
+                                county=sg_county,
+                                contest_slug=sg_slug,
                             )
                             if pack_dir:
                                 st.session_state["sg_pack_dir"] = str(pack_dir)

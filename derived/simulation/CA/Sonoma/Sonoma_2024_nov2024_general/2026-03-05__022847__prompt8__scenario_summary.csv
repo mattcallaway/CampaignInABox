@@ -1,0 +1,5 @@
+scenario,win_probability,median_margin,p10_margin,p90_margin,avg_turnout
+baseline,0.0,0.0,0.0,0.0,0.0177
+field_program_light,0.0,0.0,0.0,0.0,0.0177
+field_program_medium,0.0,0.0,0.0,0.0,0.0174
+field_program_heavy,0.0,0.0,0.0,0.0,0.0177

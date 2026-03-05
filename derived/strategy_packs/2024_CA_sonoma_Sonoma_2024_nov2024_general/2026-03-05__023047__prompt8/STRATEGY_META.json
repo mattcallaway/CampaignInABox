@@ -1,0 +1,37 @@
+{
+  "contest_id": "2024_CA_sonoma_Sonoma_2024_nov2024_general",
+  "run_id": "2026-03-05__023047__prompt8",
+  "generated_at": "2026-03-05T02:30:47.615044",
+  "contest_mode": "measure",
+  "mode_reason": "defaulted to MEASURE (support_pct only)",
+  "derived_mode": "degraded",
+  "forecast_mode": "both",
+  "inputs_found": {
+    "precinct_model": {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\precinct_models\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__010708__74fbdd60__msi__precinct_model.csv",
+      "hash": "live"
+    }
+  },
+  "inputs_missing": [
+    "target_ranking",
+    "walk_turfs",
+    "scenario_forecasts",
+    "precinct_universes"
+  ],
+  "model_summary": {
+    "precinct_count": 10,
+    "turf_count": 0,
+    "region_count": 0,
+    "scenario_count": 4
+  },
+  "topline_metrics": {
+    "baseline_turnout": null,
+    "baseline_support": 0.6,
+    "baseline_margin": 1000.0,
+    "win_number": 2501.0,
+    "best_case_margin": 0.0,
+    "worst_case_margin": 0.0,
+    "win_probability": 0.0
+  },
+  "recommended_strategy": "Challenging. Re-evaluate strategy, focus on high-impact persuasion and targeted turnout."
+}

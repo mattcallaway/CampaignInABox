@@ -143,6 +143,7 @@ REQUIRED_DIRS = [
     "derived/maps",
     "derived/reports",
     "derived/ops",
+    "derived/simulation",
     "derived/strategy_packs",
     "logs/runs",
     "logs/latest",

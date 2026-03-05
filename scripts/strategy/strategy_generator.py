@@ -1,13 +1,14 @@
 """
 scripts/strategy/strategy_generator.py
 
-Campaign Strategy Generator — loads derived pipeline outputs for a contest and
-produces a campaign-ready Strategy Pack (5 artifacts).
+Campaign Strategy Generator (Prompt 8) — loads derived pipeline outputs
+and produces a campaign-ready Strategy Pack with 7 artifacts.
 
 Design principles:
-- Does NOT re-implement scoring or modeling — reads existing derived outputs only.
-- Deterministic: stable sorting + fixed seeds where needed.
-- Graceful degradation: runs with only targets + turfs + forecasts; marks gaps.
+- Runs simulation + ops inline if pipeline outputs not already present.
+- forecast_mode: deterministic | monte_carlo | both.
+- Deterministic: stable sorting + fixed seeds.
+- Graceful degradation: runs with only targets + turfs; marks gaps.
 - Logging contract: updates pathway.json and needs.yaml.
 """
 from __future__ import annotations
@@ -188,6 +189,7 @@ def compute_win_path(targets: pd.DataFrame, forecasts: pd.DataFrame,
         "best_case_margin":    None,
         "worst_case_margin":   None,
         "win_number":          None,
+        "win_probability":     None, # Added for Prompt 8
         "notes":               [],
     }
 
@@ -221,6 +223,9 @@ def compute_win_path(targets: pd.DataFrame, forecasts: pd.DataFrame,
             if not margins.empty:
                 result["best_case_margin"]  = round(float(margins.max()), 0)
                 result["worst_case_margin"] = round(float(margins.min()), 0)
+        # If simulations has a win_probability column, use it
+        if "win_probability" in sdf.columns and not sdf["win_probability"].empty:
+            result["win_probability"] = sdf["win_probability"].iloc[0] # Assuming it's a single value
         break
 
     if result["baseline_turnout"] is None:
@@ -376,6 +381,111 @@ def universe_guidance(universes: pd.DataFrame, voter_exports_present: bool) -> s
 # ══════════════════════════════════════════════════════════════════════════════
 # Output Writers
 # ══════════════════════════════════════════════════════════════════════════════
+def _recommended_strategy(win_path: dict, simulations: pd.DataFrame) -> str:
+    """Determine a recommended strategy based on win path and simulation results."""
+    wp = win_path
+    win_prob = wp.get("win_probability")
+    baseline_margin = wp.get("baseline_margin")
+    best_case_margin = wp.get("best_case_margin")
+    worst_case_margin = wp.get("worst_case_margin")
+
+    if win_prob is not None:
+        if win_prob >= 0.75:
+            return "Strong position. Focus on turnout and protecting the lead."
+        elif win_prob >= 0.55:
+            return "Competitive race. Balanced approach: persuasion for undecideds, turnout for supporters."
+        elif win_prob >= 0.35:
+            return "Uphill battle. Aggressive persuasion needed, identify and mobilize every supporter."
+        else:
+            return "Challenging. Re-evaluate strategy, focus on high-impact persuasion and targeted turnout."
+    elif baseline_margin is not None:
+        if baseline_margin > 0 and best_case_margin > 0:
+            return "Leading. Focus on turnout and maintaining momentum."
+        elif baseline_margin < 0 and worst_case_margin < 0:
+            return "Trailing. Aggressive persuasion and voter registration efforts are critical."
+        else:
+            return "Tight race. Balanced approach: persuasion for undecideds, turnout for supporters."
+    return "Strategy recommendation not available due to insufficient data."
+
+
+def _build_strategy_summary(
+    contest_id: str, contest_mode: str, mode_reason: str, derived_mode: str,
+    win_path: dict, top15_md: str, turfs_md: str, reg_lines: str, cap_text: str,
+    uni_guidance: str, gaps: list, pace_df: pd.DataFrame,
+    win_probability: Optional[float] = None, median_margin: Optional[float] = None,
+) -> str:
+    """Builds the full 9-section STRATEGY_SUMMARY.md content."""
+    mode_badge = {"full": "✅ Full", "partial": "⚠️ Partial", "degraded": "🔴 Degraded", "blocked": "❌ Blocked"}
+    completeness = mode_badge.get(derived_mode, "?")
+
+    def _fmt(v):
+        return f"{v:,.0f}" if isinstance(v, (int, float)) and v is not None else str(v or "N/A")
+
+    def _pct(v):
+        return f"{v:.2%}" if v is not None else "N/A"
+
+    summary_lines = [
+        f"# Campaign Strategy Pack: {contest_id}",
+        f"**Generated:** {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+        f"**Contest Mode:** `{contest_mode.upper()}` ({mode_reason})",
+        f"**Data Completeness:** {completeness} (Derived Mode: `{derived_mode}`)",
+        "",
+        "## 1. Executive Summary",
+        _recommended_strategy(win_path, pd.DataFrame()), # Pass empty df as simulations are not directly used here
+        "",
+        "## 2. Win Path & Forecasts",
+        f"- **Baseline Turnout:** {_pct(win_path['baseline_turnout'])} (estimated)",
+        f"- **Baseline Support:** {_pct(win_path['baseline_support'])} (estimated)",
+        f"- **Baseline Margin:** {_fmt(win_path['baseline_margin'])} votes",
+        f"- **Win Number:** {_fmt(win_path['win_number'])} votes needed to win",
+    ]
+
+    if win_probability is not None:
+        summary_lines.append(f"- **Win Probability:** {win_probability:.1%} (from simulation)")
+    if median_margin is not None:
+        summary_lines.append(f"- **Median Margin:** {_fmt(median_margin)} votes (from simulation)")
+
+    summary_lines.extend([
+        f"- **Best Case Margin:** {_fmt(win_path['best_case_margin'])} votes",
+        f"- **Worst Case Margin:** {_fmt(win_path['worst_case_margin'])} votes",
+        "",
+        "## 3. Top Target Precincts",
+        "These precincts have the highest overall target scores, indicating a strong combination of persuasion potential and turnout opportunity.",
+        top15_md,
+        "",
+        "## 4. Top Walk Turfs",
+        "These turfs are recommended for field operations, prioritized by expected impact.",
+        turfs_md,
+        "",
+        "## 5. Focus Regions",
+        "Key regions identified for strategic focus based on target concentration.",
+        reg_lines,
+        "",
+        "## 6. Field Capacity & Pace",
+        "Recommended weekly pace for field operations to meet campaign goals.",
+        cap_text,
+        "",
+        "## 7. Messaging & Universe Guidance",
+        uni_guidance,
+        "",
+        "## 8. Data Gaps & Recommendations",
+        "The following inputs were not found, potentially limiting the completeness of this strategy pack:",
+        "\n".join(f"- `{g}`" for g in gaps) if gaps else "- None ✅",
+        "",
+        "## 9. Strategy Pack Contents",
+        "This pack includes the following files:",
+        "- `STRATEGY_SUMMARY.md`: This document.",
+        "- `STRATEGY_META.json`: Machine-readable metadata about this pack.",
+        "- `TOP_TARGETS.csv`: Detailed list of top target precincts.",
+        "- `TOP_TURFS.csv`: Detailed list of top walk turfs.",
+        "- `FIELD_PACE.csv`: Weekly breakdown of field goals.",
+        "- `FIELD_PLAN.csv`: Detailed field plan from operations planner.",
+        "- `SIMULATION_RESULTS.csv`: Raw Monte Carlo simulation results.",
+    ])
+
+    return "\n".join(summary_lines)
+
+
 def write_strategy_pack(
     contest_id: str,
     run_id: str,
@@ -417,33 +527,56 @@ def write_strategy_pack(
         ] if c in turfs.columns]
         turfs.head(DEFAULT_TOP_N_TURFS)[turf_cols].to_csv(out_root / "TOP_TURFS.csv", index=False)
 
+    # ── 4.5a Extra Prompt-8 artifacts ────────────────────────────────────────
+    # SIMULATION_RESULTS.csv
+    sim_export = inputs.get("simulations", pd.DataFrame())
+    if not sim_export.empty:
+        sim_export.to_csv(out_root / "SIMULATION_RESULTS.csv", index=False)
+
+    # FIELD_PLAN.csv (ops planner output, or fallback from field_plan)
+    field_plan_export = inputs.get("field_plan", pd.DataFrame())
+    if not field_plan_export.empty:
+        # Rename to match Prompt 8 spec
+        fp_cols = [c for c in [
+            "region_id", "region_name", "registered_total",
+            "doors_to_knock", "expected_contacts", "volunteers_needed", "weeks_required",
+        ] if c in field_plan_export.columns]
+        if not fp_cols:
+            fp_cols = list(field_plan_export.columns)
+        field_plan_export[fp_cols].to_csv(out_root / "FIELD_PLAN.csv", index=False)
+
     # ── 4.4 FIELD_PACE.csv ────────────────────────────────────────────────────
     pace_df.to_csv(out_root / "FIELD_PACE.csv", index=False)
 
     # ── 4.5 STRATEGY_META.json ────────────────────────────────────────────────
     meta = {
-        "contest_id":   contest_id,
-        "run_id":       run_id,
-        "generated_at": datetime.datetime.now().isoformat(),
-        "contest_mode": contest_mode,
-        "mode_reason":  mode_reason,
-        "derived_mode": derived_mode,
-        "inputs_found":   inputs["inputs_found"],
-        "inputs_missing": inputs["inputs_missing"],
+        "contest_id":    contest_id,
+        "run_id":        run_id,
+        "generated_at":  datetime.datetime.now().isoformat(),
+        "contest_mode":  contest_mode,
+        "mode_reason":   mode_reason,
+        "derived_mode":  derived_mode,
+        "forecast_mode": inputs.get("forecast_mode", "both"),
+        "inputs_found":  inputs["inputs_found"],
+        "inputs_missing":inputs["inputs_missing"],
         "model_summary": {
             "precinct_count": len(targets),
             "turf_count":     len(turfs),
             "region_count":   len(top_regions),
-            "scenario_count": len(inputs["simulations"]) if not inputs["simulations"].empty else 0,
+            "scenario_count": 4 if not inputs["simulations"].empty else 0,
         },
         "topline_metrics": {
-            "baseline_turnout": win_path["baseline_turnout"],
-            "baseline_support": win_path["baseline_support"],
-            "baseline_margin":  win_path["baseline_margin"],
-            "win_number":       win_path["win_number"],
-            "best_case_margin": win_path["best_case_margin"],
+            "baseline_turnout":  win_path["baseline_turnout"],
+            "baseline_support":  win_path["baseline_support"],
+            "baseline_margin":   win_path["baseline_margin"],
+            "win_number":        win_path["win_number"],
+            "best_case_margin":  win_path["best_case_margin"],
             "worst_case_margin": win_path["worst_case_margin"],
+            "win_probability":   win_path.get("win_probability"),
         },
+        "recommended_strategy": _recommended_strategy(
+            win_path, inputs["simulations"]
+        ),
     }
     (out_root / "STRATEGY_META.json").write_text(json.dumps(meta, indent=2, default=str), encoding="utf-8")
 
@@ -502,81 +635,13 @@ def write_strategy_pack(
     gaps = inputs["inputs_missing"]
     gap_text = "\n".join(f"- `{g}`" for g in gaps) if gaps else "- None ✅"
 
-    summary_md = f"""# Campaign Strategy Summary
-**Contest:** `{contest_id}`
-**Mode:** {contest_mode.upper()} — {mode_reason}
-**Data Completeness:** {completeness}
-**Generated:** {datetime.datetime.now().strftime("%Y-%m-%d %H:%M")}
+    (out_root / "STRATEGY_SUMMARY.md").write_text(
+        _build_strategy_summary(contest_id, contest_mode, mode_reason, derived_mode,
+                                win_path, top15_md, turfs_md, reg_lines, cap_text,
+                                uni_guidance, gaps, pace_df),
+        encoding="utf-8"
+    )
 
----
-
-## Win Path
-
-| Metric | Value |
-|---|---|
-| Baseline Turnout | {_fmt(wp['baseline_turnout'])} |
-| Baseline Support | {_fmt(wp['baseline_support'])} |
-| Baseline Margin (votes) | {_fmt(wp['baseline_margin'])} |
-| Win Number | {_fmt(wp['win_number'])} |
-| Best-Case Margin | {_fmt(wp['best_case_margin'])} |
-| Worst-Case Margin | {_fmt(wp['worst_case_margin'])} |
-
-{"".join(f"> ⚠️ {n}  " + chr(10) for n in wp['notes'])}
-
----
-
-## Top 15 Target Precincts
-
-{top15_md}
-
-> Full list → `TOP_TARGETS.csv` (top {DEFAULT_TOP_N_TARGETS} precincts)
-
----
-
-## Top 10 Turfs to Walk First
-
-{turfs_md}
-
-> Full list → `TOP_TURFS.csv` (top {DEFAULT_TOP_N_TURFS} turfs)
-
----
-
-## Focus Regions
-
-{reg_lines}
-
----
-
-## Field Capacity Plan
-
-{cap_text}
-
----
-
-## Messaging & Universe Guidance
-
-{uni_guidance}
-
----
-
-## Data Gaps & NEEDS
-
-{gap_text}
-
----
-
-## Key Output Files
-
-| File | Description |
-|---|---|
-| `TOP_TARGETS.csv` | Top {DEFAULT_TOP_N_TARGETS} target precincts |
-| `TOP_TURFS.csv` | Top {DEFAULT_TOP_N_TURFS} turfs with purpose labels |
-| `FIELD_PACE.csv` | Weekly capacity schedule |
-| `STRATEGY_META.json` | Machine-readable strategy metadata |
-| `STRATEGY_SUMMARY.md` | This file |
-"""
-
-    (out_root / "STRATEGY_SUMMARY.md").write_text(summary_md, encoding="utf-8")
 
     if logger:
         logger.info(f"  Strategy pack written to {out_root}")
@@ -630,11 +695,16 @@ def run_strategy_generator(
     contest_id: str,
     run_id: str,
     contest_mode: str = "auto",
+    forecast_mode: str = "both",
     weeks: int = DEFAULT_WEEKS,
+    state: str = "CA",
+    county: str = "",
+    contest_slug: str = "",
     logger=None,
 ) -> Optional[Path]:
     """
     Main entry point. Returns path to strategy pack folder, or None on error.
+    forecast_mode: deterministic | monte_carlo | both
     """
     if logger: logger.info(f"[STRATEGY] Loading inputs for contest_id={contest_id}")
 
@@ -649,7 +719,51 @@ def run_strategy_generator(
 
     # Load inputs
     inputs = load_inputs(contest_id, run_id)
+    inputs["forecast_mode"] = forecast_mode
     derived_mode = inputs["derived_mode"]
+
+    # ── Inline simulation if not already present ──────────────────────────
+    if inputs["simulations"].empty and not inputs["targets"].empty:
+        try:
+            from scripts.simulation.simulation_engine import run_simulation
+            _cslug = contest_slug or contest_id
+            _county = county or "unknown"
+            sim_result = run_simulation(
+                model_df=inputs["targets"],
+                state=state or "CA",
+                county=_county,
+                contest=_cslug,
+                run_id=run_id,
+                mode=forecast_mode,
+                logger=logger,
+            )
+            inputs["simulations"] = sim_result["simulation_results"]
+            if sim_result["win_probability"] is not None:
+                inputs["win_probability"] = sim_result["win_probability"]
+                inputs["median_margin"]   = sim_result["median_margin"]
+            if logger: logger.info(f"[STRATEGY] Inline simulation complete, win_prob={sim_result['win_probability']}")
+        except Exception as e:
+            if logger: logger.warn(f"[STRATEGY] Inline simulation failed (non-fatal): {e}")
+
+    # ── Inline ops planner if not already present ───────────────────────
+    if inputs["field_plan"].empty and not inputs["targets"].empty:
+        try:
+            from scripts.ops.operations_planner import run_operations_planner
+            _cslug = contest_slug or contest_id
+            _county = county or "unknown"
+            ops_result = run_operations_planner(
+                model_df=inputs["targets"],
+                state=state or "CA",
+                county=_county,
+                contest=_cslug,
+                run_id=run_id,
+                logger=logger,
+            )
+            inputs["field_plan"] = ops_result["field_plan"]
+            inputs["regions"]    = ops_result["regions"]
+            if logger: logger.info(f"[STRATEGY] Inline ops planner: {ops_result['region_count']} regions")
+        except Exception as e:
+            if logger: logger.warn(f"[STRATEGY] Inline ops planner failed (non-fatal): {e}")
 
     if logger:
         logger.info(f"[STRATEGY]  derived_mode={derived_mode}")
@@ -665,9 +779,13 @@ def run_strategy_generator(
     final_mode, mode_reason = infer_contest_mode(inputs["targets"], contest_mode)
     if logger: logger.info(f"[STRATEGY]  contest_mode={final_mode} ({mode_reason})")
 
-    # Win path
+    # Win path (merge inline simulation results)
     win_path = compute_win_path(inputs["targets"], inputs["forecasts"],
                                 inputs["simulations"], final_mode)
+    if "win_probability" in inputs:
+        win_path["win_probability"] = inputs["win_probability"]
+    if "median_margin" in inputs and win_path["baseline_margin"] is None:
+        win_path["baseline_margin"] = inputs["median_margin"]
 
     # Focus areas
     focus = compute_focus(inputs["targets"], inputs["regions"])
@@ -722,6 +840,7 @@ if __name__ == "__main__":
         contest_id=args.contest_id,
         run_id=args.run_id,
         contest_mode=args.contest_mode,
+        forecast_mode=args.forecast_mode if hasattr(args, "forecast_mode") else "both",
         weeks=args.weeks,
     )
     if pack:
