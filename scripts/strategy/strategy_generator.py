@@ -506,6 +506,7 @@ def write_strategy_pack(
     uni_guidance: str,
     ops_config: dict,
     logger=None,
+    integrity_meta: dict | None = None,
 ) -> Path:
     """Write all 5 Strategy Pack artifacts. Returns pack_dir."""
     out_root = BASE_DIR / "derived" / "strategy_packs" / contest_id / run_id
@@ -557,6 +558,15 @@ def write_strategy_pack(
     pace_df.to_csv(out_root / "FIELD_PACE.csv", index=False)
 
     # ── 4.5 STRATEGY_META.json ────────────────────────────────────────────────
+    _scenario_count = (
+        len(inputs["simulations"]["scenario"].unique())
+        if not inputs["simulations"].empty and "scenario" in inputs["simulations"].columns
+        else (4 if not inputs["simulations"].empty else 0)
+    )
+
+    # integrity_meta is optionally passed in via run_strategy_generator kwargs
+    _integrity = integrity_meta or {}
+
     meta = {
         "contest_id":    contest_id,
         "run_id":        run_id,
@@ -565,13 +575,22 @@ def write_strategy_pack(
         "mode_reason":   mode_reason,
         "derived_mode":  derived_mode,
         "forecast_mode": inputs.get("forecast_mode", "both"),
+        # Prompt 8.6: top-level counts (audit-accessible)
+        "precinct_count":  len(targets),
+        "turf_count":      len(turfs),
+        "region_count":    len(top_regions),
+        "scenario_count":  _scenario_count,
+        # Prompt 8.6: data quality flags
+        "constraint_violations_count": _integrity.get("constraint_violations_count", 0),
+        "integrity_repairs_count":     _integrity.get("integrity_repairs_count", 0),
+        "join_guard_critical":         _integrity.get("join_guard_critical", False),
         "inputs_found":  inputs["inputs_found"],
         "inputs_missing":inputs["inputs_missing"],
         "model_summary": {
             "precinct_count": len(targets),
             "turf_count":     len(turfs),
             "region_count":   len(top_regions),
-            "scenario_count": 4 if not inputs["simulations"].empty else 0,
+            "scenario_count": _scenario_count,
         },
         "topline_metrics": {
             "baseline_turnout":  win_path["baseline_turnout"],
@@ -709,6 +728,7 @@ def run_strategy_generator(
     county: str = "",
     contest_slug: str = "",
     logger=None,
+    integrity_meta: dict | None = None,
 ) -> Optional[Path]:
     """
     Main entry point. Returns path to strategy pack folder, or None on error.
@@ -820,6 +840,7 @@ def run_strategy_generator(
             uni_guidance=uni_text,
             ops_config=ops_config,
             logger=logger,
+            integrity_meta=integrity_meta or {},
         )
     except Exception as e:
         if logger: logger.error(f"[STRATEGY] Write failed: {e}")

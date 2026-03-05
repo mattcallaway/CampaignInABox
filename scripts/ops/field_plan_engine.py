@@ -29,20 +29,30 @@ def compute_field_plan(
     # 1. Door Math
     # If we have voter features with household counts, use those. 
     # Otherwise, heuristic: 1.5 voters per door.
+    plan_df["doors_estimated"] = (plan_df.get("registered", pd.Series(0, index=plan_df.index)) / 1.5).fillna(0).astype(int)
+
     if voter_features is not None and "household_count" in voter_features.columns:
-        # Merge if not already present
         if "household_count" not in plan_df.columns:
-            plan_df = pd.merge(plan_df, voter_features[["canonical_precinct_id", "household_count"]], 
+            plan_df = pd.merge(plan_df, voter_features[["canonical_precinct_id", "household_count"]],
                                on="canonical_precinct_id", how="left")
-        plan_df["doors_estimated"] = plan_df["household_count"].fillna(plan_df["registered"] / 1.5).astype(int)
-    else:
-        plan_df["doors_estimated"] = (plan_df["registered"] / 1.5).fillna(0).astype(int)
+        plan_df["doors_estimated"] = plan_df["household_count"].fillna(plan_df["doors_estimated"]).astype(int)
 
     # 2. Shift & Volunteer Math
-    plan_df["shifts_needed"] = plan_df["doors_estimated"] / (doors_per_hour * hours_per_shift)
+    plan_df["shifts_needed"]            = plan_df["doors_estimated"] / (doors_per_hour * hours_per_shift)
     plan_df["volunteers_needed_weekend"] = plan_df["shifts_needed"] / target_shift_count
-    plan_df["expected_contacts"] = plan_df["doors_estimated"] * contact_rate
-    
+    plan_df["expected_contacts"]         = plan_df["doors_estimated"] * contact_rate
+
+    # Prompt 8.6: add spec-required alias columns
+    plan_df["doors_to_knock"]      = plan_df["doors_estimated"]
+    plan_df["volunteers_needed"]   = plan_df["volunteers_needed_weekend"].round(1)
+    # weeks_required: rough estimate — doors_estimated at 1 weekend (4h) per week
+    weekly_doors = doors_per_hour * hours_per_shift * 2  # two shifts/weekend
+    plan_df["weeks_required"] = (
+        plan_df["doors_estimated"] / weekly_doors.real
+        if hasattr(weekly_doors, "real") else plan_df["doors_estimated"] / max(weekly_doors, 1)
+    ).round(1) if weekly_doors > 0 else 0
+    # expected_contacts already computed above
+
     return plan_df
 
 def summarize_field_plan(plan_df: pd.DataFrame, level_name: str = "precinct") -> pd.DataFrame:

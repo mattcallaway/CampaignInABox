@@ -68,13 +68,32 @@ def build_strategic_regions(
     # 4. Result Formatting
     res_df = df[["canonical_precinct_id"]].copy()
     res_df["region_id"] = [f"REGION_{l+1:02d}" for l in labels]
-    
+
     # Add rank based on total registered in region (strategic priority)
     region_reg = df.groupby(res_df["region_id"])["registered"].sum()
     region_ranks = region_reg.sort_values(ascending=False).index.tolist()
     rank_map = {rid: i+1 for i, rid in enumerate(region_ranks)}
     res_df["region_rank"] = res_df["region_id"].map(rank_map)
-    
+
+    # Prompt 8.6: add spec-required columns to region output
+    res_df["region_name"] = res_df["region_id"].apply(
+        lambda rid: f"Region {rid.replace('REGION_', '')}"
+    )
+    # Precinct count per region
+    pcount = res_df.groupby("region_id")["canonical_precinct_id"].transform("count")
+    res_df["precinct_count"] = pcount
+
+    # Registered total per region (join from df)
+    reg_map = df.groupby(res_df["region_id"].values)["registered"].sum().to_dict()
+    res_df["registered_total"] = res_df["region_id"].map(reg_map).fillna(0).astype(int)
+
+    # Avg target score per region
+    if "target_score" in df.columns:
+        score_map = df.groupby(res_df["region_id"].values)["target_score"].mean().to_dict()
+        res_df["avg_target_score"] = res_df["region_id"].map(score_map).round(4)
+    else:
+        res_df["avg_target_score"] = 0.0
+
     return res_df
 
 def generate_region_summary(df: pd.DataFrame, regions_df: pd.DataFrame) -> str:
