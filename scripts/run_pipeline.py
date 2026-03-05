@@ -46,6 +46,7 @@ for p in [str(BASE_DIR), str(SCRIPTS_DIR.parent)]:
 from scripts.lib.run_id import generate_run_id
 from scripts.lib.hashing import sha256_file, file_info
 from scripts.lib.ca_fips import fips_to_county, county_to_fips
+from app.lib.state_manager import clear_stale
 from scripts.loaders.logger import RunLogger
 from scripts.ingest import run_ingestion
 from scripts.validation.geography_validator import (
@@ -163,8 +164,12 @@ def run_pipeline(
     staging_dir: str | None = None,
     log_level: str = "verbose",
     commit: bool = True,
+    rebuild_memberships_only: bool = False,
+    rebuild_maps_only: bool = False,
+    rebuild_targets_only: bool = False,
 ) -> str:
     """Execute the full pipeline. Returns RUN_ID on success."""
+    context_key = f"{state}/{county}/{year}/{contest_slug}"
 
     # ── Step 0: RUN_ID + logger ───────────────────────────────────────────
     run_id = generate_run_id(repo_dir=BASE_DIR)
@@ -201,11 +206,14 @@ def run_pipeline(
         logger.step_skip("INGEST_STAGING", reason="No --staging-dir provided; skipping ingestion")
 
     # ── Step 2: Scaffold boundary index ──────────────────────────────────
-    logger.step_start("SCAFFOLD_BOUNDARY_INDEX")
-    bi_path = scaffold_boundary_index(data_root, county, log=logger)
-    bi_refresh = refresh_boundary_index(data_root, county, log=logger)
-    logger.step_done("SCAFFOLD_BOUNDARY_INDEX", outputs=[bi_path])
-    all_artifacts.append(bi_path)
+    if not (rebuild_maps_only or rebuild_targets_only):
+        logger.step_start("SCAFFOLD_BOUNDARY_INDEX")
+        bi_path = scaffold_boundary_index(data_root, county, log=logger)
+        bi_refresh = refresh_boundary_index(data_root, county, log=logger)
+        logger.step_done("SCAFFOLD_BOUNDARY_INDEX", outputs=[bi_path])
+        all_artifacts.append(bi_path)
+    else:
+        logger.step_skip("SCAFFOLD_BOUNDARY_INDEX", reason="Skipped due to targeted rebuild flag")
 
     # ── Step 3: Validate geography ────────────────────────────────────────
     logger.step_start("VALIDATE_GEOGRAPHY", expected=[
@@ -300,12 +308,17 @@ def run_pipeline(
         logger.step_done("LOAD_CROSSWALKS", notes=[f"{len(crosswalks)} crosswalk(s) loaded"])
 
     # ── Step 7: Scaffold contest.json ─────────────────────────────────────
-    logger.step_start("SCAFFOLD_CONTEST_JSON")
-    contest_json_path = scaffold_contest_json(
-        votes_root, year=year, state=state, county=county, contest_slug=contest_slug,
-    )
-    logger.step_done("SCAFFOLD_CONTEST_JSON", outputs=[contest_json_path])
-    all_artifacts.append(contest_json_path)
+    if not (rebuild_maps_only or rebuild_memberships_only):
+        logger.step_start("SCAFFOLD_CONTEST_JSON")
+        contest_json_path = scaffold_contest_json(
+            votes_root, year=year, state=state, county=county, contest_slug=contest_slug,
+        )
+        logger.step_done("SCAFFOLD_CONTEST_JSON", outputs=[contest_json_path])
+        all_artifacts.append(contest_json_path)
+    else:
+        # Just grab the path for later commits
+        contest_json_path = votes_root / year / state / county / contest_slug / "contest.json"
+        logger.step_skip("SCAFFOLD_CONTEST_JSON", reason="Skipped due to targeted rebuild flag")
 
     # ── Step 8: Parse contest workbook ────────────────────────────────────
     logger.step_start("PARSE_CONTEST", expected=["Detect sheet types; aggregate vote methods"])
@@ -386,29 +399,45 @@ def run_pipeline(
         all_artifacts.append(csv_path)
         logger.info(f"  Precinct model: {csv_path.name}")
 
-        targeting_df = build_targeting_list(model_df, min_score=min_score)
-        tgt_path = export_targeting_list(targeting_df, BASE_DIR, run_id, state, county, slug_out)
-        all_artifacts.append(tgt_path)
-        logger.info(f"  Targeting list: {tgt_path.name} ({len(targeting_df)} rows)")
+        if not rebuild_maps_only:
+            targeting_df = build_targeting_list(model_df, min_score=min_score)
+            tgt_path = export_targeting_list(targeting_df, BASE_DIR, run_id, state, county, slug_out)
+            all_artifacts.append(tgt_path)
+            logger.info(f"  Targeting list: {tgt_path.name} ({len(targeting_df)} rows)")
 
-        agg_path = export_district_aggregates(model_df, BASE_DIR, run_id, state, county, slug_out)
-        all_artifacts.append(agg_path)
-        logger.info(f"  District aggregates: {agg_path.name}")
+        if not (rebuild_maps_only or rebuild_targets_only):
+            agg_path = export_district_aggregates(model_df, BASE_DIR, run_id, state, county, slug_out)
+            all_artifacts.append(agg_path)
+            logger.info(f"  District aggregates: {agg_path.name}")
 
-        id_col = next((c for c in model_df.columns if "ID" in c.upper()), model_df.columns[0])
-        kepler_path = export_kepler_geojson(model_df, BASE_DIR, run_id, state, county, slug_out, id_col=id_col)
-        if kepler_path:
-            all_artifacts.append(kepler_path)
-            logger.info(f"  Kepler GeoJSON: {kepler_path.name}")
-        else:
-            logger.step_skip(f"KEPLER/{sname}", reason="No geometry (boundary files missing or geopandas unavailable)")
-            logger.register_need("geometry_for_kepler", "blocked", ["kepler_geojson"],
-                                  path=str(county_geo_dir / "precinct_shapes" / "MPREC_GeoJSON"))
+        if not rebuild_targets_only:
+            kepler_path = export_kepler_geojson(model_df, BASE_DIR, run_id, state, county, slug_out, id_col=id_col)
+            if kepler_path:
+                all_artifacts.append(kepler_path)
+                logger.info(f"  Kepler GeoJSON: {kepler_path.name}")
+            else:
+                logger.step_skip(f"KEPLER/{sname}", reason="No geometry (boundary files missing or geopandas unavailable)")
+                logger.register_need("geometry_for_kepler", "blocked", ["kepler_geojson"],
+                                      path=str(county_geo_dir / "precinct_shapes" / "MPREC_GeoJSON"))
 
     logger.step_done("EXPORT_OUTPUTS", outputs=all_artifacts)
 
     # ── Step 14: Finalize + commit ────────────────────────────────────────
     logger.finalize(state, county, contest_slug, run_status="success")
+
+    # Clear staleness flags upon success
+    cleared_domains = []
+    if rebuild_memberships_only:
+        cleared_domains = ["memberships", "precinct_models", "district_aggregates", "campaign_targets", "maps"]
+    elif rebuild_targets_only:
+        cleared_domains = ["campaign_targets"]
+    elif rebuild_maps_only:
+        cleared_domains = ["maps"]
+    else:
+        # full rebuild
+        cleared_domains = ["memberships", "precinct_models", "district_aggregates", "campaign_targets", "maps"]
+        
+    clear_stale(context_key, cleared_domains)
 
     if commit:
         _git_commit(
@@ -465,6 +494,9 @@ def main():
     parser.add_argument("--log-level",     dest="log_level",
                         choices=["verbose", "summary"], default="verbose")
     parser.add_argument("--no-commit",     dest="commit", action="store_false")
+    parser.add_argument("--rebuild-memberships", action="store_true", help="Rebuild memberships and all downstream")
+    parser.add_argument("--rebuild-maps-only", action="store_true", help="Only rebuild maps")
+    parser.add_argument("--rebuild-targets-only", action="store_true", help="Only rebuild campaign targets")
     parser.set_defaults(commit=True)
 
     args = parser.parse_args()
@@ -489,6 +521,9 @@ def main():
             staging_dir=args.staging_dir,
             log_level=args.log_level,
             commit=args.commit,
+            rebuild_memberships_only=args.rebuild_memberships,
+            rebuild_maps_only=args.rebuild_maps_only,
+            rebuild_targets_only=args.rebuild_targets_only,
         )
     except RuntimeError as e:
         print(f"\n[PIPELINE HARD FAIL] {e}", file=sys.stderr)

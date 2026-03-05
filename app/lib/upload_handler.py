@@ -47,6 +47,11 @@ def _sha256_file(path: Path) -> str:
     return h.hexdigest()
 
 
+from app.lib.archiver import archive_file, get_archive_dest
+from app.lib.audit_logger import log_update_event
+from app.lib.state_manager import mark_stale, determine_stale_domains_for_update
+
+
 def save_geography_files(
     uploaded_files: list,  # Streamlit UploadedFile objects
     category: str,
@@ -55,6 +60,7 @@ def save_geography_files(
 ) -> tuple[list[dict], list[str]]:
     """
     Save uploaded geography/crosswalk files to correct folder.
+    Archives old files, logs event, and marks derivatives stale.
     Returns (saved_records, warnings).
     """
     folder_rel = CATEGORY_TO_FOLDER.get(category, "crosswalks")
@@ -66,7 +72,6 @@ def save_geography_files(
     uploaded_names = {f.name for f in uploaded_files}
     is_shapefile_category = "Shapefile" in category
 
-    # Shapefile bundle completeness check
     if is_shapefile_category:
         shp_files = [f for f in uploaded_files if f.name.lower().endswith(".shp")]
         for shp in shp_files:
@@ -78,11 +83,32 @@ def save_geography_files(
             if missing:
                 warnings.append(f"Shapefile bundle incomplete for '{shp.name}': missing {missing}")
 
+    # Generate a single timestamp for this batch upload
+    from datetime import datetime, timezone
+    now_ts = datetime.now(timezone.utc).strftime("%Y-%m-%d__%H%M%S")
+    domains_stale = determine_stale_domains_for_update(category)
+    context_key = f"{state}/{county}"
+
     for uf in uploaded_files:
         data = uf.getvalue()
         dest = dest_dir / uf.name
+        
+        old_record = None
+        archive_path = None
+        action = "add"
+
+        if dest.exists():
+            action = "replace"
+            old_data = dest.read_bytes()
+            old_record = {
+                "filename": dest.name,
+                "size_bytes": len(old_data),
+                "sha256": _sha256_bytes(old_data),
+            }
+            archive_path = archive_file(dest, now_ts, "geography", county, state=state)
+
         dest.write_bytes(data)
-        saved.append({
+        new_record = {
             "filename": uf.name,
             "path": str(dest),
             "size_bytes": len(data),
@@ -90,10 +116,27 @@ def save_geography_files(
             "category_label": category,
             "category_folder": folder_rel,
             "uploaded_at": datetime.now(timezone.utc).isoformat(),
-        })
+        }
+        saved.append(new_record)
+
+        log_update_event(
+            action=action,
+            category=category,
+            county=county,
+            contest=None,
+            old_file_record=old_record,
+            new_file_record=new_record,
+            archive_dest=str(archive_path.parent) if archive_path else None,
+            derived_stale=domains_stale,
+        )
 
     # Refresh manifest
     _update_geo_manifest(county, state, saved)
+
+    # Mark stale
+    if saved:
+        mark_stale(context_key, f"Geography replaced: {category}", domains_stale)
+
     return saved, warnings
 
 
@@ -105,8 +148,8 @@ def save_votes_file(
     state: str = "CA",
 ) -> tuple[Path, Path]:
     """
-    Save detail.xlsx/xls to votes/<year>/<state>/<county>/<contest_slug>/.
-    Creates contest.json placeholder and manifest.json.
+    Save detail.xlsx/xls, archiving old version if present.
+    Creates contest.json placeholder, manifest.json, marks derivatives stale.
     Returns (detail_path, contest_json_path).
     """
     dest_dir = VOTES_ROOT / year / state / county / contest_slug
@@ -116,7 +159,46 @@ def save_votes_file(
     dest_name = f"detail{ext}"
     dest = dest_dir / dest_name
     data = uploaded_file.getvalue()
+
+    from datetime import datetime, timezone
+    now_ts = datetime.now(timezone.utc).strftime("%Y-%m-%d__%H%M%S")
+    
+    old_record = None
+    archive_path = None
+    action = "add"
+
+    if dest.exists():
+        action = "replace"
+        old_data = dest.read_bytes()
+        old_record = {
+            "filename": dest.name,
+            "size_bytes": len(old_data),
+            "sha256": _sha256_bytes(old_data),
+        }
+        archive_path = archive_file(dest, now_ts, "votes", county, year=year, contest=contest_slug, state=state)
+
     dest.write_bytes(data)
+
+    new_record = {
+        "filename": dest_name,
+        "size_bytes": len(data),
+        "sha256": _sha256_bytes(data),
+    }
+
+    domains_stale = determine_stale_domains_for_update("detail")
+    context_key = f"{state}/{county}/{year}/{contest_slug}"
+
+    log_update_event(
+        action=action,
+        category="detail.xlsx",
+        county=county,
+        contest=contest_slug,
+        old_file_record=old_record,
+        new_file_record=new_record,
+        archive_dest=str(archive_path.parent) if archive_path else None,
+        derived_stale=domains_stale,
+    )
+    mark_stale(context_key, f"Votes replaced: {dest_name}", domains_stale)
 
     # Contest JSON placeholder
     contest_json = dest_dir / "contest.json"
@@ -138,8 +220,7 @@ def save_votes_file(
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "year": year, "state": state, "county": county,
         "contest_slug": contest_slug,
-        "files": [{"filename": dest_name, "size_bytes": len(data),
-                   "sha256": _sha256_bytes(data)}],
+        "files": [new_record],
     }
     manifest.write_text(json.dumps(mf, indent=2), encoding="utf-8")
     return dest, contest_json
