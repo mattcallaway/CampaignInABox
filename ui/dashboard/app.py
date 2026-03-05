@@ -1,0 +1,147 @@
+"""
+ui/dashboard/app.py — Prompt 9
+
+Campaign Intelligence Dashboard entry point.
+
+Launch with:
+    streamlit run ui/dashboard/app.py
+"""
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+import streamlit as st
+
+# ── Bootstrap sys.path ────────────────────────────────────────────────────────
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
+
+# ── Page config ───────────────────────────────────────────────────────────────
+st.set_page_config(
+    page_title="Campaign Intelligence Dashboard",
+    page_icon="🗳️",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
+# ── CSS ───────────────────────────────────────────────────────────────────────
+st.markdown("""
+<style>
+  :root {
+    --primary: #1E3A5F;
+    --accent:  #2563EB;
+    --success: #16A34A;
+    --warn:    #D97706;
+    --danger:  #DC2626;
+    --border:  #E2E8F0;
+  }
+  /* Sidebar */
+  [data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #1E3A5F 0%, #0F2340 100%) !important;
+  }
+  [data-testid="stSidebar"] .stRadio label { color: white !important; font-size: 0.95rem; }
+  [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2,
+  [data-testid="stSidebar"] h3, [data-testid="stSidebar"] p { color: white !important; }
+  [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p { color: #CBD5E1 !important; }
+  /* Tab styling */
+  .stTabs [data-baseweb="tab-list"] { gap: 4px; }
+  .stTabs [data-baseweb="tab"] {
+    border-radius: 8px 8px 0 0;
+    padding: 8px 16px;
+    font-weight: 600;
+  }
+  /* Metric cards */
+  div[data-testid="metric-container"] {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+  }
+</style>
+""", unsafe_allow_html=True)
+
+# ── Data loading (cached) ─────────────────────────────────────────────────────
+from ui.dashboard.data_loader import load_all
+
+
+@st.cache_data(ttl=120, show_spinner="Loading campaign data…")
+def get_data() -> dict:
+    return load_all()
+
+
+# ── Sidebar navigation ────────────────────────────────────────────────────────
+with st.sidebar:
+    st.markdown("## 🗳️ Campaign Intelligence")
+    st.markdown("*Powered by Campaign In A Box*")
+    st.divider()
+
+    page = st.radio(
+        "Navigation",
+        [
+            "🏠 Overview",
+            "🗺️ Precinct Map",
+            "🎯 Targeting",
+            "📋 Strategy",
+            "🔬 Simulations",
+            "🩺 Diagnostics",
+            "🗄️ Data Explorer",
+        ],
+        label_visibility="collapsed",
+        key="dashboard_nav",
+    )
+    st.divider()
+
+    # Refresh button
+    if st.button("🔄 Refresh Data", use_container_width=True):
+        st.cache_data.clear()
+        st.rerun()
+
+    # Run info
+    try:
+        data_preview = get_data()
+        run_id = data_preview.get("run_id", "—")
+        elapsed = data_preview.get("load_elapsed", 0)
+        pm_rows = len(data_preview.get("precinct_model", []))
+        st.markdown(f"**Run:** `{run_id[:20]}…`" if len(run_id) > 22 else f"**Run:** `{run_id}`")
+        st.markdown(f"**Precincts:** {pm_rows:,}")
+        st.markdown(f"**Load time:** {elapsed:.2f}s")
+    except Exception:
+        st.caption("Loading…")
+
+# ── Load data ─────────────────────────────────────────────────────────────────
+try:
+    data = get_data()
+except Exception as e:
+    st.error(f"Failed to load data: {e}")
+    st.stop()
+
+# ── Page routing ─────────────────────────────────────────────────────────────
+if page == "🏠 Overview":
+    from ui.dashboard.layout import render_overview
+    render_overview(data)
+
+elif page == "🗺️ Precinct Map":
+    from ui.dashboard.map_view import render_map
+    render_map(data)
+
+elif page == "🎯 Targeting":
+    from ui.dashboard.targeting_view import render_targeting
+    render_targeting(data)
+
+elif page == "📋 Strategy":
+    from ui.dashboard.strategy_view import render_strategy
+    render_strategy(data)
+
+elif page == "🔬 Simulations":
+    from ui.dashboard.simulation_view import render_simulation
+    render_simulation(data)
+
+elif page == "🩺 Diagnostics":
+    from ui.dashboard.diagnostics_view import render_diagnostics
+    render_diagnostics(data)
+
+elif page == "🗄️ Data Explorer":
+    from ui.dashboard.data_explorer import render_explorer
+    render_explorer(data)
