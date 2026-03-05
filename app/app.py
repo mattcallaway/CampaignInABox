@@ -155,17 +155,18 @@ with st.sidebar:
     page = st.radio(
         "Navigation",
         [
-            "🏛️ Jurisdiction", 
-            "📤 Upload New Data", 
-            "🔄 Update Center", 
+            "🏛️ Jurisdiction",
+            "📤 Upload New Data",
+            "🔄 Update Center",
             "🕰️ Version Browser",
             "▶️ Run Pipeline",
             "📈 Modeling & Forecasts",
             "🗺️ Ops Planner",
-            "📊 Outputs Browser", 
+            "📊 Outputs Browser",
             "🎯 Strategy Generator",
+            "🔬 Diagnostics",
             "📋 Logs & NEEDS",
-            "📜 County Registry"
+            "📜 County Registry",
         ],
         label_visibility="collapsed",
     )
@@ -1645,6 +1646,169 @@ elif page == "📋 Logs & NEEDS":
                     # Quick log tail
                     tail = "\n".join(log_content.splitlines()[-15:]) if log_content else ""
                     st.code(tail, language=None)
+
+# ═════════════════════════════════════════════════════════════════════════════
+# PAGE: DIAGNOSTICS (Prompt 8.7)
+# ═════════════════════════════════════════════════════════════════════════════
+elif page == "🔬 Diagnostics":
+    st.markdown("""
+    <div class='ciab-header'>
+        <h1>🔬 System Diagnostics</h1>
+        <p>Post-run integrity, geometry, join validation, and artifact status</p>
+    </div>""", unsafe_allow_html=True)
+
+    import json as _json
+
+    latest_dir = BASE_DIR / "logs" / "latest"
+
+    def _color(status: str) -> str:
+        s = str(status).upper()
+        if s in ("PASS", "HEALTHY", "COMPLETE"):   return "#16A34A"  # green
+        if s in ("WARN", "DEGRADED", "SKIP"):       return "#D97706"  # yellow
+        if s in ("FAIL", "FAIL"):                   return "#DC2626"  # red
+        return "#64748B"  # muted
+
+    def _badge(status: str) -> str:
+        s = str(status).upper()
+        if s in ("PASS", "HEALTHY", "COMPLETE"):  return "✅"
+        if s in ("WARN", "DEGRADED", "SKIP"):     return "⚠️"
+        if s in ("FAIL",):                         return "❌"
+        return "⏭️"
+
+    # ── System health card ────────────────────────────────────────────────────
+    health_file = latest_dir / "system_health.json"
+    if health_file.exists():
+        try:
+            health_data = _json.loads(health_file.read_text())
+            sh = health_data.get("system_health", "UNKNOWN")
+            run_label = health_data.get("run_id", "—")
+            color = _color(sh)
+            st.markdown(f"""
+            <div style='background:{color}15;border-left:5px solid {color};
+                border-radius:10px;padding:18px 22px;margin-bottom:16px'>
+              <span style='font-size:2rem'>{_badge(sh)}</span>
+              <span style='font-size:1.4rem;font-weight:700;color:{color};margin-left:12px'>
+                System Health: {sh}
+              </span><br>
+              <small style='color:#64748B'>Latest run: <code>{run_label}</code></small>
+            </div>""", unsafe_allow_html=True)
+        except Exception:
+            st.info("System health data not yet available. Run the pipeline to generate diagnostics.")
+    else:
+        st.info("No diagnostics found. Run the pipeline to generate diagnostic reports.")
+
+    # ── Metrics row ──────────────────────────────────────────────────────────
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        jg_status = "unknown"
+        jg_file = latest_dir / "join_guard.md"
+        if jg_file.exists():
+            jg_status = "PASS" if "PASS" in jg_file.read_text()[:200] else "WARN"
+        color = _color(jg_status)
+        st.markdown(f"""<div style='background:white;border:1px solid #E2E8F0;border-radius:10px;
+            padding:16px;border-top:4px solid {color}'>
+            <div style='font-size:0.85rem;color:#64748B'>Join Guard</div>
+            <div style='font-size:1.5rem;font-weight:700;color:{color}'>{_badge(jg_status)} {jg_status.upper()}</div>
+            </div>""", unsafe_allow_html=True)
+
+    with col2:
+        geo_file = latest_dir / "geometry_status.json"
+        geo_status = "SKIP"
+        if geo_file.exists():
+            try:
+                geo_status = _json.loads(geo_file.read_text()).get("status", "SKIP")
+            except Exception:
+                pass
+        color = _color(geo_status)
+        st.markdown(f"""<div style='background:white;border:1px solid #E2E8F0;border-radius:10px;
+            padding:16px;border-top:4px solid {color}'>
+            <div style='font-size:0.85rem;color:#64748B'>Geometry</div>
+            <div style='font-size:1.5rem;font-weight:700;color:{color}'>{_badge(geo_status)} {geo_status.upper()}</div>
+            </div>""", unsafe_allow_html=True)
+
+    with col3:
+        repairs_file = latest_dir / "integrity_repairs.md"
+        repair_count = 0
+        if repairs_file.exists():
+            txt = repairs_file.read_text()
+            import re as _re
+            m = _re.search(r"(\d+) repair", txt)
+            repair_count = int(m.group(1)) if m else 0
+        color = "#16A34A" if repair_count == 0 else "#D97706"
+        st.markdown(f"""<div style='background:white;border:1px solid #E2E8F0;border-radius:10px;
+            padding:16px;border-top:4px solid {color}'>
+            <div style='font-size:0.85rem;color:#64748B'>Integrity Repairs</div>
+            <div style='font-size:1.5rem;font-weight:700;color:{color}'>{repair_count}</div>
+            </div>""", unsafe_allow_html=True)
+
+    with col4:
+        art_file = latest_dir / "artifact_validation.md"
+        art_status = "unknown"
+        if art_file.exists():
+            txt = art_file.read_text()
+            if "All required" in txt: art_status = "COMPLETE"
+            elif "Missing" in txt:    art_status = "WARN"
+        color = _color(art_status)
+        st.markdown(f"""<div style='background:white;border:1px solid #E2E8F0;border-radius:10px;
+            padding:16px;border-top:4px solid {color}'>
+            <div style='font-size:0.85rem;color:#64748B'>Artifacts</div>
+            <div style='font-size:1.5rem;font-weight:700;color:{color}'>{_badge(art_status)} {art_status.upper()}</div>
+            </div>""", unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # ── Post-run audit detail ────────────────────────────────────────────────
+    audit_latest = latest_dir / "post_prompt86_audit.json"
+    if audit_latest.exists():
+        try:
+            audit = _json.loads(audit_latest.read_text())
+            with st.expander("📋 Full Post-Run Audit Report", expanded=True):
+                c1, c2 = st.columns(2)
+                with c1:
+                    st.markdown(f"**System health:** `{audit.get('system_health','—')}`")
+                    st.markdown(f"**Join guard:** `{audit.get('join_guard_status','—')}`")
+                    st.markdown(f"**Geometry:** `{audit.get('geometry_status','—')}`")
+                    missing_a = audit.get("missing_artifacts", [])
+                    if missing_a:
+                        st.markdown(f"**Missing artifacts:** {len(missing_a)}")
+                        for m_art in missing_a:
+                            st.markdown(f"  - ❌ `{m_art}`")
+                    else:
+                        st.markdown("**All artifacts present** ✅")
+                with c2:
+                    st.markdown(f"**Strategy pack:** {'✅' if audit.get('strategy_pack_generated') else '❌'}")
+                    st.markdown(f"**Simulation results:** {'✅' if audit.get('simulation_results_generated') else '❌'}")
+                    st.markdown(f"**Integrity repairs:** `{audit.get('integrity_repairs_count', 0)}`")
+                    if audit.get("warnings"):
+                        st.warning("\n".join(audit["warnings"][:5]))
+                    if audit.get("errors"):
+                        st.error("\n".join(audit["errors"][:5]))
+        except Exception as e:
+            st.warning(f"Could not parse audit JSON: {e}")
+    else:
+        st.info("Post-run audit not yet generated. Run the pipeline to produce diagnostics.")
+
+    # ── Artifact validation detail ───────────────────────────────────────────
+    if art_file.exists():
+        with st.expander("📂 Artifact Validation Detail"):
+            st.markdown(art_file.read_text())
+
+    # ── Geometry detail ─────────────────────────────────────────────────────
+    geo_val = latest_dir / "geometry_validation.md"
+    if geo_val.exists():
+        with st.expander("🗺️ Geometry Validation Detail"):
+            st.markdown(geo_val.read_text())
+
+    # ── Join guard detail ───────────────────────────────────────────────────
+    if jg_file.exists():
+        with st.expander("🔗 Join Guard Report"):
+            st.markdown(jg_file.read_text())
+
+    # ── Integrity repairs detail ─────────────────────────────────────────────
+    if repairs_file.exists():
+        with st.expander("🔧 Integrity Repairs Log"):
+            st.markdown(repairs_file.read_text())
 
 # ═════════════════════════════════════════════════════════════════════════════
 # PAGE 7: COUNTY REGISTRY
