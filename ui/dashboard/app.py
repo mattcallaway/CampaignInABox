@@ -85,6 +85,7 @@ with st.sidebar:
             "🎯 Targeting",
             "📋 Strategy",
             "🔬 Simulations",
+            "⚡ Advanced Modeling",
             "🩺 Diagnostics",
             "🗄️ Data Explorer",
         ],
@@ -137,6 +138,10 @@ elif page == "📋 Strategy":
 elif page == "🔬 Simulations":
     from ui.dashboard.simulation_view import render_simulation
     render_simulation(data)
+
+elif page == "⚡ Advanced Modeling":
+    from ui.dashboard.advanced_view import render_advanced
+    render_advanced(data)
 
 elif page == "🩺 Diagnostics":
     from ui.dashboard.diagnostics_view import render_diagnostics
