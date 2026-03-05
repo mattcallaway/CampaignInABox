@@ -1,0 +1,92 @@
+[2026-03-05T08:36:01.189Z] [INFO] ========================================================================
+  Campaign In A Box — Pipeline Run
+  RUN_ID  : 2026-03-05__003601__b03e3511__msi
+  Started : 2026-03-05T08:36:01.187485+00:00
+========================================================================
+[2026-03-05T08:36:01.189Z] [INFO ] Pipeline v2 starting
+[2026-03-05T08:36:01.189Z] [INFO ]   state=CA  county=Sonoma  year=2024  contest_slug=nov2024_general
+[2026-03-05T08:36:01.189Z] [INFO ]   membership_method=auto  log_level=verbose
+[2026-03-05T08:36:01.192Z] [STEP ] START  -> INGEST_STAGING
+[2026-03-05T08:36:01.192Z] [INFO ]   expected: Files from: Campaign In A Box Data/Campaign In A Box
+[2026-03-05T08:36:01.192Z] [INFO ] Ingestion starting
+[2026-03-05T08:36:01.192Z] [INFO ]   STAGING_DIR : Campaign In A Box Data\Campaign In A Box
+[2026-03-05T08:36:01.192Z] [INFO ]   data_root   : C:\Users\Mathew C\Campaign In A Box\data
+[2026-03-05T08:36:01.192Z] [INFO ]   dry_run     : False
+[2026-03-05T08:36:01.193Z] [INFO ] Discovered 21 files in staging (after zip extraction)
+[2026-03-05T08:36:01.194Z] [INFO ]   blk_mprec_097_g24_v01.csv -> [2020 BLK TO MPREC] county=Sonoma
+[2026-03-05T08:36:01.197Z] [INFO ]   Copied: blk_mprec_097_g24_v01.csv -> crosswalks/
+[2026-03-05T08:36:01.211Z] [INFO ]   c097_g24_rg_blk_map.csv -> [RGPREC TO 2020 BLK] county=Sonoma
+[2026-03-05T08:36:01.213Z] [INFO ]   Copied: c097_g24_rg_blk_map.csv -> crosswalks/
+[2026-03-05T08:36:01.230Z] [INFO ]   c097_g24_sr_blk_map.csv -> [SRPREC TO 2020 BLK] county=Sonoma
+[2026-03-05T08:36:01.232Z] [INFO ]   Copied: c097_g24_sr_blk_map.csv -> crosswalks/
+[2026-03-05T08:36:01.245Z] [INFO ]   c097_g24_srprec_to_city.csv -> [SRPREC to CITY] county=Sonoma
+[2026-03-05T08:36:01.247Z] [INFO ]   Copied: c097_g24_srprec_to_city.csv -> crosswalks/
+[2026-03-05T08:36:01.257Z] [INFO ]   c097_rg_rr_sr_svprec_g24.csv -> [RG to RR to SR to SVPREC] county=Sonoma
+[2026-03-05T08:36:01.259Z] [INFO ]   Copied: c097_rg_rr_sr_svprec_g24.csv -> crosswalks/
+[2026-03-05T08:36:01.273Z] [INFO ]   mprec_097_g24_v01.geojson -> [MPREC GeoJSON] county=Sonoma
+[2026-03-05T08:36:01.288Z] [INFO ]   Copied: mprec_097_g24_v01.geojson -> precinct_shapes/MPREC_GeoJSON/
+[2026-03-05T08:36:01.347Z] [INFO ]   mprec_097_g24_v01.gpkg -> [MPREC GeoPackage] county=Sonoma
+[2026-03-05T08:36:01.360Z] [INFO ]   Copied: mprec_097_g24_v01.gpkg -> precinct_shapes/MPREC_GeoPackage/
+[2026-03-05T08:36:01.384Z] [INFO ]   mprec_097_g24_v01.shp -> [MPREC Shapefile] county=Sonoma
+[2026-03-05T08:36:01.396Z] [INFO ]   Copied: mprec_097_g24_v01.shp -> precinct_shapes/MPREC_Shapefile/
+[2026-03-05T08:36:01.426Z] [INFO ]   Copied: mprec_097_g24_v01.prj -> precinct_shapes/MPREC_Shapefile/
+[2026-03-05T08:36:01.429Z] [INFO ]   Copied: mprec_097_g24_v01.shx -> precinct_shapes/MPREC_Shapefile/
+[2026-03-05T08:36:01.439Z] [INFO ]   Copied: mprec_097_g24_v01.qix -> precinct_shapes/MPREC_Shapefile/
+[2026-03-05T08:36:01.447Z] [INFO ]   Copied: mprec_097_g24_v01.dbf -> precinct_shapes/MPREC_Shapefile/
+[2026-03-05T08:36:01.462Z] [INFO ]   Copied: mprec_097_g24_v01.cpg -> precinct_shapes/MPREC_Shapefile/
+[2026-03-05T08:36:01.463Z] [INFO ]   mprec_srprec_097_g24.csv -> [MPREC to SRPREC] county=Sonoma
+[2026-03-05T08:36:01.464Z] [INFO ]   Copied: mprec_srprec_097_g24.csv -> crosswalks/
+[2026-03-05T08:36:01.477Z] [INFO ]   srprec_097_g24_v01.geojson -> [SRPREC GeoJSON] county=Sonoma
+[2026-03-05T08:36:01.490Z] [INFO ]   Copied: srprec_097_g24_v01.geojson -> precinct_shapes/SRPREC_GeoJSON/
+[2026-03-05T08:36:01.539Z] [INFO ]   srprec_097_g24_v01.gpkg -> [SRPREC GeoPackage] county=Sonoma
+[2026-03-05T08:36:01.548Z] [INFO ]   Copied: srprec_097_g24_v01.gpkg -> precinct_shapes/SRPREC_GeoPackage/
+[2026-03-05T08:36:01.566Z] [INFO ]   srprec_097_g24_v01.shp -> [SRPREC Shapefile] county=Sonoma
+[2026-03-05T08:36:01.576Z] [INFO ]   Copied: srprec_097_g24_v01.shp -> precinct_shapes/SRPREC_Shapefile/
+[2026-03-05T08:36:01.599Z] [INFO ]   Copied: srprec_097_g24_v01.prj -> precinct_shapes/SRPREC_Shapefile/
+[2026-03-05T08:36:01.604Z] [INFO ]   Copied: srprec_097_g24_v01.shx -> precinct_shapes/SRPREC_Shapefile/
+[2026-03-05T08:36:01.607Z] [INFO ]   Copied: srprec_097_g24_v01.dbf -> precinct_shapes/SRPREC_Shapefile/
+[2026-03-05T08:36:01.617Z] [INFO ]   Copied: srprec_097_g24_v01.cpg -> precinct_shapes/SRPREC_Shapefile/
+[2026-03-05T08:36:01.618Z] [INFO ]   9 files not classified (no matching rule):
+[2026-03-05T08:36:01.618Z] [INFO ]     unclassified: mprec_097_g24_v01.cpg
+[2026-03-05T08:36:01.618Z] [INFO ]     unclassified: mprec_097_g24_v01.dbf
+[2026-03-05T08:36:01.618Z] [INFO ]     unclassified: mprec_097_g24_v01.prj
+[2026-03-05T08:36:01.618Z] [INFO ]     unclassified: mprec_097_g24_v01.qix
+[2026-03-05T08:36:01.618Z] [INFO ]     unclassified: mprec_097_g24_v01.shx
+[2026-03-05T08:36:01.618Z] [INFO ]     unclassified: srprec_097_g24_v01.cpg
+[2026-03-05T08:36:01.618Z] [INFO ]     unclassified: srprec_097_g24_v01.dbf
+[2026-03-05T08:36:01.618Z] [INFO ]     unclassified: srprec_097_g24_v01.prj
+[2026-03-05T08:36:01.618Z] [INFO ]     unclassified: srprec_097_g24_v01.shx
+[2026-03-05T08:36:01.621Z] [INFO ]   Manifest written: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\manifest.json
+[2026-03-05T08:36:01.621Z] [INFO ]   County Sonoma: 21 files ingested
+[2026-03-05T08:36:01.621Z] [INFO ] Ingestion complete: 21 files across 1 counties
+[2026-03-05T08:36:01.621Z] [STEP ] DONE   [OK] INGEST_STAGING (0.434s)
+[2026-03-05T08:36:01.621Z] [STEP ] START  -> SCAFFOLD_BOUNDARY_INDEX
+[2026-03-05T08:36:01.622Z] [INFO ]   Boundary index exists: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\boundary_index\boundaries_index.csv
+[2026-03-05T08:36:01.623Z] [WARN ]   Boundary index scaffolded (no boundary files found yet)
+[2026-03-05T08:36:01.630Z] [INFO ]   output: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\boundary_index\boundaries_index.csv  [sha256:b4dff0e71c42...]
+[2026-03-05T08:36:01.630Z] [STEP ] DONE   [OK] SCAFFOLD_BOUNDARY_INDEX (0.443s)
+[2026-03-05T08:36:01.630Z] [STEP ] START  -> VALIDATE_GEOGRAPHY
+[2026-03-05T08:36:01.630Z] [INFO ]   expected: data/CA/counties/Sonoma/geography/precinct_shapes/
+[2026-03-05T08:36:01.630Z] [INFO ]   expected: data/CA/counties/Sonoma/geography/crosswalks/
+[2026-03-05T08:36:01.630Z] [INFO ]   [present] MPREC GeoJSON
+[2026-03-05T08:36:01.630Z] [INFO ]   [present] MPREC GeoPackage
+[2026-03-05T08:36:01.631Z] [INFO ]   [present] MPREC Shapefile
+[2026-03-05T08:36:01.631Z] [INFO ]   [present] SRPREC GeoJSON
+[2026-03-05T08:36:01.631Z] [INFO ]   [present] SRPREC GeoPackage
+[2026-03-05T08:36:01.632Z] [INFO ]   [present] SRPREC Shapefile
+[2026-03-05T08:36:01.632Z] [INFO ]   [present] 2020 BLK TO MPREC
+[2026-03-05T08:36:01.632Z] [INFO ]   [present] RGPREC TO 2020 BLK
+[2026-03-05T08:36:01.633Z] [INFO ]   [present] SRPREC TO 2020 BLK
+[2026-03-05T08:36:01.633Z] [INFO ]   [present] RG to RR to SR to SVPREC
+[2026-03-05T08:36:01.633Z] [INFO ]   [present] MPREC to SRPREC
+[2026-03-05T08:36:01.633Z] [INFO ]   [present] SRPREC to CITY
+[2026-03-05T08:36:01.633Z] [INFO ] Geography validation: 12/12 present, canonical=MPREC
+[2026-03-05T08:36:01.633Z] [STEP ] DONE   [OK] VALIDATE_GEOGRAPHY (0.446s)
+[2026-03-05T08:36:01.633Z] [STEP ] START  -> VALIDATE_VOTES
+[2026-03-05T08:36:01.633Z] [INFO ]   expected: votes/2024/CA/Sonoma/nov2024_general/detail.xlsx
+[2026-03-05T08:36:01.634Z] [WARN ]   [missing] votes: no detail.xlsx/xls in C:\Users\Mathew C\Campaign In A Box\votes\2024\CA\Sonoma\nov2024_general
+[2026-03-05T08:36:01.634Z] [WARN ]   NEED: detail.xlsx [missing] -- blocks: parse_contest, allocate_votes, export_model
+[2026-03-05T08:36:01.634Z] [STEP ] SKIP   [SKIP] VALIDATE_VOTES -- blocked: missing votes — detail.xlsx not found
+[2026-03-05T08:36:01.634Z] [INFO ] ========================================================================
+  Run complete — PARTIAL  elapsed: 0.447s
+========================================================================

@@ -1,6 +1,6 @@
 meta:
-  last_updated: '2026-03-05T07:04:32.786Z'
-  last_run_id: 2026-03-04__230432__6e40c8bc__msi
+  last_updated: '2026-03-05T08:36:01.649Z'
+  last_run_id: 2026-03-05__003601__b03e3511__msi
 jurisdictions:
   CA/SAMPLE_COUNTY:
     last_run_id: 20260304_224546_3d3ba634
@@ -51,90 +51,15 @@ jurisdictions:
       - kepler_geojson
       expected_path: C:\Users\Mathew C\Campaign In A Box\Campaign in a box Data\CA\SAMPLE_COUNTY\MPREC_GeoJSON
   CA/Sonoma:
-    last_run_id: 2026-03-04__230432__6e40c8bc__msi
+    last_run_id: 2026-03-05__003601__b03e3511__msi
     needs:
-    - category: MPREC GeoJSON
+    - category: detail.xlsx
       status: missing
       blocks:
-      - geometry_load
-      - kepler_export
-      - precinct_model
-      expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\MPREC_GeoJSON
-    - category: MPREC GeoPackage
-      status: missing
-      blocks:
-      - geometry_load
-      - kepler_export
-      - precinct_model
-      expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\MPREC_GeoPackage
-    - category: MPREC Shapefile
-      status: missing
-      blocks:
-      - geometry_load
-      - kepler_export
-      - precinct_model
-      expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\MPREC_Shapefile
-    - category: SRPREC GeoJSON
-      status: missing
-      blocks:
-      - geometry_load
-      - kepler_export
-      - precinct_model
-      expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\SRPREC_GeoJSON
-    - category: SRPREC GeoPackage
-      status: missing
-      blocks:
-      - geometry_load
-      - kepler_export
-      - precinct_model
-      expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\SRPREC_GeoPackage
-    - category: SRPREC Shapefile
-      status: missing
-      blocks:
-      - geometry_load
-      - kepler_export
-      - precinct_model
-      expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\SRPREC_Shapefile
-    - category: 2020 BLK TO MPREC
-      status: missing
-      blocks:
-      - crosswalk_2020_BLK_TO_MPREC
-      expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\crosswalks
-    - category: RGPREC TO 2020 BLK
-      status: missing
-      blocks:
-      - crosswalk_RGPREC_TO_2020_BLK
-      expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\crosswalks
-    - category: SRPREC TO 2020 BLK
-      status: missing
-      blocks:
-      - crosswalk_SRPREC_TO_2020_BLK
-      expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\crosswalks
-    - category: RG to RR to SR to SVPREC
-      status: missing
-      blocks:
-      - crosswalk_allocation
-      expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\crosswalks
-    - category: MPREC to SRPREC
-      status: missing
-      blocks:
-      - crosswalk_allocation
-      expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\crosswalks
-    - category: SRPREC to CITY
-      status: missing
-      blocks:
-      - crosswalk_SRPREC_to_CITY
-      expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\crosswalks
-    - category: geometry_for_kepler
-      status: blocked
-      blocks:
-      - kepler_geojson
-      expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\MPREC_GeoJSON
-    - category: geometry_for_kepler
-      status: blocked
-      blocks:
-      - kepler_geojson
-      expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\MPREC_GeoJSON
+      - parse_contest
+      - allocate_votes
+      - export_model
+      expected_path: C:\Users\Mathew C\Campaign In A Box\votes\2024\CA\Sonoma\nov2024_general\detail.xlsx
 runs:
 - run_id: 20260304_224546_3d3ba634
   timestamp: '2026-03-05T06:45:46.799Z'
@@ -169,3 +94,14 @@ runs:
     validation_report: C:\Users\Mathew C\Campaign In A Box\reports\validation\2026-03-04__230432__6e40c8bc__msi__validation_report.md
     qa_report: C:\Users\Mathew C\Campaign In A Box\reports\qa\2026-03-04__230432__6e40c8bc__msi__qa_sanity_checks.md
     needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-04__230432__6e40c8bc__msi__needs_snapshot.yaml
+- run_id: 2026-03-05__003601__b03e3511__msi
+  timestamp: '2026-03-05T08:36:01.649Z'
+  state: CA
+  county: Sonoma
+  status: partial
+  artifacts:
+    run_log: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-05__003601__b03e3511__msi__run.log
+    pathway_json: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-05__003601__b03e3511__msi__pathway.json
+    validation_report: C:\Users\Mathew C\Campaign In A Box\reports\validation\2026-03-05__003601__b03e3511__msi__validation_report.md
+    qa_report: C:\Users\Mathew C\Campaign In A Box\reports\qa\2026-03-05__003601__b03e3511__msi__qa_sanity_checks.md
+    needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-05__003601__b03e3511__msi__needs_snapshot.yaml

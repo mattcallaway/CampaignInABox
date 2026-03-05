@@ -1,0 +1,70 @@
+{
+  "run_id": "2026-03-05__003601__b03e3511__msi",
+  "run_status": "partial",
+  "total_elapsed_s": 0.447,
+  "started_at": "2026-03-05T08:36:01.187485+00:00",
+  "county_name": "Sonoma",
+  "county_fips": "097",
+  "county_slug": "sonoma",
+  "contest_id": "2026_CA_sonoma_nov2024_general",
+  "registry_version": "1.0",
+  "input_hashes": {},
+  "output_hashes": {
+    "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\boundary_index\\boundaries_index.csv": "b4dff0e71c422e612069cecc47bc83d6f5c0027631171e9fa736bf40cb029e7a"
+  },
+  "coverage": {
+    "canonical_geometry": "MPREC",
+    "categories_present": 12,
+    "categories_missing": 0
+  },
+  "steps": [
+    {
+      "step": "INGEST_STAGING",
+      "status": "done",
+      "elapsed_s": 0.434,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": [
+        "21 files across 1 counties"
+      ]
+    },
+    {
+      "step": "SCAFFOLD_BOUNDARY_INDEX",
+      "status": "done",
+      "elapsed_s": 0.443,
+      "outputs": [
+        "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\boundary_index\\boundaries_index.csv"
+      ],
+      "hashes_out": {
+        "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\boundary_index\\boundaries_index.csv": "b4dff0e71c422e612069cecc47bc83d6f5c0027631171e9fa736bf40cb029e7a"
+      },
+      "notes": []
+    },
+    {
+      "step": "VALIDATE_GEOGRAPHY",
+      "status": "done",
+      "elapsed_s": 0.446,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": []
+    },
+    {
+      "step": "VALIDATE_VOTES",
+      "status": "skipped",
+      "elapsed_s": 0.447,
+      "reason": "blocked: missing votes \u2014 detail.xlsx not found"
+    }
+  ],
+  "needs": [
+    {
+      "category": "detail.xlsx",
+      "status": "missing",
+      "blocks": [
+        "parse_contest",
+        "allocate_votes",
+        "export_model"
+      ],
+      "expected_path": "C:\\Users\\Mathew C\\Campaign In A Box\\votes\\2024\\CA\\Sonoma\\nov2024_general\\detail.xlsx"
+    }
+  ]
+}
