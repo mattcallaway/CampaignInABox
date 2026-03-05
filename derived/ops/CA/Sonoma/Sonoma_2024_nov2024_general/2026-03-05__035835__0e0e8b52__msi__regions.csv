@@ -1,0 +1,11 @@
+canonical_precinct_id,region_id,region_rank,region_name,precinct_count,registered_total,avg_target_score
+Precinct 0510000,REGION_01,1,Region 01,10,0,0.0
+Precinct 0510001,REGION_01,1,Region 01,10,0,0.0
+Precinct 0510002,REGION_01,1,Region 01,10,0,0.0
+Precinct 0510003,REGION_01,1,Region 01,10,0,0.0
+Precinct 0510004,REGION_01,1,Region 01,10,0,0.0
+Precinct 0510005,REGION_01,1,Region 01,10,0,0.0
+Precinct 0510006,REGION_01,1,Region 01,10,0,0.0
+Precinct 0510007,REGION_01,1,Region 01,10,0,0.0
+Precinct 0510008,REGION_01,1,Region 01,10,0,0.0
+Precinct 0510009,REGION_01,1,Region 01,10,0,0.0

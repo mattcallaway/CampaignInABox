@@ -1,0 +1,38 @@
+{
+  "run_id": "2026-03-05__035835__0e0e8b52__msi",
+  "timestamp": "2026-03-05T03:58:36.113937",
+  "contest_id": "2024_CA_sonoma_nov2024_general",
+  "county": "Sonoma",
+  "state": "CA",
+  "system_health": "DEGRADED",
+  "artifacts_created": [
+    "run.log",
+    "pathway.json",
+    "needs.yaml",
+    "validation.md",
+    "qa.md",
+    "join_guard.md",
+    "join_guard.csv",
+    "integrity_repairs.md",
+    "integrity_repairs.csv"
+  ],
+  "missing_artifacts": [
+    "audit_report.json",
+    "audit_report.md",
+    "post_prompt86_audit.json",
+    "post_prompt86_audit.md"
+  ],
+  "geometry_status": "skip",
+  "join_guard_status": "PASS",
+  "integrity_repairs_count": 0,
+  "strategy_pack_generated": false,
+  "simulation_results_generated": false,
+  "warnings": [
+    "Missing artifact: post_prompt86_audit.json",
+    "Missing artifact: post_prompt86_audit.md",
+    "Missing artifacts: audit_report.json, audit_report.md, post_prompt86_audit.json, post_prompt86_audit.md"
+  ],
+  "errors": [],
+  "prompt": "8.7",
+  "model_version": "8.7"
+}
