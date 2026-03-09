@@ -109,7 +109,7 @@ def render_upload() -> None:
         _render_weights(contest_dir, geo_dir, voter_dir, xwalk_dir, cfg)
 
     with tab_run:
-        _render_run(state, county, slug, year)
+        _render_run(state, county, slug, year, contest_dir)
 
 
 # ── Tab: Browse & Manage ───────────────────────────────────────────────────────
@@ -437,7 +437,122 @@ def _render_weights(contest_dir, geo_dir, voter_dir, xwalk_dir, cfg):
 
 # ── Tab: Run Pipeline ──────────────────────────────────────────────────────────
 
-def _render_run(state, county, slug, year):
+def _find_detail_path(contest_dir: Path, state: str, county: str, year: str, slug: str) -> Path | None:
+    """
+    Search for the detail.xlsx/xls in priority order:
+      1. contest_dir itself (data/CA/counties/<county>/votes/<year>/<slug>/)
+      2. data_config.json registered file path in contest_dir
+      3. Legacy votes/<year>/<state>/<county>/<slug>/
+    Returns the first Path that exists, or None.
+    """
+    # 1. Canonical dir
+    for ext in (".xlsx", ".xls"):
+        p = contest_dir / f"detail{ext}"
+        if p.exists():
+            return p
+
+    # 2. data_config.json registered file
+    cfg_path = contest_dir / "data_config.json"
+    if cfg_path.exists():
+        try:
+            cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
+            for fname, finfo in cfg.get("files", {}).items():
+                if finfo.get("enabled", True) and fname.lower() in ("detail.xlsx", "detail.xls"):
+                    p = contest_dir / fname
+                    if p.exists():
+                        return p
+        except Exception:
+            pass
+
+    # 3. Legacy path
+    legacy = BASE_DIR / "votes" / str(year) / state / county / slug
+    for ext in (".xlsx", ".xls"):
+        p = legacy / f"detail{ext}"
+        if p.exists():
+            return p
+
+    return None
+
+
+def _render_run(state, county, slug, year, contest_dir: Path):
+    st.subheader("▶️ Run Pipeline for This Contest")
+
+    # Auto-detect the detail file
+    detail_path = _find_detail_path(contest_dir, state, county, str(year), slug)
+
+    if detail_path:
+        st.success(f"✅ Election results file found: `{detail_path.relative_to(BASE_DIR)}`")
+        detail_flag = f' --detail-path "{detail_path.relative_to(BASE_DIR)}"'
+        detail_args = ["--detail-path", str(detail_path)]
+    else:
+        st.warning(
+            "⚠️ No `detail.xlsx` / `detail.xls` found for this contest. "
+            "Upload the election results file in the **Upload New File** tab first."
+        )
+        detail_flag = ""
+        detail_args = []
+
+    cmd_str = (
+        f"python scripts/run_pipeline.py --state {state} --county {county} "
+        f"--year {year} --contest-slug {slug}{detail_flag}"
+    )
+    st.code(cmd_str, language="bash")
+
+    st.markdown(
+        "After uploading or modifying files, run the pipeline to process the contest data and regenerate all outputs.\n\n"
+        "_Typical runtime: ~2 minutes. Map output requires `geopandas` (optional)._"
+    )
+
+    col1, col2 = st.columns([2, 3])
+    with col1:
+        run_clicked = st.button(
+            "▶️ Run Now",
+            type="primary" if detail_path else "secondary",
+            key="run_pipe",
+            use_container_width=True,
+            disabled=(not detail_path),
+        )
+    with col2:
+        force_run = st.checkbox(
+            "Run anyway (no election results)",
+            key="force_run_chk",
+            disabled=bool(detail_path),
+            help="Run geo-only steps even without a detail file.",
+        )
+
+    if run_clicked or (force_run and st.button("▶️ Force Run", key="force_run_btn")):
+        import subprocess, sys
+        base_cmd = [
+            sys.executable, "scripts/run_pipeline.py",
+            "--state", state, "--county", county,
+            "--year", str(year), "--contest-slug", slug,
+            "--no-commit",
+        ]
+        if detail_args:
+            base_cmd += detail_args
+
+        with st.spinner("Running pipeline… (this may take 1–2 minutes)"):
+            result = subprocess.run(
+                base_cmd,
+                capture_output=True, text=True, timeout=360, cwd=str(BASE_DIR),
+            )
+
+        if result.returncode == 0:
+            st.success("✅ Pipeline completed successfully!")
+        else:
+            st.error("❌ Pipeline returned an error — see output below.")
+
+        # Show output with key metrics highlighted
+        raw_out = (result.stdout or "") + (result.stderr or "")
+        step_lines = [l for l in raw_out.splitlines() if any(
+            kw in l for kw in ["DONE", "SKIP", "FAIL", "ERROR", "precincts", "Run complete", "elapsed", "registered"]
+        )]
+        if step_lines:
+            with st.expander("📊 Pipeline steps summary", expanded=True):
+                st.code("\n".join(step_lines[-60:]))
+        with st.expander("📄 Full pipeline output"):
+            st.code(raw_out[-8000:])
+
     st.subheader("▶️ Run Pipeline for This Contest")
     st.markdown(
         "After uploading or modifying files, run the pipeline to process the contest data and regenerate all outputs."

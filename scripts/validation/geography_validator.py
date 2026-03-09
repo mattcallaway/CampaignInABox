@@ -153,25 +153,69 @@ def validate_votes_present(
     county: str,
     contest_slug: str,
     log=None,
+    data_root: str | Path | None = None,
 ) -> dict:
     """
     Validate that a detail.xlsx (or .xls) exists for the given contest.
+
+    Checks 3 locations in priority order:
+      1. data/CA/counties/<county>/votes/<year>/<slug>/   (canonical new path)
+      2. votes/<year>/CA/<county>/<slug>/                 (legacy path)
+      3. Any 'election_results' file in data_config.json for the contest dir
+
     Returns {valid, path, blocked_steps}.
     """
     votes_root = Path(votes_root)
-    contest_dir = votes_root / str(year) / "CA" / county / contest_slug
 
     def _log(msg, level="INFO"):
         if log:
             getattr(log, level.lower(), log.info)(msg)
 
-    for ext in (".xlsx", ".xls"):
-        candidate = contest_dir / f"detail{ext}"
-        if candidate.exists():
-            _log(f"  [present] votes: {candidate}")
-            return {"valid": True, "path": candidate, "blocked_steps": []}
+    # Build candidate directories in priority order
+    candidate_dirs: list[Path] = []
 
-    _log(f"  [missing] votes: no detail.xlsx/xls in {contest_dir}", "WARN")
+    # 1. Canonical path: data/CA/counties/<county>/votes/<year>/<slug>/
+    if data_root is not None:
+        canonical_dir = Path(data_root) / "CA" / "counties" / county / "votes" / str(year) / contest_slug
+        candidate_dirs.append(canonical_dir)
+    else:
+        # Infer data_root as sibling of votes_root
+        inferred_data = votes_root.parent / "data"
+        if inferred_data.is_dir():
+            canonical_dir = inferred_data / "CA" / "counties" / county / "votes" / str(year) / contest_slug
+            candidate_dirs.append(canonical_dir)
+
+    # 2. Legacy path: votes/<year>/CA/<county>/<slug>/
+    legacy_dir = votes_root / str(year) / "CA" / county / contest_slug
+    candidate_dirs.append(legacy_dir)
+
+    # Search all candidate directories for detail.xlsx / detail.xls
+    for contest_dir in candidate_dirs:
+        for ext in (".xlsx", ".xls"):
+            candidate = contest_dir / f"detail{ext}"
+            if candidate.exists():
+                _log(f"  input: detail{ext} -> {candidate}  [sha256:{_safe_sha(candidate)}]")
+                return {"valid": True, "path": candidate, "blocked_steps": [], "needs_entry": None}
+
+    # 3. Check data_config.json in canonical dir for a registered election_results file
+    for contest_dir in candidate_dirs:
+        cfg_path = contest_dir / "data_config.json"
+        if cfg_path.exists():
+            try:
+                import json as _json
+                cfg = _json.loads(cfg_path.read_text(encoding="utf-8"))
+                for fname, finfo in cfg.get("files", {}).items():
+                    if finfo.get("enabled", True) and fname.lower() in ("detail.xlsx", "detail.xls"):
+                        candidate = contest_dir / fname
+                        if candidate.exists():
+                            _log(f"  input: {fname} (from data_config.json) -> {candidate}")
+                            return {"valid": True, "path": candidate, "blocked_steps": [], "needs_entry": None}
+            except Exception:
+                pass
+
+    # Not found in any location
+    expected = candidate_dirs[0] / "detail.xlsx" if candidate_dirs else Path("detail.xlsx")
+    _log(f"  [missing] votes: no detail.xlsx/xls in any of: {[str(d) for d in candidate_dirs]}", "WARN")
     return {
         "valid": False,
         "path": None,
@@ -180,6 +224,21 @@ def validate_votes_present(
             "category": "detail.xlsx",
             "status": "missing",
             "blocks": ["parse_contest", "allocate_votes", "export_model"],
-            "expected_path": str(contest_dir / "detail.xlsx"),
+            "expected_path": str(expected),
         },
     }
+
+
+def _safe_sha(path: Path) -> str:
+    """Return first 12 chars of file SHA-256, or '...' on error."""
+    try:
+        import hashlib
+        h = hashlib.sha256()
+        with open(path, "rb") as f:
+            for chunk in iter(lambda: f.read(65536), b""):
+                h.update(chunk)
+        return h.hexdigest()[:12]
+    except Exception:
+        return "..."
+
+
