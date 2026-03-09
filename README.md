@@ -11,7 +11,12 @@ A modular, deterministic election modeling pipeline with an interactive Campaign
 ### Run the Pipeline
 ```powershell
 cd "Campaign In A Box"
-python scripts/run_pipeline.py --state CA --county Sonoma --contest-slug nov2024_general --year 2024
+# With auto-detected election results file (detail.xlsx must be in data/)
+python scripts/run_pipeline.py --state CA --county Sonoma --contest-slug prop_50_special --year 2025
+
+# To override the election results path explicitly:
+python scripts/run_pipeline.py --state CA --county Sonoma --contest-slug prop_50_special --year 2025 \
+  --detail-path "data/CA/counties/Sonoma/votes/2025/prop_50_special/detail.xlsx"
 ```
 
 ### Launch the Campaign Intelligence Dashboard
@@ -141,20 +146,70 @@ The pipeline (`scripts/run_pipeline.py`) runs 30+ steps including:
 
 ---
 
-## Requirements
+## Setup & Requirements
 
+### Install Python dependencies
+
+```powershell
+# Install all dependencies at once
+pip install -r app/requirements.txt
+
+# Or individually:
+pip install streamlit pandas openpyxl pyyaml   # Core (required)
+pip install plotly                              # Charts & simulation graphs
+pip install geopandas shapely pyogrio pyproj   # Map view & geospatial export
 ```
-pip install streamlit pandas plotly
-pip install geopandas  # optional — enables map view
-```
+
+### Installed versions (as of March 2026)
+| Package | Version | Purpose |
+|---------|---------|--------|
+| `streamlit` | ≥1.30 | Dashboard UI |
+| `pandas` | ≥2.0 | Data processing |
+| `openpyxl` | ≥3.0 | Excel file reading |
+| `plotly` | 6.6.0 | Simulation charts, histograms |
+| `geopandas` | 1.1.3 | Precinct map, KeplerGL export |
+| `shapely` | 2.1.2 | Geometry operations |
+| `pyogrio` | 0.12.1 | Fast GeoJSON/GPKG IO |
+| `pyproj` | 3.7.2 | Coordinate projections |
+
+> **Note:** `plotly` and `geopandas` were previously optional — they are now **recommended** installs. The pipeline gracefully skips map export if `geopandas` is unavailable.
 
 ---
 
 ## Data Requirements
 
-Place election data in:
-- `data/CA/counties/<County>/votes/<year>/<slug>/detail.xlsx`
-- `data/CA/counties/<County>/geography/precinct_shapes/MPREC_GeoJSON/*.geojson`
+Place election results in the canonical path:
+```
+data/CA/counties/<County>/votes/<year>/<contest-slug>/detail.xlsx
+```
+
+For example:
+```
+data/CA/counties/Sonoma/votes/2025/prop_50_special/detail.xlsx
+```
+
+The pipeline auto-discovers this file — no `--detail-path` flag needed when using the canonical location.
+
+Geography files (optional, enables map view):
+```
+data/CA/counties/<County>/geography/precinct_shapes/MPREC_GeoJSON/*.geojson
+```
+
+---
+
+## Recent Changes
+
+### March 2026 — Real Election Data Pipeline Fix
+- **Fixed:** CA election XLS compound header parsing (YES/NO labels above column headers)
+- **Fixed:** `openpyxl` `read_only` mode truncating rows to 1 cell — switched to `pandas` for workbook reading
+- **Fixed:** `Registered = 0` hardcoded in `aggregate_to_precinct_totals` — now reads inline data
+- **Fixed:** Pipeline path resolution now checks `data/CA/counties/` canonical path automatically
+- **Added:** `validate_votes_present` checks 3 path locations in priority order
+- **Added:** Run Pipeline UI tab auto-detects `detail.xlsx` and builds command with `--detail-path`
+- **Installed:** `geopandas 1.1.3`, `plotly 6.6.0`, `shapely 2.1.2`, `pyogrio 0.12.1`
+
+**Verified with Sonoma County Prop 50 (2025 Special):**
+- 390 precincts parsed · 209,233 ballots cast · 66% YES support · all integrity checks pass ✅
 
 ---
 
