@@ -65,13 +65,51 @@ def iter_excel_sheets(workbook: openpyxl.Workbook) -> Iterator[tuple[str, list[l
     """
     Yield (sheet_name, rows) for each sheet in workbook.
     rows is a list of lists (raw cell values).
+
+    Uses pandas for reading to handle variable-column workbooks correctly.
+    openpyxl read_only mode can return truncated rows when max_column
+    metadata is missing or wrong (common in files exported from CA election
+    reporting systems). Falls back to openpyxl if pandas fails.
     """
+    # We need the file path to use pandas; extract it from the workbook if possible
+    wb_path = getattr(workbook, "_archive", None)
+    if wb_path is None:
+        # Try to get it via the fp attribute used by openpyxl internals
+        wb_path = getattr(workbook, "fp", None)
+    if wb_path is not None:
+        wb_path = getattr(wb_path, "name", None)
+
+    if wb_path:
+        try:
+            import pandas as pd
+            import warnings
+            xl = pd.ExcelFile(wb_path)
+            for name in workbook.sheetnames:
+                try:
+                    with warnings.catch_warnings():
+                        warnings.simplefilter("ignore")
+                        df = pd.read_excel(xl, sheet_name=name, header=None, dtype=object)
+                    # Convert to list-of-lists, replacing pd.NA/NaN with None
+                    rows = []
+                    for _, row in df.iterrows():
+                        rows.append([None if (v is None or (isinstance(v, float) and __import__('math').isnan(v))) else v
+                                      for v in row])
+                    yield name, rows
+                    continue
+                except Exception:
+                    pass
+            return
+        except Exception:
+            pass
+
+    # Fallback: openpyxl row iteration (may truncate rows in some workbooks)
     for name in workbook.sheetnames:
         ws = workbook[name]
         rows = []
         for row in ws.iter_rows(values_only=True):
             rows.append(list(row))
         yield name, rows
+
 
 
 def load_voter_file(path: str | Path) -> list[dict]:

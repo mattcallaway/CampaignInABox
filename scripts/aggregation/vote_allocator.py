@@ -13,7 +13,7 @@ import pandas as pd
 
 from ..loaders.file_loader import load_excel_workbook, iter_excel_sheets
 from ..loaders.contest_registry import update_contest_from_parse
-from ..loaders.contest_parser import discover_contests, parse_contest_sheet, extract_registered_voters
+from ..loaders.contest_parser import discover_contests, parse_contest_sheet, extract_registered_voters, is_contest_sheet
 from ..lib.naming import normalize_precinct_id
 
 # ---------------------------------------------------------------------------
@@ -54,13 +54,19 @@ def aggregate_to_precinct_totals(parsed: dict, logger=None) -> pd.DataFrame:
     for choice in choice_cols:
         result[choice] = _to_num(choice)
 
-    # Ballots Cast derived logic:
-    # BallotsCast = sum(choice_votes) typically. 
-    # For ballot measures it's YES + NO.
-    result["BallotsCast"] = result[choice_cols].sum(axis=1)
-    
-    # Registered Voters (placeholder, merged in parse_contest_workbook)
-    result["Registered"] = 0 
+    # Registered — pull from df if available (set by parse_contest_sheet from inline data)
+    if "Registered" in df.columns:
+        result["Registered"] = pd.to_numeric(df["Registered"], errors="coerce").fillna(0).astype(int)[mask].reset_index(drop=True)
+    elif prec_col and "Registered" not in df.columns:
+        result["Registered"] = 0
+    else:
+        result["Registered"] = 0
+
+    # BallotsCast — if already set by parse_contest_sheet, use it; otherwise derive from choices
+    if "BallotsCast" in df.columns:
+        result["BallotsCast"] = pd.to_numeric(df["BallotsCast"], errors="coerce").fillna(0).astype(int)[mask].reset_index(drop=True)
+    else:
+        result["BallotsCast"] = result[choice_cols].sum(axis=1)
 
     result = result.dropna(subset=["PrecinctID"]).reset_index(drop=True)
     return result
@@ -180,56 +186,77 @@ def parse_contest_workbook(
     logger=None,
 ) -> list[dict]:
     """Parse workbook and return structured contest data."""
+    import math
     workbook_path = Path(workbook_path)
 
     def _log(msg, level="INFO"):
         if logger: getattr(logger, level.lower(), logger.info)(msg)
 
-    try:
-        wb = load_excel_workbook(workbook_path)
-    except Exception as e:
-        raise RuntimeError(f"Cannot open workbook: {e}")
+    if not workbook_path.exists():
+        raise RuntimeError(f"Cannot open workbook: {workbook_path}")
 
-    # 1. Registration Discovery
+    # 1. Registration Discovery (openpyxl path is fine here — single-column sheet)
     reg_voters = extract_registered_voters(workbook_path)
     if reg_voters:
         _log(f"Extracted registration for {len(reg_voters)} precincts")
 
-    # 2. Contest Discovery
-    found_sheets = discover_contests(workbook_path)
+    # 2. Discover contest sheet names using openpyxl (just for names)
+    wb = load_excel_workbook(workbook_path)
+    all_sheet_names_wb = wb.sheetnames
+
+    # 3. Build rows using pandas (correctly reads all columns for CA XLS format)
+    import warnings as _warnings
+    sheet_rows: dict[str, list[list]] = {}
+    try:
+        import pandas as _pd
+        xl = _pd.ExcelFile(workbook_path)
+        for sname in all_sheet_names_wb:
+            try:
+                with _warnings.catch_warnings():
+                    _warnings.simplefilter("ignore")
+                    df = _pd.read_excel(xl, sheet_name=sname, header=None, dtype=object)
+                rows = []
+                for _, row in df.iterrows():
+                    rows.append([
+                        None if (v is None or (isinstance(v, float) and math.isnan(v))) else v
+                        for v in row
+                    ])
+                sheet_rows[sname] = rows
+            except Exception:
+                sheet_rows[sname] = []
+    except Exception:
+        # Fallback to openpyxl if pandas unavailable
+        for sname, rows in iter_excel_sheets(wb):
+            sheet_rows[sname] = rows
+
+    # 4. Filter to contest sheets and parse
+    found_sheets = [s for s in all_sheet_names_wb if is_contest_sheet(s, sheet_rows.get(s, []))]
     parsed_sheets = []
     contest_types = []
     all_sheet_names = []
 
     for sheet_name in found_sheets:
+        rows = sheet_rows.get(sheet_name, [])
         _log(f"Parsing sheet: {sheet_name!r}")
         try:
-            # Re-read rows for this specific sheet
-            rows = None
-            for sname, srows in iter_excel_sheets(wb):
-                if sname == sheet_name:
-                    rows = srows
-                    break
-            
-            if rows:
-                parsed = parse_contest_sheet(sheet_name, rows, logger=logger)
-                totals = aggregate_to_precinct_totals(parsed, logger=logger)
-                
-                if reg_voters:
-                    totals["Registered"] = totals["PrecinctID"].map(reg_voters).fillna(0).astype(int)
-                
-                parsed["totals_df"] = totals
-                parsed_sheets.append(parsed)
-                contest_types.append(parsed["contest_type"])
-                all_sheet_names.append(sheet_name)
-                _log(f"  -> {len(totals)} precincts, type={parsed['contest_type']}")
+            parsed = parse_contest_sheet(sheet_name, rows, logger=logger)
+            totals = aggregate_to_precinct_totals(parsed, logger=logger)
+
+            if reg_voters:
+                totals["Registered"] = totals["PrecinctID"].map(reg_voters).fillna(0).astype(int)
+
+            parsed["totals_df"] = totals
+            parsed_sheets.append(parsed)
+            contest_types.append(parsed["contest_type"])
+            all_sheet_names.append(sheet_name)
+            _log(f"  -> {len(totals)} precincts, type={parsed['contest_type']}")
         except Exception as e:
             _log(f"  Failed parsing {sheet_name}: {e}", "WARN")
 
     if not parsed_sheets:
         raise RuntimeError("No contest sheets discovered or parsed")
 
-    # 3. Update contest.json
+    # 5. Update contest.json
     if contest_json_path:
         contest_json_path = Path(contest_json_path)
         if contest_json_path.exists():
@@ -245,7 +272,7 @@ def parse_contest_workbook(
                     candidates.extend(p["choice_cols"])
                 elif p["contest_type"] == "ballot_measure":
                     measures.append(p["contest_title"])
-            
+
             update_contest_from_parse(
                 contest_json_path,
                 all_sheet_names,
@@ -255,3 +282,5 @@ def parse_contest_workbook(
             )
 
     return parsed_sheets
+
+
