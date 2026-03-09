@@ -1,0 +1,39 @@
+{
+  "context": "4",
+  "contest_id": "2025_CA_sonoma_prop_50_special",
+  "run_id": "2026-03-09__152941__9b8da56e__msi",
+  "original_columns": [
+    "PrecinctID_Raw",
+    "MPREC_ID",
+    "yes_votes",
+    "no_votes",
+    "Registered",
+    "BallotsCast"
+  ],
+  "mapping": {
+    "MPREC_ID": "canonical_precinct_id",
+    "Registered": "registered",
+    "BallotsCast": "ballots_cast"
+  },
+  "missing_optional": [
+    "support_pct",
+    "turnout_pct"
+  ],
+  "inferred_columns": [
+    "turnout_pct",
+    "support_pct"
+  ],
+  "inferred_contest_type": "ballot_measure",
+  "final_columns": [
+    "PrecinctID_Raw",
+    "canonical_precinct_id",
+    "yes_votes",
+    "no_votes",
+    "registered",
+    "ballots_cast",
+    "turnout_pct",
+    "support_pct"
+  ],
+  "status": "ok",
+  "timestamp": "2026-03-09T15:29:41.915074"
+}
