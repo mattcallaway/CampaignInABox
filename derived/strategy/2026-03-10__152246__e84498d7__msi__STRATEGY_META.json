@@ -1,0 +1,52 @@
+﻿{
+    "total_budget":  150000,
+    "data_requests":  {
+                          "critical":  0,
+                          "medium":  2,
+                          "total":  4,
+                          "high":  2
+                      },
+    "pipeline_steps_completed":  [
+                                     "BUILD_PROVENANCE",
+                                     "GENERATE_DATA_REQUESTS",
+                                     "WAR_ROOM_STATUS",
+                                     "WAR_ROOM_FORECAST_UPDATE",
+                                     "CAMPAIGN_STRATEGY"
+                                 ],
+    "contest_name":  "Prop 50 Special Election 2025",
+    "simulated_metrics_count":  3,
+    "target_vote_share":  0.52,
+    "real_metrics_count":  0,
+    "budget_allocation":  {
+                              "field":  52500,
+                              "mail":  22500,
+                              "research":  60000,
+                              "digital":  15000
+                          },
+    "prompt_version":  "14",
+    "contest_type":  "ballot_measure",
+    "generated_at":  "2026-03-10T15:31:32",
+    "vote_path":  {
+                      "base_votes":  3360,
+                      "expected_voters":  21803,
+                      "gotv_votes_needed":  2792,
+                      "win_number":  11338,
+                      "persuasion_votes_needed":  5185,
+                      "coverage_rate":  0.9999
+                  },
+    "strategy_pack_generated":  true,
+    "provenance_summary":  {
+                               "SIMULATED":  3,
+                               "MISSING":  1,
+                               "ESTIMATED":  6,
+                               "REAL":  0
+                           },
+    "missing_metrics_count":  1,
+    "run_id":  "2026-03-10__152246__e84498d7__msi",
+    "jurisdiction":  "Sonoma County, CA",
+    "win_number":  11338,
+    "estimated_metrics_count":  6,
+    "election_date":  "2025-06-03",
+    "model_version":  "8.7",
+    "war_room_ready":  false
+}
