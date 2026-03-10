@@ -1,0 +1,9 @@
+metric,model_baseline,war_room_current,delta,current_source,impact
+Contact Rate,22.0%,22.0%,0.0%,ESTIMATED,Higher rate = fewer doors needed per vote
+Persuasion Rate per Contact,4.0%,4.0%,0.0%,ESTIMATED,Higher rate = more persuasion from each contact
+Volunteers per Week,10,10,0,ESTIMATED,More volunteers = more doors per week
+Persuasion Doors Needed,"589,205","589,205",0,SIMULATED,Total persuasion doors required to hit vote goal
+GOTV Doors Needed,"211,516","211,516",0,SIMULATED,Total GOTV doors required to hit turnout goal
+Volunteer Doors/Week Capacity,"2,181","2,181",0,ESTIMATED,Total door capacity from volunteer army each week
+Total Doors Needed,"800,721","800,721",0,SIMULATED,Total field program scope
+Doors/Week Required,"800,721","800,721",0,SIMULATED,Weekly pace needed to complete field program

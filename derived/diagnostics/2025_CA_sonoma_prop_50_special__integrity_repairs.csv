@@ -1,2 +1,2 @@
 repair_type,dataset,field,original_value,new_value,reason,timestamp,precinct_id
-CRITICAL_NO_REPAIR,precinct_model,registered,0,0,Likely join/extraction error — registered not mapped from workbook,2026-03-10T14:56:26.333981,0500274
+CRITICAL_NO_REPAIR,precinct_model,registered,0,0,Likely join/extraction error — registered not mapped from workbook,2026-03-10T15:24:07.246023,0500274

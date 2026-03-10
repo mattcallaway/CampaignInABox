@@ -853,6 +853,80 @@ def run_pipeline(
         logger.warn(f"Campaign strategy error (non-fatal): {_strat_err}")
         logger.step_skip("CAMPAIGN_STRATEGY", reason=str(_strat_err))
 
+    # ── Prompt 14: Data Provenance ────────────────────────────────────────────
+    logger.step_start("BUILD_PROVENANCE")
+    try:
+        from engine.provenance.data_provenance import classify_metrics, write_provenance_json
+        from engine.war_room.runtime_loader import get_runtime_summary as _get_rt
+        import yaml as _yaml
+        _cfg_path = BASE_DIR / "config" / "campaign_config.yaml"
+        _prov_cfg = _yaml.safe_load(_cfg_path.read_text(encoding="utf-8")) if _cfg_path.exists() else {}
+        _rt_summary = _get_rt(_prov_cfg)
+        _prov_records = classify_metrics(run_id, campaign_config=_prov_cfg)
+        _prov_path = write_provenance_json(_prov_records, run_id)
+        all_artifacts.append(_prov_path)
+        _real = sum(1 for r in _prov_records if r.source_type == "REAL")
+        _sim  = sum(1 for r in _prov_records if r.source_type == "SIMULATED")
+        _est  = sum(1 for r in _prov_records if r.source_type == "ESTIMATED")
+        _miss = sum(1 for r in _prov_records if r.source_type == "MISSING")
+        logger.step_done("BUILD_PROVENANCE",
+            notes=[f"REAL={_real}, SIMULATED={_sim}, ESTIMATED={_est}, MISSING={_miss}"])
+    except Exception as _prov_err:
+        logger.warn(f"Provenance build error (non-fatal): {_prov_err}")
+        logger.step_skip("BUILD_PROVENANCE", reason=str(_prov_err))
+        _rt_summary = {"presence": {}, "metrics": {}, "has_any": False}
+        _prov_records = []
+        _prov_cfg = {}
+
+    # ── Prompt 14: Data Requests + War Room Status ────────────────────────────
+    logger.step_start("GENERATE_DATA_REQUESTS")
+    try:
+        from engine.war_room.data_requests import generate_data_requests, write_data_requests
+        _data_reqs = generate_data_requests(_rt_summary, _prov_records, _prov_cfg)
+        _dr_path = write_data_requests(_data_reqs, run_id)
+        all_artifacts.append(_dr_path)
+        _critical = sum(1 for r in _data_reqs if r["priority"] == "critical")
+        _high     = sum(1 for r in _data_reqs if r["priority"] == "high")
+        logger.step_done("GENERATE_DATA_REQUESTS",
+            notes=[f"{len(_data_reqs)} requests ({_critical} critical, {_high} high)"])
+    except Exception as _dr_err:
+        logger.warn(f"Data requests error (non-fatal): {_dr_err}")
+        logger.step_skip("GENERATE_DATA_REQUESTS", reason=str(_dr_err))
+        _data_reqs = []
+
+    logger.step_start("WAR_ROOM_STATUS")
+    try:
+        from engine.war_room.status_engine import (
+            compute_war_room_status, write_daily_status_json,
+            write_daily_status_md, write_war_room_summary_md,
+        )
+        _wr_status = compute_war_room_status(_prov_cfg, _rt_summary, _data_reqs, _prov_records)
+        _ds_json = write_daily_status_json(_wr_status, run_id)
+        _ds_md   = write_daily_status_md(_wr_status, run_id)
+        _wr_md   = write_war_room_summary_md(_wr_status, _data_reqs, run_id)
+        for _p in [_ds_json, _ds_md, _wr_md]:
+            all_artifacts.append(_p)
+        _wp = _wr_status.get("win_probability", {})
+        logger.step_done("WAR_ROOM_STATUS",
+            notes=[f"win_prob={_wp.get('display','—')}, "
+                   f"days_to_election={_wr_status.get('days_to_election','—')}, "
+                   f"requests={len(_data_reqs)}"])
+    except Exception as _wr_err:
+        logger.warn(f"War Room status error (non-fatal): {_wr_err}")
+        logger.step_skip("WAR_ROOM_STATUS", reason=str(_wr_err))
+
+    logger.step_start("WAR_ROOM_FORECAST_UPDATE")
+    try:
+        from engine.war_room.forecast_updater import compute_forecast_comparison, write_forecast_comparison
+        _fc_df = compute_forecast_comparison(_prov_cfg, _rt_summary, run_id)
+        _fc_path = write_forecast_comparison(_fc_df, run_id)
+        all_artifacts.append(_fc_path)
+        logger.step_done("WAR_ROOM_FORECAST_UPDATE",
+            notes=[f"{len(_fc_df)} metrics compared (baseline vs runtime)"])
+    except Exception as _fc_err:
+        logger.warn(f"Forecast update error (non-fatal): {_fc_err}")
+        logger.step_skip("WAR_ROOM_FORECAST_UPDATE", reason=str(_fc_err))
+
     # ── Step 16: Forecasting ──────────────────────────────────────────────
     logger.step_start("FORECAST_GENERATION")
     all_forecasts = []

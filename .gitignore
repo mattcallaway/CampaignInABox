@@ -54,5 +54,10 @@ scratch/
 # Jupyter
 .ipynb_checkpoints/
 
+# Prompt 14 — War Room runtime data (never commit — may contain sensitive campaign data)
+data/campaign_runtime/*
+!data/campaign_runtime/**/.gitkeep
+derived/war_room/private/*
+
 # Large raw data (use LFS rules above for GIS)
 # raw xlsx/xls vote files ARE committed (small; source of truth)

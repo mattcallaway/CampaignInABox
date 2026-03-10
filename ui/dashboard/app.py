@@ -80,9 +80,10 @@ with st.sidebar:
     page = st.radio(
         "Navigation",
         [
-            "📂 Upload Contest Data",
             "🏠 Overview",
+            "🪖 War Room",
             "🗳️ Campaign Setup",
+            "📂 Upload Contest Data",
             "🗺️ Precinct Map",
             "🎯 Targeting",
             "📋 Strategy",
@@ -95,6 +96,12 @@ with st.sidebar:
         label_visibility="collapsed",
         key="dashboard_nav",
     )
+    st.divider()
+    # Data Provenance Legend
+    st.markdown("""
+    <div style='font-size:0.72rem;color:#CBD5E1'>
+    🟢 REAL &nbsp; 🔵 SIM &nbsp; 🟡 EST &nbsp; 🔴 MISSING
+    </div>""", unsafe_allow_html=True)
     st.divider()
 
     # Refresh button
@@ -122,17 +129,21 @@ except Exception as e:
     st.stop()
 
 # ── Page routing ─────────────────────────────────────────────────────────────
-if page == "📂 Upload Contest Data":
-    from ui.dashboard.data_upload_view import render_upload
-    render_upload()
-
-elif page == "🏠 Overview":
+if page == "🏠 Overview":
     from ui.dashboard.layout import render_overview
     render_overview(data)
+
+elif page == "🪖 War Room":
+    from ui.dashboard.war_room_view import render_war_room
+    render_war_room(data)
 
 elif page == "🗳️ Campaign Setup":
     from ui.dashboard.campaign_setup_view import render_campaign_setup
     render_campaign_setup(data)
+
+elif page == "📂 Upload Contest Data":
+    from ui.dashboard.data_upload_view import render_upload
+    render_upload()
 
 elif page == "🗺️ Precinct Map":
     from ui.dashboard.map_view import render_map
