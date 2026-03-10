@@ -1166,6 +1166,61 @@ def run_pipeline(
         logger.warn(f"POST_RUN_AUDIT non-fatal: {_e}")
         logger.step_done("POST_RUN_AUDIT", notes=["error"])
 
+    # ── Prompt 14.5: STATE_BUILD ──────────────────────────────────────────────
+    logger.step_start("STATE_BUILD")
+    _built_state = {}
+    try:
+        from engine.state.state_builder import build_campaign_state
+        from engine.state.state_validator import validate_state
+        _built_state = build_campaign_state(
+            project_root=BASE_DIR,
+            run_id=run_id,
+            contest_id=_contest_id_for_diag,
+        )
+        _val_passed, _val_issues = validate_state(_built_state, run_id, BASE_DIR)
+        _recs = _built_state.get("recommendations", [])
+        _real_n = _built_state.get("provenance_summary", {}).get("REAL", 0)
+        logger.step_done("STATE_BUILD", notes=[
+            f"war_room_ready={_built_state.get('war_room_summary', {}).get('war_room_ready', False)}, "
+            f"real_metrics={_real_n}, "
+            f"recommendations={len(_recs)}, "
+            f"validation={'PASS' if _val_passed else 'WARN'}, "
+            f"issues={len(_val_issues)}"
+        ])
+    except Exception as _sb_err:
+        logger.warn(f"STATE_BUILD error (non-fatal): {_sb_err}")
+        logger.step_skip("STATE_BUILD", reason=str(_sb_err))
+
+    # ── Prompt 14.5: STATE_DIFF ───────────────────────────────────────────────
+    logger.step_start("STATE_DIFF")
+    try:
+        from engine.state.state_diff import diff_campaign_states
+        import json as _json_sd
+        # Load previous state if it exists
+        _latest_state_path = BASE_DIR / "derived" / "state" / "latest" / "campaign_state.json"
+        _prior_state: dict = {}
+        if _latest_state_path.exists() and _built_state:
+            _prior_raw = _latest_state_path.read_text(encoding="utf-8")
+            _candidate = _json_sd.loads(_prior_raw)
+            # Only use as 'prior' if it's from a different run
+            if _candidate.get("run_id") != run_id:
+                _prior_state = _candidate
+        _diff_result = diff_campaign_states(
+            old_state=_prior_state,
+            new_state=_built_state if _built_state else {},
+            run_id=run_id,
+            project_root=BASE_DIR,
+        )
+        _n_changes = len(_diff_result.get("numeric_changes", [])) + len(_diff_result.get("text_changes", []))
+        logger.step_done("STATE_DIFF", notes=[
+            f"prior_found={_diff_result.get('prior_state_found', False)}, "
+            f"fields_changed={_n_changes}, "
+            f"key_changes={len(_diff_result.get('key_changes', []))}"
+        ])
+    except Exception as _sd_err:
+        logger.warn(f"STATE_DIFF error (non-fatal): {_sd_err}")
+        logger.step_skip("STATE_DIFF", reason=str(_sd_err))
+
     # ── Prompt 10: ADVANCED_MODELING stage group ────────────────────────────────────
     import yaml as _yaml
     _adv_cfg_path = Path(__file__).resolve().parent.parent / "config" / "advanced_modeling.yaml"

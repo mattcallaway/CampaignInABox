@@ -121,6 +121,31 @@ with st.sidebar:
     except Exception:
         st.caption("Loading…")
 
+    # ── State Snapshot panel (Prompt 14.5) ────────────────────────────────
+    st.divider()
+    st.markdown("#### 🗂️ State Snapshot")
+    try:
+        from ui.dashboard.state_loader import load_state_snapshot_meta
+        snap = load_state_snapshot_meta()
+        if snap.get("available"):
+            risk_color = {"HIGH": "🔴", "MEDIUM": "🟡", "LOW": "🟢"}.get(
+                snap.get("risk_level", "UNKNOWN"), "⬜")
+            st.markdown(
+                f"<div style='font-size:0.78rem;color:#CBD5E1'>"
+                f"🏅 <b>Contest:</b> {snap.get('contest_id','—')}<br>"
+                f"📍 {snap.get('county','—')}, {snap.get('state','—')}<br>"
+                f"{'✅ War Room Ready' if snap.get('war_room_ready') else '🟡 Needs Real Data'}<br>"
+                f"{risk_color} Risk: <b>{snap.get('risk_level','UNKNOWN')}</b><br>"
+                f"🟢 REAL: {snap.get('real_metrics',0)} metric(s)<br>"
+                f"{'📊 Diff available' if snap.get('diff_available') else '📊 First run'}"
+                f"</div>",
+                unsafe_allow_html=True,
+            )
+        else:
+            st.caption("No state store yet. Run pipeline to generate.")
+    except Exception:
+        st.caption("State store loading…")
+
 # ── Load data ─────────────────────────────────────────────────────────────────
 try:
     data = get_data()

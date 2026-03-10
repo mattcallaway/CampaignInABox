@@ -82,10 +82,26 @@ def get_run_id() -> str:
 def load_all(run_id: Optional[str] = None) -> dict:
     """
     Load all dashboard datasets for the given run_id (or auto-detect latest).
+
+    Prefers derived/state/latest/campaign_state.json (Prompt 14.5 state store).
+    Falls back to legacy file discovery for any sections that are missing.
+
     Returns a dict with DataFrames and metadata.
     """
     ts_start = datetime.now()
 
+    # ── Try state store first (Prompt 14.5) ───────────────────────────────────
+    state_data: dict = {}
+    try:
+        from ui.dashboard.state_loader import load_state, state_to_data_dict
+        raw_state = load_state()
+        if raw_state:
+            state_data = state_to_data_dict(raw_state)
+            log.info(f"State store loaded: run_id={raw_state.get('run_id')}")
+    except Exception as _se:
+        log.warning(f"State store load failed (falling back to legacy): {_se}")
+
+    # ── Legacy discovery (always runs for DataFrame artifacts) ────────────────
     precinct_model = _read_csv(_latest(BASE_DIR / "derived" / "precinct_models", "*.csv"))
 
     # Strategy pack
@@ -93,12 +109,12 @@ def load_all(run_id: Optional[str] = None) -> dict:
     strategy_meta = _read_json(sp_meta_path)
     sp_dir = sp_meta_path.parent if sp_meta_path else None
 
-    top_targets        = _read_csv(sp_dir / "TOP_TARGETS.csv"       if sp_dir else None)
-    top_turfs          = _read_csv(sp_dir / "TOP_TURFS.csv"         if sp_dir else None)
+    top_targets        = _read_csv(sp_dir / "TOP_TARGETS.csv"        if sp_dir else None)
+    top_turfs          = _read_csv(sp_dir / "TOP_TURFS.csv"          if sp_dir else None)
     simulation_results = _read_csv(sp_dir / "SIMULATION_RESULTS.csv" if sp_dir else None)
-    field_plan         = _read_csv(sp_dir / "FIELD_PLAN.csv"        if sp_dir else None)
-    field_pace         = _read_csv(sp_dir / "FIELD_PACE.csv"        if sp_dir else None)
-    strategy_summary_md = _read_md(sp_dir / "STRATEGY_SUMMARY.md"  if sp_dir else None)
+    field_plan         = _read_csv(sp_dir / "FIELD_PLAN.csv"         if sp_dir else None)
+    field_pace         = _read_csv(sp_dir / "FIELD_PACE.csv"         if sp_dir else None)
+    strategy_summary_md = _read_md(sp_dir / "STRATEGY_SUMMARY.md"   if sp_dir else None)
 
     precinct_universes = _read_csv(_latest(BASE_DIR / "derived" / "universes", "*precinct_universes*.csv"))
     scenario_forecasts = _read_csv(_latest(BASE_DIR / "derived" / "forecasts", "*scenario_forecasts*.csv"))
@@ -111,10 +127,13 @@ def load_all(run_id: Optional[str] = None) -> dict:
     validation_md  = _read_md(latest_dir / "validation.md")
     qa_md          = _read_md(latest_dir / "qa.md")
 
-    detected_run_id = run_id or get_run_id()
+    # Prefer state-store strategy_meta over legacy sp_meta when available
+    if state_data.get("strategy_meta"):
+        strategy_meta = {**strategy_meta, **state_data["strategy_meta"]}
+
+    detected_run_id = run_id or state_data.get("run_id") or get_run_id()
     elapsed = (datetime.now() - ts_start).total_seconds()
 
-    # Log startup
     datasets_loaded = [
         k for k, v in {
             "precinct_model": precinct_model,
@@ -125,12 +144,25 @@ def load_all(run_id: Optional[str] = None) -> dict:
     ]
     log.info(
         f"Dashboard loaded | run_id={detected_run_id} | "
+        f"state_store={'yes' if state_data else 'no'} | "
         f"datasets={datasets_loaded} | elapsed={elapsed:.2f}s"
     )
 
     return {
         "run_id":              detected_run_id,
         "load_elapsed":        elapsed,
+        # ── State Store fields (Prompt 14.5) ───────────────────────────────
+        "state_store":         state_data.get("state_store", {}),
+        "campaign_setup":      state_data.get("campaign_setup", {}),
+        "model_summary":       state_data.get("model_summary", {}),
+        "strategy_summary":    state_data.get("strategy_summary", {}),
+        "war_room_summary":    state_data.get("war_room_summary", {}),
+        "provenance_summary":  state_data.get("provenance_summary", {}),
+        "recommendations":     state_data.get("recommendations", []),
+        "data_requests":       state_data.get("data_requests", []),
+        "risks":               state_data.get("risks", []),
+        "artifact_index":      state_data.get("artifact_index", {}),
+        # ── Legacy DataFrame artifacts ─────────────────────────────────────
         "precinct_model":      precinct_model,
         "precinct_universes":  precinct_universes,
         "top_targets":         top_targets,
@@ -147,3 +179,4 @@ def load_all(run_id: Optional[str] = None) -> dict:
         "validation_md":       validation_md,
         "qa_md":               qa_md,
     }
+

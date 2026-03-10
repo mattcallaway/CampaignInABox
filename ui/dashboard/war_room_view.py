@@ -468,9 +468,7 @@ def render_war_room(data: dict) -> None:
             except ImportError:
                 pass
         else:
-            st.info(f"No field results yet. {_badge('MISSING')} — Log daily results in the Data Gaps tab.",
-                    unsafe_allow_html=True if False else False)
-            st.markdown(f"No field results yet. {_badge('MISSING')} Log daily results in the Data Gaps tab.",
+            st.markdown(f"No field results yet. {_badge('MISSING')} — Log daily results in the **Data Gaps** tab.",
                         unsafe_allow_html=True)
 
         # Volunteer log
