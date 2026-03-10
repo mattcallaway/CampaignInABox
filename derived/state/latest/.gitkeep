@@ -1,0 +1,3 @@
+.gitkeep — derived/state/latest/ stable pointer files are safe to commit
+campaign_state.json, campaign_metrics.csv, data_requests.json, recommendations.json
+all contain aggregated data only — no voter records

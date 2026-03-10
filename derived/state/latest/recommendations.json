@@ -1,0 +1,46 @@
+{
+  "run_id": "2026-03-10__152246__e84498d7__msi",
+  "generated_at": "2026-03-10T23:11:38.637863",
+  "top_recommendations": [
+    {
+      "type": "DATA_INPUT",
+      "priority": "HIGH",
+      "description": "No real canvass results uploaded",
+      "action": "Enter Field Data in the War Room \u2192 Field tab.",
+      "provenance_basis": "MISSING",
+      "source": "data_request_engine"
+    },
+    {
+      "type": "DATA_INPUT",
+      "priority": "HIGH",
+      "description": "No volunteer shift logs entered",
+      "action": "Log volunteer shifts in War Room \u2192 Volunteers tab.",
+      "provenance_basis": "MISSING",
+      "source": "data_request_engine"
+    },
+    {
+      "type": "DATA_INPUT",
+      "priority": "MEDIUM",
+      "description": "No budget actuals entered",
+      "action": "Enter budget actuals in War Room \u2192 Budget tab.",
+      "provenance_basis": "MISSING",
+      "source": "data_request_engine"
+    },
+    {
+      "type": "OPERATIONAL",
+      "priority": "HIGH",
+      "description": "Begin field canvassing and log first week's results in War Room",
+      "action": "Execute immediately",
+      "provenance_basis": "SIMULATED",
+      "source": "war_room_status_engine"
+    },
+    {
+      "type": "OPERATIONAL",
+      "priority": "HIGH",
+      "description": "Log volunteer shifts from last week",
+      "action": "Execute immediately",
+      "provenance_basis": "SIMULATED",
+      "source": "war_room_status_engine"
+    }
+  ]
+}

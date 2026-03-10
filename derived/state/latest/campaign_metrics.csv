@@ -1,0 +1,2 @@
+run_id,contest_id,state,county,generated_at,election_date,target_vote_share,total_budget,precinct_count,win_probability,expected_margin,baseline_support,baseline_turnout,win_number,vote_path_coverage,field_pace_doors_wk,war_room_ready,real_metrics,simulated_metrics,estimated_metrics,missing_metrics,data_requests,voter_file_loaded,gotv_universe,persuasion_universe
+2026-03-10__152246__e84498d7__msi,2026_CA_sonoma_prop_50_special,,,2026-03-10T23:11:38.637863,2025-06-03,0.52,150000,0,,,,,,,,False,0,3,6,1,4,True,,
