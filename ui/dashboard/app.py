@@ -82,6 +82,7 @@ with st.sidebar:
         [
             "🏠 Overview",
             "🪖 War Room",
+            "📐 Calibration",
             "🗳️ Campaign Setup",
             "📂 Upload Contest Data",
             "🗺️ Precinct Map",
@@ -161,6 +162,10 @@ if page == "🏠 Overview":
 elif page == "🪖 War Room":
     from ui.dashboard.war_room_view import render_war_room
     render_war_room(data)
+
+elif page == "📐 Calibration":
+    from ui.dashboard.calibration_view import render_calibration
+    render_calibration(data)
 
 elif page == "🗳️ Campaign Setup":
     from ui.dashboard.campaign_setup_view import render_campaign_setup
