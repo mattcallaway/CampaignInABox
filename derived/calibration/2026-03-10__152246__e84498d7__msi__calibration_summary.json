@@ -1,0 +1,51 @@
+{
+  "run_id": "2026-03-10__152246__e84498d7__msi",
+  "contest_id": "2026_CA_sonoma_prop_50_special",
+  "generated_at": "2026-03-10T23:27:50.551147",
+  "calibration_status": "prior_only",
+  "calibration_confidence": "none",
+  "calibration_sources": [],
+  "n_historical_records": 0,
+  "n_historical_elections": 0,
+  "n_precincts_historical": 0,
+  "gotv_universe_size": 0,
+  "persuasion_universe_size": 0,
+  "runtime_has_data": false,
+  "turnout_parameters": {
+    "method": "prior",
+    "baseline_turnout_probability": 0.45,
+    "turnout_variance": 0.08,
+    "confidence": "none",
+    "n_precincts": 0,
+    "n_elections": 0
+  },
+  "persuasion_parameters": {
+    "method": "prior",
+    "persuasion_lift_per_contact": 0.006,
+    "persuasion_variance": 0.003,
+    "confidence": "none",
+    "notes": "Using prior (0.6pp/contact). Enter field contact results to calibrate."
+  },
+  "turnout_lift_parameters": {
+    "method": "prior",
+    "turnout_lift_per_contact": 0.06,
+    "turnout_lift_variance": 0.02,
+    "confidence": "none",
+    "notes": "Using Gerber & Green prior (6pp/contact). Add field results to calibrate."
+  },
+  "combined_parameters": {
+    "calibration_status": "prior_only",
+    "calibration_confidence": "none",
+    "note": "No historical election data found. Place detail.xls files in data/elections/CA/Sonoma/<year>/ and rerun to calibrate.",
+    "turnout_lift_per_contact_mean": 0.004,
+    "turnout_lift_per_contact_sd": 0.002,
+    "persuasion_lift_per_contact_mean": 0.006,
+    "persuasion_lift_per_contact_sd": 0.003
+  },
+  "forecast_accuracy": {
+    "records": [],
+    "mean_absolute_error": null,
+    "n_contests_tracked": 0,
+    "has_real_election_results": false
+  }
+}

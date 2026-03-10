@@ -1,0 +1,7 @@
+{
+  "method": "prior",
+  "turnout_lift_per_contact": 0.06,
+  "turnout_lift_variance": 0.02,
+  "confidence": "none",
+  "notes": "Using Gerber & Green prior (6pp/contact). Add field results to calibrate."
+}

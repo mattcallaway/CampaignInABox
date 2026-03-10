@@ -1,0 +1,7 @@
+{
+  "method": "prior",
+  "persuasion_lift_per_contact": 0.006,
+  "persuasion_variance": 0.003,
+  "confidence": "none",
+  "notes": "Using prior (0.6pp/contact). Enter field contact results to calibrate."
+}

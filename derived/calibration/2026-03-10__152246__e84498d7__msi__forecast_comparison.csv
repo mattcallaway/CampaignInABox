@@ -1,0 +1,4 @@
+metric,baseline_forecast,calibrated_forecast,difference,source
+baseline_turnout_probability,0.45,0.45,0.0,prior
+turnout_lift_per_contact,0.06,0.06,0.0,prior
+persuasion_lift_per_contact,0.06,0.006,-0.054,prior

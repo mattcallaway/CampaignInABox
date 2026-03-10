@@ -1,0 +1,8 @@
+{
+  "method": "prior",
+  "baseline_turnout_probability": 0.45,
+  "turnout_variance": 0.08,
+  "confidence": "none",
+  "n_precincts": 0,
+  "n_elections": 0
+}
