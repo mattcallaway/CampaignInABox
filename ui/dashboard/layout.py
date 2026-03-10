@@ -67,10 +67,10 @@ def render_overview(data: dict) -> None:
     if topline:
         st.subheader("📊 Topline Model Metrics")
         c1, c2, c3, c4 = st.columns(4)
-        c1.metric("Baseline Turnout",  f"{topline.get('baseline_turnout',0)*100:.1f}%")
-        c2.metric("Baseline Support",  f"{topline.get('baseline_support',0)*100:.1f}%")
-        c3.metric("Win Number",        f"{topline.get('win_number',0):,}")
-        c4.metric("Win Probability",   f"{topline.get('win_probability',0)*100:.0f}%" if topline.get('win_probability') is not None else "—")
+        c1.metric("Baseline Turnout",  f"{(topline.get('baseline_turnout') or 0)*100:.1f}%")
+        c2.metric("Baseline Support",  f"{(topline.get('baseline_support') or 0)*100:.1f}%")
+        c3.metric("Win Number",        f"{topline.get('win_number') or 0:,}")
+        c4.metric("Win Probability",   f"{(topline.get('win_probability') or 0)*100:.0f}%")
 
     st.markdown("---")
 
@@ -93,7 +93,7 @@ def render_overview(data: dict) -> None:
     with col2:
         st.subheader("🔎 Recommended Strategy")
         rec = meta.get("recommended_strategy", {})
-        if rec:
+        if isinstance(rec, dict) and rec:
             st.markdown(f"**Mode:** `{rec.get('strategy_mode','—')}`")
             st.markdown(f"**Focus:** {rec.get('focus_desc','—')}")
             prio = rec.get("priority_regions", [])

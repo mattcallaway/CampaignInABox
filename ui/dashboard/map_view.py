@@ -87,9 +87,20 @@ def _try_geo_map(pm: pd.DataFrame, col_name: str, layer: str, cscale: str) -> No
         import plotly.express as px
 
         gdf = gpd.read_file(geojson_path)
-        # Find ID column
-        geo_id = next((c for c in ["MPREC_ID", "precinct", "id", "GEOID"] if c in gdf.columns), gdf.columns[0])
-        pm_id  = "canonical_precinct_id" if "canonical_precinct_id" in pm.columns else pm.columns[0]
+        # Find ID column — MPREC_ID/canonical_precinct_id added when we write the canonical GeoJSON;
+        # PRECINCT is the raw column from statewidedatabase.org GPKG exports
+        geo_id = next(
+            (c for c in ["canonical_precinct_id", "MPREC_ID", "PRECINCT", "precinct", "id", "GEOID"]
+             if c in gdf.columns),
+            gdf.columns[0]
+        )
+        pm_id = "canonical_precinct_id" if "canonical_precinct_id" in pm.columns else pm.columns[0]
+
+        # Cast both sides to string to avoid object vs int64 merge errors
+        gdf = gdf.copy()
+        gdf[geo_id] = gdf[geo_id].astype(str).str.strip()
+        pm = pm.copy()
+        pm[pm_id] = pm[pm_id].astype(str).str.strip()
 
         merged = gdf.merge(pm, left_on=geo_id, right_on=pm_id, how="left")
         if col_name not in merged.columns:

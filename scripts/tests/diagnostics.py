@@ -122,7 +122,7 @@ def generate_diagnostic_summary(anomalies_df: pd.DataFrame, pipeline_meta: dict)
     Builds a markdown report for humans.
     """
     total = len(anomalies_df)
-    critical = len(anomalies_df[anomalies_df["severity"] == "CRITICAL"])
+    critical = len(anomalies_df[anomalies_df["severity"] == "CRITICAL"]) if "severity" in anomalies_df.columns else 0
     
     report = f"# Model Diagnostics & QA\n\n"
     report += f"**Contest:** {pipeline_meta.get('contest_slug', 'N/A')}\n"

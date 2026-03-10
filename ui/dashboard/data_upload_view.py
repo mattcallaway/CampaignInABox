@@ -553,31 +553,4 @@ def _render_run(state, county, slug, year, contest_dir: Path):
         with st.expander("📄 Full pipeline output"):
             st.code(raw_out[-8000:])
 
-    st.subheader("▶️ Run Pipeline for This Contest")
-    st.markdown(
-        "After uploading or modifying files, run the pipeline to process the contest data and regenerate all outputs."
-    )
-    st.code(
-        f"python scripts/run_pipeline.py --state {state} --county {county} "
-        f"--contest-slug {slug} --year {year}",
-        language="bash",
-    )
 
-    if st.button("▶️ Run Now", type="primary", key="run_pipe", use_container_width=False):
-        import subprocess, sys
-        with st.spinner("Running pipeline… (this takes 1–2 minutes)"):
-            result = subprocess.run(
-                [sys.executable, "scripts/run_pipeline.py",
-                 "--state", state, "--county", county,
-                 "--contest-slug", slug, "--year", str(year), "--no-commit"],
-                capture_output=True, text=True, timeout=300, cwd=str(BASE_DIR),
-            )
-        if result.returncode == 0:
-            st.success("✅ Pipeline completed successfully!")
-        else:
-            st.error("❌ Pipeline returned an error.")
-        with st.expander("Pipeline output"):
-            st.code((result.stdout or "")[-6000:])
-        if result.stderr:
-            with st.expander("Stderr"):
-                st.code(result.stderr[-2000:])
