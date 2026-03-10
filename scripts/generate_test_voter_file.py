@@ -90,7 +90,7 @@ def generate(n: int = 2000, seed: int = 42):
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     df = pd.DataFrame(rows)
     df.to_csv(OUTPUT_PATH, index=False)
-    print(f"\nGenerated {n:,} synthetic voters → {OUTPUT_PATH}")
+    print(f"\nGenerated {n:,} synthetic voters -> {OUTPUT_PATH}")
     print(f"  Columns: {list(df.columns)}")
     print(f"  Party distribution:\n{df['party'].value_counts().to_string()}")
     print(f"\nNow run the pipeline to ingest:")

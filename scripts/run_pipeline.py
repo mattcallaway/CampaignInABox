@@ -104,18 +104,28 @@ from scripts.ops.simulation_engine import run_net_gain_simulation, simulate_scen
 from scripts.turfs.turf_packer import generate_turf_packs
 from scripts.strategy.strategy_generator import run_strategy_generator
 
-# ── Prompt 11: Voter Intelligence & Calibration ───────────────────────────────
+# ── Prompt 11 + 12: Voter Intelligence & Calibration & Propensity ─────────────
 try:
     from engine.voters.voter_parser import ingest_voter_file, find_voter_file
     from engine.voters.universe_builder import classify_voters, aggregate_to_precinct, write_universes, universe_summary_text
     from engine.calibration.historical_parser import parse_all_historical
     from engine.calibration.model_calibrator import calibrate, load_calibrated_params
     from engine.calibration.election_downloader import download_historical_elections
+    # Prompt 12: TPS, PS, Targeting
+    from engine.voters.turnout_propensity import compute_tps, write_turnout_scores
+    from engine.voters.persuasion_model import compute_ps, write_persuasion_scores
+    from engine.voters.targeting_quadrants import assign_quadrant, write_targeting_quadrants
+    from engine.voters.precinct_voter_metrics import (
+        build_precinct_voter_metrics,
+        write_precinct_voter_metrics,
+        write_voter_model_validation,
+    )
     _VOTER_INTEL_AVAILABLE = True
 except ImportError as _vi_err:
     _VOTER_INTEL_AVAILABLE = False
     import logging as _vi_logging
     _vi_logging.getLogger(__name__).info(f"[VOTER_INTEL] Modules not available: {_vi_err}")
+
 
 from scripts.exports.exporter import (
     export_precinct_model,
@@ -689,6 +699,88 @@ def run_pipeline(
             logger.step_skip("BUILD_VOTER_UNIVERSES", reason=str(_ub_err))
     else:
         logger.step_skip("BUILD_VOTER_UNIVERSES", reason="No voter file loaded")
+
+    # ── Prompt 12 Step A: Score Voter Turnout (TPS) ───────────────────────
+    _p12_voter_scored = None
+    _p12_quadrant_df = None
+    _p12_precinct_metrics = None
+
+    logger.step_start("SCORE_VOTER_TURNOUT")
+    if _p11_voter_df is not None and _VOTER_INTEL_AVAILABLE:
+        try:
+            _p12_voter_scored = compute_tps(_p11_voter_df)
+            _tp_parquet, _tp_csv = write_turnout_scores(_p12_voter_scored, run_id)
+            all_artifacts.append(_tp_csv)
+            _tps_mean = _p12_voter_scored["tps"].mean() if "tps" in _p12_voter_scored.columns else 0
+            logger.step_done("SCORE_VOTER_TURNOUT",
+                notes=[f"{len(_p12_voter_scored):,} voters scored, mean TPS={_tps_mean:.3f}"])
+        except Exception as _tps_err:
+            logger.warn(f"TPS scoring error: {_tps_err}")
+            logger.step_skip("SCORE_VOTER_TURNOUT", reason=str(_tps_err))
+    else:
+        logger.step_skip("SCORE_VOTER_TURNOUT", reason="No voter file loaded")
+
+    # ── Prompt 12 Step B: Score Voter Persuasion (PS) ────────────────────
+    logger.step_start("SCORE_VOTER_PERSUASION")
+    if _p12_voter_scored is not None and _VOTER_INTEL_AVAILABLE:
+        try:
+            _p12_voter_scored = compute_ps(_p12_voter_scored)
+            _ps_parquet, _ps_csv = write_persuasion_scores(_p12_voter_scored, run_id)
+            all_artifacts.append(_ps_csv)
+            _ps_mean = _p12_voter_scored["ps"].mean() if "ps" in _p12_voter_scored.columns else 0
+            logger.step_done("SCORE_VOTER_PERSUASION",
+                notes=[f"{len(_p12_voter_scored):,} voters scored, mean PS={_ps_mean:.3f}"])
+        except Exception as _ps_err:
+            logger.warn(f"PS scoring error: {_ps_err}")
+            logger.step_skip("SCORE_VOTER_PERSUASION", reason=str(_ps_err))
+    else:
+        logger.step_skip("SCORE_VOTER_PERSUASION", reason="No TPS-scored voter file")
+
+    # ── Prompt 12 Step C: Build Targeting Quadrants ──────────────────────
+    logger.step_start("BUILD_TARGETING_QUADRANTS")
+    if _p12_voter_scored is not None and "tps" in _p12_voter_scored.columns and "ps" in _p12_voter_scored.columns and _VOTER_INTEL_AVAILABLE:
+        try:
+            _p12_quadrant_df = assign_quadrant(_p12_voter_scored)
+            _qt_parquet, _qt_csv = write_targeting_quadrants(_p12_quadrant_df, run_id)
+            all_artifacts.append(_qt_csv)
+            _n_quadrants = _p12_quadrant_df["quadrant"].nunique() if "quadrant" in _p12_quadrant_df.columns else 0
+            logger.step_done("BUILD_TARGETING_QUADRANTS",
+                notes=[f"{len(_p12_quadrant_df):,} voters in {_n_quadrants} targeting quadrants"])
+        except Exception as _qt_err:
+            logger.warn(f"Quadrant assignment error: {_qt_err}")
+            logger.step_skip("BUILD_TARGETING_QUADRANTS", reason=str(_qt_err))
+    else:
+        logger.step_skip("BUILD_TARGETING_QUADRANTS", reason="TPS+PS scores not available")
+
+    # Also re-run universe classification with TPS/PS-aware logic if we have scored voters
+    if _p12_quadrant_df is not None and _VOTER_INTEL_AVAILABLE:
+        try:
+            _p11_voter_classified = classify_voters(_p12_quadrant_df)  # now uses TPS/PS
+            _p11_universe_precinct_df = aggregate_to_precinct(_p11_voter_classified)
+            _uni_csv, _uni_seg = write_universes(_p11_universe_precinct_df, _p11_voter_classified, run_id)
+            if _uni_csv not in all_artifacts:
+                all_artifacts.append(_uni_csv)
+        except Exception:
+            pass  # Universe already built, non-fatal to rebuild
+
+    # ── Prompt 12 Step D: Build Precinct Voter Metrics ───────────────────
+    logger.step_start("BUILD_PRECINCT_VOTER_METRICS")
+    if _p12_quadrant_df is not None and _VOTER_INTEL_AVAILABLE:
+        try:
+            _pm_for_metrics = all_scored_dfs[0][1] if all_scored_dfs else None
+            _p12_precinct_metrics = build_precinct_voter_metrics(_p12_quadrant_df, _pm_for_metrics, run_id)
+            _vm_csv = write_precinct_voter_metrics(_p12_precinct_metrics, run_id)
+            all_artifacts.append(_vm_csv)
+            _val_path = write_voter_model_validation(_p12_quadrant_df, _p12_precinct_metrics, run_id)
+            all_artifacts.append(_val_path)
+            logger.step_done("BUILD_PRECINCT_VOTER_METRICS",
+                notes=[f"{len(_p12_precinct_metrics):,} precincts, "
+                       f"{len(_p12_precinct_metrics.columns)} metrics"])
+        except Exception as _vm_err:
+            logger.warn(f"Precinct voter metrics error: {_vm_err}")
+            logger.step_skip("BUILD_PRECINCT_VOTER_METRICS", reason=str(_vm_err))
+    else:
+        logger.step_skip("BUILD_PRECINCT_VOTER_METRICS", reason="No quadrant data")
 
     # ── Prompt 11 Step C: Download Historical Elections ───────────────────
     logger.step_start("DOWNLOAD_HISTORICAL_ELECTIONS")

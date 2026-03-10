@@ -699,6 +699,74 @@ def write_strategy_pack(
     if logger:
         logger.info(f"  Strategy pack written to {out_root}")
 
+    # ── Prompt 12: Voter Targeting Exports ────────────────────────────────────
+    _voter_models_dir = BASE_DIR / "derived" / "voter_models"
+    _voter_segs_dir   = BASE_DIR / "derived" / "voter_segments"
+    _voter_uni_dir    = BASE_DIR / "derived" / "voter_universes"
+
+    def _load_latest_voter_csv(directory: Path, pattern: str):
+        """Load most recent voter-derived CSV matching pattern, silently skip if missing."""
+        try:
+            matches = sorted(directory.glob(pattern), key=lambda p: p.stat().st_mtime, reverse=True)
+            if matches:
+                return pd.read_csv(matches[0])
+        except Exception:
+            pass
+        return None
+
+    # GOTV_TARGETS.csv — top precincts by GOTV universe count
+    _gotv_df = _load_latest_voter_csv(_voter_segs_dir, "*__targeting_quadrants.csv")
+    if _gotv_df is not None and not _gotv_df.empty:
+        gotv_col = "turnout_persuasion_count" if "turnout_persuasion_count" in _gotv_df.columns else None
+        if gotv_col is None:
+            gotv_col = "low_priority_count"  # fallback
+        if gotv_col and gotv_col in _gotv_df.columns:
+            gotv_targets = (
+                _gotv_df.sort_values(gotv_col, ascending=False)
+                .head(150)[["canonical_precinct_id", gotv_col, "avg_tps", "avg_ps"]
+                            if "avg_tps" in _gotv_df.columns else ["canonical_precinct_id", gotv_col]]
+            )
+            gotv_targets.to_csv(out_root / "GOTV_TARGETS.csv", index=False)
+
+    # PERSUASION_TARGETS.csv — top precincts by persuasion count
+    if _gotv_df is not None and not _gotv_df.empty:
+        pers_col = "persuasion_target_count" if "persuasion_target_count" in _gotv_df.columns else None
+        if pers_col and pers_col in _gotv_df.columns:
+            pers_targets = (
+                _gotv_df.sort_values(pers_col, ascending=False)
+                .head(150)[["canonical_precinct_id", pers_col, "avg_ps"]
+                            if "avg_ps" in _gotv_df.columns else ["canonical_precinct_id", pers_col]]
+            )
+            pers_targets.to_csv(out_root / "PERSUASION_TARGETS.csv", index=False)
+
+    # TARGETING_QUADRANTS.csv — full quadrant assignment per precinct
+    if _gotv_df is not None:
+        _gotv_df.to_csv(out_root / "TARGETING_QUADRANTS.csv", index=False)
+
+    # TPS_DISTRIBUTION.csv
+    _tps_df = _load_latest_voter_csv(_voter_models_dir, "*__precinct_turnout_scores.csv")
+    if _tps_df is not None and not _tps_df.empty:
+        _tps_df.to_csv(out_root / "TPS_DISTRIBUTION.csv", index=False)
+
+    # PS_DISTRIBUTION.csv
+    _ps_df = _load_latest_voter_csv(_voter_models_dir, "*__precinct_persuasion_scores.csv")
+    if _ps_df is not None and not _ps_df.empty:
+        _ps_df.to_csv(out_root / "PS_DISTRIBUTION.csv", index=False)
+
+    # VOTER_UNIVERSE_SUMMARY.csv
+    _uni_df = _load_latest_voter_csv(_voter_uni_dir, "*__universes.csv")
+    if _uni_df is not None and not _uni_df.empty:
+        _uni_df.to_csv(out_root / "VOTER_UNIVERSE_SUMMARY.csv", index=False)
+
+    if logger:
+        _p12_files = ["GOTV_TARGETS.csv", "PERSUASION_TARGETS.csv", "TARGETING_QUADRANTS.csv",
+                      "TPS_DISTRIBUTION.csv", "PS_DISTRIBUTION.csv", "VOTER_UNIVERSE_SUMMARY.csv"]
+        _written = [f for f in _p12_files if (out_root / f).exists()]
+        if _written:
+            logger.info(f"  [STRATEGY] Prompt 12 voter targeting files: {', '.join(_written)}")
+        else:
+            logger.info(f"  [STRATEGY] Prompt 12 voter targeting files: none (no voter file loaded)")
+
     return out_root
 
 
