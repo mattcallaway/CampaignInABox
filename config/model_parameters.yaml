@@ -1,27 +1,30 @@
-# model_parameters.yaml
-# Weights and thresholds for precinct scoring and targeting tier assignment.
-
 scoring:
   weights:
-    turnout_pct:   0.30   # historical turnout importance
-    yes_pct:       0.35   # ballot measure support (or candidate margin)
-    registered:    0.15   # raw voter pool size
-    swing_index:   0.20   # estimated persuadability (0-1 scale)
-
+    turnout_pct: 0.3
+    yes_pct: 0.35
+    registered: 0.15
+    swing_index: 0.2
   thresholds:
-    tier_1_cutoff: 0.75   # top quartile — highest priority
-    tier_2_cutoff: 0.50   # second quartile
-    tier_3_cutoff: 0.25   # third quartile
-
+    tier_1_cutoff: 0.75
+    tier_2_cutoff: 0.5
+    tier_3_cutoff: 0.25
 turnout:
-  baseline_off_year_factor: 0.70  # relative to presidential year
+  baseline_off_year_factor: 0.7
   mail_ballot_weight: 1.0
-  in_person_weight:   1.0
-
+  in_person_weight: 1.0
 allocation:
-  area_weighted_tolerance: 0.02   # max fractional error allowed
-  crosswalk_sum_tolerance:  0.001  # crosswalk weights must sum to 1 ± this
-
+  area_weighted_tolerance: 0.02
+  crosswalk_sum_tolerance: 0.001
 sanity:
-  max_ballots_over_registered_pct: 0.0   # hard-fail threshold
-  max_yes_no_over_ballots_pct:      0.005  # 0.5% float tolerance
+  max_ballots_over_registered_pct: 0.0
+  max_yes_no_over_ballots_pct: 0.005
+calibration:
+  calibration_status: prior_only
+  calibration_confidence: none
+  turnout_lift_per_contact: 0.06
+  turnout_lift_variance: 0.02
+  persuasion_lift_per_contact: 0.006
+  persuasion_variance: 0.003
+  baseline_turnout_probability: 0.45
+  turnout_variance: 0.08
+  calibrated_at: '2026-03-10T23:27:50.967930'

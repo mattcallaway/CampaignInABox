@@ -853,6 +853,30 @@ def run_pipeline(
         logger.warn(f"Campaign strategy error (non-fatal): {_strat_err}")
         logger.step_skip("CAMPAIGN_STRATEGY", reason=str(_strat_err))
 
+    # ── Prompt 15: CALIBRATION ────────────────────────────────────────────────
+    logger.step_start("CALIBRATION")
+    _calib_result: dict = {}
+    try:
+        from engine.calibration.calibration_engine import run_calibration
+        _calib_result = run_calibration(
+            project_root=BASE_DIR,
+            contest_id=_contest_id_for_diag,
+            run_id=run_id,
+            logger=logger,
+        )
+        _cal_status = _calib_result.get("calibration_status", "prior_only")
+        _cal_conf   = _calib_result.get("calibration_confidence", "none")
+        _cal_srcs   = _calib_result.get("calibration_sources", [])
+        logger.step_done("CALIBRATION", notes=[
+            f"status={_cal_status}, "
+            f"confidence={_cal_conf}, "
+            f"sources={_cal_srcs}, "
+            f"n_elections={_calib_result.get('n_historical_elections', 0)}"
+        ])
+    except Exception as _cal_err:
+        logger.warn(f"CALIBRATION error (non-fatal): {_cal_err}")
+        logger.step_skip("CALIBRATION", reason=str(_cal_err))
+
     # ── Prompt 14: Data Provenance ────────────────────────────────────────────
     logger.step_start("BUILD_PROVENANCE")
     try:
