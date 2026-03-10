@@ -1,0 +1,14 @@
+run_id: 2026-03-10__145503__00b7b2b1__msi
+timestamp: '2026-03-10T21:57:33.498Z'
+state: CA
+county: Sonoma
+needs: []
+coverage:
+  canonical_geometry: MPREC
+  categories_present: 12
+  categories_missing: 0
+  geometry_features: 1405
+  sheets_parsed: 3
+  rows_2: 2
+  rows_3: 390
+  rows_4: 55

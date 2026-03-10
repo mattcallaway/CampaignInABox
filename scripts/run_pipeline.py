@@ -821,6 +821,38 @@ def run_pipeline(
     else:
         logger.step_skip("CALIBRATE_MODEL", reason="Calibration modules unavailable")
 
+    # ── Prompt 13: Campaign Strategy Engine ───────────────────────────────────
+    logger.step_start("CAMPAIGN_STRATEGY")
+    _p13_strategy_bundle = None
+    try:
+        from engine.strategy.campaign_strategy_ai import generate_strategy_bundle, load_campaign_config
+        from engine.strategy.strategy_report_writer import write_strategy_report
+        _campaign_cfg = load_campaign_config()
+        if not _campaign_cfg:
+            logger.step_skip(
+                "CAMPAIGN_STRATEGY",
+                reason="No campaign_config.yaml found — run Campaign Setup in the dashboard to configure"
+            )
+        else:
+            _p13_strategy_bundle = generate_strategy_bundle(run_id)
+            _rpt_path = write_strategy_report(_p13_strategy_bundle, run_id)
+            all_artifacts.append(_rpt_path)
+            for _p in _p13_strategy_bundle.get("output_paths", {}).values():
+                all_artifacts.append(_p)
+            _vp  = _p13_strategy_bundle.get("vote_path", {})
+            _fld = _p13_strategy_bundle.get("field_strategy", {})
+            logger.step_done(
+                "CAMPAIGN_STRATEGY",
+                notes=[
+                    f"win_number={_vp.get('win_number', 0):,}, "
+                    f"doors_needed={_fld.get('total_doors_needed', 0):,}, "
+                    f"canvassers_needed={_fld.get('paid_canvassers_needed', 0)}"
+                ]
+            )
+    except Exception as _strat_err:
+        logger.warn(f"Campaign strategy error (non-fatal): {_strat_err}")
+        logger.step_skip("CAMPAIGN_STRATEGY", reason=str(_strat_err))
+
     # ── Step 16: Forecasting ──────────────────────────────────────────────
     logger.step_start("FORECAST_GENERATION")
     all_forecasts = []

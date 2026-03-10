@@ -1,0 +1,2 @@
+precinct_id,type,detail,severity
+TURF_001,LOW_REGISTRATION_TURF,Registered(0) < 100,MEDIUM

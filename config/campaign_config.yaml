@@ -1,0 +1,52 @@
+# config/campaign_config.yaml — Prompt 13
+#
+# Campaign configuration file. Edit via the Campaign Setup dashboard page
+# or directly. Automatically loaded by the strategy engine.
+#
+# This file is SAFE to commit — it contains no voter-level data.
+
+campaign:
+  contest_name: "Prop 50 Special Election 2025"
+  contest_type: ballot_measure       # ballot_measure | candidate
+  jurisdiction: "Sonoma County, CA"
+  election_date: "2025-06-03"
+  candidate_name: ""                 # leave blank for ballot measures
+  party: ""                          # D | R | N | (blank for ballot measures)
+
+targets:
+  target_vote_share: 0.52            # 52% — win threshold
+  win_margin: 0.04                   # 4-point margin goal above 50%
+  registration_target: 0             # 0 = auto-compute from model
+
+budget:
+  total_budget: 150000
+  field_budget: 60000
+  mail_budget: 40000
+  digital_budget: 30000
+  research_budget: 20000
+  # budget_notes: "Q2 fundraising assumed; adjust after March FEC filing"
+
+field_program:
+  doors_per_canvasser_per_day: 40
+  persuasion_rate_per_contact: 0.04  # 4% persuasion rate per door
+  turnout_lift_per_contact: 0.06     # 6% turnout lift per contact
+  contact_success_rate: 0.22         # 22% contact rate
+  days_per_week: 5
+  weeks_before_election: null        # null = auto-compute from election_date
+
+volunteers:
+  volunteers_per_week: 10
+  avg_shifts_per_volunteer: 2
+  shift_length_hours: 3
+  contacts_per_hour: 8               # used to compute weekly reach
+
+strategy:
+  persuasion_priority: High          # Low | Medium | High
+  turnout_priority: Medium
+  base_mobilization_priority: Medium
+  mail_priority: Medium
+  digital_priority: Low
+  coalition_targets: []              # e.g. ["Labor", "Teachers", "NAACP"]
+  key_demographics: []               # e.g. ["Seniors 65+", "Latino voters"]
+  key_geographic_targets: []         # e.g. ["Santa Rosa", "Petaluma"]
+  primary_message: ""                # 1-sentence campaign message

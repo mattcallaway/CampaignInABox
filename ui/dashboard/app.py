@@ -82,6 +82,7 @@ with st.sidebar:
         [
             "📂 Upload Contest Data",
             "🏠 Overview",
+            "🗳️ Campaign Setup",
             "🗺️ Precinct Map",
             "🎯 Targeting",
             "📋 Strategy",
@@ -128,6 +129,10 @@ if page == "📂 Upload Contest Data":
 elif page == "🏠 Overview":
     from ui.dashboard.layout import render_overview
     render_overview(data)
+
+elif page == "🗳️ Campaign Setup":
+    from ui.dashboard.campaign_setup_view import render_campaign_setup
+    render_campaign_setup(data)
 
 elif page == "🗺️ Precinct Map":
     from ui.dashboard.map_view import render_map

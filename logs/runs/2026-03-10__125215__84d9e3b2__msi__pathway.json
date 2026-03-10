@@ -1,0 +1,336 @@
+{
+  "run_id": "2026-03-10__125215__84d9e3b2__msi",
+  "run_status": "success",
+  "total_elapsed_s": 236.222,
+  "started_at": "2026-03-10T19:52:15.878674+00:00",
+  "county_name": "Sonoma",
+  "county_fips": "097",
+  "county_slug": "sonoma",
+  "contest_id": "2026_CA_sonoma_nov2024_general",
+  "registry_version": "1.0",
+  "input_hashes": {
+    "detail.xlsx": "15704823393468d92320aa97921477eaf973390d438d022adb310ed46dc053db"
+  },
+  "output_hashes": {
+    "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\boundary_index\\boundaries_index.csv": "b4dff0e71c422e612069cecc47bc83d6f5c0027631171e9fa736bf40cb029e7a",
+    "C:\\Users\\Mathew C\\Campaign In A Box\\votes\\2024\\CA\\Sonoma\\nov2024_general\\contest.json": "f6d59ec4075e5988598d8f22f8905037481e4e28bdbc201f6ce232e4b545a04e"
+  },
+  "coverage": {
+    "canonical_geometry": "MPREC",
+    "categories_present": 12,
+    "categories_missing": 0,
+    "geometry_features": 1405,
+    "sheets_parsed": 1,
+    "rows_Sheet1": 10
+  },
+  "steps": [
+    {
+      "step": "INGEST_STAGING",
+      "status": "skipped",
+      "elapsed_s": 0.025,
+      "reason": "No --staging-dir provided; skipping ingestion"
+    },
+    {
+      "step": "SCAFFOLD_BOUNDARY_INDEX",
+      "status": "done",
+      "elapsed_s": 0.038,
+      "outputs": [
+        "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\boundary_index\\boundaries_index.csv"
+      ],
+      "hashes_out": {
+        "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\boundary_index\\boundaries_index.csv": "b4dff0e71c422e612069cecc47bc83d6f5c0027631171e9fa736bf40cb029e7a"
+      },
+      "notes": []
+    },
+    {
+      "step": "VALIDATE_GEOGRAPHY",
+      "status": "done",
+      "elapsed_s": 0.056,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": []
+    },
+    {
+      "step": "VALIDATE_VOTES",
+      "status": "done",
+      "elapsed_s": 0.057,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": []
+    },
+    {
+      "step": "LOAD_GEOMETRY",
+      "status": "done",
+      "elapsed_s": 7.686,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": []
+    },
+    {
+      "step": "LOAD_CROSSWALKS",
+      "status": "skipped",
+      "elapsed_s": 8.09,
+      "reason": "No crosswalk files; using identity mapping"
+    },
+    {
+      "step": "SCAFFOLD_CONTEST_JSON",
+      "status": "done",
+      "elapsed_s": 8.092,
+      "outputs": [
+        "C:\\Users\\Mathew C\\Campaign In A Box\\votes\\2024\\CA\\Sonoma\\nov2024_general\\contest.json"
+      ],
+      "hashes_out": {
+        "C:\\Users\\Mathew C\\Campaign In A Box\\votes\\2024\\CA\\Sonoma\\nov2024_general\\contest.json": "f6d59ec4075e5988598d8f22f8905037481e4e28bdbc201f6ce232e4b545a04e"
+      },
+      "notes": []
+    },
+    {
+      "step": "PARSE_CONTEST",
+      "status": "done",
+      "elapsed_s": 8.168,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": []
+    },
+    {
+      "step": "NORMALIZE_SCHEMA/Sheet1",
+      "status": "done",
+      "elapsed_s": 8.187,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": [
+        "mapped 5 cols, inferred=ballot_measure"
+      ]
+    },
+    {
+      "step": "SANITY/Sheet1",
+      "status": "done",
+      "elapsed_s": 8.188,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": []
+    },
+    {
+      "step": "BUILD_MODEL/Sheet1",
+      "status": "done",
+      "elapsed_s": 8.212,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": []
+    },
+    {
+      "step": "ALLOCATE_VOTES",
+      "status": "done",
+      "elapsed_s": 8.212,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": []
+    },
+    {
+      "step": "INTEGRITY_ENFORCEMENT",
+      "status": "done",
+      "elapsed_s": 8.225,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": [
+        "0 repair(s), 0 CRITICAL (registered=0) row(s)"
+      ]
+    },
+    {
+      "step": "FEATURE_ENGINEERING",
+      "status": "done",
+      "elapsed_s": 8.258,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": []
+    },
+    {
+      "step": "UNIVERSE_BUILDING",
+      "status": "done",
+      "elapsed_s": 8.29,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": []
+    },
+    {
+      "step": "SCORING_V2",
+      "status": "done",
+      "elapsed_s": 8.326,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": []
+    },
+    {
+      "step": "REGION_CLUSTERING",
+      "status": "done",
+      "elapsed_s": 8.352,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": []
+    },
+    {
+      "step": "FIELD_PLANNING",
+      "status": "done",
+      "elapsed_s": 8.369,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": []
+    },
+    {
+      "step": "SIMULATION",
+      "status": "done",
+      "elapsed_s": 8.371,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": []
+    },
+    {
+      "step": "VOTER_UNIVERSE_EXPORT",
+      "status": "skipped",
+      "elapsed_s": 8.372,
+      "reason": "No voter file present"
+    },
+    {
+      "step": "FORECAST_GENERATION",
+      "status": "done",
+      "elapsed_s": 8.41,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": []
+    },
+    {
+      "step": "TURF_GENERATION",
+      "status": "done",
+      "elapsed_s": 8.432,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": []
+    },
+    {
+      "step": "EXPORT_V2_OUTPUTS",
+      "status": "done",
+      "elapsed_s": 18.521,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": []
+    },
+    {
+      "step": "DIAGNOSTICS",
+      "status": "done",
+      "elapsed_s": 18.541,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": []
+    },
+    {
+      "step": "STRATEGY_GENERATOR",
+      "status": "done",
+      "elapsed_s": 19.33,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": []
+    },
+    {
+      "step": "GEO_VALIDATION",
+      "status": "done",
+      "elapsed_s": 20.198,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": [
+        "status=WARN"
+      ]
+    },
+    {
+      "step": "JOIN_GUARD_VALIDATION",
+      "status": "done",
+      "elapsed_s": 20.213,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": [
+        "overall=PASS, joins=4"
+      ]
+    },
+    {
+      "step": "INTEGRITY_REPAIRS_WRITE",
+      "status": "done",
+      "elapsed_s": 20.219,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": [
+        "0 records written"
+      ]
+    },
+    {
+      "step": "ARTIFACT_VALIDATION",
+      "status": "done",
+      "elapsed_s": 20.238,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": [
+        "13/13 present, 0 missing"
+      ]
+    },
+    {
+      "step": "POST_RUN_AUDIT",
+      "status": "done",
+      "elapsed_s": 20.253,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": [
+        "written \u2192 2026-03-10__125215__84d9e3b2__msi__post_prompt86_audit.json"
+      ]
+    },
+    {
+      "step": "ADVANCED_UNIVERSE_ESTIMATES",
+      "status": "done",
+      "elapsed_s": 20.277,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": [
+        "10 precincts with universe estimates"
+      ]
+    },
+    {
+      "step": "OPTIMIZER",
+      "status": "done",
+      "elapsed_s": 20.28,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": [
+        "0 shifts allocated"
+      ]
+    },
+    {
+      "step": "ADVANCED_LIFT_MODEL",
+      "status": "done",
+      "elapsed_s": 20.281,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": [
+        "lifted=no"
+      ]
+    },
+    {
+      "step": "ADVANCED_SCENARIOS",
+      "status": "done",
+      "elapsed_s": 236.198,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": [
+        "4 scenarios, 4 MC summaries"
+      ]
+    },
+    {
+      "step": "ADVANCED_QA",
+      "status": "done",
+      "elapsed_s": 236.221,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": [
+        "PASS=2, WARN=0",
+        "model_card=2026-03-10__125215__84d9e3b2__msi__advanced_modeling_model_card.md"
+      ]
+    }
+  ],
+  "needs": []
+}

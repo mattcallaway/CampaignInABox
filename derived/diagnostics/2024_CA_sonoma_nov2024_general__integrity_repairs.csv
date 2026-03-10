@@ -1,11 +1,1 @@
 repair_type,dataset,field,original_value,new_value,reason,timestamp,precinct_id
-CRITICAL_NO_REPAIR,precinct_model,registered,0,0,Likely join/extraction error — registered not mapped from workbook,2026-03-05T04:22:21.458979,Precinct 0510000
-CRITICAL_NO_REPAIR,precinct_model,registered,0,0,Likely join/extraction error — registered not mapped from workbook,2026-03-05T04:22:21.458979,Precinct 0510001
-CRITICAL_NO_REPAIR,precinct_model,registered,0,0,Likely join/extraction error — registered not mapped from workbook,2026-03-05T04:22:21.458979,Precinct 0510002
-CRITICAL_NO_REPAIR,precinct_model,registered,0,0,Likely join/extraction error — registered not mapped from workbook,2026-03-05T04:22:21.458979,Precinct 0510003
-CRITICAL_NO_REPAIR,precinct_model,registered,0,0,Likely join/extraction error — registered not mapped from workbook,2026-03-05T04:22:21.458979,Precinct 0510004
-CRITICAL_NO_REPAIR,precinct_model,registered,0,0,Likely join/extraction error — registered not mapped from workbook,2026-03-05T04:22:21.458979,Precinct 0510005
-CRITICAL_NO_REPAIR,precinct_model,registered,0,0,Likely join/extraction error — registered not mapped from workbook,2026-03-05T04:22:21.458979,Precinct 0510006
-CRITICAL_NO_REPAIR,precinct_model,registered,0,0,Likely join/extraction error — registered not mapped from workbook,2026-03-05T04:22:21.458979,Precinct 0510007
-CRITICAL_NO_REPAIR,precinct_model,registered,0,0,Likely join/extraction error — registered not mapped from workbook,2026-03-05T04:22:21.458979,Precinct 0510008
-CRITICAL_NO_REPAIR,precinct_model,registered,0,0,Likely join/extraction error — registered not mapped from workbook,2026-03-05T04:22:21.458979,Precinct 0510009
