@@ -32,11 +32,18 @@ geopandas_library:
   status: missing
 jurisdictions:
   CA/Sonoma:
-    last_run_id: 2026-03-10__152246__e84498d7__msi
-    needs: []
+    last_run_id: 2026-03-10__161040__fddf01a4__msi
+    needs:
+    - category: detail.xlsx
+      status: missing
+      blocks:
+      - parse_contest
+      - allocate_votes
+      - export_model
+      expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\votes\2024\prop_50_special\detail.xlsx
 meta:
-  last_run_id: 2026-03-10__152246__e84498d7__msi
-  last_updated: '2026-03-10T22:25:17.986Z'
+  last_run_id: 2026-03-10__161040__fddf01a4__msi
+  last_updated: '2026-03-10T23:10:40.377Z'
 runs:
 - artifacts:
     needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-05__035835__0e0e8b52__msi__needs_snapshot.yaml
@@ -181,6 +188,17 @@ runs:
     validation_report: C:\Users\Mathew C\Campaign In A Box\reports\validation\2026-03-10__152246__e84498d7__msi__validation_report.md
     qa_report: C:\Users\Mathew C\Campaign In A Box\reports\qa\2026-03-10__152246__e84498d7__msi__qa_sanity_checks.md
     needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-10__152246__e84498d7__msi__needs_snapshot.yaml
+- run_id: 2026-03-10__161040__fddf01a4__msi
+  timestamp: '2026-03-10T23:10:40.377Z'
+  state: CA
+  county: Sonoma
+  status: partial
+  artifacts:
+    run_log: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-10__161040__fddf01a4__msi__run.log
+    pathway_json: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-10__161040__fddf01a4__msi__pathway.json
+    validation_report: C:\Users\Mathew C\Campaign In A Box\reports\validation\2026-03-10__161040__fddf01a4__msi__validation_report.md
+    qa_report: C:\Users\Mathew C\Campaign In A Box\reports\qa\2026-03-10__161040__fddf01a4__msi__qa_sanity_checks.md
+    needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-10__161040__fddf01a4__msi__needs_snapshot.yaml
 strategy_generator:
   2024_CA_sonoma_nov2024_general:
     derived_mode: full
