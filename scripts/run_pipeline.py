@@ -104,6 +104,19 @@ from scripts.ops.simulation_engine import run_net_gain_simulation, simulate_scen
 from scripts.turfs.turf_packer import generate_turf_packs
 from scripts.strategy.strategy_generator import run_strategy_generator
 
+# ── Prompt 11: Voter Intelligence & Calibration ───────────────────────────────
+try:
+    from engine.voters.voter_parser import ingest_voter_file, find_voter_file
+    from engine.voters.universe_builder import classify_voters, aggregate_to_precinct, write_universes, universe_summary_text
+    from engine.calibration.historical_parser import parse_all_historical
+    from engine.calibration.model_calibrator import calibrate, load_calibrated_params
+    from engine.calibration.election_downloader import download_historical_elections
+    _VOTER_INTEL_AVAILABLE = True
+except ImportError as _vi_err:
+    _VOTER_INTEL_AVAILABLE = False
+    import logging as _vi_logging
+    _vi_logging.getLogger(__name__).info(f"[VOTER_INTEL] Modules not available: {_vi_err}")
+
 from scripts.exports.exporter import (
     export_precinct_model,
     export_targeting_list,
@@ -221,6 +234,28 @@ def run_pipeline(
     logger.info(f"Pipeline v2 starting")
     logger.info(f"  state={state}  county={county}  year={year}  contest_slug={contest_slug}")
     logger.info(f"  membership_method={membership_method}  log_level={log_level}")
+
+    # ── Voter-in-git safety gate (Prompt 11) ─────────────────────────────
+    try:
+        _staged = subprocess.run(
+            ["git", "diff", "--cached", "--name-only"],
+            cwd=str(BASE_DIR), capture_output=True, text=True, check=False
+        ).stdout.splitlines()
+        _voter_staged = [f for f in _staged if any(
+            kw in f for kw in ["voters/", "voter_models/", "voter_segments/"]
+        )]
+        if _voter_staged:
+            logger.error(
+                "SAFETY ABORT: Voter data files detected in git staging area!\n"
+                f"  Staged files: {_voter_staged}\n"
+                "  Unstage with: git reset HEAD <file>\n"
+                "  These files must never be committed to GitHub."
+            )
+            raise SystemExit(1)
+    except SystemExit:
+        raise
+    except Exception:
+        pass  # git not available in this context — skip check
 
     config    = load_config("model_parameters")
     ops_config = load_config("field_ops")
@@ -620,6 +655,79 @@ def run_pipeline(
             logger.step_skip("VOTER_UNIVERSE_EXPORT", reason=str(e))
     else:
         logger.step_skip("VOTER_UNIVERSE_EXPORT", reason="No voter file present")
+
+    # ── Prompt 11 Step A: Load Voter File ─────────────────────────────────
+    _p11_voter_df = None
+    _p11_universe_precinct_df = None
+    _p11_calibration_params = None
+
+    logger.step_start("LOAD_VOTER_FILE")
+    if _VOTER_INTEL_AVAILABLE:
+        _vf_path = find_voter_file(county=county, state=state)
+        if _vf_path:
+            _p11_voter_df = ingest_voter_file(_vf_path, run_id=run_id, county=county, state=state, logger=logger)
+            logger.step_done("LOAD_VOTER_FILE",
+                notes=[f"{len(_p11_voter_df):,} voters loaded from {_vf_path.name}"])
+        else:
+            logger.step_skip("LOAD_VOTER_FILE",
+                reason=f"No voter file found in data/voters/{state}/{county}/ — place a CSV there to enable voter intelligence")
+    else:
+        logger.step_skip("LOAD_VOTER_FILE", reason="Voter intelligence modules unavailable")
+
+    # ── Prompt 11 Step B: Build Voter Universes ───────────────────────────
+    logger.step_start("BUILD_VOTER_UNIVERSES")
+    if _p11_voter_df is not None and _VOTER_INTEL_AVAILABLE:
+        try:
+            _p11_voter_classified = classify_voters(_p11_voter_df)
+            _p11_universe_precinct_df = aggregate_to_precinct(_p11_voter_classified)
+            _csv_path, _seg_path = write_universes(_p11_universe_precinct_df, _p11_voter_classified, run_id)
+            all_artifacts.append(_csv_path)
+            logger.step_done("BUILD_VOTER_UNIVERSES",
+                notes=[f"{len(_p11_universe_precinct_df):,} precincts with universe data"])
+        except Exception as _ub_err:
+            logger.warn(f"Universe builder error: {_ub_err}")
+            logger.step_skip("BUILD_VOTER_UNIVERSES", reason=str(_ub_err))
+    else:
+        logger.step_skip("BUILD_VOTER_UNIVERSES", reason="No voter file loaded")
+
+    # ── Prompt 11 Step C: Download Historical Elections ───────────────────
+    logger.step_start("DOWNLOAD_HISTORICAL_ELECTIONS")
+    if _VOTER_INTEL_AVAILABLE:
+        try:
+            _dl_status = download_historical_elections(county=county, state=state, logger=logger)
+            _n_downloaded = len(_dl_status.get("years_downloaded", []))
+            _n_present = len(_dl_status.get("years_already_present", []))
+            _n_failed = len(_dl_status.get("years_failed", []))
+            if _n_failed > 0:
+                logger.step_done("DOWNLOAD_HISTORICAL_ELECTIONS",
+                    notes=[f"{_n_downloaded} downloaded, {_n_present} already present, "
+                           f"{_n_failed} require manual download (see data/elections/{state}/{county}/download_status.json)"])
+            else:
+                logger.step_done("DOWNLOAD_HISTORICAL_ELECTIONS",
+                    notes=[f"{_n_downloaded + _n_present} elections available"])
+        except Exception as _dl_err:
+            logger.warn(f"Historical download error (non-fatal): {_dl_err}")
+            logger.step_skip("DOWNLOAD_HISTORICAL_ELECTIONS", reason=str(_dl_err))
+    else:
+        logger.step_skip("DOWNLOAD_HISTORICAL_ELECTIONS", reason="Calibration modules unavailable")
+
+    # ── Prompt 11 Step D: Calibrate Model ────────────────────────────────
+    logger.step_start("CALIBRATE_MODEL")
+    if _VOTER_INTEL_AVAILABLE:
+        try:
+            _hist_df = parse_all_historical(logger=logger)
+            # Use first available scored model for precinct model context
+            _pm_for_cal = all_scored_dfs[0][1] if all_scored_dfs else None
+            _p11_calibration_params = calibrate(_hist_df, _pm_for_cal, logger=logger)
+            _cal_status = _p11_calibration_params.get("calibration_status", "prior_only")
+            _cal_conf = _p11_calibration_params.get("calibration_confidence", "none")
+            logger.step_done("CALIBRATE_MODEL",
+                notes=[f"status={_cal_status}, confidence={_cal_conf}"])
+        except Exception as _cal_err:
+            logger.warn(f"Model calibration error (non-fatal): {_cal_err}")
+            logger.step_skip("CALIBRATE_MODEL", reason=str(_cal_err))
+    else:
+        logger.step_skip("CALIBRATE_MODEL", reason="Calibration modules unavailable")
 
     # ── Step 16: Forecasting ──────────────────────────────────────────────
     logger.step_start("FORECAST_GENERATION")

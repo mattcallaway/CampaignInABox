@@ -1,0 +1,9 @@
+{
+  "calibration_status": "prior_only",
+  "calibration_confidence": "none",
+  "note": "No historical election data found. Place detail.xls files in data/elections/CA/Sonoma/<year>/ and rerun to calibrate.",
+  "turnout_lift_per_contact_mean": 0.004,
+  "turnout_lift_per_contact_sd": 0.002,
+  "persuasion_lift_per_contact_mean": 0.006,
+  "persuasion_lift_per_contact_sd": 0.003
+}

@@ -32,16 +32,11 @@ geopandas_library:
   status: missing
 jurisdictions:
   CA/Sonoma:
-    last_run_id: 2026-03-09__150530__cc2e639f__msi
-    needs:
-    - blocks:
-      - geometry_load
-      - kepler_export
-      category: geopandas_library
-      status: missing
+    last_run_id: 2026-03-10__141533__84d9e3b2__msi
+    needs: []
 meta:
-  last_run_id: 2026-03-09__150530__cc2e639f__msi
-  last_updated: '2026-03-09T22:07:32.177Z'
+  last_run_id: 2026-03-10__141533__84d9e3b2__msi
+  last_updated: '2026-03-10T21:17:52.373Z'
 runs:
 - artifacts:
     needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-05__035835__0e0e8b52__msi__needs_snapshot.yaml
@@ -131,16 +126,38 @@ runs:
   state: CA
   status: success
   timestamp: '2026-03-09T22:07:32.177Z'
+- artifacts:
+    needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-10__125215__84d9e3b2__msi__needs_snapshot.yaml
+    pathway_json: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-10__125215__84d9e3b2__msi__pathway.json
+    qa_report: C:\Users\Mathew C\Campaign In A Box\reports\qa\2026-03-10__125215__84d9e3b2__msi__qa_sanity_checks.md
+    run_log: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-10__125215__84d9e3b2__msi__run.log
+    validation_report: C:\Users\Mathew C\Campaign In A Box\reports\validation\2026-03-10__125215__84d9e3b2__msi__validation_report.md
+  county: Sonoma
+  run_id: 2026-03-10__125215__84d9e3b2__msi
+  state: CA
+  status: success
+  timestamp: '2026-03-10T19:56:12.144Z'
+- run_id: 2026-03-10__141533__84d9e3b2__msi
+  timestamp: '2026-03-10T21:17:52.373Z'
+  state: CA
+  county: Sonoma
+  status: success
+  artifacts:
+    run_log: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-10__141533__84d9e3b2__msi__run.log
+    pathway_json: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-10__141533__84d9e3b2__msi__pathway.json
+    validation_report: C:\Users\Mathew C\Campaign In A Box\reports\validation\2026-03-10__141533__84d9e3b2__msi__validation_report.md
+    qa_report: C:\Users\Mathew C\Campaign In A Box\reports\qa\2026-03-10__141533__84d9e3b2__msi__qa_sanity_checks.md
+    needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-10__141533__84d9e3b2__msi__needs_snapshot.yaml
 strategy_generator:
   2024_CA_sonoma_nov2024_general:
     derived_mode: full
-    last_run_id: 2026-03-05__042220__46073f09__msi
+    last_run_id: 2026-03-10__125215__84d9e3b2__msi
     missing_inputs: []
-    notes: Generated at 2026-03-05T04:22:21.446481
+    notes: Generated at 2026-03-10T12:52:35.180653
     status: complete
   2025_CA_sonoma_prop_50_special:
     derived_mode: full
-    last_run_id: 2026-03-09__150530__cc2e639f__msi
+    last_run_id: 2026-03-10__141533__84d9e3b2__msi
     missing_inputs: []
-    notes: Generated at 2026-03-09T15:05:32.743369
+    notes: Generated at 2026-03-10T14:16:49.237680
     status: complete

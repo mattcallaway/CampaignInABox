@@ -87,6 +87,7 @@ with st.sidebar:
             "📋 Strategy",
             "🔬 Simulations",
             "⚡ Advanced Modeling",
+            "🧠 Voter Intelligence",
             "🩺 Diagnostics",
             "🗄️ Data Explorer",
         ],
@@ -147,6 +148,10 @@ elif page == "🔬 Simulations":
 elif page == "⚡ Advanced Modeling":
     from ui.dashboard.advanced_view import render_advanced
     render_advanced(data)
+
+elif page == "🧠 Voter Intelligence":
+    from ui.dashboard.voter_intelligence_view import render_voter_intelligence
+    render_voter_intelligence(data)
 
 elif page == "🩺 Diagnostics":
     from ui.dashboard.diagnostics_view import render_diagnostics

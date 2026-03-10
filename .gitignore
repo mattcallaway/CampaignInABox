@@ -25,11 +25,24 @@ desktop.ini
 *.suo
 *.user
 
-# Raw voter files (sensitive; never commit)
-voters/**/*.csv
-voters/**/*.tsv
-voters/**/*.txt
-voters/**/*.zip
+# ── Voter Intelligence (Prompt 11) — NEVER COMMIT VOTER DATA ─────────────────
+# Individual voter records — strictly local only
+data/voters/
+data/voter_files/
+derived/voter_models/
+derived/voter_segments/
+
+# Voter universe files contain aggregate counts only — SAFE to commit
+# derived/voter_universes/ is intentionally NOT excluded
+
+# Raw historical election downloads (large, re-downloadable)
+data/elections/CA/*/detail*.xls
+data/elections/CA/*/detail*.xlsx
+data/elections/CA/*/detail*.xls*
+
+# Parquet voter snapshots — local only
+*.parquet
+
 
 # Temp / scratch
 _scaffold.ps1

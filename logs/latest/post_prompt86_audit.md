@@ -1,7 +1,7 @@
 # Post-Prompt-8.6 Audit ✅
-**Run:** `2026-03-09__150530__cc2e639f__msi`
+**Run:** `2026-03-10__141533__84d9e3b2__msi`
 **Contest:** `2025_CA_sonoma_prop_50_special`  **State:** CA  **County:** Sonoma
-**Timestamp:** 2026-03-09T15:05:32.787221
+**Timestamp:** 2026-03-10T14:16:49.525108
 **System Health:** `HEALTHY` ✅
 
 ## Artifact Status
@@ -10,8 +10,11 @@
 ## Diagnostic Status
 | Check | Status |
 |---|---|
-| Geometry | `skip` |
+| Geometry | `warn` |
 | Join Guard | `PASS` |
 | Integrity Repairs | 0 repair(s) |
 | Strategy Pack Generated | ✅ |
 | Simulation Results | ❌ |
+
+## ⚠️ Warnings
+- Geometry: 2 invalid geometries

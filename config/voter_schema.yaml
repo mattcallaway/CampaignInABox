@@ -1,0 +1,118 @@
+# config/voter_schema.yaml
+# Column name aliases for auto-detecting voter file schemas.
+# Add entries here if your voter file uses non-standard column names.
+
+# ── Primary key ───────────────────────────────────────────────────────────────
+voter_id_aliases:
+  - voter_id
+  - VoterId
+  - Voter_ID
+  - StateVoterID
+  - state_voter_id
+  - VOTERID
+  - lalvoterid
+  - registrant_id
+
+# ── Precinct / geography ──────────────────────────────────────────────────────
+precinct_aliases:
+  - precinct
+  - Precinct
+  - PRECINCT
+  - PrecinctID
+  - precinct_id
+  - Precinct_ID
+  - srprec
+  - SRPREC
+  - prec
+  - prec_id
+
+# ── Party ─────────────────────────────────────────────────────────────────────
+party_aliases:
+  - party
+  - Party
+  - PartyCode
+  - party_code
+  - PARTY
+  - Parties_Description
+  - party_affiliation
+
+# Party normalizations → canonical label
+party_map:
+  DEM: D
+  Democrat: D
+  Democratic: D
+  REP: R
+  Republican: R
+  DTS: N      # Decline to State
+  NPP: N      # No Party Preference
+  "No Party Preference": N
+  "Decline to State": N
+  LIB: L
+  Libertarian: L
+  GRN: G
+  Green: G
+  AIW: A      # American Independent
+  "American Independent": A
+
+# ── Vote history ──────────────────────────────────────────────────────────────
+# Columns that start with these prefixes are treated as election participation flags
+vote_history_prefixes:
+  - vote_history_
+  - VH_
+  - vh_
+  - Election_
+  - Voted_
+
+# ── Demographics ──────────────────────────────────────────────────────────────
+age_aliases:
+  - age
+  - Age
+  - AGE
+  - Calculated_Age
+  - computed_age
+
+gender_aliases:
+  - gender
+  - Gender
+  - GENDER
+  - Sex
+
+ethnicity_aliases:
+  - ethnicity
+  - Ethnicity
+  - ETHNICITY
+  - race
+  - Race
+
+language_aliases:
+  - language
+  - Language
+  - preferred_language
+  - lang
+
+# ── Mail ballot ───────────────────────────────────────────────────────────────
+mail_ballot_aliases:
+  - mail_ballot_status
+  - MailBallot
+  - vbm
+  - VBM
+  - absentee
+  - Absentee
+
+# ── Address (auto-excluded from any committed output) ─────────────────────────
+address_columns_exclude:
+  - address
+  - Address
+  - street
+  - Street
+  - city
+  - City
+  - zip
+  - ZIP
+  - Zip_Code
+  - residence_address
+  - mailing_address
+  - lat
+  - lon
+  - latitude
+  - longitude

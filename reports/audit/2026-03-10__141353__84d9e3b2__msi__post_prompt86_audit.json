@@ -1,0 +1,35 @@
+{
+  "run_id": "2026-03-10__141353__84d9e3b2__msi",
+  "timestamp": "2026-03-10T14:15:12.045334",
+  "contest_id": "2025_CA_sonoma_prop_50_special",
+  "county": "Sonoma",
+  "state": "CA",
+  "system_health": "HEALTHY",
+  "artifacts_created": [
+    "run.log",
+    "pathway.json",
+    "needs.yaml",
+    "validation.md",
+    "qa.md",
+    "audit_report.json",
+    "audit_report.md",
+    "post_prompt86_audit.json",
+    "post_prompt86_audit.md",
+    "join_guard.md",
+    "join_guard.csv",
+    "integrity_repairs.md",
+    "integrity_repairs.csv"
+  ],
+  "missing_artifacts": [],
+  "geometry_status": "warn",
+  "join_guard_status": "PASS",
+  "integrity_repairs_count": 0,
+  "strategy_pack_generated": true,
+  "simulation_results_generated": false,
+  "warnings": [
+    "Geometry: 2 invalid geometries"
+  ],
+  "errors": [],
+  "prompt": "8.7",
+  "model_version": "8.7"
+}

@@ -1,0 +1,27 @@
+{
+  "county": "Sonoma",
+  "state": "CA",
+  "years_attempted": [
+    2016,
+    2018,
+    2020,
+    2022,
+    2024
+  ],
+  "years_downloaded": [],
+  "years_already_present": [],
+  "years_failed": [
+    2016,
+    2018,
+    2020,
+    2022,
+    2024
+  ],
+  "manual_download_links": {
+    "Sonoma County ROV": "https://www.sonomacounty.ca.gov/elected-officials-and-departments/registrar-of-voters/election-results",
+    "CA Secretary of State": "https://www.sos.ca.gov/elections/prior-elections/statewide-election-results/",
+    "statewidedatabase.org election data": "https://statewidedatabase.org/d20/g24.html",
+    "MIT Election Lab": "https://electionlab.mit.edu/data"
+  },
+  "instructions": "For years that failed automatic download, manually download the detail.xls file from the Sonoma County ROV website and place it at: data/elections/CA/Sonoma/<year>/detail.xls"
+}
