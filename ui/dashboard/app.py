@@ -83,6 +83,7 @@ with st.sidebar:
             "🏠 Overview",
             "🪖 War Room",
             "📐 Calibration",
+            "🧭 Political Intelligence",
             "🗳️ Campaign Setup",
             "📂 Upload Contest Data",
             "🗺️ Precinct Map",
@@ -166,6 +167,10 @@ elif page == "🪖 War Room":
 elif page == "📐 Calibration":
     from ui.dashboard.calibration_view import render_calibration
     render_calibration(data)
+
+elif page == "🧭 Political Intelligence":
+    from ui.dashboard.political_intelligence_view import render_political_intelligence
+    render_political_intelligence(data)
 
 elif page == "🗳️ Campaign Setup":
     from ui.dashboard.campaign_setup_view import render_campaign_setup
