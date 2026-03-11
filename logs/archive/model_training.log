@@ -1,0 +1,4 @@
+2026-03-10 22:28:58,225 - INFO - Turnout Model trained. MAE: 0.0949, R2: 0.0916
+2026-03-10 22:28:58,252 - INFO - Saved turnout model to C:\Users\Mathew C\Campaign In A Box\derived\models\turnout_model.pkl
+2026-03-10 22:29:00,980 - INFO - Support Model trained. MAE: 0.0403, R2: 0.8263
+2026-03-10 22:29:00,997 - INFO - Saved support model to C:\Users\Mathew C\Campaign In A Box\derived\models\support_model.pkl

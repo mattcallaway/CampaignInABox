@@ -1,0 +1,6 @@
+year,state,county,contest,contest_type,avg_turnout,similarity_score
+2024,CA,Sonoma,prop_1_measure_2024,ballot_measure,0.5452130000000001,94.47869999999999
+2022,CA,Sonoma,local_general_2022,local_general,0.550542,62.945800000000006
+2018,CA,Sonoma,gov_midterm_2018,midterm,0.593757,56.624300000000005
+2020,CA,Sonoma,presidential_2020,presidential,0.695298,47.470200000000006
+2016,CA,Sonoma,presidential_2016,presidential,0.694886,45.511399999999995

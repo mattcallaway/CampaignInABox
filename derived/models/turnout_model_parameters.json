@@ -1,0 +1,16 @@
+{
+  "training_elections": 5,
+  "training_precincts": 100,
+  "year_range": "2016 - 2024",
+  "features": [
+    "is_presidential",
+    "is_midterm",
+    "is_local",
+    "is_measure",
+    "registered_log"
+  ],
+  "metrics": {
+    "mae": 0.0949,
+    "r2": 0.0916
+  }
+}

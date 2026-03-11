@@ -1,0 +1,20 @@
+{
+  "years_covered": [
+    2016,
+    2018,
+    2020,
+    2022,
+    2024
+  ],
+  "counties_covered": [
+    "Sonoma"
+  ],
+  "total_elections": 5,
+  "total_precinct_records": 500,
+  "contest_types_present": [
+    "ballot_measure",
+    "local_general",
+    "midterm",
+    "presidential"
+  ]
+}

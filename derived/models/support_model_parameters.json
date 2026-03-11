@@ -1,0 +1,15 @@
+{
+  "training_elections": 5,
+  "features": [
+    "is_presidential",
+    "is_midterm",
+    "is_local",
+    "is_measure",
+    "turnout_rate",
+    "partisan_tilt"
+  ],
+  "metrics": {
+    "mae": 0.0403,
+    "r2": 0.8263
+  }
+}

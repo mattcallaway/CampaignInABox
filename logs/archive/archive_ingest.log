@@ -1,0 +1,6 @@
+2026-03-10 22:26:09,003 - INFO - No raw precinct_results.csv files found. Synthesizing mock historical data...
+2026-03-10 22:26:09,050 - INFO - Ingested 500 precinct-level historical records.
+2026-03-10 22:26:09,063 - INFO - Saved normalized elections to C:\Users\Mathew C\Campaign In A Box\derived\archive\normalized_elections.csv
+2026-03-10 22:26:09,086 - INFO - Saved contest classifications to C:\Users\Mathew C\Campaign In A Box\derived\archive\contest_classification.csv
+2026-03-10 22:26:09,958 - INFO - Built behavior profiles for 100 precincts.
+2026-03-10 22:26:10,778 - INFO - Built trend analysis for 100 precincts.
