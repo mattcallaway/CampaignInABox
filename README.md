@@ -178,7 +178,17 @@ A full run takes **30–90 seconds** depending on your data size.
 
 ---
 
-### Step 5 — Launch the Dashboard
+### Step 5 — Data Intake & File Management
+
+Use the **📂 Data Manager** page in the dashboard to safely upload and manage files.
+- **Upload:** Drop CSVs, Excel files, shapefiles, or documents. It will auto-detect the likely type (e.g. `voter_file`, `polling`, `election_results`), suggest a canonical path, and add it to the active file registry.
+- **Manage & Archive:** Rename or relabel files without breaking paths. Old files are safely sent to `archive/` rather than permanently destroyed.
+- **Missing Data Assistant:** Check the "Missing Data" tab to see what critical files your campaign lacks (e.g. no polling data, no voter file) and get exact recommendations on where to find them on the internet.
+- **GitHub Safety:** The system explicitly guards against committing raw voter files to GitHub using an automatic pre-commit scanner.
+
+---
+
+### Step 6 — Launch the Dashboard
 
 ```powershell
 streamlit run ui/dashboard/app.py
