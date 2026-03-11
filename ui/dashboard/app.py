@@ -27,40 +27,10 @@ st.set_page_config(
 )
 
 # ── CSS ───────────────────────────────────────────────────────────────────────
-st.markdown("""
-<style>
-  :root {
-    --primary: #1E3A5F;
-    --accent:  #2563EB;
-    --success: #16A34A;
-    --warn:    #D97706;
-    --danger:  #DC2626;
-    --border:  #E2E8F0;
-  }
-  /* Sidebar */
-  [data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #1E3A5F 0%, #0F2340 100%) !important;
-  }
-  [data-testid="stSidebar"] .stRadio label { color: white !important; font-size: 0.95rem; }
-  [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2,
-  [data-testid="stSidebar"] h3, [data-testid="stSidebar"] p { color: white !important; }
-  [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p { color: #CBD5E1 !important; }
-  /* Tab styling */
-  .stTabs [data-baseweb="tab-list"] { gap: 4px; }
-  .stTabs [data-baseweb="tab"] {
-    border-radius: 8px 8px 0 0;
-    padding: 8px 16px;
-    font-weight: 600;
-  }
-  /* Metric cards */
-  div[data-testid="metric-container"] {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 16px;
-  }
-</style>
-""", unsafe_allow_html=True)
+st.markdown(
+    f"<style>{(BASE_DIR / 'ui' / 'dashboard' / 'sidebar_styles.css').read_text(encoding='utf-8')}</style>",
+    unsafe_allow_html=True
+)
 
 # ── Data loading (cached) ─────────────────────────────────────────────────────
 from ui.dashboard.data_loader import load_all
@@ -166,7 +136,7 @@ with st.sidebar:
                 p_label = p["label"]
                 # If it's the active page, highlight it
                 if p_id == st.session_state["active_page"]:
-                    st.markdown(f"**➤ {p_label}**")
+                    st.markdown(f"<div class='sidebar-active-page'><p>{p_label}</p></div>", unsafe_allow_html=True)
                     active_category_label = g_label
                     active_page_label = p_label
                 else:
@@ -254,10 +224,15 @@ except Exception as e:
 
     # ── Sidebar Footer ────────────────────────────────────────────────────────────
     st.divider()
-    st.markdown("##### Campaign In A Box v0.3")
-    st.markdown(f"**Jurisdiction**: {data_preview.get('county', '—')}")
-    st.markdown(f"**Contest**: {data_preview.get('contest_id', '—')}")
-    st.markdown(f"**Run ID**: `{run_id[:13]}...`")
+    st.markdown(
+        f"<div class='sidebar-footer'>"
+        f"<b>Campaign In A Box v0.3</b><br>"
+        f"Jurisdiction: {data_preview.get('county', '—')}<br>"
+        f"Contest: {data_preview.get('contest_id', '—')}<br>"
+        f"Run ID: {run_id[:13]}..."
+        f"</div>",
+        unsafe_allow_html=True
+    )
 
 # ── Context Header ────────────────────────────────────────────────────────────
 try:
