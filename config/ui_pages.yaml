@@ -1,0 +1,61 @@
+campaign_command:
+  label: "🏠 Campaign Command"
+  pages:
+    - id: "🏠 Overview"
+      label: "Overview"
+    - id: "🪖 War Room"
+      label: "War Room"
+    - id: "🌐 Jurisdiction Summary"
+      label: "Jurisdiction Summary"
+    - id: "📋 Team Activity"
+      label: "Team Activity"
+
+campaign_setup:
+  label: "🗳️ Campaign Setup"
+  pages:
+    - id: "🗳️ Campaign Setup"
+      label: "Campaign Setup"
+    - id: "📂 Upload Contest Data"
+      label: "Upload Contest Data"
+
+intelligence:
+  label: "📊 Intelligence"
+  pages:
+    - id: "🧭 Political Intelligence"
+      label: "Political Intelligence"
+    - id: "🧠 Voter Intelligence"
+      label: "Voter Intelligence"
+
+data:
+  label: "📂 Data"
+  pages:
+    - id: "📂 Data Manager"
+      label: "Data Manager"
+    - id: "🗄️ Data Explorer"
+      label: "Data Explorer"
+
+geography:
+  label: "🗺️ Geography"
+  pages:
+    - id: "🗺️ Precinct Map"
+      label: "Precinct Map"
+    - id: "🎯 Targeting"
+      label: "Targeting"
+
+strategy_modeling:
+  label: "📈 Strategy & Modeling"
+  pages:
+    - id: "📋 Strategy"
+      label: "Strategy"
+    - id: "🔬 Simulations"
+      label: "Simulations"
+    - id: "⚡ Advanced Modeling"
+      label: "Advanced Modeling"
+    - id: "📐 Calibration"
+      label: "Calibration"
+
+system:
+  label: "🛠 System"
+  pages:
+    - id: "🩺 Diagnostics"
+      label: "Diagnostics"
