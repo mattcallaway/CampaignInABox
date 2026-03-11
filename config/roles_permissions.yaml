@@ -1,0 +1,83 @@
+campaign_manager:
+  upload_data: true
+  edit_strategy: true
+  approve_strategy: true
+  view_voter_data: true
+  view_dashboard: true
+  modify_data: true
+  upload_runtime_data: true
+  edit_field_plan: true
+  manage_tasks: true
+  view_finance: true
+
+data_director:
+  upload_data: true
+  edit_strategy: true
+  approve_strategy: false
+  view_voter_data: true
+  view_dashboard: true
+  modify_data: true
+  upload_runtime_data: true
+  edit_field_plan: true
+  manage_tasks: true
+  view_finance: false
+
+field_director:
+  upload_data: false
+  edit_strategy: false
+  approve_strategy: false
+  view_voter_data: false
+  view_dashboard: true
+  modify_data: true
+  upload_runtime_data: true
+  edit_field_plan: true
+  manage_tasks: true
+  view_finance: false
+
+finance_director:
+  upload_data: false
+  edit_strategy: false
+  approve_strategy: false
+  view_voter_data: false
+  view_dashboard: true
+  modify_data: false
+  upload_runtime_data: false
+  edit_field_plan: false
+  manage_tasks: true
+  view_finance: true
+
+communications_director:
+  upload_data: false
+  edit_strategy: false
+  approve_strategy: false
+  view_voter_data: false
+  view_dashboard: true
+  modify_data: false
+  upload_runtime_data: false
+  edit_field_plan: false
+  manage_tasks: true
+  view_finance: false
+
+analyst:
+  upload_data: false
+  edit_strategy: false
+  approve_strategy: false
+  view_voter_data: true
+  view_dashboard: true
+  modify_data: false
+  upload_runtime_data: false
+  edit_field_plan: false
+  manage_tasks: false
+  view_finance: false
+
+viewer:
+  upload_data: false
+  edit_strategy: false
+  approve_strategy: false
+  view_voter_data: false
+  view_dashboard: true
+  modify_data: false
+  upload_runtime_data: false
+  edit_field_plan: false
+  manage_tasks: false
+  view_finance: false

@@ -1,0 +1,39 @@
+{
+  "users": [
+    {
+      "user_id": "mcallaway",
+      "name": "Matthew Callaway",
+      "role": "campaign_manager"
+    },
+    {
+      "user_id": "field_01",
+      "name": "Field Director",
+      "role": "field_director"
+    },
+    {
+      "user_id": "data_01",
+      "name": "Data Director",
+      "role": "data_director"
+    },
+    {
+      "user_id": "finance_01",
+      "name": "Finance Director",
+      "role": "finance_director"
+    },
+    {
+      "user_id": "comms_01",
+      "name": "Communications Director",
+      "role": "communications_director"
+    },
+    {
+      "user_id": "analyst_01",
+      "name": "Lead Analyst",
+      "role": "analyst"
+    },
+    {
+      "user_id": "guest_01",
+      "name": "Guest Viewer",
+      "role": "viewer"
+    }
+  ]
+}
