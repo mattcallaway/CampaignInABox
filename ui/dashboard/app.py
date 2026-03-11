@@ -27,10 +27,8 @@ st.set_page_config(
 )
 
 # ── CSS ───────────────────────────────────────────────────────────────────────
-st.markdown(
-    f"<style>{(BASE_DIR / 'ui' / 'dashboard' / 'sidebar_styles.css').read_text(encoding='utf-8')}</style>",
-    unsafe_allow_html=True
-)
+from ui.theme import inject_theme
+inject_theme(BASE_DIR)
 
 # ── Data loading (cached) ─────────────────────────────────────────────────────
 from ui.dashboard.data_loader import load_all
@@ -233,6 +231,28 @@ except Exception as e:
         f"</div>",
         unsafe_allow_html=True
     )
+
+# ── Global Command Bar ────────────────────────────────────────────────────────
+try:
+    from ui.dashboard.state_loader import load_state_snapshot_meta
+    snap = load_state_snapshot_meta()
+    
+    if snap.get("available"):
+        g_contest = snap.get('contest_id', '—')
+        g_county = snap.get('county', '—')
+        g_health = snap.get('risk_level', 'UNKNOWN')
+        g_h_color = "#2E8B57" if g_health == "LOW" else ("#D9A441" if g_health == "MEDIUM" else "#C94C4C")
+        
+        bar_html = f"""
+        <div class="command-bar">
+            <span><b>Contest:</b> {g_contest} | <b>Jurisdiction:</b> {g_county}</span>
+            <span><b>Run:</b> <span style="font-family:monospace">{run_id[:8]}...</span></span>
+            <span><b>Health:</b> <span style="color:{g_h_color}; font-weight:700">{g_health}</span></span>
+        </div>
+        """
+        st.markdown(bar_html, unsafe_allow_html=True)
+except Exception:
+    pass
 
 # ── Context Header ────────────────────────────────────────────────────────────
 try:
