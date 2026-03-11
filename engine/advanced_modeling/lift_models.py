@@ -113,10 +113,14 @@ def apply_lifts(
     # Lift curves
     t_lift = turnout_lift_vec(contacts, max_to, k_to)
     p_lift = persuasion_lift_vec(contacts, max_pe, k_pe)
+    
+    # Optionally use historical models/trends (Prompt 22)
+    t_trend = _c("historical_turnout_trend")
+    s_trend = _c("historical_support_trend")
 
-    # Apply
-    to_new  = (to_base  + t_lift).clip(0, 1)
-    sup_new = (sup_base + p_lift * persuasion_direction).clip(0, 1)
+    # Apply lifts and historical trends
+    to_new  = (to_base  + t_lift + t_trend).clip(0, 1)
+    sup_new = (sup_base + p_lift * persuasion_direction + s_trend).clip(0, 1)
 
     # Vote math
     baseline_yes   = (reg * to_base  * sup_base).clip(lower=0)

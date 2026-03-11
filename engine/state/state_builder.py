@@ -490,6 +490,19 @@ def build_campaign_state(
         except:
             pass
 
+    # ── Section P: archive_summary (Prompt 22) ────────────────────────────────
+    archive_summary_path = root / "derived" / "archive" / "archive_summary.json"
+    if archive_summary_path.exists():
+        state["archive_summary"] = _read_json(archive_summary_path)
+    
+    similar_elections_path = root / "derived" / "archive" / "similar_elections.csv"
+    if similar_elections_path.exists():
+        state["similar_elections"] = _read_csv_dicts(similar_elections_path)
+    
+    turnout_model_path = root / "derived" / "models" / "turnout_model.pkl"
+    support_model_path = root / "derived" / "models" / "support_model.pkl"
+    state["historical_models_active"] = turnout_model_path.exists() and support_model_path.exists()
+
     # ── Write outputs ─────────────────────────────────────────────────────────
     _write_state(state, root, run_id, recommendations)
     return state
