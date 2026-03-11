@@ -25,12 +25,8 @@ _COL_MAP = {
 
 
 def render_targeting(data: dict) -> None:
-    st.markdown("""
-    <div style='background:linear-gradient(135deg,#7C3AED,#4F46E5);
-         border-radius:12px;padding:18px 28px;margin-bottom:20px;color:white'>
-      <h2 style='margin:0;color:white'>🎯 Targeting List</h2>
-      <p style='margin:4px 0 0 0;color:#DDD6FE'>Filter and explore precinct targeting data</p>
-    </div>""", unsafe_allow_html=True)
+    st.markdown("<h1 class='page-title'>Targeting List</h1>", unsafe_allow_html=True)
+    st.caption("Filter and explore precinct targeting data")
 
     # Try multiple sources in priority order
     df = data.get("top_targets", pd.DataFrame())
