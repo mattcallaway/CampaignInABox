@@ -27,7 +27,13 @@
     "baseline_turnout": null,
     "win_probability": null,
     "expected_margin": null,
-    "advanced_modeling_used": false
+    "advanced_modeling_used": false,
+    "calibration_used": false,
+    "calibration_confidence": "none",
+    "calibration_sources": [],
+    "calibrated_turnout_lift": 0.06,
+    "calibrated_persuasion_lift": 0.006,
+    "calibrated_baseline_turnout": 0.45
   },
   "strategy_summary": {
     "recommended_strategy": null,
@@ -237,5 +243,7 @@
     "metric_provenance": "derived\\provenance\\2026-03-10__152246__e84498d7__msi__metric_provenance.json",
     "forecast_comparison": "derived\\war_room\\2026-03-10__152246__e84498d7__msi__forecast_update_comparison.csv",
     "campaign_state": null
-  }
+  },
+  "calibration_status": "prior_only",
+  "calibration_sources": []
 }

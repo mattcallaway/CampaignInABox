@@ -1,0 +1,2 @@
+registered,expected_voters,baseline_turnout_pct,win_number,stretch_number,base_votes,votes_gap,persuasion_votes_needed,gotv_votes_needed,cumulative_total,coverage_rate,status
+51913,21803,0.42,11338,12210,3360,7978,5185,2792,11337,0.9999118010231082,gap_exists

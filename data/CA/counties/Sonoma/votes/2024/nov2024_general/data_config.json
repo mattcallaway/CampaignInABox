@@ -1,0 +1,40 @@
+{
+  "files": {
+    "mprec_097_g24_v01.geojson": {
+      "enabled": true,
+      "weight": 1.0,
+      "notes": ""
+    },
+    "detail.xlsx": {
+      "enabled": true,
+      "weight": 1.0,
+      "notes": ""
+    },
+    "sonoma_2024_mprec_g24.geojson": {
+      "enabled": false,
+      "weight": 1.0,
+      "notes": ""
+    },
+    "sonoma_mprec_g24_v01.geojson": {
+      "enabled": true,
+      "weight": 1.0,
+      "notes": ""
+    },
+    ".gitkeep": {
+      "enabled": true,
+      "weight": 1.0,
+      "notes": ""
+    },
+    "Sonoma_County_VoterFile.csv": {
+      "enabled": true,
+      "weight": 1.0,
+      "notes": ""
+    },
+    "detail_old.xls": {
+      "enabled": true,
+      "weight": 1.0,
+      "notes": ""
+    }
+  },
+  "updated_at": "2026-03-10T20:32:29.134576"
+}

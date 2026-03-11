@@ -1,0 +1,5 @@
+scenario,max_shifts_budget,det_net_gain,mc_net_gain_mean,mc_net_gain_p10,mc_net_gain_p90,mc_net_gain_sd,risk_band
+baseline,0,0.0,0.0,0.0,0.0,0.0,0.0–0.0
+lite,20,0.0,0.0,0.0,0.0,0.0,0.0–0.0
+medium,50,0.0,0.0,0.0,0.0,0.0,0.0–0.0
+heavy,100,0.0,0.0,0.0,0.0,0.0,0.0–0.0

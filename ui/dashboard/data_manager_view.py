@@ -62,7 +62,8 @@ def _preview_file(file_path: Path):
         st.info(f"Binary or non-previewable format ({ext}).")
 
 def render_data_manager(data: dict):
-    from ui.dashboard.app import PROJECT_ROOT
+    # Compute PROJECT_ROOT directly to avoid circular import running app.py top-level again
+    PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
     st.title("📂 Data Manager")
     
     manager = FileRegistryManager(PROJECT_ROOT)

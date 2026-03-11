@@ -1,0 +1,6 @@
+scenario_id,scenario_name,expected_turnout_pct,total_expected_ballots,expected_support_pct,expected_yes_votes,expected_no_votes,margin_votes
+baseline,Baseline (Observed),0.5,5000,0.6,3000,2000,1000
+optimistic_turnout,Optimistic Turnout (+10%),0.55,5500,0.6,3300,2200,1100
+pessimistic_turnout,Pessimistic Turnout (-15%),0.425,4250,0.6,2550,1700,850
+persuasion_lift_low,Incremental Persuasion (+2%),0.5,5000,0.62,3100,1900,1200
+persuasion_lift_high,Strong Field Success (+5%),0.525,5250,0.65,3412,1837,1575

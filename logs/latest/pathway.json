@@ -1,41 +1,44 @@
 {
-  "run_id": "2026-03-10__152246__e84498d7__msi",
-  "run_status": "success",
-  "total_elapsed_s": 150.861,
-  "started_at": "2026-03-10T22:22:47.108497+00:00",
+  "run_id": "2026-03-10__205411__6e008642__msi",
+  "run_status": "partial",
+  "total_elapsed_s": 0.538,
+  "started_at": "2026-03-11T03:54:11.753607+00:00",
   "county_name": "Sonoma",
   "county_fips": "097",
   "county_slug": "sonoma",
-  "contest_id": "2026_CA_sonoma_prop_50_special",
+  "contest_id": "2026_CA_sonoma_general",
   "registry_version": "1.0",
-  "input_hashes": {
-    "detail.xlsx": "1028d97deafd02d80f3fb341932d44d490b7dcd12a0ba9b45d7f678553787b71"
-  },
+  "input_hashes": {},
   "output_hashes": {
-    "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\boundary_index\\boundaries_index.csv": "b4dff0e71c422e612069cecc47bc83d6f5c0027631171e9fa736bf40cb029e7a",
-    "C:\\Users\\Mathew C\\Campaign In A Box\\votes\\2025\\CA\\Sonoma\\prop_50_special\\contest.json": "4f768969ee640122b81012662b5d5659b1859a3ad37ea4a30c1f713be67b1231"
+    "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\boundary_index\\boundaries_index.csv": "b4dff0e71c422e612069cecc47bc83d6f5c0027631171e9fa736bf40cb029e7a"
   },
   "coverage": {
     "canonical_geometry": "MPREC",
     "categories_present": 12,
-    "categories_missing": 0,
-    "geometry_features": 1405,
-    "sheets_parsed": 3,
-    "rows_2": 2,
-    "rows_3": 390,
-    "rows_4": 55
+    "categories_missing": 0
   },
   "steps": [
     {
+      "step": "DATA_INTAKE_ANALYSIS",
+      "status": "done",
+      "elapsed_s": 0.083,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": [
+        "Missing required files: 7",
+        "Source recs generated: 7"
+      ]
+    },
+    {
       "step": "INGEST_STAGING",
       "status": "skipped",
-      "elapsed_s": 0.059,
+      "elapsed_s": 0.083,
       "reason": "No --staging-dir provided; skipping ingestion"
     },
     {
-      "step": "SCAFFOLD_BOUNDARY_INDEX",
+      "step": "SCAFFOLD_BOUNDARY_INDEX_Sonoma",
       "status": "done",
-      "elapsed_s": 0.062,
+      "elapsed_s": 0.53,
       "outputs": [
         "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\boundary_index\\boundaries_index.csv"
       ],
@@ -47,474 +50,28 @@
     {
       "step": "VALIDATE_GEOGRAPHY",
       "status": "done",
-      "elapsed_s": 0.065,
+      "elapsed_s": 0.537,
       "outputs": [],
       "hashes_out": {},
       "notes": []
     },
     {
       "step": "VALIDATE_VOTES",
-      "status": "done",
-      "elapsed_s": 0.066,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": []
-    },
-    {
-      "step": "LOAD_GEOMETRY",
-      "status": "done",
-      "elapsed_s": 2.862,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": []
-    },
-    {
-      "step": "LOAD_CROSSWALKS",
       "status": "skipped",
-      "elapsed_s": 3.098,
-      "reason": "No crosswalk files; using identity mapping"
-    },
-    {
-      "step": "SCAFFOLD_CONTEST_JSON",
-      "status": "done",
-      "elapsed_s": 3.099,
-      "outputs": [
-        "C:\\Users\\Mathew C\\Campaign In A Box\\votes\\2025\\CA\\Sonoma\\prop_50_special\\contest.json"
-      ],
-      "hashes_out": {
-        "C:\\Users\\Mathew C\\Campaign In A Box\\votes\\2025\\CA\\Sonoma\\prop_50_special\\contest.json": "4f768969ee640122b81012662b5d5659b1859a3ad37ea4a30c1f713be67b1231"
-      },
-      "notes": []
-    },
-    {
-      "step": "PARSE_CONTEST",
-      "status": "done",
-      "elapsed_s": 3.241,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": []
-    },
-    {
-      "step": "NORMALIZE_SCHEMA/2",
-      "status": "done",
-      "elapsed_s": 3.246,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": [
-        "mapped 3 cols, inferred=unknown"
-      ]
-    },
-    {
-      "step": "SANITY/2",
-      "status": "done",
-      "elapsed_s": 3.246,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": []
-    },
-    {
-      "step": "BUILD_MODEL/2",
-      "status": "done",
-      "elapsed_s": 3.256,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": []
-    },
-    {
-      "step": "NORMALIZE_SCHEMA/3",
-      "status": "done",
-      "elapsed_s": 3.261,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": [
-        "mapped 3 cols, inferred=ballot_measure"
-      ]
-    },
-    {
-      "step": "SANITY/3",
-      "status": "done",
-      "elapsed_s": 3.262,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": []
-    },
-    {
-      "step": "BUILD_MODEL/3",
-      "status": "done",
-      "elapsed_s": 3.274,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": []
-    },
-    {
-      "step": "NORMALIZE_SCHEMA/4",
-      "status": "done",
-      "elapsed_s": 3.279,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": [
-        "mapped 3 cols, inferred=ballot_measure"
-      ]
-    },
-    {
-      "step": "SANITY/4",
-      "status": "done",
-      "elapsed_s": 3.279,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": []
-    },
-    {
-      "step": "BUILD_MODEL/4",
-      "status": "done",
-      "elapsed_s": 3.287,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": []
-    },
-    {
-      "step": "ALLOCATE_VOTES",
-      "status": "done",
-      "elapsed_s": 3.287,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": []
-    },
-    {
-      "step": "INTEGRITY_ENFORCEMENT",
-      "status": "done",
-      "elapsed_s": 3.365,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": [
-        "0 repair(s), 1 CRITICAL (registered=0) row(s)"
-      ]
-    },
-    {
-      "step": "FEATURE_ENGINEERING",
-      "status": "done",
-      "elapsed_s": 3.394,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": []
-    },
-    {
-      "step": "UNIVERSE_BUILDING",
-      "status": "done",
-      "elapsed_s": 3.431,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": []
-    },
-    {
-      "step": "SCORING_V2",
-      "status": "done",
-      "elapsed_s": 3.458,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": []
-    },
-    {
-      "step": "REGION_CLUSTERING",
-      "status": "done",
-      "elapsed_s": 3.491,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": []
-    },
-    {
-      "step": "FIELD_PLANNING",
-      "status": "done",
-      "elapsed_s": 3.508,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": []
-    },
-    {
-      "step": "SIMULATION",
-      "status": "done",
-      "elapsed_s": 3.51,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": []
-    },
-    {
-      "step": "VOTER_UNIVERSE_EXPORT",
-      "status": "skipped",
-      "elapsed_s": 3.51,
-      "reason": "No voter file present"
-    },
-    {
-      "step": "LOAD_VOTER_FILE",
-      "status": "done",
-      "elapsed_s": 3.638,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": [
-        "3,000 voters loaded from voter_file_synthetic.csv"
-      ]
-    },
-    {
-      "step": "BUILD_VOTER_UNIVERSES",
-      "status": "done",
-      "elapsed_s": 3.671,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": [
-        "55 precincts with universe data"
-      ]
-    },
-    {
-      "step": "SCORE_VOTER_TURNOUT",
-      "status": "done",
-      "elapsed_s": 3.747,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": [
-        "3,000 voters scored, mean TPS=0.491"
-      ]
-    },
-    {
-      "step": "SCORE_VOTER_PERSUASION",
-      "status": "done",
-      "elapsed_s": 3.814,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": [
-        "3,000 voters scored, mean PS=0.565"
-      ]
-    },
-    {
-      "step": "BUILD_TARGETING_QUADRANTS",
-      "status": "done",
-      "elapsed_s": 3.848,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": [
-        "3,000 voters in 6 targeting quadrants"
-      ]
-    },
-    {
-      "step": "BUILD_PRECINCT_VOTER_METRICS",
-      "status": "done",
-      "elapsed_s": 3.928,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": [
-        "2 precincts, 38 metrics"
-      ]
-    },
-    {
-      "step": "DOWNLOAD_HISTORICAL_ELECTIONS",
-      "status": "done",
-      "elapsed_s": 65.172,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": [
-        "0 downloaded, 0 already present, 5 require manual download (see data/elections/CA/Sonoma/download_status.json)"
-      ]
-    },
-    {
-      "step": "CALIBRATE_MODEL",
-      "status": "done",
-      "elapsed_s": 65.181,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": [
-        "status=prior_only, confidence=none"
-      ]
-    },
-    {
-      "step": "CAMPAIGN_STRATEGY",
-      "status": "done",
-      "elapsed_s": 65.241,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": [
-        "win_number=11,338, doors_needed=800,719, canvassers_needed=3993"
-      ]
-    },
-    {
-      "step": "BUILD_PROVENANCE",
-      "status": "done",
-      "elapsed_s": 65.293,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": [
-        "REAL=0, SIMULATED=3, ESTIMATED=6, MISSING=1"
-      ]
-    },
-    {
-      "step": "GENERATE_DATA_REQUESTS",
-      "status": "done",
-      "elapsed_s": 65.306,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": [
-        "4 requests (0 critical, 2 high)"
-      ]
-    },
-    {
-      "step": "WAR_ROOM_STATUS",
-      "status": "done",
-      "elapsed_s": 65.33,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": [
-        "win_prob=55.0%, days_to_election=-280, requests=4"
-      ]
-    },
-    {
-      "step": "WAR_ROOM_FORECAST_UPDATE",
-      "status": "done",
-      "elapsed_s": 65.345,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": [
-        "8 metrics compared (baseline vs runtime)"
-      ]
-    },
-    {
-      "step": "FORECAST_GENERATION",
-      "status": "done",
-      "elapsed_s": 65.387,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": []
-    },
-    {
-      "step": "TURF_GENERATION",
-      "status": "done",
-      "elapsed_s": 65.493,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": []
-    },
-    {
-      "step": "EXPORT_V2_OUTPUTS",
-      "status": "done",
-      "elapsed_s": 78.702,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": []
-    },
-    {
-      "step": "DIAGNOSTICS",
-      "status": "done",
-      "elapsed_s": 78.748,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": []
-    },
-    {
-      "step": "STRATEGY_GENERATOR",
-      "status": "done",
-      "elapsed_s": 79.594,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": []
-    },
-    {
-      "step": "GEO_VALIDATION",
-      "status": "done",
-      "elapsed_s": 80.132,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": [
-        "status=WARN"
-      ]
-    },
-    {
-      "step": "JOIN_GUARD_VALIDATION",
-      "status": "done",
-      "elapsed_s": 80.137,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": [
-        "overall=PASS, joins=4"
-      ]
-    },
-    {
-      "step": "INTEGRITY_REPAIRS_WRITE",
-      "status": "done",
-      "elapsed_s": 80.14,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": [
-        "1 records written"
-      ]
-    },
-    {
-      "step": "ARTIFACT_VALIDATION",
-      "status": "done",
-      "elapsed_s": 80.152,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": [
-        "13/13 present, 0 missing"
-      ]
-    },
-    {
-      "step": "POST_RUN_AUDIT",
-      "status": "done",
-      "elapsed_s": 80.165,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": [
-        "written \u2192 2026-03-10__152246__e84498d7__msi__post_prompt86_audit.json"
-      ]
-    },
-    {
-      "step": "ADVANCED_UNIVERSE_ESTIMATES",
-      "status": "done",
-      "elapsed_s": 80.175,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": [
-        "2 precincts with universe estimates"
-      ]
-    },
-    {
-      "step": "OPTIMIZER",
-      "status": "done",
-      "elapsed_s": 80.176,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": [
-        "0 shifts allocated"
-      ]
-    },
-    {
-      "step": "ADVANCED_LIFT_MODEL",
-      "status": "done",
-      "elapsed_s": 80.177,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": [
-        "lifted=no"
-      ]
-    },
-    {
-      "step": "ADVANCED_SCENARIOS",
-      "status": "done",
-      "elapsed_s": 150.857,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": [
-        "4 scenarios, 4 MC summaries"
-      ]
-    },
-    {
-      "step": "ADVANCED_QA",
-      "status": "done",
-      "elapsed_s": 150.861,
-      "outputs": [],
-      "hashes_out": {},
-      "notes": [
-        "PASS=2, WARN=0",
-        "model_card=2026-03-10__152246__e84498d7__msi__advanced_modeling_model_card.md"
-      ]
+      "elapsed_s": 0.538,
+      "reason": "blocked: missing votes \u2014 detail.xlsx not found"
     }
   ],
-  "needs": []
+  "needs": [
+    {
+      "category": "detail.xlsx",
+      "status": "missing",
+      "blocks": [
+        "parse_contest",
+        "allocate_votes",
+        "export_model"
+      ],
+      "expected_path": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\votes\\2024\\general\\detail.xlsx"
+    }
+  ]
 }

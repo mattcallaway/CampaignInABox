@@ -1,0 +1,11 @@
+turf_id,precinct_ids,precinct_count,sum_registered,avg_target_score
+TURF_001,Precinct 0510000,1,1000,0.3
+TURF_002,Precinct 0510001,1,1000,0.3
+TURF_003,Precinct 0510002,1,1000,0.3
+TURF_004,Precinct 0510003,1,1000,0.3
+TURF_005,Precinct 0510004,1,1000,0.3
+TURF_006,Precinct 0510005,1,1000,0.3
+TURF_007,Precinct 0510006,1,1000,0.3
+TURF_008,Precinct 0510007,1,1000,0.3
+TURF_009,Precinct 0510008,1,1000,0.3
+TURF_010,Precinct 0510009,1,1000,0.3

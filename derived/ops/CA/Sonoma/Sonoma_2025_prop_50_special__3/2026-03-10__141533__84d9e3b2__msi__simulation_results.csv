@@ -1,0 +1,5 @@
+scenario_id,scenario_name,effort_level,net_vote_gain,projected_support_votes,win_margin_estimate
+baseline,Baseline (No Field),0.0,0,132942,32193
+field_light,Field Light (30% Capacity),0.3,245,133188,32439
+field_medium,Field Medium (70% Capacity),0.7,573,133515,32766
+field_heavy,Field Heavy (100% Capacity),1.0,818,133761,33012

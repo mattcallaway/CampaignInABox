@@ -1,14 +1,12 @@
 # QA Sanity Checks
 
-**RUN_ID**: `2026-03-10__152246__e84498d7__msi`  |  **CA/Sonoma/prop_50_special**
+**RUN_ID**: `2026-03-10__205411__6e008642__msi`  |  **CA/Sonoma/general**
 
-**Result**: 3/3 checks passed
+**Result**: 0/0 checks passed
 
 ## ✓ Passed
 
-- ✓ **Non-empty model**: 2 rows
-- ✓ **Non-empty model**: 390 rows
-- ✓ **Non-empty model**: 55 rows
+_None_
 
 ## ✗ Failed
 

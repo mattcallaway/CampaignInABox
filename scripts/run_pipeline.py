@@ -310,327 +310,378 @@ def run_pipeline(
     else:
         logger.step_skip("INGEST_STAGING", reason="No --staging-dir provided; skipping ingestion")
 
-    # ── Step 2: Scaffold boundary index ──────────────────────────────────
-    if not (rebuild_maps_only or rebuild_targets_only):
-        logger.step_start("SCAFFOLD_BOUNDARY_INDEX")
-        bi_path = scaffold_boundary_index(data_root, county, log=logger)
-        bi_refresh = refresh_boundary_index(data_root, county, log=logger)
-        logger.step_done("SCAFFOLD_BOUNDARY_INDEX", outputs=[bi_path])
-        all_artifacts.append(bi_path)
-    else:
-        logger.step_skip("SCAFFOLD_BOUNDARY_INDEX", reason="Skipped due to targeted rebuild flag")
-
-    # ── Step 3: Validate geography ────────────────────────────────────────
-    logger.step_start("VALIDATE_GEOGRAPHY", expected=[
-        f"data/CA/counties/{county}/geography/precinct_shapes/",
-        f"data/CA/counties/{county}/geography/crosswalks/",
-    ])
-    geo_validation = validate_county_geography(data_root, county, log=logger)
-    for need in geo_validation["needs_entries"]:
-        logger.register_need(
-            need["category"], need["status"], need["blocks"],
-            path=need.get("expected_path"),
-        )
-    logger.set_coverage("canonical_geometry", geo_validation["canonical_geometry"])
-    logger.set_coverage("categories_present", len(geo_validation["present"]))
-    logger.set_coverage("categories_missing", len(geo_validation["missing"]))
-    logger.step_done("VALIDATE_GEOGRAPHY")
-
-    # ── Step 4: Validate votes ────────────────────────────────────────────
-    logger.step_start("VALIDATE_VOTES", expected=[
-        f"votes/{year}/CA/{county}/{contest_slug}/detail.xlsx"
-    ])
-
-    if detail_path_override:
-        detail_path = Path(detail_path_override)
-        if not detail_path.is_absolute():
-            detail_path = BASE_DIR / detail_path_override
-        votes_valid = detail_path.exists()
-        votes_need  = None
-    else:
-        votes_result = validate_votes_present(votes_root, year, county, contest_slug, log=logger)
-        votes_valid  = votes_result["valid"]
-        detail_path  = votes_result.get("path")
-        votes_need   = votes_result.get("needs_entry")
-
-    if not votes_valid:
-        if votes_need:
-            logger.register_need(
-                votes_need["category"], votes_need["status"],
-                votes_need["blocks"], path=votes_need.get("expected_path"),
-            )
-        logger.step_skip("VALIDATE_VOTES", reason="blocked: missing votes — detail.xlsx not found")
-        # Still run ingestion/validation; just skip modeling steps
-        logger.finalize(state, county, contest_slug, run_status="partial")
-        if commit:
-            _git_commit(
-                f"reports: ingestion+validation run {run_id} -- {state}/{county} (no votes)",
-                [logger.log_path, logger.pathway_path, logger.validation_path,
-                 logger.qa_path, logger.needs_path, logger.needs_snapshot_path],
-            )
-        _print_summary(run_id, all_artifacts, no_votes=True)
-        return run_id
-    else:
-        logger.register_input("detail.xlsx", detail_path)
-        logger.step_done("VALIDATE_VOTES")
-
-    # ── Step 5: Load geometry ─────────────────────────────────────────────
-    logger.step_start("LOAD_GEOMETRY", expected=["MPREC preferred; SRPREC fallback"])
-    gdf, geo_level, geo_id_col = load_canonical_geometry(
-        data_root / "CA" / "counties",  # boundary_loader expects county parent
-        state,
-        county,
-        logger=logger,
-    )
-
-    if gdf is None or (isinstance(gdf, dict) and gdf.get("_stub")):
-        logger.step_skip("LOAD_GEOMETRY", reason="No usable geometry (geopandas unavailable or files missing)")
-        if isinstance(gdf, dict):
-            logger.register_need("geopandas_library", "missing", ["geometry_load", "kepler_export"])
-        gdf = None
-        geo_level = geo_validation["canonical_geometry"]
-    else:
-        logger.set_coverage("geometry_features", len(gdf))
-        logger.step_done("LOAD_GEOMETRY")
-
-    # ── Step 6: Load crosswalks ───────────────────────────────────────────
-    logger.step_start("LOAD_CROSSWALKS")
-    county_geo_dir = data_root / "CA" / "counties" / county / "geography"
-    crosswalks: dict = {}
-    crosswalk_categories = {
-        "MPREC_to_SRPREC":          county_geo_dir / "crosswalks",
-        "RG_to_RR_to_SR_to_SVPREC": county_geo_dir / "crosswalks",
-    }
-    for cat_label, cat_dir in crosswalk_categories.items():
-        xwalk, ok = load_crosswalk_from_category(county_geo_dir, "crosswalks", logger=logger)
-        if ok:
-            crosswalks[cat_label] = xwalk
-            break  # use first available crosswalk
-
-    # Prompt 8.5: enhanced crosswalk discovery + validation
-    _county_fips = county_to_fips(county) or county
-    _contest_id_for_diag = f"{year}_{state}_{county.lower().replace(chr(32), chr(95))}_{contest_slug}"
-    _xwalk_full = discover_crosswalks(BASE_DIR, state, _county_fips)
-    write_crosswalk_validation(_xwalk_full, _contest_id_for_diag, run_id, BASE_DIR)
-    update_needs_crosswalks(_xwalk_full, BASE_DIR)
-    _n_xw_found = sum(1 for v in _xwalk_full.values() if v.get("status") in ("found", "fallback"))
-    logger.info(f"  [CROSSWALKS] Discovered {_n_xw_found}/{len(_xwalk_full)} crosswalks")
-
-    if not crosswalks:
-        logger.step_skip("LOAD_CROSSWALKS", reason="No crosswalk files; using identity mapping")
-    else:
-        logger.step_done("LOAD_CROSSWALKS", notes=[f"{len(crosswalks)} crosswalk(s) loaded"])
-
-    # ── Step 7: Scaffold contest.json ─────────────────────────────────────
-    if not (rebuild_maps_only or rebuild_memberships_only):
-        logger.step_start("SCAFFOLD_CONTEST_JSON")
-        contest_json_path = scaffold_contest_json(
-            votes_root, year=year, state=state, county=county, contest_slug=contest_slug,
-        )
-        logger.step_done("SCAFFOLD_CONTEST_JSON", outputs=[contest_json_path])
-        all_artifacts.append(contest_json_path)
-    else:
-        # Just grab the path for later commits
-        contest_json_path = votes_root / year / state / county / contest_slug / "contest.json"
-        logger.step_skip("SCAFFOLD_CONTEST_JSON", reason="Skipped due to targeted rebuild flag")
-
-    # ── Step 8: Parse contest workbook ────────────────────────────────────
-    logger.step_start("PARSE_CONTEST", expected=["Detect sheet types; aggregate vote methods"])
-    parsed_sheets = parse_contest_workbook(
-        detail_path,
-        contest_json_path=contest_json_path,
-        config=config,
-        logger=logger,
-    )
-    detected_types = [p["contest_type"] for p in parsed_sheets]
-    logger.set_coverage("sheets_parsed", len(parsed_sheets))
-    logger.step_done("PARSE_CONTEST")
-
-    # ── Step 8.5: Determine Contest Mode ──────────────────────────────────
-    final_mode = contest_mode.lower()
-    if final_mode == "auto":
-        # Heuristic: if any sheet is candidate_race, the whole run is candidate
-        if "candidate_race" in detected_types:
-            final_mode = "candidate"
-            reason = "Inferred CANDIDATE (found candidate_race headers)"
-        else:
-            final_mode = "measure"
-            reason = "Inferred MEASURE (found YES/NO headers)"
-    else:
-        reason = f"Explicit override: {final_mode.upper()}"
-
-    logger.info(f"Contest Mode: {final_mode.upper()} ({reason})")
-    # Store in pathway via the logger's step mechanism (cannot dict-index a list)
-    logger.info(f"[PATHWAY] contest_mode={final_mode}  contest_mode_reason={reason}")
-
-    # ── Steps 9-12: Allocate → Sanity → Model → Export (per sheet) ───────
-    logger.step_start("ALLOCATE_VOTES")
-    all_model_dfs: list[pd.DataFrame] = []
-
-    for parsed in parsed_sheets:
-        sheet_name   = parsed["sheet_name"]
-        contest_type = parsed["contest_type"]
-        totals_df    = parsed["totals_df"]
-
-        if totals_df.empty:
-            logger.step_skip(f"SHEET/{sheet_name}", reason="No data rows")
-            continue
-
-        logger.info(f"  Sheet {sheet_name!r}: {len(totals_df)} precincts, type={contest_type}")
-
-        # Allocation
-        xwalk = next(iter(crosswalks.values()), None) if crosswalks else None
-        if xwalk and membership_method != "area_weighted":
-            try:
-                allocated_df = safe_merge(
-                    totals_df, xwalk,
-                    on=next((c for c in ["PrecinctID", xwalk.columns[0]] if c in totals_df.columns), totals_df.columns[0]),
-                    how="left", expect="many_to_one",
-                    name=f"crosswalk_alloc/{sheet_name}",
-                    log_ctx=sheet_name,
-                    contest_id=_contest_id_for_diag if "_contest_id_for_diag" in dir() else "unknown",
-                    run_id=run_id, logger=logger,
-                )
-            except JoinExplosionError as _jex:
-                logger.warn(f"  [JOIN_GUARD] Explosion in crosswalk alloc: {_jex}. Falling back to area-weighted.")
-                allocated_df = area_weighted_fallback(totals_df, src_id_col="PrecinctID")
-            method_used = "crosswalk"
-        else:
-            allocated_df = area_weighted_fallback(totals_df, src_id_col="PrecinctID")
-            method_used = "area_weighted_fallback"
-
-        logger.info(f"    Allocation: {method_used}, {len(allocated_df)} target precincts")
-
-        # Prompt 8.6: NORMALIZE_SCHEMA — map variant column names → canonical
-        logger.step_start(f"NORMALIZE_SCHEMA/{sheet_name}")
+    counties_list = [c.strip() for c in county.split(",")]
+    
+    # ── Prompt 19: Jurisdiction Master Index ────────────────────────────
+    if len(counties_list) > 1:
         try:
-            _diag_id = _contest_id_for_diag if "_contest_id_for_diag" in dir() else "unknown"
-            allocated_df, _schema_report = normalize_precinct_columns(
-                allocated_df, context=sheet_name,
-                contest_id=_diag_id, run_id=run_id, logger=logger,
+            from engine.geo.master_index_builder import build_master_precinct_index
+            build_master_precinct_index(BASE_DIR, state, counties_list)
+        except Exception as e:
+            logger.warn(f"Failed to build master index: {e}")
+
+    # Aggregated outputs across all counties
+    global_all_scored_dfs = {}
+    global_all_voter_features = []
+    global_all_universes = {}
+    
+    for current_county in counties_list:
+        logger.info(f"=== Processing County: {current_county} ===")
+        loop_county = current_county
+
+        # ── Step 2: Scaffold boundary index ──────────────────────────────────
+        if not (rebuild_maps_only or rebuild_targets_only):
+            logger.step_start(f"SCAFFOLD_BOUNDARY_INDEX_{loop_county}")
+            bi_path = scaffold_boundary_index(data_root, loop_county, log=logger)
+            bi_refresh = refresh_boundary_index(data_root, loop_county, log=logger)
+            logger.step_done(f"SCAFFOLD_BOUNDARY_INDEX_{loop_county}", outputs=[bi_path])
+            all_artifacts.append(bi_path)
+        # ── Step 3: Validate geography ────────────────────────────────────────
+        logger.step_start("VALIDATE_GEOGRAPHY", expected=[
+            f"data/CA/counties/{loop_county}/geography/precinct_shapes/",
+            f"data/CA/counties/{loop_county}/geography/crosswalks/",
+        ])
+        geo_validation = validate_county_geography(data_root, loop_county, log=logger)
+        for need in geo_validation["needs_entries"]:
+            logger.register_need(
+                need["category"], need["status"], need["blocks"],
+                path=need.get("expected_path"),
             )
-            logger.step_done(f"NORMALIZE_SCHEMA/{sheet_name}",
-                             notes=[f"mapped {len(_schema_report['mapping'])} cols, inferred={_schema_report['inferred_contest_type']}"])
-        except SchemaError as _se:
-            logger.warn(f"  [SCHEMA] Non-fatal: {_se}")
-            logger.step_done(f"NORMALIZE_SCHEMA/{sheet_name}", notes=["schema warn — required fields may be absent"])
+        logger.set_coverage("canonical_geometry", geo_validation["canonical_geometry"])
+        logger.set_coverage("categories_present", len(geo_validation["present"]))
+        logger.set_coverage("categories_missing", len(geo_validation["missing"]))
+        logger.step_done("VALIDATE_GEOGRAPHY")
 
-        # Sanity checks
-        logger.step_start(f"SANITY/{sheet_name}")
-        passed, violations = run_sanity_checks(allocated_df, config, logger=logger)
-        if not passed:
-            logger.hard_fail(f"SANITY/{sheet_name}", "; ".join(violations))
-        logger.step_done(f"SANITY/{sheet_name}")
+        # ── Step 4: Validate votes ────────────────────────────────────────────
+        logger.step_start("VALIDATE_VOTES", expected=[
+            f"votes/{year}/CA/{loop_county}/{contest_slug}/detail.xlsx"
+        ])
 
-        # Build model
-        logger.step_start(f"BUILD_MODEL/{sheet_name}")
-        id_col = "MPREC_ID" if "MPREC_ID" in allocated_df.columns else allocated_df.columns[0]
-        
-        # Merge target candidate into config
-        run_config = config.copy()
-        if target_candidate:
-            run_config["target_candidate"] = target_candidate
-        run_config["contest_type"] = contest_type
-
-        model_df = build_precinct_model(
-            allocated_df, canvas_id_col=id_col,
-            geography_level=geo_level, gdf=gdf, geo_id_col=geo_id_col, config=run_config,
-        )
-        model_df["SheetName"]   = sheet_name
-        model_df["ContestType"] = contest_type
-        all_model_dfs.append(model_df)
-        logger.set_coverage(f"rows_{sheet_name}", len(model_df))
-        logger.step_done(f"BUILD_MODEL/{sheet_name}")
-
-    logger.step_done("ALLOCATE_VOTES")
-
-    if not all_model_dfs:
-        logger.hard_fail("ALLOCATE_VOTES", "No model DataFrames produced")
-
-    # Prompt 8.5/8.6: INTEGRITY_ENFORCEMENT step
-    logger.step_start("INTEGRITY_ENFORCEMENT")
-    _all_repair_reports: list[dict] = []
-    _repaired_model_dfs: list = []
-    # Use _contest_id_for_diag if already defined, else build it
-    if "_contest_id_for_diag" not in dir():
-        _contest_id_for_diag = f"{year}_{state}_{county.lower().replace(chr(32), chr(95))}_{contest_slug}"
-    for _mdf in all_model_dfs:
-        _sheet = _mdf["SheetName"].iloc[0] if "SheetName" in _mdf.columns else "unknown"
-        _mdf_repaired, _repair_report = enforce_precinct_constraints(
-            _mdf,
-            id_col="canonical_precinct_id",
-            registered_col="registered",
-            ballots_col="ballots_cast",
-            yes_col="yes_votes" if "yes_votes" in _mdf.columns else None,
-            no_col="no_votes"   if "no_votes"  in _mdf.columns else None,
-            log_ctx=_sheet,
-            logger=logger,
-            contest_id=_contest_id_for_diag,
-            run_id=run_id,
-        )
-        _all_repair_reports.append(_repair_report)
-        _repaired_model_dfs.append(_mdf_repaired)
-    all_model_dfs = _repaired_model_dfs
-    _primary_repair = _all_repair_reports[0] if _all_repair_reports else {}
-    _n_repaired  = _primary_repair.get("repaired_rows",  0)
-    _n_critical  = _primary_repair.get("critical_rows",  0)
-    # Build integrity_meta dict — passed to strategy generator (Prompt 8.6)
-    _integrity_meta = {
-        "integrity_repairs_count":     _n_repaired,
-        "constraint_violations_count": _n_critical,
-        "join_guard_critical":         _primary_repair.get("join_guard_critical", False),
-    }
-    notes = [f"{_n_repaired} repair(s), {_n_critical} CRITICAL (registered=0) row(s)"]
-    logger.step_done("INTEGRITY_ENFORCEMENT", notes=notes)
-
-    # ── Step 13: Feature Engineering ─────────────────────────────────────
-    logger.step_start("FEATURE_ENGINEERING")
-    all_combined_features = []
-    
-    # Voter file check
-    voter_file_path = BASE_DIR / "voters" / state / county / "voters.csv" # Standard path
-    voter_features_df = aggregate_voter_file(voter_file_path, county, logger=logger)
-    
-    for model_df in all_model_dfs:
-        sname = model_df["SheetName"].iloc[0]
-        # Base contest features
-        base_features = build_precinct_base_features(model_df, f"{contest_slug}__{sname}")
-        
-        # Merge with voter file if present
-        if not voter_features_df.empty:
-            merged = pd.merge(base_features, voter_features_df, on="canonical_precinct_id", how="left")
-            logger.info(f"  Merged voter features for sheet {sname}")
+        if detail_path_override:
+            detail_path = Path(detail_path_override)
+            if not detail_path.is_absolute():
+                detail_path = BASE_DIR / detail_path_override
+            votes_valid = detail_path.exists()
+            votes_need  = None
         else:
-            merged = base_features
+            votes_result = validate_votes_present(votes_root, year, loop_county, contest_slug, log=logger)
+            votes_valid  = votes_result["valid"]
+            detail_path  = votes_result.get("path")
+            votes_need   = votes_result.get("needs_entry")
+
+        if not votes_valid:
+            if votes_need:
+                logger.register_need(
+                    votes_need["category"], votes_need["status"],
+                    votes_need["blocks"], path=votes_need.get("expected_path"),
+                )
+            logger.step_skip("VALIDATE_VOTES", reason="blocked: missing votes — detail.xlsx not found")
+            # Still run ingestion/validation; just skip modeling steps
+            logger.finalize(state, loop_county, contest_slug, run_status="partial")
+            if commit:
+                _git_commit(
+                    f"reports: ingestion+validation run {run_id} -- {state}/{loop_county} (no votes)",
+                    [logger.log_path, logger.pathway_path, logger.validation_path,
+                     logger.qa_path, logger.needs_path, logger.needs_snapshot_path],
+                )
+            _print_summary(run_id, all_artifacts, no_votes=True)
+            return run_id
+        else:
+            logger.register_input("detail.xlsx", detail_path)
+            logger.step_done("VALIDATE_VOTES")
+
+        # ── Step 5: Load geometry ─────────────────────────────────────────────
+        logger.step_start("LOAD_GEOMETRY", expected=["MPREC preferred; SRPREC fallback"])
+        gdf, geo_level, geo_id_col = load_canonical_geometry(
+            data_root / "CA" / "counties",  # boundary_loader expects loop_county parent
+            state,
+            loop_county,
+            logger=logger,
+        )
+
+        if gdf is None or (isinstance(gdf, dict) and gdf.get("_stub")):
+            logger.step_skip("LOAD_GEOMETRY", reason="No usable geometry (geopandas unavailable or files missing)")
+            if isinstance(gdf, dict):
+                logger.register_need("geopandas_library", "missing", ["geometry_load", "kepler_export"])
+            gdf = None
+            geo_level = geo_validation["canonical_geometry"]
+        else:
+            logger.set_coverage("geometry_features", len(gdf))
+            logger.step_done("LOAD_GEOMETRY")
+
+        # ── Step 6: Load crosswalks ───────────────────────────────────────────
+        logger.step_start("LOAD_CROSSWALKS")
+        county_geo_dir = data_root / "CA" / "counties" / loop_county / "geography"
+        crosswalks: dict = {}
+        crosswalk_categories = {
+            "MPREC_to_SRPREC":          county_geo_dir / "crosswalks",
+            "RG_to_RR_to_SR_to_SVPREC": county_geo_dir / "crosswalks",
+        }
+        for cat_label, cat_dir in crosswalk_categories.items():
+            xwalk, ok = load_crosswalk_from_category(county_geo_dir, "crosswalks", logger=logger)
+            if ok:
+                crosswalks[cat_label] = xwalk
+                break  # use first available crosswalk
+
+        # Prompt 8.5: enhanced crosswalk discovery + validation
+        _county_fips = county_to_fips(loop_county) or loop_county
+        _contest_id_for_diag = f"{year}_{state}_{loop_county.lower().replace(chr(32), chr(95))}_{contest_slug}"
+        _xwalk_full = discover_crosswalks(BASE_DIR, state, _county_fips)
+        write_crosswalk_validation(_xwalk_full, _contest_id_for_diag, run_id, BASE_DIR)
+        update_needs_crosswalks(_xwalk_full, BASE_DIR)
+        _n_xw_found = sum(1 for v in _xwalk_full.values() if v.get("status") in ("found", "fallback"))
+        logger.info(f"  [CROSSWALKS] Discovered {_n_xw_found}/{len(_xwalk_full)} crosswalks")
+
+        if not crosswalks:
+            logger.step_skip("LOAD_CROSSWALKS", reason="No crosswalk files; using identity mapping")
+        else:
+            logger.step_done("LOAD_CROSSWALKS", notes=[f"{len(crosswalks)} crosswalk(s) loaded"])
+
+        # ── Step 7: Scaffold contest.json ─────────────────────────────────────
+        if not (rebuild_maps_only or rebuild_memberships_only):
+            logger.step_start("SCAFFOLD_CONTEST_JSON")
+            contest_json_path = scaffold_contest_json(
+                votes_root, year=year, state=state, loop_county=loop_county, contest_slug=contest_slug,
+            )
+            logger.step_done("SCAFFOLD_CONTEST_JSON", outputs=[contest_json_path])
+            all_artifacts.append(contest_json_path)
+        else:
+            # Just grab the path for later commits
+            contest_json_path = votes_root / year / state / loop_county / contest_slug / "contest.json"
+            logger.step_skip("SCAFFOLD_CONTEST_JSON", reason="Skipped due to targeted rebuild flag")
+
+        # ── Step 8: Parse contest workbook ────────────────────────────────────
+        logger.step_start("PARSE_CONTEST", expected=["Detect sheet types; aggregate vote methods"])
+        parsed_sheets = parse_contest_workbook(
+            detail_path,
+            contest_json_path=contest_json_path,
+            config=config,
+            logger=logger,
+        )
+        detected_types = [p["contest_type"] for p in parsed_sheets]
+        logger.set_coverage("sheets_parsed", len(parsed_sheets))
+        logger.step_done("PARSE_CONTEST")
+
+        # ── Step 8.5: Determine Contest Mode ──────────────────────────────────
+        final_mode = contest_mode.lower()
+        if final_mode == "auto":
+            # Heuristic: if any sheet is candidate_race, the whole run is candidate
+            if "candidate_race" in detected_types:
+                final_mode = "candidate"
+                reason = "Inferred CANDIDATE (found candidate_race headers)"
+            else:
+                final_mode = "measure"
+                reason = "Inferred MEASURE (found YES/NO headers)"
+        else:
+            reason = f"Explicit override: {final_mode.upper()}"
+
+        logger.info(f"Contest Mode: {final_mode.upper()} ({reason})")
+        # Store in pathway via the logger's step mechanism (cannot dict-index a list)
+        logger.info(f"[PATHWAY] contest_mode={final_mode}  contest_mode_reason={reason}")
+
+        # ── Steps 9-12: Allocate → Sanity → Model → Export (per sheet) ───────
+        logger.step_start("ALLOCATE_VOTES")
+        all_model_dfs: list[pd.DataFrame] = []
+
+        for parsed in parsed_sheets:
+            sheet_name   = parsed["sheet_name"]
+            contest_type = parsed["contest_type"]
+            totals_df    = parsed["totals_df"]
+
+            if totals_df.empty:
+                logger.step_skip(f"SHEET/{sheet_name}", reason="No data rows")
+                continue
+
+            logger.info(f"  Sheet {sheet_name!r}: {len(totals_df)} precincts, type={contest_type}")
+
+            # Allocation
+            xwalk = next(iter(crosswalks.values()), None) if crosswalks else None
+            if xwalk and membership_method != "area_weighted":
+                try:
+                    allocated_df = safe_merge(
+                        totals_df, xwalk,
+                        on=next((c for c in ["PrecinctID", xwalk.columns[0]] if c in totals_df.columns), totals_df.columns[0]),
+                        how="left", expect="many_to_one",
+                        name=f"crosswalk_alloc/{sheet_name}",
+                        log_ctx=sheet_name,
+                        contest_id=_contest_id_for_diag if "_contest_id_for_diag" in dir() else "unknown",
+                        run_id=run_id, logger=logger,
+                    )
+                except JoinExplosionError as _jex:
+                    logger.warn(f"  [JOIN_GUARD] Explosion in crosswalk alloc: {_jex}. Falling back to area-weighted.")
+                    allocated_df = area_weighted_fallback(totals_df, src_id_col="PrecinctID")
+                method_used = "crosswalk"
+            else:
+                allocated_df = area_weighted_fallback(totals_df, src_id_col="PrecinctID")
+                method_used = "area_weighted_fallback"
+
+            logger.info(f"    Allocation: {method_used}, {len(allocated_df)} target precincts")
+
+            # Prompt 8.6: NORMALIZE_SCHEMA — map variant column names → canonical
+            logger.step_start(f"NORMALIZE_SCHEMA/{sheet_name}")
+            try:
+                _diag_id = _contest_id_for_diag if "_contest_id_for_diag" in dir() else "unknown"
+                allocated_df, _schema_report = normalize_precinct_columns(
+                    allocated_df, context=sheet_name,
+                    contest_id=_diag_id, run_id=run_id, logger=logger,
+                )
+                logger.step_done(f"NORMALIZE_SCHEMA/{sheet_name}",
+                                 notes=[f"mapped {len(_schema_report['mapping'])} cols, inferred={_schema_report['inferred_contest_type']}"])
+            except SchemaError as _se:
+                logger.warn(f"  [SCHEMA] Non-fatal: {_se}")
+                logger.step_done(f"NORMALIZE_SCHEMA/{sheet_name}", notes=["schema warn — required fields may be absent"])
+
+            # Sanity checks
+            logger.step_start(f"SANITY/{sheet_name}")
+            passed, violations = run_sanity_checks(allocated_df, config, logger=logger)
+            if not passed:
+                logger.hard_fail(f"SANITY/{sheet_name}", "; ".join(violations))
+            logger.step_done(f"SANITY/{sheet_name}")
+
+            # Build model
+            logger.step_start(f"BUILD_MODEL/{sheet_name}")
+            id_col = "MPREC_ID" if "MPREC_ID" in allocated_df.columns else allocated_df.columns[0]
             
-        all_combined_features.append((sname, merged))
+            # Merge target candidate into config
+            run_config = config.copy()
+            if target_candidate:
+                run_config["target_candidate"] = target_candidate
+            run_config["contest_type"] = contest_type
+
+            model_df = build_precinct_model(
+                allocated_df, canvas_id_col=id_col,
+                geography_level=geo_level, gdf=gdf, geo_id_col=geo_id_col, config=run_config,
+            )
+            model_df["SheetName"]   = sheet_name
+            model_df["ContestType"] = contest_type
+            all_model_dfs.append(model_df)
+            logger.set_coverage(f"rows_{sheet_name}", len(model_df))
+            logger.step_done(f"BUILD_MODEL/{sheet_name}")
+
+        logger.step_done("ALLOCATE_VOTES")
+
+        if not all_model_dfs:
+            logger.hard_fail("ALLOCATE_VOTES", "No model DataFrames produced")
+
+        # Prompt 8.5/8.6: INTEGRITY_ENFORCEMENT step
+        logger.step_start("INTEGRITY_ENFORCEMENT")
+        _all_repair_reports: list[dict] = []
+        _repaired_model_dfs: list = []
+        # Use _contest_id_for_diag if already defined, else build it
+        if "_contest_id_for_diag" not in dir():
+            _contest_id_for_diag = f"{year}_{state}_{loop_county.lower().replace(chr(32), chr(95))}_{contest_slug}"
+        for _mdf in all_model_dfs:
+            _sheet = _mdf["SheetName"].iloc[0] if "SheetName" in _mdf.columns else "unknown"
+            _mdf_repaired, _repair_report = enforce_precinct_constraints(
+                _mdf,
+                id_col="canonical_precinct_id",
+                registered_col="registered",
+                ballots_col="ballots_cast",
+                yes_col="yes_votes" if "yes_votes" in _mdf.columns else None,
+                no_col="no_votes"   if "no_votes"  in _mdf.columns else None,
+                log_ctx=_sheet,
+                logger=logger,
+                contest_id=_contest_id_for_diag,
+                run_id=run_id,
+            )
+            _all_repair_reports.append(_repair_report)
+            _repaired_model_dfs.append(_mdf_repaired)
+        all_model_dfs = _repaired_model_dfs
+        _primary_repair = _all_repair_reports[0] if _all_repair_reports else {}
+        _n_repaired  = _primary_repair.get("repaired_rows",  0)
+        _n_critical  = _primary_repair.get("critical_rows",  0)
+        # Build integrity_meta dict — passed to strategy generator (Prompt 8.6)
+        _integrity_meta = {
+            "integrity_repairs_count":     _n_repaired,
+            "constraint_violations_count": _n_critical,
+            "join_guard_critical":         _primary_repair.get("join_guard_critical", False),
+        }
+        notes = [f"{_n_repaired} repair(s), {_n_critical} CRITICAL (registered=0) row(s)"]
+        logger.step_done("INTEGRITY_ENFORCEMENT", notes=notes)
+
+        # ── Step 13: Feature Engineering ─────────────────────────────────────
+        logger.step_start("FEATURE_ENGINEERING")
+        all_combined_features = []
         
-    logger.step_done("FEATURE_ENGINEERING")
+        # Voter file check
+        voter_file_path = BASE_DIR / "voters" / state / loop_county / "voters.csv" # Standard path
+        voter_features_df = aggregate_voter_file(voter_file_path, loop_county, logger=logger)
+        
+        for model_df in all_model_dfs:
+            sname = model_df["SheetName"].iloc[0]
+            # Base contest features
+            base_features = build_precinct_base_features(model_df, f"{contest_slug}__{sname}")
+            
+            # Merge with voter file if present
+            if not voter_features_df.empty:
+                merged = pd.merge(base_features, voter_features_df, on="canonical_precinct_id", how="left")
+                logger.info(f"  Merged voter features for sheet {sname}")
+            else:
+                merged = base_features
+                
+            all_combined_features.append((sname, merged))
+            
+        logger.step_done("FEATURE_ENGINEERING")
 
-    # ── Step 14: Universe Building ────────────────────────────────────────
-    logger.step_start("UNIVERSE_BUILDING")
-    all_universes = []
-    for sname, feat_df in all_combined_features:
-        uni_df = apply_universe_rules(feat_df)
-        all_universes.append((sname, uni_df))
-    logger.step_done("UNIVERSE_BUILDING")
+        # ── Step 14: Universe Building ────────────────────────────────────────
+        logger.step_start("UNIVERSE_BUILDING")
+        all_universes = []
+        for sname, feat_df in all_combined_features:
+            uni_df = apply_universe_rules(feat_df)
+            all_universes.append((sname, uni_df))
+        logger.step_done("UNIVERSE_BUILDING")
 
-    # ── Step 15: Scoring (v2) ─────────────────────────────────────────────
-    logger.step_start("SCORING_V2")
+        # ── Step 15: Scoring (v2) ─────────────────────────────────────────────
+        logger.step_start("SCORING_V2")
+        all_scored_dfs = []
+        for sname, feat_df in all_combined_features:
+            scored_df = run_scoring_v2(feat_df, logger=logger)
+            # Attach universe info
+            uni_df = next(u[1] for u in all_universes if u[0] == sname)
+            scored_df = pd.merge(scored_df, uni_df, on="canonical_precinct_id", how="left")
+            
+            # Re-attach geometry
+            m_df = next(m for m in all_model_dfs if m["SheetName"].iloc[0] == sname)
+            if "geometry" in m_df.columns:
+                scored_df = pd.merge(scored_df, m_df[["canonical_precinct_id", "geometry"]], on="canonical_precinct_id", how="left")
+                
+            all_scored_dfs.append((sname, scored_df))
+        logger.step_done("SCORING_V2")
+
+
+        # Append to globals by sheet name
+        for sname, sdf in all_scored_dfs:
+            if sname not in global_all_scored_dfs:
+                global_all_scored_dfs[sname] = []
+            global_all_scored_dfs[sname].append(sdf)
+            
+        if not voter_features_df.empty:
+            global_all_voter_features.append(voter_features_df)
+            
+        for sname, udf in all_universes:
+            if sname not in global_all_universes:
+                global_all_universes[sname] = []
+            global_all_universes[sname].append(udf)
+
+    # Re-combine into expected schema for Step 17+
+    import pandas as pd
     all_scored_dfs = []
-    for sname, feat_df in all_combined_features:
-        scored_df = run_scoring_v2(feat_df, logger=logger)
-        # Attach universe info
-        uni_df = next(u[1] for u in all_universes if u[0] == sname)
-        scored_df = pd.merge(scored_df, uni_df, on="canonical_precinct_id", how="left")
-        
-        # Re-attach geometry
-        m_df = next(m for m in all_model_dfs if m["SheetName"].iloc[0] == sname)
-        if "geometry" in m_df.columns:
-            scored_df = pd.merge(scored_df, m_df[["canonical_precinct_id", "geometry"]], on="canonical_precinct_id", how="left")
+    for sname, dfs in global_all_scored_dfs.items():
+        if dfs:
+            all_scored_dfs.append((sname, pd.concat(dfs, ignore_index=True)))
             
-        all_scored_dfs.append((sname, scored_df))
-    logger.step_done("SCORING_V2")
+    if global_all_voter_features:
+        voter_features_df = pd.concat(global_all_voter_features, ignore_index=True)
+    else:
+        voter_features_df = pd.DataFrame()
+        
+    all_universes = []
+    for sname, dfs in global_all_universes.items():
+        if dfs:
+            all_universes.append((sname, pd.concat(dfs, ignore_index=True)))
+            
+    # Restore original comma-separated string for trailing logging if needed
+    county = ",".join(counties_list)
 
     # ── Step 17: Strategic Region Clustering (v3) ─────────────────────────
     logger.step_start("REGION_CLUSTERING")
@@ -1545,8 +1596,11 @@ def main():
 
     try:
         from scripts.lib.county_registry import normalize_county_input
-        c_record = normalize_county_input(args.county)
-        resolved_county = c_record["county_name"]
+        resolved_counties = []
+        for c_str in args.county.split(","):
+            c_record = normalize_county_input(c_str.strip())
+            resolved_counties.append(c_record["county_name"])
+        resolved_county = ",".join(resolved_counties)
     except ValueError as e:
         print(f"\n[CLI ERROR] {e}", file=sys.stderr)
         sys.exit(1)

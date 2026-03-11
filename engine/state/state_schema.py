@@ -31,6 +31,9 @@ REQUIRED_KEYS: tuple[str, ...] = (
     "risks",
     "recommendations",
     "artifact_index",
+    "jurisdictions",
+    "contests",
+    "multi_jurisdiction_forecast",
 )
 
 # ── Section schemas (used as typing hints / defaults) ────────────────────────
@@ -156,6 +159,9 @@ def make_empty_state() -> dict:
         "risks":                       [],
         "recommendations":             [],
         "artifact_index":              empty_artifact_index(),
+        "jurisdictions":               [],
+        "contests":                    [],
+        "multi_jurisdiction_forecast": {},
     }
 
 

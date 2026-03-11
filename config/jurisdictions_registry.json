@@ -1,0 +1,16 @@
+{
+  "CA": {
+    "Sonoma": {
+      "jurisdiction_type": "county",
+      "districts": ["supervisorial", "city", "school"]
+    },
+    "Marin": {
+      "jurisdiction_type": "county",
+      "districts": ["supervisorial", "city"]
+    },
+    "Napa": {
+      "jurisdiction_type": "county",
+      "districts": ["supervisorial", "city"]
+    }
+  }
+}

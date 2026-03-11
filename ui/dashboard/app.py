@@ -81,6 +81,7 @@ with st.sidebar:
         "Navigation",
         [
             "🏠 Overview",
+            "🌐 Jurisdiction Summary",
             "🪖 War Room",
             "📐 Calibration",
             "🧭 Political Intelligence",
@@ -160,6 +161,10 @@ except Exception as e:
 if page == "🏠 Overview":
     from ui.dashboard.layout import render_overview
     render_overview(data)
+
+elif page == "🌐 Jurisdiction Summary":
+    from ui.dashboard.jurisdiction_view import render_jurisdiction_summary
+    render_jurisdiction_summary(data)
 
 elif page == "🪖 War Room":
     from ui.dashboard.war_room_view import render_war_room

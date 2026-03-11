@@ -1,0 +1,11 @@
+turf_id,precinct_ids,sum_registered,turf_purpose
+TURF_001,Precinct 0510000,1000,turnout
+TURF_002,Precinct 0510001,1000,turnout
+TURF_003,Precinct 0510002,1000,turnout
+TURF_004,Precinct 0510003,1000,turnout
+TURF_005,Precinct 0510004,1000,turnout
+TURF_006,Precinct 0510005,1000,turnout
+TURF_007,Precinct 0510006,1000,turnout
+TURF_008,Precinct 0510007,1000,turnout
+TURF_009,Precinct 0510008,1000,turnout
+TURF_010,Precinct 0510009,1000,turnout

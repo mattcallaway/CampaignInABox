@@ -1,0 +1,14 @@
+{
+  "target_doors": 120000,
+  "target_calls": 200000,
+  "target_mail": 150000,
+  "target_digital_spend": 50000,
+  "target_budget": 750000,
+  "target_volunteers": 500,
+  "target_fundraising": 800000,
+  "expected_turnout_lift": 0.04,
+  "expected_persuasion_lift": 0.02,
+  "expected_doors_per_hour": 18,
+  "expected_calls_per_hour": 35,
+  "base_win_margin": 0.015
+}

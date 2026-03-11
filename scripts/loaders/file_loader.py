@@ -58,7 +58,17 @@ def load_excel_workbook(path: str | Path) -> openpyxl.Workbook:
         raise FileNotFoundError(f"Excel file not found: {path}")
     if path.suffix.lower() not in (".xlsx", ".xls"):
         raise ValueError(f"Unsupported Excel format: {path.suffix}")
-    return openpyxl.load_workbook(path, read_only=True, data_only=True)
+    try:
+        return openpyxl.load_workbook(path, read_only=True, data_only=True)
+    except zipfile.BadZipFile as e:
+        with open(path, "r", errors="ignore") as f:
+            header = f.read(100)
+            if "<?xml" in header or "<?mso-application" in header:
+                raise ValueError(
+                    f"File '{path.name}' is an XML Spreadsheet masquerading as XLSX. "
+                    "Open it in Excel and 'Save As' a true .xlsx workbook before running."
+                ) from e
+        raise ValueError(f"File '{path.name}' is not a valid .xlsx file or is corrupted.") from e
 
 
 def iter_excel_sheets(workbook: openpyxl.Workbook) -> Iterator[tuple[str, list[list]]]:

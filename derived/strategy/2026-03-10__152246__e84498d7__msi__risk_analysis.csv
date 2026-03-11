@@ -1,0 +1,6 @@
+risk,level,description,mitigation
+Turnout Uncertainty,MEDIUM,"Baseline turnout variance ±6%. Low-turnout scenario reduces expected voters by ~1,308.",Increase GOTV investment; mail VBM chase list to high-propensity supporters.
+Persuasion Universe Size,HIGH,"409 persuadable voters available vs 5,185 needed (0.1× coverage).",Lower PS threshold in targeting_quadrants.py
+Canvasser Staffing,HIGH,"3993 paid canvassers needed beyond volunteer capacity (2,182 volunteer doors/week vs 800,719 needed).","Recruit more volunteers, hire canvassers, or reduce persuasion target threshold."
+Voter File Precinct Coverage,HIGH,2/55 precincts matched (4%).,Ensure voter file includes all Sonoma precinct codes. Check voter_parser precinct normalization.
+Campaign Timeline,HIGH,-280 days (1.0 weeks) until election.,Very short timeline — prioritize mail and digital; limited field available.

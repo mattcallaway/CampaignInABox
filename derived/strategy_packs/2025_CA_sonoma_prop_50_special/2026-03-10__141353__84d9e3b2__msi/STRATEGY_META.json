@@ -1,0 +1,77 @@
+{
+  "contest_id": "2025_CA_sonoma_prop_50_special",
+  "run_id": "2026-03-10__141353__84d9e3b2__msi",
+  "generated_at": "2026-03-10T14:15:11.618902",
+  "contest_mode": "candidate",
+  "mode_reason": "explicit override: candidate",
+  "derived_mode": "full",
+  "forecast_mode": "both",
+  "precinct_count": 55,
+  "turf_count": 34,
+  "region_count": 0,
+  "scenario_count": 4,
+  "constraint_violations_count": 1,
+  "integrity_repairs_count": 0,
+  "join_guard_critical": false,
+  "inputs_found": {
+    "target_ranking": {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\precinct_models\\CA\\Sonoma\\Sonoma_2025_prop_50_special__4\\2026-03-10__141353__84d9e3b2__msi__precinct_model.csv",
+      "hash": "ed1e54d0057f40df"
+    },
+    "walk_turfs": {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\turfs\\CA\\Sonoma\\Sonoma_2025_prop_50_special__4\\2026-03-10__141353__84d9e3b2__msi__top_30_walk_turfs.csv",
+      "hash": "07d994aa741de171"
+    },
+    "scenario_forecasts": {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\forecasts\\CA\\Sonoma\\Sonoma_2025_prop_50_special__4\\2026-03-10__141353__84d9e3b2__msi__scenario_forecasts.csv",
+      "hash": "57b677c807c125ed"
+    },
+    "precinct_universes": {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\universes\\CA\\Sonoma\\Sonoma_2025_prop_50_special__4\\2026-03-10__141353__84d9e3b2__msi__precinct_universes.csv",
+      "hash": "521fb68fa7a1a3cc"
+    },
+    "regions": {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\ops\\CA\\Sonoma\\Sonoma_2025_prop_50_special__4\\2026-03-10__141353__84d9e3b2__msi__regions.csv",
+      "hash": "8b3ecc73c15072d1"
+    },
+    "field_plan": {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\ops\\CA\\Sonoma\\Sonoma_2025_prop_50_special__4\\2026-03-10__141353__84d9e3b2__msi__field_plan.csv",
+      "hash": "ed1e54d0057f40df"
+    },
+    "simulation_results": {
+      "path": "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\ops\\CA\\Sonoma\\Sonoma_2025_prop_50_special__4\\2026-03-10__141353__84d9e3b2__msi__simulation_results.csv",
+      "hash": "24bcf7f4c8039294"
+    }
+  },
+  "inputs_missing": [],
+  "model_summary": {
+    "precinct_count": 55,
+    "turf_count": 34,
+    "region_count": 0,
+    "scenario_count": 4
+  },
+  "topline_metrics": {
+    "baseline_turnout": 0.6531,
+    "baseline_support": 0.534,
+    "baseline_margin": 2306.0,
+    "win_number": 16954.0,
+    "best_case_margin": 1171.0,
+    "worst_case_margin": 1046.0,
+    "win_probability": null
+  },
+  "recommended_strategy": "Leading. Focus on turnout and maintaining momentum.",
+  "target_precincts": 0,
+  "estimated_doors": 34589,
+  "estimated_volunteers": 115,
+  "simulation_runs": 4,
+  "model_version": "8.7",
+  "data_sources": {
+    "targets_source": "derived/precinct_models",
+    "turfs_source": "none",
+    "forecast_source": "derived/forecasts",
+    "universe_source": "none"
+  },
+  "advanced_modeling_used": false,
+  "allocation_scenario_selected": "heavy",
+  "expected_net_gain_from_field": 0
+}
