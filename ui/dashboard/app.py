@@ -346,6 +346,10 @@ elif page == "🔬 Simulations":
     from ui.dashboard.simulation_view import render_simulation
     render_simulation(data)
 
+elif page == "🏛️ Historical Archive":
+    from ui.dashboard.archive_view import render_archive_view
+    render_archive_view(data)
+
 elif page == "⚡ Advanced Modeling":
     from ui.dashboard.advanced_view import render_advanced
     render_advanced(data)

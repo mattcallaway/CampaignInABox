@@ -49,6 +49,8 @@ strategy_modeling:
       label: "Strategy"
     - id: "🔬 Simulations"
       label: "Simulations"
+    - id: "🏛️ Historical Archive"
+      label: "Historical Archive"
     - id: "⚡ Advanced Modeling"
       label: "Advanced Modeling"
     - id: "📐 Calibration"
