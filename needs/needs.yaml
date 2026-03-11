@@ -32,7 +32,7 @@ geopandas_library:
   status: missing
 jurisdictions:
   CA/Sonoma:
-    last_run_id: 2026-03-10__205411__6e008642__msi
+    last_run_id: 2026-03-10__211126__90c643ce__msi
     needs:
     - category: detail.xlsx
       status: missing
@@ -42,8 +42,8 @@ jurisdictions:
       - export_model
       expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\votes\2024\general\detail.xlsx
 meta:
-  last_run_id: 2026-03-10__205411__6e008642__msi
-  last_updated: '2026-03-11T03:54:12.314Z'
+  last_run_id: 2026-03-10__211126__90c643ce__msi
+  last_updated: '2026-03-11T04:11:26.913Z'
 runs:
 - artifacts:
     needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-05__035835__0e0e8b52__msi__needs_snapshot.yaml
@@ -210,6 +210,17 @@ runs:
     validation_report: C:\Users\Mathew C\Campaign In A Box\reports\validation\2026-03-10__205411__6e008642__msi__validation_report.md
     qa_report: C:\Users\Mathew C\Campaign In A Box\reports\qa\2026-03-10__205411__6e008642__msi__qa_sanity_checks.md
     needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-10__205411__6e008642__msi__needs_snapshot.yaml
+- run_id: 2026-03-10__211126__90c643ce__msi
+  timestamp: '2026-03-11T04:11:26.913Z'
+  state: CA
+  county: Sonoma
+  status: partial
+  artifacts:
+    run_log: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-10__211126__90c643ce__msi__run.log
+    pathway_json: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-10__211126__90c643ce__msi__pathway.json
+    validation_report: C:\Users\Mathew C\Campaign In A Box\reports\validation\2026-03-10__211126__90c643ce__msi__validation_report.md
+    qa_report: C:\Users\Mathew C\Campaign In A Box\reports\qa\2026-03-10__211126__90c643ce__msi__qa_sanity_checks.md
+    needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-10__211126__90c643ce__msi__needs_snapshot.yaml
 strategy_generator:
   2024_CA_sonoma_nov2024_general:
     derived_mode: full
