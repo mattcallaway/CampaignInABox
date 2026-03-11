@@ -377,6 +377,32 @@ def build_campaign_state(
         _latest_file(root / "derived" / "war_room", "*forecast_update_comparison.csv"), root)
     state["artifact_index"] = ai
 
+    # ── Section K: intelligence_summary (Prompt 17) ───────────────────────────
+    intel_dir = root / "derived" / "intelligence"
+    intel_adj  = _read_json(intel_dir / "support_adjustment.json")
+    intel_poll = _read_json(intel_dir / "poll_average.json")
+    intel_reg  = _read_json(intel_dir / "registration_summary.json")
+    intel_br   = _read_json(intel_dir / "ballot_returns_summary.json")
+    intel_mac  = _read_json(intel_dir / "macro_environment.json")
+
+    state["intelligence_summary"] = {
+        "poll_average":             intel_poll.get("poll_average"),
+        "n_polls":                  intel_poll.get("n_polls", 0),
+        "poll_ci_low":              intel_poll.get("confidence_interval_low"),
+        "poll_ci_high":             intel_poll.get("confidence_interval_high"),
+        "registration_growth":      intel_reg.get("registration_growth"),
+        "net_partisan_score":       intel_reg.get("net_partisan_score"),
+        "ballot_return_rate":       intel_br.get("return_rate"),
+        "dem_return_advantage":     intel_br.get("partisan_advantage"),
+        "projected_turnout":        intel_br.get("projected_turnout"),
+        "macro_environment_score":  intel_mac.get("macro_environment_score"),
+        "intelligence_adjustment":  intel_adj.get("intelligence_adjustment"),
+        "adjusted_support":         intel_adj.get("adjusted_support"),
+        "intelligence_impact":      intel_adj.get("impact"),
+        "intelligence_source_type": intel_adj.get("source_type", "MISSING"),
+        "has_real_signals":         intel_adj.get("has_real_signals", False),
+    }
+
     # ── Write outputs ─────────────────────────────────────────────────────────
     _write_state(state, root, run_id, recommendations)
     return state

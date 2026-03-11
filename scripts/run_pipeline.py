@@ -877,6 +877,54 @@ def run_pipeline(
         logger.warn(f"CALIBRATION error (non-fatal): {_cal_err}")
         logger.step_skip("CALIBRATION", reason=str(_cal_err))
 
+    # ── Prompt 17: INTELLIGENCE ───────────────────────────────────────────────
+    logger.step_start("INTELLIGENCE")
+    _intel_result: dict = {}
+    try:
+        from engine.intelligence.polling_ingest import ingest_all_polling
+        from engine.intelligence.poll_aggregation import compute_poll_average
+        from engine.intelligence.registration_trends import compute_registration_trends
+        from engine.intelligence.ballot_returns import load_ballot_returns
+        from engine.intelligence.macro_environment import load_macro_environment
+        from engine.intelligence.intelligence_fusion import run_intelligence_fusion
+
+        # Load all intelligence data sources
+        _polls_df   = ingest_all_polling(logger=logger)
+        _poll_avg   = compute_poll_average(_polls_df, logger=logger)
+        _, _reg_sum = compute_registration_trends(logger=logger)
+        _, _br_sum  = load_ballot_returns(logger=logger)
+        _macro      = load_macro_environment(logger=logger)
+
+        # Get latest precinct model for fusion (if available)
+        _fusion_pm = None
+        try:
+            import pandas as _pd
+            _pm_hits = sorted(
+                (BASE_DIR / "derived" / "precinct_models").glob("*.csv"),
+                key=lambda p: p.stat().st_mtime, reverse=True
+            )
+            if _pm_hits:
+                _fusion_pm = _pd.read_csv(_pm_hits[0])
+        except Exception:
+            pass
+
+        _intel_result = run_intelligence_fusion(
+            project_root=BASE_DIR,
+            run_id=run_id,
+            precinct_model=_fusion_pm,
+            logger=logger,
+        )
+        logger.step_done("INTELLIGENCE", notes=[
+            f"adj={_intel_result.get('intelligence_adjustment', 0):+.4f}, "
+            f"adjusted_support={_intel_result.get('adjusted_support', 0):.3f}, "
+            f"polls={_intel_result.get('n_polls', 0)}, "
+            f"impact={_intel_result.get('impact', '—')}, "
+            f"source={_intel_result.get('source_type', '—')}"
+        ])
+    except Exception as _intel_err:
+        logger.warn(f"INTELLIGENCE error (non-fatal): {_intel_err}")
+        logger.step_skip("INTELLIGENCE", reason=str(_intel_err))
+
     # ── Prompt 14: Data Provenance ────────────────────────────────────────────
     logger.step_start("BUILD_PROVENANCE")
     try:
