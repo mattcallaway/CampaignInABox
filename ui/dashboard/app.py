@@ -71,11 +71,82 @@ def get_data() -> dict:
     return load_all()
 
 
+# ── Authentication Check ──────────────────────────────────────────────────────
+from engine.auth.auth_manager import AuthManager
+import json
+
+if "auth_manager" not in st.session_state:
+    st.session_state["auth_manager"] = AuthManager(BASE_DIR)
+
+auth_mgr = st.session_state["auth_manager"]
+all_users = auth_mgr.get_all_users()
+
+if "current_user_id" not in st.session_state:
+    st.session_state["current_user_id"] = None
+
+def login(user_id):
+    st.session_state["current_user_id"] = user_id
+
+if not st.session_state["current_user_id"]:
+    st.title("🔒 Campaign In A Box Login")
+    st.markdown("Please select a user to continue:")
+    if all_users:
+        user_names = [u["name"] for u in all_users]
+        user_ids = [u["user_id"] for u in all_users]
+        selected_name = st.selectbox("Select User", user_names)
+        if st.button("Login"):
+            idx = user_names.index(selected_name)
+            login(user_ids[idx])
+            st.rerun()
+    else:
+        st.warning("No users found in config/users_registry.json")
+    st.stop()
+
+current_user = auth_mgr.get_user(st.session_state["current_user_id"])
+current_role = current_user.get("role") if current_user else "Unknown"
+can_edit_strategy = auth_mgr.has_permission(st.session_state["current_user_id"], "edit_strategy")
+can_upload = auth_mgr.has_permission(st.session_state["current_user_id"], "upload_data")
+
 # ── Sidebar navigation ────────────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("## 🗳️ Campaign Intelligence")
-    st.markdown("*Powered by Campaign In A Box*")
+    st.markdown(f"**User**: {current_user.get('name')}  
+**Role**: `{current_role}`")
+    if st.button("🚪 Logout"):
+        st.session_state["current_user_id"] = None
+        st.rerun()
     st.divider()
+
+    nav_options = [
+        "🏠 Overview",
+        "🌐 Jurisdiction Summary",
+        "🪖 War Room",
+        "📋 Team Activity",
+        "📐 Calibration",
+        "🧭 Political Intelligence",
+        "📂 Data Manager",
+        "🗳️ Campaign Setup",
+        "📂 Upload Contest Data",
+        "🗺️ Precinct Map",
+        "🎯 Targeting",
+        "📋 Strategy",
+        "🔬 Simulations",
+        "⚡ Advanced Modeling",
+        "🧠 Voter Intelligence",
+        "🩺 Diagnostics",
+        "🗄️ Data Explorer",
+    ]
+    
+    # Filter nav options based on role
+    if not can_upload:
+        nav_options.remove("📂 Data Manager")
+        nav_options.remove("📂 Upload Contest Data")
+        
+    if not can_edit_strategy:
+        if "📋 Strategy" in nav_options:
+            nav_options.remove("📋 Strategy")
+        if "🗳️ Campaign Setup" in nav_options:
+            nav_options.remove("🗳️ Campaign Setup")
 
     page = st.radio(
         "Navigation",
@@ -169,6 +240,10 @@ elif page == "🌐 Jurisdiction Summary":
 elif page == "🪖 War Room":
     from ui.dashboard.war_room_view import render_war_room
     render_war_room(data)
+
+elif page == "📋 Team Activity":
+    from ui.dashboard.team_view import render_team_view
+    render_team_view(data, auth_mgr, current_user)
 
 elif page == "📐 Calibration":
     from ui.dashboard.calibration_view import render_calibration
