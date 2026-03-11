@@ -62,13 +62,17 @@ def _preview_file(file_path: Path):
         st.info(f"Binary or non-previewable format ({ext}).")
 
 def render_data_manager(data: dict):
-    # Compute PROJECT_ROOT directly to avoid circular import running app.py top-level again
+    from ui.components.alerts import render_alert
+    from ui.components.empty_state import render_empty_state
+    from ui.components.badges import render_provenance_badge
+    
+    # Compute PROJECT_ROOT directly
     PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-    st.title("📂 Data Manager")
+    st.markdown("<h1 class='page-title'>Data Manager</h1>", unsafe_allow_html=True)
+    st.caption("Campaign data registry, file classification, and missing data tracker.")
     
     manager = FileRegistryManager(PROJECT_ROOT)
     registry = manager.load_registry()
-
     root_path = Path(PROJECT_ROOT)
 
     tab_upload, tab_registry, tab_missing = st.tabs([
@@ -78,7 +82,7 @@ def render_data_manager(data: dict):
     ])
 
     with tab_upload:
-        st.markdown("### Upload Campaign Files")
+        st.subheader("Upload Campaign Files")
         st.markdown("Drop election results, voter files, crosswalks, polling, demographics, or ballot returns here.")
         
         uploaded_file = st.file_uploader("Select a file", type=["csv", "xlsx", "xls", "geojson", "zip", "md", "txt", "tsv", "json"])
@@ -99,68 +103,55 @@ def render_data_manager(data: dict):
             st.markdown("#### Classification & Destination")
             col1, col2 = st.columns(2)
             with col1:
-                form_cat  = st.selectbox("Campaign Data Type", manager._DESTINATION_RULES.keys(), index=list(manager._DESTINATION_RULES.keys()).index(cat) if cat in manager._DESTINATION_RULES else 0)
+                form_cat  = st.selectbox("Campaign Data Type", list(manager._DESTINATION_RULES.keys()), index=list(manager._DESTINATION_RULES.keys()).index(cat) if cat in manager._DESTINATION_RULES else 0)
                 form_name = st.text_input("Filename", uploaded_file.name)
             
             with col2:
-                form_prov = st.selectbox("Provenance", ["REAL", "EXTERNAL", "ESTIMATED", "SIMULATED"], index=["REAL", "EXTERNAL", "ESTIMATED", "SIMULATED"].index(prov) if prov in ["REAL", "EXTERNAL", "ESTIMATED", "SIMULATED"] else 1)
+                opts = ["REAL", "EXTERNAL", "ESTIMATED", "SIMULATED"]
+                form_prov = st.selectbox("Provenance", opts, index=opts.index(prov) if prov in opts else 1)
                 form_state = st.text_input("State Code (e.g. CA)", "CA")
                 form_county = st.text_input("County", "Sonoma")
                 form_contest = st.text_input("Contest ID", "2025_prop50_special")
 
             proposed_dest = manager.propose_destination(form_name, form_cat, form_state, form_county, form_contest)
-            st.info(f"**Proposed Destination:** `{proposed_dest}`")
+            render_alert("info", f"**Proposed Destination:** `{proposed_dest}`")
 
             form_notes = st.text_area("Notes (Optional)")
 
             if st.button("Confirm & Save File", type="primary"):
                 try:
                     record = manager.register_new_file(
-                        source_file=temp_path,
-                        category=form_cat,
-                        provenance=form_prov,
-                        state=form_state,
-                        county=form_county,
-                        contest_id=form_contest,
-                        notes=form_notes,
-                        proposed_name=form_name
+                        source_file=temp_path, category=form_cat, provenance=form_prov,
+                        state=form_state, county=form_county, contest_id=form_contest,
+                        notes=form_notes, proposed_name=form_name
                     )
-                    # Cleanup temp
-                    if temp_path.exists():
-                        temp_path.unlink()
-                    st.success(f"File saved to `{record['current_path']}` and registered as `{record['file_id']}`!")
-                    # Force rerun to update registry view
+                    if temp_path.exists(): temp_path.unlink()
+                    st.success(f"File saved to `{record['current_path']}` and registered!")
                     st.rerun()
                 except Exception as e:
-                    st.error(f"Error saving file: {e}")
+                    render_alert("critical", f"Error saving file: {e}")
 
     with tab_registry:
-        st.markdown("### Active File Registry")
+        st.subheader("Active File Registry")
         if not registry:
-            st.info("The file registry is empty. Upload a file to get started.")
+            render_empty_state("No Files Uploaded", "The file registry is empty.", "🗂️", "Upload a file in the first tab.")
         else:
-            # Convert string dates
             df_reg = pd.DataFrame(registry)
-            
-            # View toggle
             view_status = st.radio("View", ["ACTIVE", "ARCHIVED", "ALL"], horizontal=True)
             if view_status != "ALL":
-                # REGISTERED is also considered active
                 if view_status == "ACTIVE":
                     df_reg = df_reg[df_reg["status"].isin(["ACTIVE", "REGISTERED"])]
                 else:
                     df_reg = df_reg[df_reg["status"] == view_status]
 
             if df_reg.empty:
-                st.write(f"No {view_status.lower()} files found.")
+                render_empty_state("No Files Found", f"No {view_status.lower()} files currently exist.")
             else:
-                # Display table
-                disp_df = df_reg[["file_id", "current_filename", "campaign_data_type", "state", "county", "contest_id", "provenance", "status", "last_modified", "current_path"]]
+                disp_df = df_reg[["file_id", "current_filename", "campaign_data_type", "state", "county", "contest_id", "provenance", "status", "last_modified"]]
                 st.dataframe(disp_df, use_container_width=True, hide_index=True)
 
                 st.markdown("#### Manage Existing Files")
                 edit_id = st.selectbox("Select File ID to Edit/Archive", disp_df["file_id"].tolist())
-                
                 if edit_id:
                     rec = next(r for r in registry if r["file_id"] == edit_id)
                     st.write(f"**Selected:** `{rec['current_filename']}` ({rec['campaign_data_type']})")
@@ -169,13 +160,8 @@ def render_data_manager(data: dict):
                     with ecol1:
                         new_cat = st.selectbox("Change Category", list(manager._DESTINATION_RULES.keys()), index=list(manager._DESTINATION_RULES.keys()).index(rec["campaign_data_type"]))
                         new_name = st.text_input("Rename File", rec["current_filename"])
-                        
-                        if st.button("Update Metadata & Relocate"):
-                            manager.update_file(
-                                file_id=edit_id,
-                                new_name=new_name,
-                                new_category=new_cat
-                            )
+                        if st.button("Update Metadata"):
+                            manager.update_file(file_id=edit_id, new_name=new_name, new_category=new_cat)
                             st.success("File updated successfully.")
                             st.rerun()
 
@@ -187,25 +173,24 @@ def render_data_manager(data: dict):
                                 st.success("File archived safely.")
                                 st.rerun()
                         else:
-                            st.warning("File is already archived.")
+                            render_alert("warning", "File is already archived.")
 
     with tab_missing:
-        st.markdown("### Missing Data Assistant & Source Finder")
-        
+        st.subheader("Missing Data & Source Finder")
         req_path = root_path / "derived" / "file_registry" / "latest" / "missing_data_requests.json"
         src_path = root_path / "derived" / "file_registry" / "latest" / "source_finder_recommendations.json"
 
         if not req_path.exists():
-            st.info("Missing Data Assistant has not run yet. Run the main pipeline (which now includes DATA_INTAKE_ANALYSIS step).")
+            render_empty_state("No Missing Data Analysis", "Run the pipeline to scan for gaps.", "🔍")
         else:
             try:
                 missing_data = json.loads(req_path.read_text(encoding="utf-8"))
                 reqs = missing_data.get("requests", [])
                 
                 if not reqs:
-                    st.success("✅ Your campaign has all required and recommended data files!")
+                    render_alert("success", "Your campaign has all required and recommended files!")
                 else:
-                    st.warning(f"Your campaign is missing {len(reqs)} recommended data files.")
+                    render_alert("warning", f"Your campaign is missing {len(reqs)} recommended files.")
                     
                     src_data = {}
                     if src_path.exists():
@@ -216,20 +201,20 @@ def render_data_manager(data: dict):
                     for req in reqs:
                         dt = req["data_type"]
                         prio = req["priority"]
-                        color = "red" if prio == "critical" else ("orange" if prio == "high" else "blue")
+                        a_type = "critical" if prio == "critical" else ("warning" if prio == "high" else "info")
                         
-                        with st.expander(f":{color}[**{dt.upper()}**] — Priority: {prio.upper()}"):
-                            st.write(f"**Why needed:** {req['why_needed']}")
-                            st.write(f"**Expected destination:** `{req['recommended_destination']}`")
-                            st.write(f"**Example filename:** `{req['example_filename']}`")
+                        with st.expander(f"{dt.upper()} ({prio.upper()})"):
+                            render_alert(a_type, req["why_needed"])
+                            st.write(f"**Destination:** `{req['recommended_destination']}`")
                             
                             src = src_data.get(dt)
                             if src:
-                                st.markdown("##### 🌍 Internet Source Finder Recommendations")
+                                st.markdown("<div class='secondary-block'>", unsafe_allow_html=True)
+                                st.markdown("##### 🌍 Source Recommendations")
                                 st.write(f"**Likely Source:** {src['likely_source_type']}")
                                 st.write(f"**Search Query:** `{src['search_keywords']}`")
-                                st.markdown("**Actionable Steps:**")
                                 for step in src["actionable_steps"]:
                                     st.markdown(f"- {step}")
+                                st.markdown("</div>", unsafe_allow_html=True)
             except Exception as e:
-                st.error(f"Error parsing missing data payload: {e}")
+                render_alert("critical", f"Error parsing payload: {e}")
