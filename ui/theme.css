@@ -1,0 +1,189 @@
+/* ui/theme.css */
+
+/* Global Colors & Fonts */
+:root {
+    --bg-app: #F4F7FB;
+    --bg-surface: #FFFFFF;
+    --bg-card: #F8FBFF;
+    --bg-sidebar: #0F2A44;
+    
+    --text-primary: #1A2A3A;
+    --text-secondary: #5B6B7D;
+    --text-muted: #7C8C9D;
+    --text-sidebar: #D6E2F0;
+    --text-sidebar-active: #FFFFFF;
+    
+    --color-success: #2E8B57;
+    --color-warning: #D9A441;
+    --color-danger: #C94C4C;
+    --color-info: #3C78D8;
+    --color-estimated: #8E7CC3;
+    --color-missing: #B85450;
+    
+    --color-accent: #1F4E79;
+    --color-accent-light: #7DB8FF;
+}
+
+/* Base App Background overlay */
+.stApp {
+    background-color: var(--bg-app);
+    color: var(--text-primary);
+}
+
+/* Ensure secondary content looks distinct */
+.secondary-block {
+    background-color: var(--bg-card);
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 12px;
+}
+
+/* Typography Hierarchy */
+h1, .page-title {
+    font-size: 1.6rem !important;
+    font-weight: 700 !important;
+    color: var(--text-primary) !important;
+    margin-bottom: 0.5rem !important;
+    padding-bottom: 0px !important;
+}
+
+h2, h3, .section-header {
+    font-size: 1.05rem !important;
+    font-weight: 600 !important;
+    color: var(--text-primary) !important;
+    letter-spacing: 0.2px;
+    margin-top: 1rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+/* Metric Cards */
+.metric-card {
+    background-color: var(--bg-surface);
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    border: 1px solid #E2E8F0;
+    height: 100%;
+}
+
+.metric-card.status-success { border-top: 4px solid var(--color-success); }
+.metric-card.status-danger { border-top: 4px solid var(--color-danger); }
+.metric-card.status-warning { border-top: 4px solid var(--color-warning); }
+.metric-card.status-info { border-top: 4px solid var(--color-info); }
+
+.metric-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.metric-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+}
+
+.metric-subtext {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+/* Provenance Badges */
+.badge-prov {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+.badge-prov.real { background: var(--color-success); color: white; }
+.badge-prov.simulated { background: var(--color-info); color: white; }
+.badge-prov.estimated { background: var(--color-estimated); color: white; }
+.badge-prov.missing { background: var(--color-missing); color: white; }
+.badge-prov.external { background: var(--text-muted); color: white; }
+
+/* Alerts */
+.alert-box {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+}
+.alert-box.info { background-color: #E8F0FE; border-left: 4px solid var(--color-info); color: var(--color-accent); }
+.alert-box.warning { background-color: #FFF3E0; border-left: 4px solid var(--color-warning); color: #8A651B; }
+.alert-box.critical { background-color: #FCE8E6; border-left: 4px solid var(--color-danger); color: #9B2828; }
+.alert-box.success { background-color: #E6F4EA; border-left: 4px solid var(--color-success); color: #1E5C3A; }
+
+.alert-icon {
+    font-size: 1.2rem;
+    margin-right: 12px;
+}
+
+/* Tables */
+[data-testid="stDataFrame"] {
+    font-size: 0.9rem;
+}
+[data-testid="stDataFrame"] th {
+    background-color: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+    font-weight: 600 !important;
+    border-bottom: 2px solid #CBD5E1 !important;
+}
+[data-testid="stDataFrame"] td {
+    color: var(--text-secondary) !important;
+}
+/* Even/Odd rows usually managed by Streamlit, but we can set cell colors */
+
+/* Data Manager Active Cards */
+.file-card {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 8px;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: rgba(255,255,255,0.6);
+    border: 1px dashed #CBD5E1;
+    border-radius: 8px;
+    color: var(--text-secondary);
+}
+.empty-state-icon {
+    font-size: 2rem;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+.empty-state-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+.empty-state-desc {
+    font-size: 0.9rem;
+    margin-bottom: 16px;
+}
+
+/* Global Command Bar */
+.command-bar {
+    background-color: var(--bg-surface);
+    border-bottom: 1px solid #E2E8F0;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+    margin: -4rem -3rem 1.5rem -3rem; /* hack to place it at the top of stApp padding */
+}
