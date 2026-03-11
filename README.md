@@ -396,9 +396,37 @@ Rerun the pipeline. The **Calibration page** will now show:
 | 🩺 **Diagnostics** | System health, join guard, artifact status | Technical QA |
 | 🗄️ **Data Explorer** | Browse any dataset — sort, filter, export CSV | Data verification |
 
+
+---
+
+## Command Center UI System
+
+The Campaign In A Box dashboard is built on a custom, professional UI theme designed for high-information density and clarity under pressure.
+
+### Semantic Color Palette
+- **Success / Healthy:** Green (`#16A34A`, bg: `#F0FDF4`) — Used for passing diagnostics, covered targets, and healthy paces.
+- **Warning / Degraded:** Amber (`#D97706`, bg: `#FFFBEB`) — Used for lagging pace, partial coverage, and non-critical data gaps.
+- **Critical / Fail:** Red (`#DC2626`, bg: `#FEF2F2`) — Used for system failures, missing critical data, and high risks.
+- **Info / Objective:** Blue (`#2563EB`, bg: `#EFF6FF`) — Used for neutral targets, general info, and primary actions.
+
+### Data Provenance Badges
+Every key metric and data source is tagged with a provenance badge so operators know the source of truth:
+- `REAL` (Green) — Verified actual data (e.g., official election results, live field logs)
+- `EXTERNAL` (Blue) — Data imported from outside systems (e.g., TargetSmart)
+- `ESTIMATED` (Yellow) — Pipeline calculations based on priors
+- `SIMULATED` (Purple) — Monte Carlo simulation outputs
+- `MISSING` (Red) — Required data that is not available
+
+### Core UI Components
+- **Metric Cards:** Unified displays for KPIs, showing the primary value, a descriptive subtitle, the data provenance, and a semantic status border.
+- **Alerts:** Contextual banners that provide immediate feedback on system health, data gaps, or strategic risks.
+- **Empty States:** Clear, actionable placeholders that guide the user on how to upload data or run the pipeline when information is missing.
+- **Global Command Bar:** A persistent header showing the active contest, jurisdiction, run ID, and real-time campaign health (CHI score).
+
 ---
 
 ## Directory Structure
+
 
 ```
 Campaign In A Box/
