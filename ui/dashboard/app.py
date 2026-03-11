@@ -30,7 +30,33 @@ st.set_page_config(
 from ui.theme import inject_theme
 inject_theme(BASE_DIR)
 
+
+# ── Version ───────────────────────────────────────────────────────────────────
+import json
+def _get_version():
+    vfile = BASE_DIR / "config" / "version.json"
+    if vfile.exists():
+        try:
+            return json.loads(vfile.read_text("utf-8")).get("version", "Unknown")
+        except: pass
+    return "0.4.0"
+
+CIA_BOX_VERSION = _get_version()
+
+# Startup Banner
+if "startup_banner_shown" not in st.session_state:
+    st.session_state["startup_banner_shown"] = True
+    try:
+        from ui.dashboard.state_loader import load_state_snapshot_meta
+        snap = load_state_snapshot_meta()
+        camp = snap.get('contest_id', 'Unknown Campaign')
+        jur = snap.get('county', 'Unknown Jurisdiction')
+        st.toast(f"**Campaign In A Box v{CIA_BOX_VERSION}**\n{camp}\n{jur}\nModel: Calibrated", icon="✅")
+    except:
+        st.toast(f"**Campaign In A Box v{CIA_BOX_VERSION}**\nStartup Successful", icon="✅")
+
 # ── Data loading (cached) ─────────────────────────────────────────────────────
+
 from ui.dashboard.data_loader import load_all
 
 
@@ -224,7 +250,7 @@ except Exception as e:
     st.divider()
     st.markdown(
         f"<div class='sidebar-footer'>"
-        f"<b>Campaign In A Box v0.3</b><br>"
+        f"<b>Campaign In A Box v{CIA_BOX_VERSION}</b><br>"
         f"Jurisdiction: {data_preview.get('county', '—')}<br>"
         f"Contest: {data_preview.get('contest_id', '—')}<br>"
         f"Run ID: {run_id[:13]}..."

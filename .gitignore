@@ -61,3 +61,9 @@ derived/war_room/private/*
 
 # Large raw data (use LFS rules above for GIS)
 # raw xlsx/xls vote files ARE committed (small; source of truth)
+ 
+# Campaign Private Data Restrictions
+/data/voters/
+/data/campaign_runtime/
+/data/private/
+/data/intelligence/private/

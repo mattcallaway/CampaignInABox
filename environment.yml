@@ -1,0 +1,15 @@
+name: campaign_in_a_box
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pandas
+  - numpy
+  - geopandas
+  - shapely
+  - streamlit
+  - plotly
+  - scikit-learn
+  - pyyaml
+  - openpyxl
+  - requests
