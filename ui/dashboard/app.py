@@ -117,60 +117,84 @@ with st.sidebar:
         st.rerun()
     st.divider()
 
-    nav_options = [
-        "🏠 Overview",
-        "🌐 Jurisdiction Summary",
-        "🪖 War Room",
-        "📋 Team Activity",
-        "📐 Calibration",
-        "🧭 Political Intelligence",
-        "📂 Data Manager",
-        "🗳️ Campaign Setup",
-        "📂 Upload Contest Data",
-        "🗺️ Precinct Map",
-        "🎯 Targeting",
-        "📋 Strategy",
-        "🔬 Simulations",
-        "⚡ Advanced Modeling",
-        "🧠 Voter Intelligence",
-        "🩺 Diagnostics",
-        "🗄️ Data Explorer",
-    ]
-    
-    # Filter nav options based on role
-    if not can_upload:
-        nav_options.remove("📂 Data Manager")
-        nav_options.remove("📂 Upload Contest Data")
-        
-    if not can_edit_strategy:
-        if "📋 Strategy" in nav_options:
-            nav_options.remove("📋 Strategy")
-        if "🗳️ Campaign Setup" in nav_options:
-            nav_options.remove("🗳️ Campaign Setup")
+    # ── Load UI Registry ──────────────────────────────────────────────────────
+    ui_cfg_path = BASE_DIR / "config" / "ui_pages.yaml"
+    ui_registry = {}
+    if ui_cfg_path.exists():
+        with open(ui_cfg_path, "r", encoding="utf-8") as f:
+            ui_registry = yaml.safe_load(f) or {}
 
-    page = st.radio(
-        "Navigation",
-        [
-            "🏠 Overview",
-            "🌐 Jurisdiction Summary",
-            "🪖 War Room",
-            "📐 Calibration",
-            "🧭 Political Intelligence",
-            "📂 Data Manager",
-            "🗳️ Campaign Setup",
-            "📂 Upload Contest Data",
-            "🗺️ Precinct Map",
-            "🎯 Targeting",
-            "📋 Strategy",
-            "🔬 Simulations",
-            "⚡ Advanced Modeling",
-            "🧠 Voter Intelligence",
-            "🩺 Diagnostics",
-            "🗄️ Data Explorer",
-        ],
-        label_visibility="collapsed",
-        key="dashboard_nav",
-    )
+    nav_options = []
+    # Collect all available pages based on roles
+    for group_key, group_data in ui_registry.items():
+        for page_obj in group_data.get("pages", []):
+            p_id = page_obj["id"]
+            if not can_upload and p_id in ["📂 Data Manager", "📂 Upload Contest Data"]:
+                continue
+            if not can_edit_strategy and p_id in ["📋 Strategy", "🗳️ Campaign Setup"]:
+                continue
+            nav_options.append(p_id)
+
+    if "active_page" not in st.session_state:
+        st.session_state["active_page"] = "🏠 Overview"
+
+    # Ensure active page is still allowed
+    if st.session_state["active_page"] not in nav_options and nav_options:
+        st.session_state["active_page"] = nav_options[0]
+
+    # Render collapsible sections
+    page = st.session_state["active_page"]
+    active_category_label = ""
+    active_page_label = ""
+    
+    for group_key, group_data in ui_registry.items():
+        g_label = group_data.get("label", group_key)
+        # Check if any page in this group is allowed
+        allowed_pages = [p for p in group_data.get("pages", []) if p["id"] in nav_options]
+        if not allowed_pages:
+            continue
+            
+        # Determine if expanded (expand if active page is inside)
+        is_active_group = any(p["id"] == st.session_state["active_page"] for p in allowed_pages)
+        key_group = f"exp_{group_key}"
+        if key_group not in st.session_state:
+            st.session_state[key_group] = is_active_group
+            
+        with st.expander(g_label, expanded=st.session_state.get(key_group, is_active_group)):
+            for p in allowed_pages:
+                p_id = p["id"]
+                p_label = p["label"]
+                # If it's the active page, highlight it
+                if p_id == st.session_state["active_page"]:
+                    st.markdown(f"**➤ {p_label}**")
+                    active_category_label = g_label
+                    active_page_label = p_label
+                else:
+                    if st.button(p_label, key=f"btn_nav_{p_id}"):
+                        st.session_state["active_page"] = p_id
+                        # Log the navigation event
+                        try:
+                            from datetime import datetime
+                            log_path = BASE_DIR / "logs" / "ui" / "navigation.log"
+                            log_path.parent.mkdir(parents=True, exist_ok=True)
+                            uid = current_user.get("user_id") if current_user else "unknown"
+                            with open(log_path, "a", encoding="utf-8") as lf:
+                                lf.write(f"{datetime.utcnow().isoformat()},{uid},{p_id},{g_label}\n")
+                        except Exception as e:
+                            pass
+                        st.rerun()
+
+    # Save context
+    try:
+        ctx_dir = BASE_DIR / "derived" / "ui"
+        ctx_dir.mkdir(parents=True, exist_ok=True)
+        ctx_file = ctx_dir / "navigation_context.json"
+        with open(ctx_file, "w") as cf:
+            json.dump({"category": active_category_label, "page": active_page_label}, cf)
+    except:
+        pass
+
+    st.divider()
     st.divider()
     # Data Provenance Legend
     st.markdown("""
@@ -227,6 +251,26 @@ try:
 except Exception as e:
     st.error(f"Failed to load data: {e}")
     st.stop()
+
+    # ── Sidebar Footer ────────────────────────────────────────────────────────────
+    st.divider()
+    st.markdown("##### Campaign In A Box v0.3")
+    st.markdown(f"**Jurisdiction**: {data_preview.get('county', '—')}")
+    st.markdown(f"**Contest**: {data_preview.get('contest_id', '—')}")
+    st.markdown(f"**Run ID**: `{run_id[:13]}...`")
+
+# ── Context Header ────────────────────────────────────────────────────────────
+try:
+    ctx_file = BASE_DIR / "derived" / "ui" / "navigation_context.json"
+    if ctx_file.exists():
+        with open(ctx_file, "r") as cf:
+            ctx = json.load(cf)
+            cat = ctx.get("category", "")
+            pname = ctx.get("page", "")
+            if cat and pname:
+                st.caption(f"{cat} \u2192 **{pname}**")
+except:
+    pass
 
 # ── Page routing ─────────────────────────────────────────────────────────────
 if page == "🏠 Overview":
