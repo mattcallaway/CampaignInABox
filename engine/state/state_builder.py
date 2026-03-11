@@ -458,6 +458,38 @@ def build_campaign_state(
             }
         state["multi_jurisdiction_forecast"] = mj_forecast
 
+    # ── Section O: collaboration_metrics (Prompt 20) ──────────────────────────
+    users_path = root / "config" / "users_registry.json"
+    if users_path.exists():
+        try:
+            udata = json.loads(users_path.read_text(encoding="utf-8"))
+            state["active_users"] = len(udata.get("users", []))
+        except:
+            pass
+            
+    approvals_path = root / "derived" / "workflow" / "strategy_approvals.csv"
+    if approvals_path.exists():
+        try:
+            import pandas as pd
+            app_df = pd.read_csv(approvals_path)
+            if not app_df.empty:
+                latest = app_df.sort_values("approval_timestamp").groupby("strategy_id").tail(1)
+                state["pending_approvals"] = len(latest[latest["status"] == "pending"])
+                last_app = latest[latest["status"] == "approved"]
+                if not last_app.empty:
+                    state["last_strategy_approval"] = last_app.iloc[-1]["approval_timestamp"]
+        except:
+            pass
+
+    tasks_path = root / "derived" / "workflow" / "tasks.csv"
+    if tasks_path.exists():
+        try:
+            import pandas as pd
+            tasks_df = pd.read_csv(tasks_path)
+            state["open_tasks"] = len(tasks_df[tasks_df["status"] == "open"])
+        except:
+            pass
+
     # ── Write outputs ─────────────────────────────────────────────────────────
     _write_state(state, root, run_id, recommendations)
     return state

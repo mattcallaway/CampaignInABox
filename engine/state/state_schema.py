@@ -34,6 +34,10 @@ REQUIRED_KEYS: tuple[str, ...] = (
     "jurisdictions",
     "contests",
     "multi_jurisdiction_forecast",
+    "active_users",
+    "pending_approvals",
+    "open_tasks",
+    "last_strategy_approval",
 )
 
 # ── Section schemas (used as typing hints / defaults) ────────────────────────
@@ -162,6 +166,10 @@ def make_empty_state() -> dict:
         "jurisdictions":               [],
         "contests":                    [],
         "multi_jurisdiction_forecast": {},
+        "active_users":                0,
+        "pending_approvals":           0,
+        "open_tasks":                  0,
+        "last_strategy_approval":      None,
     }
 
 
