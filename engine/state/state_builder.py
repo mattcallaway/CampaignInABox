@@ -403,6 +403,40 @@ def build_campaign_state(
         "has_real_signals":         intel_adj.get("has_real_signals", False),
     }
 
+    # ── Section L: file_inventory (Prompt 17.5) ───────────────────────────────
+    registry_path = root / "derived" / "file_registry" / "latest" / "file_registry.json"
+    req_path = root / "derived" / "file_registry" / "latest" / "missing_data_requests.json"
+    rec_path = root / "derived" / "file_registry" / "latest" / "source_finder_recommendations.json"
+
+    reg_data = _read_json(registry_path) if registry_path.exists() else []
+    missing_data = _read_json(req_path)
+    sources = _read_json(rec_path)
+
+    active_count = sum(1 for r in reg_data if r.get("status") in ("ACTIVE", "REGISTERED"))
+    archived_count = sum(1 for r in reg_data if r.get("status") == "ARCHIVED")
+
+    reqs = missing_data.get("requests", [])
+    missing_crit = sum(1 for r in reqs if r.get("priority") in ("critical", "high"))
+    missing_opt  = sum(1 for r in reqs if r.get("priority") not in ("critical", "high"))
+
+    state["file_inventory_summary"] = {
+        "active_files": active_count,
+        "archived_files": archived_count,
+        "missing_critical_files": missing_crit,
+        "missing_optional_files": missing_opt
+    }
+    state["missing_data_requests_intake"] = reqs
+    state["source_recommendations_available"] = bool(sources.get("recommendations"))
+
+    # ── Section M: performance_summary (Prompt 18) ────────────────────────────
+    perf_health = _read_json(root / "derived" / "performance" / f"{run_id}__campaign_health.json")
+    state["performance_summary"] = {
+        "chi_score":     perf_health.get("chi_score", 0.0),
+        "health_status": perf_health.get("status", "UNKNOWN"),
+        "doors_health":  perf_health.get("doors_health", "UNKNOWN"),
+        "calls_health":  perf_health.get("calls_health", "UNKNOWN")
+    }
+
     # ── Write outputs ─────────────────────────────────────────────────────────
     _write_state(state, root, run_id, recommendations)
     return state

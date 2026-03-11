@@ -273,6 +273,21 @@ def run_pipeline(
     votes_root = BASE_DIR / "votes"
     all_artifacts: list[Path] = []
 
+    # ── Prompt 17.5: Data Intake Analysis ─────────────────────────────────────
+    logger.step_start("DATA_INTAKE_ANALYSIS")
+    try:
+        from engine.data_intake.missing_data_assistant import analyze_missing_data
+        from engine.data_intake.source_finder import run_source_finder
+        _missing = analyze_missing_data(BASE_DIR, run_id)
+        _sources = run_source_finder(BASE_DIR, _missing, run_id)
+        logger.step_done("DATA_INTAKE_ANALYSIS", notes=[
+            f"Missing required files: {len(_missing)}",
+            f"Source recs generated: {len(_sources)}"
+        ])
+    except Exception as _intake_err:
+        logger.warn(f"DATA_INTAKE_ANALYSIS error: {_intake_err}")
+        logger.step_skip("DATA_INTAKE_ANALYSIS", reason=str(_intake_err))
+
     # ── Step 1: Ingestion (if staging_dir provided) ───────────────────────
     if staging_dir:
         logger.step_start("INGEST_STAGING", expected=[f"Files from: {staging_dir}"])
@@ -998,6 +1013,39 @@ def run_pipeline(
     except Exception as _fc_err:
         logger.warn(f"Forecast update error (non-fatal): {_fc_err}")
         logger.step_skip("WAR_ROOM_FORECAST_UPDATE", reason=str(_fc_err))
+
+    # ── Prompt 18: Performance Reconciliation ───────────────────────────────
+    logger.step_start("PERFORMANCE_RECONCILIATION")
+    try:
+        from engine.performance.performance_ingest import ingest_performance_data
+        from engine.performance.forecast_drift import calculate_forecast_drift
+        from engine.performance.assumption_monitor import check_assumptions
+        from engine.performance.leverage_analysis import run_leverage_analysis
+        from engine.performance.campaign_scorecard import generate_campaign_scorecard
+
+        # 1. Ingest runtime data
+        ingest_performance_data(BASE_DIR, run_id)
+        
+        # 2. Compute Drift
+        drift_data = calculate_forecast_drift(BASE_DIR, run_id)
+        
+        # 3. Check Assumptions
+        assumptions = check_assumptions(BASE_DIR, run_id)
+        
+        # 4. Leverage Analysis (recovery scenarios)
+        leverage = run_leverage_analysis(BASE_DIR, run_id, drift_data)
+        
+        # 5. Scorecard and CHI
+        health = generate_campaign_scorecard(BASE_DIR, run_id, drift_data, assumptions)
+
+        logger.step_done("PERFORMANCE_RECONCILIATION", notes=[
+            f"CHI: {health.get('chi_score')} ({health.get('status')})",
+            f"Assumption Fails: {assumptions.get('failures_count')}",
+            f"Scenarios: {leverage.get('scenarios_generated')}"
+        ])
+    except Exception as _perf_err:
+        logger.warn(f"PERFORMANCE_RECONCILIATION error: {_perf_err}")
+        logger.step_skip("PERFORMANCE_RECONCILIATION", reason=str(_perf_err))
 
     # ── Step 16: Forecasting ──────────────────────────────────────────────
     logger.step_start("FORECAST_GENERATION")

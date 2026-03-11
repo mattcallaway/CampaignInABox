@@ -128,6 +128,12 @@ def render_war_room(data: dict) -> None:
     risk_df = _find_latest_csv(BASE_DIR / "derived" / "strategy", "*__risk_analysis.csv")
     budget_df = _find_latest_csv(BASE_DIR / "derived" / "strategy", "*__budget_allocation.csv")
 
+    # Load Performance (Prompt 18)
+    perf_health = _find_latest_json(BASE_DIR / "derived" / "performance", "*__campaign_health.json")
+    perf_drift = _find_latest_csv(BASE_DIR / "derived" / "performance", "*__forecast_drift.csv")
+    perf_scenarios = _find_latest_csv(BASE_DIR / "derived" / "performance", "*__recovery_scenarios.csv")
+    perf_actions = _find_latest_json(BASE_DIR / "derived" / "performance", "*__leverage_actions.json")
+
     # Load runtime data for form display
     try:
         from engine.war_room.runtime_loader import get_runtime_summary
@@ -153,9 +159,10 @@ def render_war_room(data: dict) -> None:
 
     st.divider()
 
-    # ── 5 Main Tabs ────────────────────────────────────────────────────────────
-    tab_snap, tab_gaps, tab_field, tab_resource, tab_risks = st.tabs([
+    # ── 6 Main Tabs ────────────────────────────────────────────────────────────
+    tab_snap, tab_perf, tab_gaps, tab_field, tab_resource, tab_risks = st.tabs([
         "📊 Campaign Snapshot",
+        "🏆 Performance & Drift",
         "🔔 Data Gaps",
         "🚪 Field Ops",
         "💰 Resources",
@@ -278,7 +285,60 @@ def render_war_room(data: dict) -> None:
                 st.dataframe(forecast_df, use_container_width=True, hide_index=True)
 
     # ═══════════════════════════════════════════════════════════════════════════
-    # Tab B: Data Gaps / Requests
+    # Tab B: Performance & Drift (Prompt 18)
+    # ═══════════════════════════════════════════════════════════════════════════
+    with tab_perf:
+        st.subheader("Performance Reconciliation & Forecast Drift")
+        st.caption("Reconciles planned strategy vs. actual operations to predict systemic drift.")
+
+        if not perf_health:
+            st.info("No Performance Data found. Run the full pipeline (with Field Data) to generate insights.")
+        else:
+            chi = perf_health.get("chi_score", 0.0)
+            status = perf_health.get("status", "UNKNOWN")
+            
+            # Health Score Header
+            chi_color = "#065F46" if status == "STRONG" else "#DC2626" if status == "CRITICAL" else "#D97706"
+            
+            st.markdown(f"""
+            <div style='background:{chi_color}11; border: 1px solid {chi_color}44; border-radius: 8px; padding: 16px; margin-bottom: 24px'>
+                <h3 style='margin:0; color:{chi_color}'>Campaign Health Index: {status} ({chi:.2f})</h3>
+                <p style='margin:4px 0 0 0; color:#4B5563'>Pacing: Doors ({perf_health.get('doors_health')}) | Calls ({perf_health.get('calls_health')})</p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            pc1, pc2 = st.columns(2)
+            with pc1:
+                st.markdown("#### Forecast Drift")
+                if perf_drift is not None and not perf_drift.empty:
+                    try:
+                        import plotly.express as px
+                        # Bar chart for pct dev
+                        fig = px.bar(
+                            perf_drift, x="metric", y="pct_deviation", color="type",
+                            title="Operational Drift (% Variance from Plan)",
+                            text_auto=".1%", template="plotly_white"
+                        )
+                        st.plotly_chart(fig, use_container_width=True)
+                    except Exception:
+                        st.dataframe(perf_drift, use_container_width=True)
+                else:
+                    st.caption("No drift calculations available.")
+
+            with pc2:
+                st.markdown("#### Leverage Actions & Recovery Scenarios")
+                if perf_actions:
+                    actions = perf_actions.get("actions", [])
+                    for a in actions:
+                        st.markdown(f"**{a.get('program')}:** {a.get('issue')} ➔ <br>_Recommendation_: {a.get('recommendation')}", unsafe_allow_html=True)
+                
+                if perf_scenarios is not None and not perf_scenarios.empty:
+                    st.divider()
+                    st.markdown("**Simulated Recovery Programs**")
+                    st.dataframe(perf_scenarios, use_container_width=True, hide_index=True)
+
+    # ═══════════════════════════════════════════════════════════════════════════
+    # Tab C: Data Gaps / Requests
     # ═══════════════════════════════════════════════════════════════════════════
     with tab_gaps:
         st.subheader("Data Gaps & Requests")
