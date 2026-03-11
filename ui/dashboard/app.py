@@ -84,6 +84,7 @@ with st.sidebar:
             "🪖 War Room",
             "📐 Calibration",
             "🧭 Political Intelligence",
+            "📂 Data Manager",
             "🗳️ Campaign Setup",
             "📂 Upload Contest Data",
             "🗺️ Precinct Map",
@@ -171,6 +172,10 @@ elif page == "📐 Calibration":
 elif page == "🧭 Political Intelligence":
     from ui.dashboard.political_intelligence_view import render_political_intelligence
     render_political_intelligence(data)
+
+elif page == "📂 Data Manager":
+    from ui.dashboard.data_manager_view import render_data_manager
+    render_data_manager(data)
 
 elif page == "🗳️ Campaign Setup":
     from ui.dashboard.campaign_setup_view import render_campaign_setup
