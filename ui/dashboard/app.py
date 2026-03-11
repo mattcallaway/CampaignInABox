@@ -110,8 +110,7 @@ can_upload = auth_mgr.has_permission(st.session_state["current_user_id"], "uploa
 # ── Sidebar navigation ────────────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("## 🗳️ Campaign Intelligence")
-    st.markdown(f"**User**: {current_user.get('name')}  
-**Role**: `{current_role}`")
+    st.markdown(f"**User**: {current_user.get('name')}  \\n**Role**: `{current_role}`")
     if st.button("🚪 Logout"):
         st.session_state["current_user_id"] = None
         st.rerun()
