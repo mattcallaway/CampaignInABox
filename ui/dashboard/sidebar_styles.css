@@ -1,0 +1,91 @@
+/* ui/dashboard/sidebar_styles.css */
+
+/* Base sidebar background */
+[data-testid="stSidebar"] {
+    background: #0F2A44 !important;
+}
+
+/* Base text color inside sidebar */
+[data-testid="stSidebar"] p, 
+[data-testid="stSidebar"] span, 
+[data-testid="stSidebar"] label {
+    color: #D6E2F0 !important;
+}
+
+/* Section Expanders (Categories) */
+.streamlit-expanderHeader {
+    font-weight: 600 !important;
+    font-size: 0.95rem !important;
+    color: #FFFFFF !important;
+    letter-spacing: 0.5px !important;
+    padding-top: 14px !important;
+    padding-bottom: 8px !important;
+    border-bottom: 1px solid #2E5C87 !important;
+}
+
+/* Chevron/Expander Icons */
+.streamlit-expanderHeader svg {
+    fill: #9FC5E8 !important;
+    color: #9FC5E8 !important;
+}
+
+/* Remove default expander borders */
+[data-testid="stExpander"] {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+/* Page Link Buttons */
+[data-testid="stSidebar"] .stButton button {
+    width: 100% !important;
+    background-color: transparent !important;
+    color: #D6E2F0 !important;
+    border: none !important;
+    border-radius: 6px !important;
+    padding: 8px 12px !important;
+    margin-bottom: 4px !important;
+    text-align: left !important;
+    justify-content: flex-start !important;
+    font-weight: 400 !important;
+    transition: 0.15s ease !important;
+}
+
+[data-testid="stSidebar"] .stButton button p {
+    color: inherit !important;
+}
+
+/* Hover feedback */
+[data-testid="stSidebar"] .stButton button:hover {
+    background-color: #244E75 !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    cursor: pointer !important;
+}
+
+/* Active Page Highlight (injected via HTML div) */
+.sidebar-active-page {
+    background-color: #1F4E79 !important;
+    border-left: 4px solid #7DB8FF !important;
+    border-radius: 0 6px 6px 0 !important; 
+    padding: 8px 12px !important;
+    margin-bottom: 4px !important;
+    font-weight: 600 !important;
+    color: #FFFFFF !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Footer Styling */
+.sidebar-footer {
+    font-size: 0.75rem !important;
+    color: #9FB9D4 !important;
+    line-height: 1.4 !important;
+}
+
+/* Hide standard markdown paragraph margins in sidebar active blocks to prevent spacing drift */
+.sidebar-active-page p {
+    margin: 0 !important;
+    color: #FFFFFF !important;
+    font-weight: 600 !important;
+}
