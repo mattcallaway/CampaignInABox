@@ -117,6 +117,7 @@ with st.sidebar:
     st.divider()
 
     # ── Load UI Registry ──────────────────────────────────────────────────────
+    import yaml
     ui_cfg_path = BASE_DIR / "config" / "ui_pages.yaml"
     ui_registry = {}
     if ui_cfg_path.exists():
