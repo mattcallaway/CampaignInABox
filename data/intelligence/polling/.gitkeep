@@ -1,0 +1,2 @@
+# Place polling CSV/XLSX/JSON files here.
+# Fields: pollster, field_date_start, field_date_end, sample_size, population, support_percent, oppose_percent, undecided_percent, geography

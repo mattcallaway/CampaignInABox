@@ -1,0 +1,21 @@
+{
+  "generated_at": "2026-03-11T00:17:01.790616",
+  "has_macro_data": false,
+  "signals": {
+    "presidential_approval": 0.44,
+    "generic_ballot_dem": 0.02,
+    "economic_index": 0.0,
+    "inflation_rate": 0.035,
+    "right_track_pct": 0.3
+  },
+  "signal_contributions": {
+    "presidential_approval": -0.0005,
+    "generic_ballot_dem": 0.02,
+    "economic_index": 0.0,
+    "right_track_pct": 0.0
+  },
+  "macro_environment_score": 0.0195,
+  "source_type": "SIMULATED",
+  "sources": [],
+  "note": "Using default macro environment (neutral). Add signals to data/intelligence/macro/"
+}

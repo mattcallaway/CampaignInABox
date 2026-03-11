@@ -1,0 +1,15 @@
+{
+  "generated_at": "2026-03-11T00:17:01.747648",
+  "poll_average": null,
+  "poll_average_oppose": null,
+  "poll_average_undecided": null,
+  "n_polls": 0,
+  "n_polls_weighted": 0.0,
+  "confidence_interval_low": null,
+  "confidence_interval_high": null,
+  "source_type": "SIMULATED",
+  "latest_poll_date": null,
+  "polls_used": [],
+  "method": "weighted_average",
+  "note": "No polling data available."
+}

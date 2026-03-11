@@ -1,0 +1,39 @@
+{
+  "run_id": "2026-03-10__172639__prompt17_smoke",
+  "generated_at": "2026-03-11T00:17:01.791260",
+  "model_support_baseline": 0.5,
+  "intelligence_adjustment": 0.00098,
+  "adjusted_support": 0.501,
+  "impact": "NEUTRAL",
+  "source_type": "SIMULATED",
+  "weights": {
+    "alpha_polling": 0.6,
+    "beta_demographic": 0.15,
+    "gamma_registration": 0.2,
+    "delta_macro": 0.05
+  },
+  "contributions": {
+    "polling_signal": 0.0,
+    "poll_average": null,
+    "demographic_signal": 0.0,
+    "demographic_weight": 0.15,
+    "registration_signal": 0.0,
+    "registration_weight": 0.2,
+    "net_partisan_score": null,
+    "macro_signal": 0.0195,
+    "macro_weight": 0.05
+  },
+  "signal_sources": [
+    "MISSING",
+    "SIMULATED"
+  ],
+  "has_real_signals": false,
+  "poll_average": null,
+  "poll_average_ci_low": null,
+  "poll_average_ci_high": null,
+  "n_polls": 0,
+  "registration_growth": null,
+  "net_partisan_score": null,
+  "macro_score": 0.0195,
+  "demographic_adjustment": 0.0
+}

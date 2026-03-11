@@ -1,0 +1,12 @@
+{
+  "generated_at": "2026-03-11T00:17:01.784851",
+  "has_registration_data": false,
+  "n_snapshots": 0,
+  "registration_growth": null,
+  "party_shift": null,
+  "new_voter_rate": null,
+  "net_partisan_score": null,
+  "latest_total_registered": null,
+  "source_type": "MISSING",
+  "note": "No registration data. Add files to data/intelligence/registration/"
+}

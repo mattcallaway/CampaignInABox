@@ -1,0 +1,14 @@
+{
+  "generated_at": "2026-03-11T00:17:01.787904",
+  "has_ballot_return_data": false,
+  "n_reports": 0,
+  "total_returned": null,
+  "total_issued": null,
+  "return_rate": null,
+  "dem_return_pct": null,
+  "rep_return_pct": null,
+  "partisan_advantage": null,
+  "projected_turnout": null,
+  "source_type": "MISSING",
+  "note": "No ballot return data. Add daily reports to data/intelligence/ballot_returns/"
+}

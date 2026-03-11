@@ -1,0 +1,2 @@
+# Place Census ACS or precinct demographic CSV files here.
+# Fields: precinct_id, median_income, median_age, education_level, homeownership_rate
