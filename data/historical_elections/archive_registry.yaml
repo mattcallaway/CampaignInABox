@@ -1,0 +1,18 @@
+schema_version: '1.0'
+last_updated: '2026-03-13T01:53:41.400304'
+elections:
+- election_id: 2024_general_test
+  state: CA
+  county: Sonoma
+  year: 2024
+  election_type: general
+  source_url: https://sonomacounty.gov/test
+  files_ingested: 1
+  confidence_score: 0.92
+  fingerprint_type: statement_of_vote
+  precinct_schema: mprec
+  normalization_method: safe_join_engine
+  join_confidence: 0.99
+  archive_dir: data/historical_elections/CA/Sonoma/2024_general_test
+  ingestion_date: '2026-03-13'
+  last_updated: '2026-03-13T01:53:41.400291'

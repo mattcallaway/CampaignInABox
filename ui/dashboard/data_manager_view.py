@@ -75,10 +75,11 @@ def render_data_manager(data: dict):
     registry = manager.load_registry()
     root_path = Path(PROJECT_ROOT)
 
-    tab_upload, tab_registry, tab_precinct, tab_missing = st.tabs([
+    tab_upload, tab_registry, tab_precinct, tab_archive, tab_missing = st.tabs([
         "📤 Upload New File",
         "🗂️ File Registry",
         "🔎 Precinct ID Review",
+        "🗃️ Election Archive",
         "🔍 Missing Data Assistant"
     ])
 
@@ -256,7 +257,75 @@ def render_data_manager(data: dict):
         else:
             st.info("Enter precinct IDs above and click **Run Precinct ID Check** to validate.")
 
+    with tab_archive:
+        st.subheader("Election Archive")
+        st.markdown(
+            "Discover, classify, and ingest historical election datasets. "
+            "Uses Source Registry to find official election pages, then fingerprints and validates files before archiving."
+        )
+
+        try:
+            from engine.archive_builder.archive_registry import registry_summary, list_elections
+            from engine.archive_builder.archive_builder import run_archive_build
+
+            summary = registry_summary()
+            a1, a2, a3, a4 = st.columns(4)
+            a1.metric("Archived Elections", summary.get("total", 0))
+            a2.metric("States", len(summary.get("states", [])))
+            a3.metric("Counties", len(summary.get("counties", [])))
+            a4.metric("Avg Confidence", f"{summary.get('avg_confidence', 0):.1%}")
+
+            elections = list_elections()
+            if elections:
+                import pandas as _pd
+                df_arc = _pd.DataFrame(elections)[[
+                    "election_id", "state", "county", "year", "election_type",
+                    "confidence_score", "fingerprint_type", "ingestion_date",
+                ]]
+                st.dataframe(df_arc, use_container_width=True, hide_index=True)
+            else:
+                st.info("No elections archived yet. Run a scan below to discover and ingest election data.")
+
+            st.markdown("---")
+            st.markdown("#### Run Archive Scan")
+            arc1, arc2 = st.columns(2)
+            scan_state  = arc1.text_input("State", "CA", key="arc_state")
+            scan_county = arc2.text_input("County", "Sonoma", key="arc_county")
+            st.caption("Offline scan uses Source Registry metadata without making HTTP requests. Online scan discovers files from live election pages.")
+
+            col_offline, col_online = st.columns(2)
+            run_offline = col_offline.button("Run Offline Scan", type="primary")
+            run_online  = col_online.button("Run Online Scan (HTTP)")
+
+            if run_offline or run_online:
+                with st.spinner("Running archive scan..."):
+                    build = run_archive_build(
+                        state=scan_state, county=scan_county,
+                        online=run_online, download=False,
+                    )
+                st.markdown("#### Scan Results")
+                s1, s2, s3, s4 = st.columns(4)
+                s1.metric("Sources Scanned", build.sources_scanned)
+                s2.metric("Pages Found",     build.pages_found)
+                s3.metric("Candidates",      build.candidates_found)
+                s4.metric("Ingested",        build.ingested)
+
+                if build.review_queue > 0:
+                    render_alert("warning", f"**{build.review_queue} files** sent to review queue — check `derived/archive_review_queue/`")
+                if build.errors:
+                    render_alert("critical", f"**{len(build.errors)} errors** during build: {build.errors[0][:80]}")
+                else:
+                    st.success("Scan complete — no errors.")
+                if build.build_report:
+                    st.caption(f"Build report: `{build.build_report}`")
+                if build.classification_report:
+                    st.caption(f"Classification report: `{build.classification_report}`")
+
+        except Exception as _arc_e:
+            render_alert("critical", f"Election Archive error: {_arc_e}")
+
     with tab_registry:
+
 
         st.subheader("Active File Registry")
         if not registry:
