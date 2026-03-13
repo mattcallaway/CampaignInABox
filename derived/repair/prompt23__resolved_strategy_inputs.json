@@ -1,0 +1,21 @@
+{
+  "contest_id": "2026_CA_sonoma_prop_50_special",
+  "run_id": "latest",
+  "search_paths_tried": [
+    "derived/advanced_modeling/2026_CA_sonoma_prop_50_special/*advanced_scenarios*.csv",
+    "derived/advanced_modeling/**/*advanced_scenarios*.csv",
+    "derived/simulation/**/*.csv",
+    "derived/forecasts/**/*.csv"
+  ],
+  "broken_path_removed": "derived/scenario_forecasts/**/*.csv",
+  "resolved": {
+    "precinct_model": {"status": "SEARCHED", "note": "resolved via DerivedDataReader"},
+    "voter_universes": {"status": "SEARCHED", "note": "resolved via DerivedDataReader"},
+    "targeting_quadrants": {"status": "SEARCHED", "note": "resolved via DerivedDataReader"},
+    "precinct_turnout_scores": {"status": "SEARCHED", "note": "resolved via DerivedDataReader"},
+    "precinct_persuasion_scores": {"status": "SEARCHED", "note": "resolved via DerivedDataReader"},
+    "simulations": {"status": "SEARCHED", "note": "Now uses correct path — was broken pointing to non-existent scenario_forecasts/"}
+  },
+  "c02_fix": "completed",
+  "generated_at": "2026-03-12T22:30:00-07:00"
+}

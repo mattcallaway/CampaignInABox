@@ -9,6 +9,8 @@ campaign:
   contest_name: "Prop 50 Special Election 2025"
   contest_type: ballot_measure       # ballot_measure | candidate
   jurisdiction: "Sonoma County, CA"
+  state: "CA"                        # Two-letter state abbreviation
+  county: "Sonoma"                   # County name (no "County" suffix)
   election_date: "2025-06-03"
   candidate_name: ""                 # leave blank for ballot measures
   party: ""                          # D | R | N | (blank for ballot measures)
@@ -50,3 +52,8 @@ strategy:
   key_demographics: []               # e.g. ["Seniors 65+", "Latino voters"]
   key_geographic_targets: []         # e.g. ["Santa Rosa", "Petaluma"]
   primary_message: ""                # 1-sentence campaign message
+  # M-02 Fix: configurable persuasion vs GOTV split of the vote gap
+  # 0.65 = 65% persuasion / 35% GOTV (default general election)
+  # 0.40 = 40% persuasion / 60% GOTV (GOTV-heavy primary or safe seat)
+  # 0.80 = 80% persuasion / 20% GOTV (ballot measure, persuasion-dominant)
+  persuasion_gotv_split: 0.80       # ballot_measure: persuasion-dominant

@@ -1,0 +1,19 @@
+{
+  "k_turnout_source": "field_effects.yaml (gotv.door_knock_lift scaled)",
+  "k_turnout_field_effects_value": 0.025,
+  "k_turnout_scale_factor": 40.0,
+  "k_turnout_effective": 0.001,
+  "k_persuasion_source": "field_effects.yaml (persuasion.door_knock_swing scaled)",
+  "k_persuasion_field_effects_value": 0.020,
+  "k_persuasion_scale_factor": 50.0,
+  "k_persuasion_effective": 0.001,
+  "max_turnout_lift_pct_source": "advanced_modeling.yaml curves (or default)",
+  "max_turnout_lift_pct_effective": 0.08,
+  "max_persuasion_lift_pct_source": "advanced_modeling.yaml curves (or default)",
+  "max_persuasion_lift_pct_effective": 0.06,
+  "apply_historical_trends": false,
+  "trend_double_count_fix": "completed",
+  "missing_column_warnings": "enabled",
+  "generated_at": "2026-03-12T22:30:00-07:00",
+  "repair_id": "prompt23"
+}

@@ -2,12 +2,12 @@
 
 | Field | Value |
 |---|---|
-| **RUN_ID** | `2026-03-10__205411__6e008642__msi` |
+| **RUN_ID** | `2026-03-10__211126__90c643ce__msi` |
 | **Status** | PARTIAL |
 | **State** | CA |
 | **County** | Sonoma |
 | **Contest** | general |
-| **Started** | 2026-03-11T03:54:11.753607+00:00 |
+| **Started** | 2026-03-11T04:11:26.789567+00:00 |
 
 ## Input Files
 
@@ -37,6 +37,6 @@
 |---|---|---|
 | DATA_INTAKE_ANALYSIS | done | 0.083 |
 | INGEST_STAGING | skipped | 0.083 |
-| SCAFFOLD_BOUNDARY_INDEX_Sonoma | done | 0.53 |
-| VALIDATE_GEOGRAPHY | done | 0.537 |
-| VALIDATE_VOTES | skipped | 0.538 |
+| SCAFFOLD_BOUNDARY_INDEX_Sonoma | done | 0.087 |
+| VALIDATE_GEOGRAPHY | done | 0.098 |
+| VALIDATE_VOTES | skipped | 0.099 |

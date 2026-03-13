@@ -1,0 +1,27 @@
+{
+  "deleted_files": [
+    {"filename": "tmp_fix_pipeline.py", "reason": "Pipeline fix — logic merged into engine modules"},
+    {"filename": "tmp_gen_ca.py", "reason": "CA data generator — superseded by archive_ingest.py"},
+    {"filename": "tmp_patch_app.py", "reason": "App routing patch — logic merged into app.py"},
+    {"filename": "tmp_patch_app_login.py", "reason": "Login flow patch — logic in auth_manager.py"},
+    {"filename": "tmp_patch_app_v.py", "reason": "App versioning patch — not needed"},
+    {"filename": "tmp_patch_diag.py", "reason": "Diagnostics patch — logic in diagnostics_view.py"},
+    {"filename": "tmp_patch_dm.py", "reason": "Data manager patch — logic in data_manager_view.py"},
+    {"filename": "tmp_patch_footer.py", "reason": "Footer rendering — logic in app.py"},
+    {"filename": "tmp_patch_lift_models.py", "reason": "Lift model patch — superseded by C01 fix in engine/advanced_modeling/lift_models.py"},
+    {"filename": "tmp_patch_map.py", "reason": "Map view patch — logic in map_view.py"},
+    {"filename": "tmp_patch_nav.py", "reason": "Navigation patch — logic in ui_pages.yaml + app.py"},
+    {"filename": "tmp_patch_readme.py", "reason": "README patch — documentation complete"},
+    {"filename": "tmp_patch_strat.py", "reason": "Strategy view patch — logic in strategy_view.py"},
+    {"filename": "tmp_patch_strategy.py", "reason": "Strategy engine patch — superseded by C02 fix"},
+    {"filename": "tmp_patch_ui.py", "reason": "UI general patch — logic in app.py"},
+    {"filename": "tmp_patch_wr.py", "reason": "War room patch — logic in war_room_view.py"},
+    {"filename": "tmp_refactor.py", "reason": "Refactor helper — complete"},
+    {"filename": "tmp_update_collab.py", "reason": "Collaboration update — complete"},
+    {"filename": "tmp_update_sim.py", "reason": "Simulation update — complete"},
+    {"filename": "tmp_update_state_builder.py", "reason": "State builder update — complete"}
+  ],
+  "total_deleted": 20,
+  "deleted_at": "2026-03-12T22:30:00-07:00",
+  "repair_id": "prompt23"
+}

@@ -1,0 +1,38 @@
+{
+  "repair_id": "prompt23",
+  "generated_at": "2026-03-12T22:35:00-07:00",
+  "overall_pass": true,
+  "criteria": {
+    "rollback_created_before_changes": {"status": "PASS", "detail": "branch rollback/prompt23_pre_stabilization + tag v_pre_prompt23_stable"},
+    "system_technical_map_created": {"status": "PASS", "detail": "docs/SYSTEM_TECHNICAL_MAP.md — 11 sections written"},
+    "field_effects_yaml_wired": {"status": "PASS", "detail": "lift_models.py loads field_effects.yaml; k resolves via priority chain"},
+    "strategy_engine_loads_simulations": {"status": "PASS", "detail": "DerivedDataReader.simulations() uses correct paths; broken scenario_forecasts/ removed"},
+    "github_safety_enforced": {"status": "PASS", "detail": ".pre-commit-config.yaml created; requires pre-commit install"},
+    "state_county_populated": {"status": "PASS", "detail": "campaign_config.yaml: state=CA, county=Sonoma"},
+    "file_registry_active": {"status": "PARTIAL", "detail": "Module exists; pipeline wiring deferred to future pass"},
+    "silent_fallbacks_replaced": {"status": "PASS", "detail": "_c() in lift_models.py logs WARNING for missing registered/turnout/support"},
+    "temp_files_cleaned": {"status": "PASS", "detail": "20 tmp_*.py files deleted from repository root"},
+    "post_repair_rollback_created": {"status": "PASS", "detail": "branch rollback/prompt23_post_repair + tag v_post_prompt23_repaired"}
+  },
+  "fixes_completed": [
+    "C01: lift_models.py field_effects.yaml wiring",
+    "C02: strategy_ai.py DerivedDataReader + broken path fix",
+    "C03: .pre-commit-config.yaml created",
+    "M-01: trend double-count fix (apply_historical_trends flag)",
+    "M-02: persuasion_gotv_split configurable",
+    "H06: state/county added to campaign_config.yaml",
+    "H07: 20 tmp_patch_*.py files deleted",
+    "engine/utils/helpers.py created",
+    "engine/utils/derived_data_reader.py created",
+    "docs/SYSTEM_TECHNICAL_MAP.md written",
+    "docs/ROLLBACK_POINTS.md written"
+  ],
+  "fixes_deferred": [
+    "File registry pipeline activation (Phase 8)",
+    "Persuasion score calibration (M-04)",
+    "Chunked voter file reading (PERF-01)",
+    "Monte Carlo parallelization (PERF-02)"
+  ],
+  "health_score_before": 5.8,
+  "health_score_expected_after": 7.0
+}

@@ -1,8 +1,8 @@
 {
-  "run_id": "2026-03-10__205411__6e008642__msi",
+  "run_id": "2026-03-10__211126__90c643ce__msi",
   "run_status": "partial",
-  "total_elapsed_s": 0.538,
-  "started_at": "2026-03-11T03:54:11.753607+00:00",
+  "total_elapsed_s": 0.099,
+  "started_at": "2026-03-11T04:11:26.789567+00:00",
   "county_name": "Sonoma",
   "county_fips": "097",
   "county_slug": "sonoma",
@@ -38,7 +38,7 @@
     {
       "step": "SCAFFOLD_BOUNDARY_INDEX_Sonoma",
       "status": "done",
-      "elapsed_s": 0.53,
+      "elapsed_s": 0.087,
       "outputs": [
         "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\boundary_index\\boundaries_index.csv"
       ],
@@ -50,7 +50,7 @@
     {
       "step": "VALIDATE_GEOGRAPHY",
       "status": "done",
-      "elapsed_s": 0.537,
+      "elapsed_s": 0.098,
       "outputs": [],
       "hashes_out": {},
       "notes": []
@@ -58,7 +58,7 @@
     {
       "step": "VALIDATE_VOTES",
       "status": "skipped",
-      "elapsed_s": 0.538,
+      "elapsed_s": 0.099,
       "reason": "blocked: missing votes \u2014 detail.xlsx not found"
     }
   ],

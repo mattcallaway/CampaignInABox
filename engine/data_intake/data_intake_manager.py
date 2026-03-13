@@ -44,6 +44,9 @@ _DESTINATION_RULES = {
 class FileRegistryManager:
     """Manages the lifecycle of Campaign In A Box data files."""
 
+    # Expose the module-level rules as a class attribute so callers can access via manager._DESTINATION_RULES
+    _DESTINATION_RULES = _DESTINATION_RULES
+
     def __init__(self, project_root: str | Path):
         self.root = Path(project_root)
         self.registry_dir_latest  = self.root / "derived" / "file_registry" / "latest"

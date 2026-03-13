@@ -67,3 +67,8 @@ derived/war_room/private/*
 /data/campaign_runtime/
 /data/private/
 /data/intelligence/private/
+
+# Historical Archive
+# Allowed: models/, derived/archive/, reports/archive/
+# Ignored: data/election_archive/raw_unnormalized/ (if any)
+

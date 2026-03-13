@@ -96,12 +96,14 @@ def render_overview(data: dict) -> None:
     with r2:
         st.markdown("<div class='secondary-block'>", unsafe_allow_html=True)
         st.markdown("<h3 class='section-header'>💡 Strategic Recommendations</h3>", unsafe_allow_html=True)
-        if rec:
+        if isinstance(rec, dict) and rec:
             render_alert("success", f"Focus: {rec.get('focus_desc', '—')}")
             prio = rec.get("priority_regions", [])
             if prio:
                 render_alert("info", f"Prioritize jurisdictions: {', '.join(str(p) for p in prio[:3])}")
             render_alert("warning", f"Model Strategy: {rec.get('strategy_mode', '—')}")
+        elif isinstance(rec, str):
+            render_alert("success", f"Focus: {rec}")
         else:
             render_alert("warning", "No recommendations available yet. Run the pipeline.")
         st.markdown("</div>", unsafe_allow_html=True)
