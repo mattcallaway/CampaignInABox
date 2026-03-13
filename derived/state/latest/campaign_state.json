@@ -285,5 +285,19 @@
     "suspicious_entries": 0,
     "registry_coverage": "strong",
     "last_updated": "2026-03-13T00:34:09.679891"
+  },
+  "swing_model_summary": {
+    "enabled": false,
+    "backtest_status": "DISABLED_INSUFFICIENT_BACKTEST",
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "folds_run": 0,
+    "top_swing_precinct_count": 0,
+    "persuasion_target_count": 0,
+    "turnout_target_count": 0,
+    "years_available": [],
+    "last_run": null,
+    "note": "Run Swing Modeling in the UI to populate. Requires historical election archive data."
   }
-}
+}

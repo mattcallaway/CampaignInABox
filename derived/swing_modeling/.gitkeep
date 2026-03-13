@@ -1,0 +1,9 @@
+# derived/swing_modeling/.gitkeep
+# Swing modeling outputs directory.
+# Files written here by swing_detector, persuasion_target_model,
+# turnout_opportunity_model, and backtester:
+#   <RUN_ID>__swing_scores.csv
+#   <RUN_ID>__persuasion_targets.csv
+#   <RUN_ID>__turnout_targets.csv
+#   <RUN_ID>__backtest_results.csv
+#   <RUN_ID>__backtest_summary.json

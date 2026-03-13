@@ -273,3 +273,29 @@ First post-confidence-enforcement snapshot. Registry is now policy-enforced.
 - Ambiguous IDs fail closed (no auto-join)
 - SRPREC cannot become MPREC without crosswalk
 - Coverage: **strong**
+
+---
+
+### Entry 12 — Pre Prompt 26 Swing Modeling
+
+| Field | Value |
+|-------|-------|
+| **Timestamp** | 2026-03-13T02:00:00-07:00 |
+| **Branch** | `rollback/prompt26_pre_swing_modeling` |
+| **Tag** | `v_pre_prompt26_swing_modeling` |
+| **Reason** | Backtested swing precinct modeling |
+| **Note** | Prompt 25 archive builder is baseline. Before adding swing_detector, persuasion_target_model, turnout_opportunity_model, backtester, metrics, and UI swing modeling view. |
+
+#### Scope
+- `engine/swing_modeling/*` — new module (7 files)
+- `engine/strategy/swing_strategy_adapter.py` — validation-aware strategy integration
+- `ui/dashboard/swing_model_view.py` — swing modeling dashboard view
+- `derived/swing_modeling/` and `reports/swing_modeling/` — output directories
+- `derived/state/latest/campaign_state.json` — swing_model_summary block added
+
+#### Validation Results
+- 26/26 assertions passed
+- Backtest: 2 folds on synthetic data, avg F1=0.594, status=ACTIVE_VALIDATED
+- IQR anomaly detection confirmed
+- Sparse data → confidence floor correctly applied
+- Cross-county isolation enforced (state + county filter)
