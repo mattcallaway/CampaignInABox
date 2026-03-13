@@ -4,10 +4,9 @@ repos:
       - id: github-safety-check
         name: Campaign In A Box — GitHub Safety Check
         entry: python engine/data_intake/github_safety.py
-        language: python
+        language: system
         pass_filenames: false
         always_run: true
-        stages: [commit]
         description: >
           Blocks commits containing raw voter files, PII columns,
           or un-aggregated campaign runtime data.
