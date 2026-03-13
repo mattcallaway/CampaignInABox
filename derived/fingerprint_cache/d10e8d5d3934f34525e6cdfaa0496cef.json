@@ -1,0 +1,23 @@
+{
+  "file_path": "C:\\Users\\MATHEW~1\\AppData\\Local\\Temp\\fingerprint_test_82p_0f0b\\precinct_crosswalk.xlsx",
+  "file_name": "precinct_crosswalk.xlsx",
+  "file_hash": "d10e8d5d3934f34525e6cdfaa0496cef",
+  "file_type": "crosswalk_file",
+  "display_name": "Precinct Crosswalk",
+  "confidence": 0.72,
+  "matching_headers": [
+    "srprec",
+    "mprec"
+  ],
+  "optional_hits": [
+    "county"
+  ],
+  "precinct_format": "******",
+  "precinct_level": true,
+  "contest_level": false,
+  "sheet_name": "Sheet1",
+  "row_count": 3,
+  "col_count": 3,
+  "source_url": "https://sonomacounty.gov/test",
+  "classified_at": "2026-03-13T01:26:57.000140"
+}

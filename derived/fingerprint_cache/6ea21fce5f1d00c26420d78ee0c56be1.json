@@ -1,0 +1,26 @@
+{
+  "file_path": "C:\\Users\\MATHEW~1\\AppData\\Local\\Temp\\fingerprint_test_82p_0f0b\\statement_of_vote_2024.xlsx",
+  "file_name": "statement_of_vote_2024.xlsx",
+  "file_hash": "6ea21fce5f1d00c26420d78ee0c56be1",
+  "file_type": "statement_of_vote",
+  "display_name": "Statement of Vote",
+  "confidence": 0.92,
+  "matching_headers": [
+    "precinct",
+    "registered voters",
+    "ballots cast"
+  ],
+  "optional_hits": [
+    "vote by mail",
+    "election day",
+    "turnout"
+  ],
+  "precinct_format": "******",
+  "precinct_level": true,
+  "contest_level": false,
+  "sheet_name": "Sheet1",
+  "row_count": 3,
+  "col_count": 8,
+  "source_url": "https://sonomacounty.gov/test",
+  "classified_at": "2026-03-13T01:26:56.921982"
+}

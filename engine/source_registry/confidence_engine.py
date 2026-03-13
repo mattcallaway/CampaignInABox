@@ -1,5 +1,5 @@
 """
-engine/source_registry/confidence_engine.py — Prompt 25A.1
+engine/source_registry/confidence_engine.py — Prompt 25A.1 / 25A.3
 
 Confidence recalculation engine for the source registry.
 
@@ -9,6 +9,8 @@ registry entry, taking into account:
   - source_origin classification
   - URL verification result
   - User approval status
+  - Fingerprint confidence boost (Prompt 25A.3): +0.05 when fingerprinted file
+    confidence > 0.90, rewarding sources that produce verified election files
 
 All changes are non-destructive — original confidence_default is preserved;
 recalculated value is written to confidence_recalculated.
@@ -43,6 +45,7 @@ NON_ALLOWLISTED_CAP = 0.59
 def recalculate_source_confidence(
     source_record: dict,
     verification_result: "VerificationResult",
+    fingerprint_confidence: float = 0.0,
 ) -> dict:
     """
     Apply confidence policy rules to a source record and return an annotated copy.
@@ -51,14 +54,16 @@ def recalculate_source_confidence(
 
     1. heuristic_candidate  → cap at 0.59
     2. Not in allowlist (and not user_approved) → cap at 0.59
-    3. URL verification failed (and not user_approved) → reduce to 0.30
+    3. URL verification failed (non-allowlisted, non-approved) → reduce to 0.30
     4. Apply domain tier ceiling (gov=0.99, official=0.90, academic=0.85)
     5. Apply source_origin ceiling
-    6. Use min(confidence_default, all applicable ceilings) as final score
+    6. Fingerprint boost (Prompt 25A.3): if fingerprint_confidence > 0.90, add 0.05
+       (capped at tier ceiling — reward sources that produce verified election files)
 
     Args:
-        source_record: raw dict from registry YAML
-        verification_result: VerificationResult from source_verifier.verify_source()
+        source_record:          raw dict from registry YAML
+        verification_result:    VerificationResult from source_verifier.verify_source()
+        fingerprint_confidence: highest fingerprint confidence seen from this source (0.0–1.0)
 
     Returns:
         Annotated copy of source_record with added fields:
@@ -119,8 +124,22 @@ def recalculate_source_confidence(
     elif source_origin == "discovered_official" and not reasons:
         reasons.append(f"Discovered official source, ceiling={origin_max}")
 
-    # ── Final score: minimum of all caps ──────────────────────────────────────
+    # Initialize final_confidence before applying boost
     final_confidence = round(min(caps), 4)
+
+    # ── Rule 6: Fingerprint confidence boost (Prompt 25A.3) ────────────────────
+    # If this source has produced a file that fingerprinted at >0.90 confidence,
+    # reward the source registry entry with a +0.05 boost (capped at tier ceiling).
+    fingerprint_boosted = False
+    if fingerprint_confidence > 0.90 and final_confidence < tier_max:
+        boost = min(0.05, tier_max - final_confidence)
+        if boost > 0:
+            final_confidence = round(final_confidence + boost, 4)
+            fingerprint_boosted = True
+            reasons.append(f"Fingerprint boost +{boost:.2f} (file confidence={fingerprint_confidence:.2f}")
+
+    # ── Final score ──────────────────────────────────────────────────────────────
+    final_confidence = round(final_confidence, 4)
     changed = abs(final_confidence - confidence_default) > 0.001
 
     if not reasons:
@@ -128,15 +147,16 @@ def recalculate_source_confidence(
 
     confidence_reason = "; ".join(reasons) if reasons else "Standard confidence"
 
-    # ── Write back to result dict ──────────────────────────────────────────────
-    result["confidence_recalculated"] = final_confidence
-    result["confidence_default_original"] = confidence_default
-    result["confidence_changed"] = changed
-    result["confidence_reason"] = confidence_reason
-    result["verified"] = vr.verified
-    result["domain"] = vr.domain
-    result["domain_tier"] = vr.tier
-    result["source_origin"] = source_origin   # ensure field present
+    # ── Write back to result dict ────────────────────────────────────────────────
+    result["confidence_recalculated"]       = final_confidence
+    result["confidence_default_original"]   = confidence_default
+    result["confidence_changed"]            = changed
+    result["confidence_reason"]             = confidence_reason
+    result["verified"]                      = vr.verified
+    result["domain"]                        = vr.domain
+    result["domain_tier"]                   = vr.tier
+    result["source_origin"]                 = source_origin
+    result["fingerprint_boosted"]           = fingerprint_boosted
 
     if changed:
         log.info(

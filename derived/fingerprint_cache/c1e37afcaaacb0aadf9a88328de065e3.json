@@ -1,0 +1,24 @@
+{
+  "file_path": "C:\\Users\\MATHEW~1\\AppData\\Local\\Temp\\fingerprint_test_82p_0f0b\\turnout_report_2024.xlsx",
+  "file_name": "turnout_report_2024.xlsx",
+  "file_hash": "c1e37afcaaacb0aadf9a88328de065e3",
+  "file_type": "turnout_report",
+  "display_name": "Turnout Report",
+  "confidence": 0.728,
+  "matching_headers": [
+    "registered",
+    "ballots cast"
+  ],
+  "optional_hits": [
+    "turnout",
+    "precinct"
+  ],
+  "precinct_format": "******",
+  "precinct_level": false,
+  "contest_level": false,
+  "sheet_name": "Sheet1",
+  "row_count": 3,
+  "col_count": 4,
+  "source_url": "https://sonomacounty.gov/test",
+  "classified_at": "2026-03-13T01:26:56.969244"
+}

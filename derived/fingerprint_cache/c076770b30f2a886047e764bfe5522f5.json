@@ -1,0 +1,25 @@
+{
+  "file_path": "C:\\Users\\MATHEW~1\\AppData\\Local\\Temp\\fingerprint_test_82p_0f0b\\precinct_contest_results_2024.xlsx",
+  "file_name": "precinct_contest_results_2024.xlsx",
+  "file_hash": "c076770b30f2a886047e764bfe5522f5",
+  "file_type": "precinct_results",
+  "display_name": "Precinct Contest Results",
+  "confidence": 0.89,
+  "matching_headers": [
+    "precinct",
+    "votes"
+  ],
+  "optional_hits": [
+    "candidate",
+    "contest",
+    "party"
+  ],
+  "precinct_format": "******",
+  "precinct_level": true,
+  "contest_level": true,
+  "sheet_name": "Sheet1",
+  "row_count": 3,
+  "col_count": 5,
+  "source_url": "https://sonomacounty.gov/test",
+  "classified_at": "2026-03-13T01:26:56.938925"
+}

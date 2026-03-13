@@ -96,6 +96,53 @@ def render_data_manager(data: dict):
             st.markdown("#### File Preview")
             _preview_file(temp_path)
 
+            # ── Election File Fingerprint Analysis (Prompt 25A.3) ─────────────
+            st.markdown("#### 🔬 Election File Fingerprint")
+            try:
+                from engine.file_fingerprinting.fingerprint_engine import classify as fp_classify
+                fp_result = fp_classify(temp_path, use_cache=False)
+
+                if fp_result.file_type not in ("parse_error", "file_not_found", "unknown"):
+                    conf_pct = int(fp_result.confidence * 100)
+                    tier_color = "green" if conf_pct >= 85 else ("orange" if conf_pct >= 65 else "red")
+                    st.success(
+                        f"**{fp_result.display_name}** — "
+                        f":{tier_color}[**{conf_pct}% confidence**]"
+                    )
+                    fp_c1, fp_c2, fp_c3, fp_c4 = st.columns(4)
+                    fp_c1.metric("File Type", fp_result.display_name)
+                    fp_c2.metric("Confidence", f"{conf_pct}%")
+                    fp_c3.metric("Precinct Level", "✅ Yes" if fp_result.precinct_level else "❌ No")
+                    fp_c4.metric("Contest Level", "✅ Yes" if fp_result.contest_level else "❌ No")
+
+                    if fp_result.matching_headers:
+                        st.caption(f"**Matched headers:** {', '.join(fp_result.matching_headers[:8])}")
+                    if fp_result.precinct_format:
+                        st.caption(f"**Precinct ID format:** `{fp_result.precinct_format}`")
+                    if fp_result.optional_hits:
+                        st.caption(f"**Optional matches:** {', '.join(fp_result.optional_hits[:6])}")
+
+                    # Show all rule scores in expandable section
+                    with st.expander("📊 All Rule Scores", expanded=False):
+                        if fp_result.all_scores:
+                            for rule_key, score in sorted(fp_result.all_scores.items(), key=lambda x: x[1], reverse=True):
+                                bar = "█" * int(score * 20)
+                                st.text(f"{rule_key:<30} {score:.3f}  {bar}")
+                        else:
+                            st.caption("No scores available (cached result).")
+                elif fp_result.file_type == "unknown":
+                    st.warning(
+                        "⚠️ **Unknown file type** — could not match any election file fingerprint. "
+                        "Check headers and format, or add a new rule to fingerprint_rules.yaml."
+                    )
+                    if fp_result.all_scores:
+                        best = max(fp_result.all_scores.items(), key=lambda x: x[1])
+                        st.caption(f"Closest match: `{best[0]}` at {best[1]:.2f}")
+                else:
+                    st.error(f"Fingerprint error: {fp_result.file_type}")
+            except Exception as fp_err:
+                st.caption(f"Fingerprint analysis unavailable: {fp_err}")
+
             classification = manager.classify_file(temp_path)
             cat  = classification["campaign_data_type"]
             prov = classification["provenance"]
