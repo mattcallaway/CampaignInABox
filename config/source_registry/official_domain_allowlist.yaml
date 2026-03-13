@@ -1,36 +1,42 @@
 # Official Domain Allowlist — Campaign In A Box Source Registry
 # ---
-# Only domains listed here are eligible for high confidence scores (>=0.90).
-# Sources whose domains are NOT in this list will be capped at confidence 0.59
-# unless the source is manually user_approved (max 0.95 for user-approved).
+# Prompt 25A.1: 3-tier allowlist created
+# Prompt 25A.2: sonomacounty.gov, electionstats.sonomacounty.ca.gov, socovotes.com added.
+#               socoe.us REMOVED — confirmed not an official government domain.
 #
 # TIERS:
 #   gov_tier:       True government domains (.gov / official registrar). Max confidence: 0.99
-#   official_tier:  Recognized official-adjacent domains (ENR vendors, open gov portals). Max: 0.90
-#   academic_tier:  Trusted academic/aggregator sources (UC Berkeley SWDB, ElectionStats). Max: 0.85
-#   not_allowlisted: Any domain not found below. Max confidence: 0.59 (unless user_approved)
+#   official_tier:  Official-adjacent domains (ENR vendors, open gov portals). Max: 0.90
+#   academic_tier:  Trusted academic/aggregator sources. Max: 0.85
+#   not_allowlisted: Any domain not listed. Max: 0.59 (or 0.95 if user_approved)
 # ---
 
-schema_version: "1.0"
+schema_version: "1.1"
 last_updated: "2026-03-13"
 
 gov_tier:
-  # These are true government domains. Max confidence: 0.99
+  # True government or official registrar domains. Max confidence: 0.99
   max_confidence: 0.99
   domains:
+    # California SOS
     - sos.ca.gov
     - www.sos.ca.gov
     - elections.cdn.sos.ca.gov
     - vig.cdn.sos.ca.gov
+    - vote.ca.gov
+    # Sonoma County — official .gov domain
     - sonomacounty.gov
     - www.sonomacounty.gov
-    - socoe.us
-    # ^ Sonoma County Office of Elections — official registrar domain
-    # Verified: Sonoma County Registrar of Voters official site
-    - vote.ca.gov
+    # Sonoma County — official Registrar domain (redirects to sonomacounty.gov)
+    - socovotes.com
+    - www.socovotes.com
+    # Sonoma County — official election results database (ca.gov subdomain)
+    - electionstats.sonomacounty.ca.gov
+    # NOTE: socoe.us was previously listed here. Research confirmed it is NOT
+    # the official Sonoma County registrar domain. Removed in Prompt 25A.2.
 
 official_tier:
-  # Recognized official-adjacent sources: ENR vendors, county open data portals.
+  # Official-adjacent: ENR vendors, county open data portals.
   # Not .gov but serve official government data under contract or citation.
   # Max confidence: 0.90
   max_confidence: 0.90
@@ -41,24 +47,23 @@ official_tier:
     # ^ Sonoma County official open data portal (ArcGIS hosted)
 
 academic_tier:
-  # Trusted academic/research aggregators. Not government but deeply authoritative.
+  # Trusted academic/research aggregators.
   # Max confidence: 0.85 (per user policy: only true .gov gets highest confidence)
   max_confidence: 0.85
   domains:
     - statewidedatabase.org
     # ^ UC Berkeley Statewide Database — canonical MPREC geometry and crosswalks
     - electionstats.org
-    # ^ ElectionStats.org — historical CA election data aggregator
+    # ^ ElectionStats.org — general CA election data aggregator (NOT Sonoma-specific)
     - nces.ed.gov
     # ^ National Center for Education Statistics — school district boundaries
 
 notes: >
-  Domain allowlist policy (Prompt 25A.1):
-  - gov_tier: True .gov domains or verified official registrar domains. Max: 0.99
+  Domain allowlist policy (updated Prompt 25A.2):
+  - gov_tier: True .gov domains or official registrar domains. Max: 0.99
+    Includes sonomacounty.gov, socovotes.com, electionstats.sonomacounty.ca.gov
   - official_tier: Official-adjacent (ENR vendors, open data portals). Max: 0.90
   - academic_tier: Trusted academic/aggregator sources. Max: 0.85
   - Not allowlisted: Any other domain. Max: 0.59 (or 0.95 if user_approved)
 
-  To add a domain, research it to confirm it is a legitimate official or authoritative
-  source, then add it to the appropriate tier with a comment explaining why.
-  Do NOT add domains based on URL patterns alone — verify the domain is real and official.
+  socoe.us removed: confirmed not an official government domain (was a tech company domain).

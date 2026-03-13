@@ -1,0 +1,15 @@
+{
+  "total_sources": 27,
+  "verified_sources": 23,
+  "heuristic_sources": 0,
+  "invalid_domain": 0,
+  "user_approved_sources": 0,
+  "confidence_changed": 7,
+  "downgraded": 7,
+  "run_id": "20260313__p25a2",
+  "state": "CA",
+  "county": "Sonoma",
+  "suspicious_entries": 0,
+  "domains_not_in_allowlist": 0,
+  "registry_coverage": "strong"
+}
