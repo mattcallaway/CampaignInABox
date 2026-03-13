@@ -72,3 +72,7 @@ derived/war_room/private/*
 # Allowed: models/, derived/archive/, reports/archive/
 # Ignored: data/election_archive/raw_unnormalized/ (if any)
 
+
+# Prompt 20.8 — Persistent session store (local only, never committed)
+data/local_sessions/
+

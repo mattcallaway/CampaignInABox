@@ -1,0 +1,20 @@
+---
+# config/campaign_registry.yaml — Prompt 20.8
+# Canonical registry of all campaigns.
+# Only one campaign should have is_active: true at a time.
+
+campaigns:
+  - campaign_id: "2026_CA_sonoma_prop_50_special"
+    campaign_name: "Prop 50 Special Election 2026"
+    state: "CA"
+    county: "Sonoma"
+    jurisdiction: "Sonoma County"
+    contest_name: "Prop 50 Special Election 2025"
+    contest_type: "ballot_measure"
+    election_date: "2025-06-03"
+    stage: "field"
+    status: "active"
+    is_active: true
+    created_at: "2026-01-01T00:00:00"
+    archived_at: null
+    notes: "Inaugural campaign. Primary development and modeling campaign."

@@ -299,3 +299,34 @@ First post-confidence-enforcement snapshot. Registry is now policy-enforced.
 - IQR anomaly detection confirmed
 - Sparse data → confidence floor correctly applied
 - Cross-county isolation enforced (state + county filter)
+
+---
+
+### Entry 13 — Pre Prompt 20.8 User & Campaign Administration Layer
+
+| Field | Value |
+|-------|-------|
+| **Timestamp** | 2026-03-13T09:15:00-07:00 |
+| **Branch** | `rollback/prompt208_pre_admin_layer` |
+| **Tag** | `v_pre_prompt208_admin_layer` |
+| **Reason** | User management, persistent sessions, campaign admin layer |
+| **Note** | Before adding user admin UI, session manager, campaign registry, campaign admin UI, and enhanced command bar. |
+
+#### Scope
+- `engine/auth/auth_manager.py` — extended with create_user, update_user_role, disable_user, enable_user
+- `engine/auth/session_manager.py` — new: persistent remembered sessions (gitignored store)
+- `engine/admin/campaign_manager.py` — new: campaign registry CRUD
+- `config/users_registry.json` — expanded with is_active, remember_login_allowed, full_name, timestamps
+- `config/roles_permissions.yaml` — added manage_users + manage_campaigns to all 7 roles
+- `config/campaign_registry.yaml` + `config/active_campaign.yaml` — new
+- `ui/dashboard/user_admin_view.py` + `ui/dashboard/campaign_admin_view.py` — new admin views
+- `ui/dashboard/app.py` — Remember Me login, session bootstrap, enhanced command bar
+- `config/ui_pages.yaml` — added admin group (Users & Roles, Campaign Admin, Swing Modeling)
+- `.gitignore` — added `data/local_sessions/`
+
+#### Validation Results
+- 41/41 assertions passed
+- session_manager: create/validate/revoke/purge all correct
+- auth_manager: create_user, role update, disable/enable, permissions all correct
+- campaign_manager: create, set_active (single-active enforced), stage change, archive, audit log all correct
+- Config file integrity: all fields present across all 4 config files

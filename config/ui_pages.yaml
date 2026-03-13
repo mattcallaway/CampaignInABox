@@ -63,3 +63,13 @@ system:
   pages:
     - id: "🩺 Diagnostics"
       label: "Diagnostics"
+
+admin:
+  label: "⚙️ Administration"
+  pages:
+    - id: "👤 Users & Roles"
+      label: "Users & Roles"
+    - id: "🏛️ Campaign Admin"
+      label: "Campaign Admin"
+    - id: "📊 Swing Modeling"
+      label: "Swing Modeling"

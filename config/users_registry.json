@@ -2,38 +2,80 @@
   "users": [
     {
       "user_id": "mcallaway",
+      "full_name": "Matthew Callaway",
       "name": "Matthew Callaway",
-      "role": "campaign_manager"
+      "role": "campaign_manager",
+      "is_active": true,
+      "remember_login_allowed": true,
+      "created_at": "2026-01-01T00:00:00",
+      "last_login_at": null,
+      "notes": "Campaign manager and primary admin."
     },
     {
       "user_id": "field_01",
+      "full_name": "Field Director",
       "name": "Field Director",
-      "role": "field_director"
+      "role": "field_director",
+      "is_active": true,
+      "remember_login_allowed": true,
+      "created_at": "2026-01-01T00:00:00",
+      "last_login_at": null,
+      "notes": ""
     },
     {
       "user_id": "data_01",
+      "full_name": "Data Director",
       "name": "Data Director",
-      "role": "data_director"
+      "role": "data_director",
+      "is_active": true,
+      "remember_login_allowed": true,
+      "created_at": "2026-01-01T00:00:00",
+      "last_login_at": null,
+      "notes": ""
     },
     {
       "user_id": "finance_01",
+      "full_name": "Finance Director",
       "name": "Finance Director",
-      "role": "finance_director"
+      "role": "finance_director",
+      "is_active": true,
+      "remember_login_allowed": true,
+      "created_at": "2026-01-01T00:00:00",
+      "last_login_at": null,
+      "notes": ""
     },
     {
       "user_id": "comms_01",
+      "full_name": "Communications Director",
       "name": "Communications Director",
-      "role": "communications_director"
+      "role": "communications_director",
+      "is_active": true,
+      "remember_login_allowed": true,
+      "created_at": "2026-01-01T00:00:00",
+      "last_login_at": null,
+      "notes": ""
     },
     {
       "user_id": "analyst_01",
+      "full_name": "Lead Analyst",
       "name": "Lead Analyst",
-      "role": "analyst"
+      "role": "analyst",
+      "is_active": true,
+      "remember_login_allowed": true,
+      "created_at": "2026-01-01T00:00:00",
+      "last_login_at": null,
+      "notes": ""
     },
     {
       "user_id": "guest_01",
+      "full_name": "Guest Viewer",
       "name": "Guest Viewer",
-      "role": "viewer"
+      "role": "viewer",
+      "is_active": true,
+      "remember_login_allowed": false,
+      "created_at": "2026-01-01T00:00:00",
+      "last_login_at": null,
+      "notes": "Read-only guest access."
     }
   ]
 }
