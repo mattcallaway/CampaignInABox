@@ -1,10 +1,11 @@
 """
-ui/dashboard/source_registry_view.py — Prompt 25A
+ui/dashboard/source_registry_view.py — Prompt 25A / 25A.1
 
 Source Registry Dashboard Page.
 
-Shows all known contest and geometry sources, their confidence levels,
-approval status, and allows user to approve/reject/add notes.
+Shows all known contest and geometry sources with verification status,
+confidence scoring, domain tier, and approval controls.
+Prompt 25A.1 additions: Domain, Verified badge, Source Origin, Confidence Reason columns.
 """
 from __future__ import annotations
 
@@ -46,17 +47,34 @@ def render_source_registry(data: dict) -> None:
     contest_sources  = load_contest_registry()
     geometry_sources = load_geometry_registry()
 
+    # ── Run verification on all sources (offline/fast mode — no HTTP) ─────────
+    _verified_cache: dict = {}
+    try:
+        from engine.source_registry.source_verifier import verify_source
+        from engine.source_registry.confidence_engine import recalculate_source_confidence
+        for src in contest_sources + geometry_sources:
+            vr = verify_source(src, skip_http=True)
+            rec = recalculate_source_confidence(src, vr)
+            _verified_cache[src.get("source_id", "")] = rec
+    except Exception:
+        pass  # Verification optional — UI still works without it
+
+    def _get_verified_rec(src: dict) -> dict:
+        return _verified_cache.get(src.get("source_id", ""), src)
+
     # ── Summary Metrics ──────────────────────────────────────────────────────
     approved_contest  = sum(1 for s in contest_sources  if s.get("user_approved"))
     approved_geometry = sum(1 for s in geometry_sources if s.get("user_approved"))
     total_sources = len(contest_sources) + len(geometry_sources)
     total_approved = approved_contest + approved_geometry
+    total_verified = sum(1 for r in _verified_cache.values() if r.get("verified"))
 
-    c1, c2, c3, c4 = st.columns(4)
+    c1, c2, c3, c4, c5 = st.columns(5)
     c1.metric("Contest Sources", len(contest_sources))
     c2.metric("Geometry Sources", len(geometry_sources))
-    c3.metric("Approved", total_approved, delta=f"{total_approved}/{total_sources}")
-    c4.metric("Coverage", _coverage_label(total_sources))
+    c3.metric("Verified", total_verified, delta=f"{total_verified}/{total_sources}")
+    c4.metric("Approved", total_approved)
+    c5.metric("Coverage", _coverage_label(total_sources))
 
     st.divider()
 
@@ -72,7 +90,7 @@ def render_source_registry(data: dict) -> None:
         st.subheader("Election Result Sources")
 
         # Filters
-        col_f1, col_f2, col_f3 = st.columns(3)
+        col_f1, col_f2, col_f3, col_f4 = st.columns(4)
         with col_f1:
             county_filter = st.selectbox(
                 "Filter by County",
@@ -90,6 +108,8 @@ def render_source_registry(data: dict) -> None:
                 "Approval Status", ["All", "Approved", "Unapproved"],
                 horizontal=True, key="reg_approval_filter",
             )
+        with col_f4:
+            show_suspicious = st.toggle("Show Suspicious Sources Only", value=False, key="show_suspicious")
 
         # Apply filters
         filtered = list(contest_sources)
@@ -101,23 +121,50 @@ def render_source_registry(data: dict) -> None:
             filtered = [s for s in filtered if s.get("user_approved")]
         elif approval_filter == "Unapproved":
             filtered = [s for s in filtered if not s.get("user_approved")]
+        if show_suspicious:
+            filtered = [s for s in filtered
+                        if not _get_verified_rec(s).get("verified", True)]
 
         st.caption(f"Showing {len(filtered)} of {len(contest_sources)} contest sources")
 
         for src in filtered:
             sid = src.get("source_id", "unknown")
+            rec = _get_verified_rec(src)
             approved = src.get("user_approved", False)
             badge = "✅" if approved else "⬜"
-            conf = src.get("confidence_default", 0.0)
+            conf = rec.get("confidence_recalculated", src.get("confidence_default", 0.0))
+            conf_orig = src.get("confidence_default", conf)
+            verified = rec.get("verified", True)
+            domain = rec.get("domain", "") or ""
+            domain_tier = rec.get("domain_tier", "")
+            origin = rec.get("source_origin", src.get("source_origin", "seeded_official"))
+
+            # Color coding: green=verified official, yellow=unverified/discovered, red=invalid/suspicious
+            if verified and domain_tier in ("gov_tier", "official_tier"):
+                ver_badge = ":green[✅ Verified Official]"
+            elif verified and domain_tier == "academic_tier":
+                ver_badge = ":blue[✅ Verified Academic]"
+            elif verified:
+                ver_badge = ":yellow[⚠️ User Approved]"
+            else:
+                ver_badge = ":red[❌ Unverified]"
+
             conf_color = "🟢" if conf >= 0.90 else ("🟡" if conf >= 0.70 else "🔴")
+            conf_changed = abs(conf - conf_orig) > 0.001
+            conf_display = f"{conf:.2f}" + (f" *(was {conf_orig:.2f})*" if conf_changed else "")
 
             with st.expander(
-                f"{badge} {conf_color} **{sid}** — {src.get('official_status','?')} | conf={conf}",
+                f"{badge} {conf_color} **{sid}** — {src.get('official_status','?')} | conf={conf_display}",
                 expanded=False,
             ):
                 col_a, col_b = st.columns([3, 1])
 
                 with col_a:
+                    # Verification status row
+                    st.markdown(f"**Verification:** {ver_badge}  |  **Domain:** `{domain or 'local/no URL'}`  |  **Tier:** `{domain_tier}`")
+                    st.markdown(f"**Source Origin:** `{origin}`")
+                    if rec.get("confidence_reason"):
+                        st.caption(f"Confidence reason: {rec['confidence_reason']}")
                     st.markdown(f"**Jurisdiction:** {src.get('state','?')}, {src.get('county','statewide')}")
                     st.markdown(f"**Year:** {src.get('year', 'any')}  |  **Type:** {src.get('election_type', 'any')}  |  **Source:** `{src.get('source_kind','?')}`")
                     if src.get("page_url") or src.get("base_url"):
@@ -175,25 +222,46 @@ def render_source_registry(data: dict) -> None:
 
         for src in geo_filtered:
             sid = src.get("source_id", "unknown")
+            rec = _get_verified_rec(src)
             preferred = src.get("preferred", False)
             approved  = src.get("user_approved", False)
             badge_pref = "⭐" if preferred else "  "
             badge_appr = "✅" if approved else "⬜"
-            conf = src.get("confidence_default", 0.0)
+            conf = rec.get("confidence_recalculated", src.get("confidence_default", 0.0))
+            conf_orig = src.get("confidence_default", conf)
+            verified = rec.get("verified", True)
+            domain = rec.get("domain", "") or ""
+            domain_tier = rec.get("domain_tier", "")
+            origin = rec.get("source_origin", src.get("source_origin", "seeded_official"))
+            conf_changed = abs(conf - conf_orig) > 0.001
+            conf_display = f"{conf:.2f}" + (f" *(was {conf_orig:.2f})*" if conf_changed else "")
+
+            if verified and domain_tier in ("gov_tier", "official_tier"):
+                ver_badge = ":green[✅ Verified Official]"
+            elif verified and domain_tier == "academic_tier":
+                ver_badge = ":blue[✅ Verified Academic]"
+            elif not domain:
+                ver_badge = ":yellow[📁 Local File]"
+            else:
+                ver_badge = ":red[❌ Unverified]"
 
             with st.expander(
-                f"{badge_appr} {badge_pref} **{sid}** — {src.get('boundary_type','?')} | conf={conf}",
+                f"{badge_appr} {badge_pref} **{sid}** — {src.get('boundary_type','?')} | conf={conf_display}",
                 expanded=False,
             ):
                 col_a, col_b = st.columns([3, 1])
 
                 with col_a:
+                    st.markdown(f"**Verification:** {ver_badge}  |  **Domain:** `{domain or 'local/no URL'}`  |  **Tier:** `{domain_tier}`")
+                    st.markdown(f"**Source Origin:** `{origin}`")
+                    if rec.get("confidence_reason"):
+                        st.caption(f"Confidence reason: {rec['confidence_reason']}")
                     st.markdown(f"**State:** {src.get('state')} | **County:** {src.get('county', 'statewide')}")
                     st.markdown(f"**Boundary type:** `{src.get('boundary_type')}` | **Source:** `{src.get('source_kind')}`")
                     if src.get("id_field_name"):
                         st.markdown(f"**ID field:** `{src['id_field_name']}` | **Name field:** `{src.get('name_field_name','?')}`")
                     if src.get("crosswalk_targets"):
-                        st.markdown(f"**Crosswalk:** {' ↔ '.join(src['crosswalk_targets'])}")
+                        st.markdown(f"**Crosswalk:** {' <-> '.join(src['crosswalk_targets'])}")
                     if src.get("page_url") or src.get("base_url"):
                         url = src.get("page_url") or src.get("base_url")
                         st.markdown(f"**URL:** [{url[:60]}...]({url})")
@@ -302,22 +370,44 @@ def render_source_registry(data: dict) -> None:
     st.divider()
 
     # ── Registry Diagnostics ─────────────────────────────────────────────────
-    with st.expander("🔍 Run Registry Diagnostics", expanded=False):
-        if st.button("Generate Registry Report", key="run_reg_report", use_container_width=True):
-            with st.spinner("Generating source registry diagnostics…"):
-                try:
-                    from engine.source_registry.source_registry_report import run_registry_report
-                    from datetime import datetime
-                    run_id = datetime.now().strftime("%Y%m%d__%H%M")
-                    summary = run_registry_report(run_id=run_id)
-                    st.success(
-                        f"Registry report generated: {summary['contest_sources']} contest, "
-                        f"{summary['geometry_sources']} geometry sources. "
-                        f"Coverage: **{summary['registry_coverage']}**"
-                    )
-                    st.info(f"Report at: `{summary['report_path']}`")
-                except Exception as e:
-                    st.error(f"Error generating report: {e}")
+    with st.expander("🔍 Registry Diagnostics & Repair", expanded=False):
+        col_diag1, col_diag2 = st.columns(2)
+        with col_diag1:
+            if st.button("Generate Registry Report", key="run_reg_report", use_container_width=True):
+                with st.spinner("Generating source registry diagnostics…"):
+                    try:
+                        from engine.source_registry.source_registry_report import run_registry_report
+                        from datetime import datetime
+                        run_id = datetime.now().strftime("%Y%m%d__%H%M")
+                        summary = run_registry_report(run_id=run_id)
+                        st.success(
+                            f"Registry report: {summary['contest_sources']} contest, "
+                            f"{summary['geometry_sources']} geometry sources. "
+                            f"Coverage: **{summary['registry_coverage']}**"
+                        )
+                        st.info(f"Report: `{summary['report_path']}`")
+                    except Exception as e:
+                        st.error(f"Error generating report: {e}")
+
+        with col_diag2:
+            if st.button("Run Registry Repair (Confidence Audit)", key="run_reg_repair", use_container_width=True):
+                with st.spinner("Running confidence recalculation and suspicious source scan…"):
+                    try:
+                        from engine.source_registry.registry_repair import run_registry_repair
+                        from datetime import datetime
+                        run_id = datetime.now().strftime("%Y%m%d__%H%M")
+                        repair_summary = run_registry_repair(run_id=run_id, skip_http=True)
+                        st.success(
+                            f"Repair complete: {repair_summary['total_sources']} sources | "
+                            f"Verified: {repair_summary['verified_sources']} | "
+                            f"Suspicious: {repair_summary['suspicious_entries']} | "
+                            f"Coverage: **{repair_summary['registry_coverage']}**"
+                        )
+                        st.info(f"Report: `{repair_summary['report_path']}`")
+                        if repair_summary['suspicious_entries'] > 0:
+                            st.warning(f"{repair_summary['suspicious_entries']} suspicious sources found — see report.")
+                    except Exception as e:
+                        st.error(f"Error running repair: {e}")
 
 
 def _coverage_label(total: int) -> str:
