@@ -2,9 +2,12 @@
 # Seeded with known high-confidence sources for Sonoma County and California.
 # Add entries following the schema defined in source_registry_schema.yaml.
 # ---
+# Prompt 25A.1: source_origin field added to all entries.
+#   seeded_official = pre-seeded known official source
+#   manual_upload   = placeholder for user-uploaded files
 
-schema_version: "1.0"
-last_updated: "2026-03-12"
+schema_version: "1.1"
+last_updated: "2026-03-13"
 
 sources:
 
@@ -16,6 +19,7 @@ sources:
     county: Sonoma
     source_kind: county_registrar
     official_status: certified
+    source_origin: seeded_official
     confidence_default: 0.95
     auto_ingest_allowed: true
     requires_confirmation: true
@@ -32,8 +36,9 @@ sources:
     normalization_rule: srprec_to_mprec
     notes: >
       Sonoma County Registrar of Voters posts Statement of Vote and precinct-level
-      results after certification. URL structure varies by election year.
-      Manual download typically required; file naming is inconsistent.
+      results after certification. socoe.us is the official Sonoma County Office of
+      Elections domain. URL structure varies by election year; manual download
+      typically required; file naming is inconsistent.
 
   - source_id: ca_sonoma_registrar_2024_general
     jurisdiction_type: county
@@ -44,6 +49,7 @@ sources:
     contest_scope: countywide
     source_kind: county_registrar
     official_status: certified
+    source_origin: seeded_official
     confidence_default: 0.95
     auto_ingest_allowed: true
     requires_confirmation: true
@@ -66,6 +72,7 @@ sources:
     contest_scope: countywide
     source_kind: county_registrar
     official_status: certified
+    source_origin: seeded_official
     confidence_default: 0.95
     auto_ingest_allowed: true
     requires_confirmation: true
@@ -88,6 +95,7 @@ sources:
     contest_scope: countywide
     source_kind: county_registrar
     official_status: certified
+    source_origin: seeded_official
     confidence_default: 0.95
     auto_ingest_allowed: true
     requires_confirmation: true
@@ -110,6 +118,7 @@ sources:
     contest_scope: countywide
     source_kind: county_registrar
     official_status: certified
+    source_origin: seeded_official
     confidence_default: 0.90
     auto_ingest_allowed: true
     requires_confirmation: true
@@ -132,6 +141,7 @@ sources:
     contest_scope: countywide
     source_kind: county_registrar
     official_status: certified
+    source_origin: seeded_official
     confidence_default: 0.90
     auto_ingest_allowed: true
     requires_confirmation: true
@@ -148,6 +158,7 @@ sources:
     contest_scope: countywide
     source_kind: county_registrar
     official_status: certified
+    source_origin: seeded_official
     confidence_default: 0.80
     auto_ingest_allowed: false
     requires_confirmation: true
@@ -166,6 +177,7 @@ sources:
     county: Sonoma
     source_kind: electionstats_database
     official_status: unofficial
+    source_origin: seeded_official
     confidence_default: 0.80
     auto_ingest_allowed: true
     requires_confirmation: true
@@ -173,8 +185,9 @@ sources:
     base_url: "https://electionstats.org/county/sonoma"
     notes: >
       ElectionStats.org aggregates historical county-level election data.
-      Useful for multi-year precinct-level trend analysis.
-      Data may be slightly different from official certified results due to precinct splits.
+      Useful for multi-year precinct-level trend analysis. Academic tier —
+      max confidence 0.85. Data may differ slightly from official certified
+      results due to precinct splits.
 
   # ─── SONOMA COUNTY — CLARITY ENR ────────────────────────────────────────
 
@@ -184,6 +197,7 @@ sources:
     county: Sonoma
     source_kind: clarity_enr
     official_status: preliminary
+    source_origin: seeded_official
     confidence_default: 0.75
     auto_ingest_allowed: false
     requires_confirmation: true
@@ -201,6 +215,7 @@ sources:
     state: CA
     source_kind: state_sos
     official_status: certified
+    source_origin: seeded_official
     confidence_default: 0.92
     auto_ingest_allowed: true
     requires_confirmation: true
@@ -227,6 +242,7 @@ sources:
     contest_scope: statewide
     source_kind: state_sos
     official_status: certified
+    source_origin: seeded_official
     confidence_default: 0.92
     auto_ingest_allowed: true
     requires_confirmation: true
@@ -248,6 +264,7 @@ sources:
     contest_scope: statewide
     source_kind: state_sos
     official_status: certified
+    source_origin: seeded_official
     confidence_default: 0.92
     auto_ingest_allowed: true
     requires_confirmation: true
@@ -265,6 +282,7 @@ sources:
     contest_scope: statewide
     source_kind: state_sos
     official_status: certified
+    source_origin: seeded_official
     confidence_default: 0.92
     auto_ingest_allowed: true
     requires_confirmation: true
@@ -279,6 +297,7 @@ sources:
     state: CA
     source_kind: state_sos
     official_status: certified
+    source_origin: seeded_official
     confidence_default: 0.93
     auto_ingest_allowed: true
     requires_confirmation: true
@@ -296,6 +315,7 @@ sources:
     contest_scope: statewide
     source_kind: state_sos
     official_status: certified
+    source_origin: seeded_official
     confidence_default: 0.90
     auto_ingest_allowed: true
     requires_confirmation: true
@@ -313,6 +333,7 @@ sources:
     county: Sonoma
     source_kind: manual_upload
     official_status: unknown
+    source_origin: manual_upload
     confidence_default: 0.70
     auto_ingest_allowed: false
     requires_confirmation: true

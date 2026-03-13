@@ -181,3 +181,51 @@ Last validated state before source registry system was added. If source registry
 
 #### Why This Rollback Point Matters
 First post-source-registry snapshot. If Prompt 25B or later breaks registry-first discovery logic, restore here.
+
+---
+
+### Entry 7 — Pre Prompt 25A.1 Registry Validation
+
+| Field | Value |
+|-------|-------|
+| **Timestamp** | 2026-03-13T00:24:00-07:00 |
+| **Branch** | `rollback/prompt25a1_pre_registry_validation` |
+| **Tag** | `v_pre_prompt25a1_registry_validation` |
+| **Overall Health Score** | ~8.0 / 10 |
+| **Reason** | Source registry confidence system before validation repair |
+
+#### What Was Working
+All Prompt 25A source registry work complete. 16 contest sources, 10 geometry sources. UI page live.
+Confidence enforcement not yet applied — domain allowlist did not exist yet.
+
+#### Why This Rollback Point Matters
+Last state before domain allowlist and confidence recalculation was added.
+
+---
+
+### Entry 8 — Post Prompt 25A.1 Registry Validation
+
+| Field | Value |
+|-------|-------|
+| **Timestamp** | 2026-03-13T00:45:00-07:00 |
+| **Branch** | `rollback/prompt25a1_post_registry_validation` |
+| **Tag** | `v_post_prompt25a1_registry_validation` |
+| **Overall Health Score** | ~8.2 / 10 |
+
+#### What Was Completed
+- Domain allowlist: 3 tiers (gov=0.99, official=0.90, academic=0.85)
+- source_origin field added to all 26 registry entries (schema_version 1.1)
+- source_verifier.py: domain extraction, allowlist check, HTTP HEAD verification
+- confidence_engine.py: 5-rule confidence recalculation with confidence_reason
+- registry_repair.py: full repair scan, suspicious source flagging, registry_health.json
+- UI updated: Domain, Verified badge, Source Origin, Confidence Reason, suspicious filter
+- campaign_state.json updated with source_registry_health
+- SYSTEM_TECHNICAL_MAP.md bumped to v1.3
+
+#### Validation Results
+- 26 sources validated: 22 verified, 0 suspicious, 0 invalid domains
+- Academic tier capped at 0.85, gov tier preserved, all 26 assertions passed
+- Coverage: **strong**
+
+#### Why This Rollback Point Matters
+First post-confidence-enforcement snapshot. Registry is now policy-enforced.
