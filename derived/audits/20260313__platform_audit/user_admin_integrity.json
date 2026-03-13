@@ -1,0 +1,98 @@
+{
+  "run_id": "20260313__platform_audit",
+  "timestamp": "2026-03-13T09:54:59.227614",
+  "total_users": 8,
+  "active_users": 8,
+  "roles_defined": 7,
+  "auth_features": {
+    "create_user": true,
+    "disable_user": true,
+    "update_user_role": true,
+    "audit_log": true
+  },
+  "issues_total": 0,
+  "score": 1.0,
+  "risk": "safe",
+  "users": [
+    {
+      "user_id": "mcallaway",
+      "full_name": "Matthew Callaway",
+      "role": "campaign_manager",
+      "active": true,
+      "remember_login_allowed": true,
+      "last_login": null,
+      "permission_anomalies": [],
+      "issues": []
+    },
+    {
+      "user_id": "field_01",
+      "full_name": "Field Director",
+      "role": "field_director",
+      "active": true,
+      "remember_login_allowed": true,
+      "last_login": null,
+      "permission_anomalies": [],
+      "issues": []
+    },
+    {
+      "user_id": "data_01",
+      "full_name": "Data Director",
+      "role": "data_director",
+      "active": true,
+      "remember_login_allowed": true,
+      "last_login": null,
+      "permission_anomalies": [],
+      "issues": []
+    },
+    {
+      "user_id": "finance_01",
+      "full_name": "Finance Director",
+      "role": "finance_director",
+      "active": true,
+      "remember_login_allowed": true,
+      "last_login": null,
+      "permission_anomalies": [],
+      "issues": []
+    },
+    {
+      "user_id": "comms_01",
+      "full_name": "Communications Director",
+      "role": "communications_director",
+      "active": true,
+      "remember_login_allowed": true,
+      "last_login": null,
+      "permission_anomalies": [],
+      "issues": []
+    },
+    {
+      "user_id": "analyst_01",
+      "full_name": "Lead Analyst",
+      "role": "analyst",
+      "active": true,
+      "remember_login_allowed": true,
+      "last_login": null,
+      "permission_anomalies": [],
+      "issues": []
+    },
+    {
+      "user_id": "guest_01",
+      "full_name": "Guest Viewer",
+      "role": "viewer",
+      "active": true,
+      "remember_login_allowed": false,
+      "last_login": null,
+      "permission_anomalies": [],
+      "issues": []
+    },
+    {
+      "user_id": "test_user_01",
+      "full_name": "Test Field Staffer",
+      "role": "field_director",
+      "active": true,
+      "remember_login_allowed": true,
+      "last_login": null,
+      "permission_anomalies": [],
+      "issues": []
+    }
+  ]
+}

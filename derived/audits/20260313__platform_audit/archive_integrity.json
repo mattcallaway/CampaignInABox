@@ -1,0 +1,58 @@
+{
+  "run_id": "20260313__platform_audit",
+  "timestamp": "2026-03-13T09:54:59.239410",
+  "builder_modules": {
+    "ingestion": true,
+    "classifier": true,
+    "scanner": true,
+    "normalizer": false
+  },
+  "archive_files": [
+    "archive_summary.json",
+    "contest_classification.csv",
+    "normalized_elections.csv",
+    "precinct_profiles.csv",
+    "precinct_trends.csv",
+    "similar_elections.csv"
+  ],
+  "normalized_election_rows": 3000,
+  "archive_summary": {
+    "run_id": "20260312__p24",
+    "generated_at": "2026-03-12T23:05:24.121887",
+    "has_real_data": true,
+    "coverage": {
+      "total_records": 3000,
+      "real_records": 3000,
+      "synthetic_records": 0,
+      "years_ingested": [
+        2024
+      ],
+      "counties": [
+        "Sonoma"
+      ],
+      "states": [
+        "CA"
+      ],
+      "contests": 1,
+      "contest_types": [
+        "local_general"
+      ],
+      "precincts": 55,
+      "has_real_data": true,
+      "turnout_null_pct": 100.0,
+      "support_null_pct": 100.0
+    },
+    "archive_dir": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\election_archive"
+  },
+  "historical_election_dirs": 1,
+  "per_election_sample": [
+    {
+      "election_id": "CA",
+      "files_ingested": 0,
+      "has_provenance": false,
+      "validation_errors": []
+    }
+  ],
+  "score": 0.86,
+  "risk": "safe"
+}

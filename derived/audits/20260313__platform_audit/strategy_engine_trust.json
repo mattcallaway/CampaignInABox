@@ -1,0 +1,22 @@
+{
+  "run_id": "20260313__platform_audit",
+  "timestamp": "2026-03-13T09:55:16.463188",
+  "strategy_components": {
+    "strategy_main": true,
+    "swing_detector": true,
+    "backtester": true,
+    "persuasion_model": true,
+    "turnout_model": true,
+    "swing_strategy_adapter": true,
+    "metrics_module": true
+  },
+  "data_sources_declared": false,
+  "confidence_labels_present": true,
+  "validation_status_present": true,
+  "turnout_persuasion_separated": true,
+  "swing_outputs": 5,
+  "backtest_files": 3,
+  "strategy_output_files": 2,
+  "score": 1.0,
+  "risk": "safe"
+}

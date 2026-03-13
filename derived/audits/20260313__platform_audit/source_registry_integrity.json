@@ -1,0 +1,336 @@
+{
+  "run_id": "20260313__platform_audit",
+  "timestamp": "2026-03-13T09:54:59.295708",
+  "contest_sources": 16,
+  "geometry_sources": 11,
+  "allowed_domains": 0,
+  "issues_total": 27,
+  "score": 0.0,
+  "risk": "unsafe",
+  "sources": [
+    {
+      "source_id": "sonoma_registrar_elections",
+      "jurisdiction": "sources",
+      "type": "contest",
+      "domain": "",
+      "verified": false,
+      "confidence": 0.0,
+      "reachable": null,
+      "issues": [
+        "NO_URL"
+      ]
+    },
+    {
+      "source_id": "sonoma_registrar_2024_general",
+      "jurisdiction": "sources",
+      "type": "contest",
+      "domain": "",
+      "verified": false,
+      "confidence": 0.0,
+      "reachable": null,
+      "issues": [
+        "NO_URL"
+      ]
+    },
+    {
+      "source_id": "sonoma_registrar_2022_general",
+      "jurisdiction": "sources",
+      "type": "contest",
+      "domain": "",
+      "verified": false,
+      "confidence": 0.0,
+      "reachable": null,
+      "issues": [
+        "NO_URL"
+      ]
+    },
+    {
+      "source_id": "sonoma_registrar_2020_general",
+      "jurisdiction": "sources",
+      "type": "contest",
+      "domain": "",
+      "verified": false,
+      "confidence": 0.0,
+      "reachable": null,
+      "issues": [
+        "NO_URL"
+      ]
+    },
+    {
+      "source_id": "sonoma_registrar_2018_general",
+      "jurisdiction": "sources",
+      "type": "contest",
+      "domain": "",
+      "verified": false,
+      "confidence": 0.0,
+      "reachable": null,
+      "issues": [
+        "NO_URL"
+      ]
+    },
+    {
+      "source_id": "sonoma_registrar_2016_general",
+      "jurisdiction": "sources",
+      "type": "contest",
+      "domain": "",
+      "verified": false,
+      "confidence": 0.0,
+      "reachable": null,
+      "issues": [
+        "NO_URL"
+      ]
+    },
+    {
+      "source_id": "sonoma_registrar_special_elections",
+      "jurisdiction": "sources",
+      "type": "contest",
+      "domain": "",
+      "verified": false,
+      "confidence": 0.0,
+      "reachable": null,
+      "issues": [
+        "NO_URL"
+      ]
+    },
+    {
+      "source_id": "sonoma_electionstats_database",
+      "jurisdiction": "sources",
+      "type": "contest",
+      "domain": "",
+      "verified": false,
+      "confidence": 0.0,
+      "reachable": null,
+      "issues": [
+        "NO_URL"
+      ]
+    },
+    {
+      "source_id": "clarity_sonoma",
+      "jurisdiction": "sources",
+      "type": "contest",
+      "domain": "",
+      "verified": false,
+      "confidence": 0.0,
+      "reachable": null,
+      "issues": [
+        "NO_URL"
+      ]
+    },
+    {
+      "source_id": "ca_sos_elections",
+      "jurisdiction": "sources",
+      "type": "contest",
+      "domain": "",
+      "verified": false,
+      "confidence": 0.0,
+      "reachable": null,
+      "issues": [
+        "NO_URL"
+      ]
+    },
+    {
+      "source_id": "ca_sos_2024_general",
+      "jurisdiction": "sources",
+      "type": "contest",
+      "domain": "",
+      "verified": false,
+      "confidence": 0.0,
+      "reachable": null,
+      "issues": [
+        "NO_URL"
+      ]
+    },
+    {
+      "source_id": "ca_sos_2022_general",
+      "jurisdiction": "sources",
+      "type": "contest",
+      "domain": "",
+      "verified": false,
+      "confidence": 0.0,
+      "reachable": null,
+      "issues": [
+        "NO_URL"
+      ]
+    },
+    {
+      "source_id": "ca_sos_2020_general",
+      "jurisdiction": "sources",
+      "type": "contest",
+      "domain": "",
+      "verified": false,
+      "confidence": 0.0,
+      "reachable": null,
+      "issues": [
+        "NO_URL"
+      ]
+    },
+    {
+      "source_id": "ca_sos_cdn_precinct_data",
+      "jurisdiction": "sources",
+      "type": "contest",
+      "domain": "",
+      "verified": false,
+      "confidence": 0.0,
+      "reachable": null,
+      "issues": [
+        "NO_URL"
+      ]
+    },
+    {
+      "source_id": "ca_sos_ballot_measures",
+      "jurisdiction": "sources",
+      "type": "contest",
+      "domain": "",
+      "verified": false,
+      "confidence": 0.0,
+      "reachable": null,
+      "issues": [
+        "NO_URL"
+      ]
+    },
+    {
+      "source_id": "sonoma_manual_upload",
+      "jurisdiction": "sources",
+      "type": "contest",
+      "domain": "",
+      "verified": false,
+      "confidence": 0.0,
+      "reachable": null,
+      "issues": [
+        "NO_URL"
+      ]
+    },
+    {
+      "source_id": "ca_statewide_mprec_statewidedatabase",
+      "jurisdiction": "sources",
+      "type": "geometry",
+      "domain": "",
+      "verified": false,
+      "confidence": 0.0,
+      "reachable": null,
+      "issues": [
+        "NO_URL"
+      ]
+    },
+    {
+      "source_id": "ca_sos_mprec_gis",
+      "jurisdiction": "sources",
+      "type": "geometry",
+      "domain": "",
+      "verified": false,
+      "confidence": 0.0,
+      "reachable": null,
+      "issues": [
+        "NO_URL"
+      ]
+    },
+    {
+      "source_id": "ca_sonoma_srprec_local",
+      "jurisdiction": "sources",
+      "type": "geometry",
+      "domain": "",
+      "verified": false,
+      "confidence": 0.0,
+      "reachable": null,
+      "issues": [
+        "NO_URL"
+      ]
+    },
+    {
+      "source_id": "ca_sonoma_srprec_registrar",
+      "jurisdiction": "sources",
+      "type": "geometry",
+      "domain": "",
+      "verified": false,
+      "confidence": 0.0,
+      "reachable": null,
+      "issues": [
+        "NO_URL"
+      ]
+    },
+    {
+      "source_id": "ca_statewide_srprec_statewidedatabase",
+      "jurisdiction": "sources",
+      "type": "geometry",
+      "domain": "",
+      "verified": false,
+      "confidence": 0.0,
+      "reachable": null,
+      "issues": [
+        "NO_URL"
+      ]
+    },
+    {
+      "source_id": "ca_statewide_mprec_srprec_crosswalk",
+      "jurisdiction": "sources",
+      "type": "geometry",
+      "domain": "",
+      "verified": false,
+      "confidence": 0.0,
+      "reachable": null,
+      "issues": [
+        "NO_URL"
+      ]
+    },
+    {
+      "source_id": "ca_sonoma_mprec_srprec_crosswalk_local",
+      "jurisdiction": "sources",
+      "type": "geometry",
+      "domain": "",
+      "verified": false,
+      "confidence": 0.0,
+      "reachable": null,
+      "issues": [
+        "NO_URL"
+      ]
+    },
+    {
+      "source_id": "ca_sonoma_srprec_city_crosswalk",
+      "jurisdiction": "sources",
+      "type": "geometry",
+      "domain": "",
+      "verified": false,
+      "confidence": 0.0,
+      "reachable": null,
+      "issues": [
+        "NO_URL"
+      ]
+    },
+    {
+      "source_id": "ca_sonoma_city_boundaries",
+      "jurisdiction": "sources",
+      "type": "geometry",
+      "domain": "",
+      "verified": false,
+      "confidence": 0.0,
+      "reachable": null,
+      "issues": [
+        "NO_URL"
+      ]
+    },
+    {
+      "source_id": "ca_sonoma_supervisorial_boundaries",
+      "jurisdiction": "sources",
+      "type": "geometry",
+      "domain": "",
+      "verified": false,
+      "confidence": 0.0,
+      "reachable": null,
+      "issues": [
+        "NO_URL"
+      ]
+    },
+    {
+      "source_id": "ca_sonoma_school_district_boundaries",
+      "jurisdiction": "sources",
+      "type": "geometry",
+      "domain": "",
+      "verified": false,
+      "confidence": 0.0,
+      "reachable": null,
+      "issues": [
+        "NO_URL"
+      ]
+    }
+  ]
+}

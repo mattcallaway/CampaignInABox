@@ -1,0 +1,50 @@
+{
+  "run_id": "20260313__platform_audit",
+  "timestamp": "2026-03-13T09:54:59.229885",
+  "live_sessions": {
+    "valid": 0,
+    "expired": 0
+  },
+  "critical_issues": 0,
+  "moderate_issues": 0,
+  "score": 1.0,
+  "risk": "low",
+  "findings": [
+    {
+      "check": "expiry_enforced_in_code",
+      "result": true,
+      "severity": "low",
+      "detail": "Session expiry check present in validate_session()"
+    },
+    {
+      "check": "session_does_not_store_role",
+      "result": true,
+      "severity": "low",
+      "detail": "Session tokens contain only user_id + expiry, no role data"
+    },
+    {
+      "check": "disabled_user_blocked_at_session_validation",
+      "result": true,
+      "severity": "low",
+      "detail": "validate_session() re-checks users_registry is_active on every call"
+    },
+    {
+      "check": "session_store_gitignored",
+      "result": true,
+      "severity": "low",
+      "detail": "data/local_sessions/ IS in .gitignore"
+    },
+    {
+      "check": "logout_revokes_session_token",
+      "result": true,
+      "severity": "low",
+      "detail": "Logout button calls revoke_session() before clearing session state"
+    },
+    {
+      "check": "live_session_store_no_expired_tokens",
+      "result": true,
+      "severity": "low",
+      "detail": "Session store clean: 0 valid, 0 expired"
+    }
+  ]
+}

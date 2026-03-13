@@ -1,0 +1,23 @@
+{
+  "run_id": "20260313__platform_audit",
+  "timestamp": "2026-03-13T09:55:16.886235",
+  "provenance_files_found": 1,
+  "complete_records": 0,
+  "incomplete_records": 1,
+  "coverage_pct": 0.0,
+  "has_provenance_engine": true,
+  "sample_missing": [
+    {
+      "file": "2026-03-10__152246__e84498d7__msi__metric_provenance.json",
+      "missing": [
+        "source_url",
+        "download_timestamp",
+        "fingerprint_type",
+        "normalization_method",
+        "confidence"
+      ]
+    }
+  ],
+  "score": 0.3,
+  "risk": "unsafe"
+}
