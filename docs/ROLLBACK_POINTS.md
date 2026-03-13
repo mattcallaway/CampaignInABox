@@ -229,3 +229,47 @@ Last state before domain allowlist and confidence recalculation was added.
 
 #### Why This Rollback Point Matters
 First post-confidence-enforcement snapshot. Registry is now policy-enforced.
+
+---
+
+### Entry 13 — Pre Prompt 25A.4 Precinct ID Normalization Engine
+
+| Field | Value |
+|-------|-------|
+| **Timestamp** | 2026-03-13T01:32:45-07:00 |
+| **Branch** | `rollback/prompt25a4_pre_precinct_id_engine` |
+| **Tag** | `v_pre_prompt25a4_precinct_id_engine` |
+| **Reason** | Adding jurisdiction-scoped precinct ID normalization safety engine |
+| **System Health** | Post-25A.3 (fingerprinting engine complete) |
+
+#### What This Protects Against
+- Introduction of cross-jurisdiction join bugs
+- False positive precinct ID matches across counties
+- SRPREC-to-MPREC mapping without explicit crosswalk
+- Ambiguous short IDs being auto-promoted to canonical keys
+
+---
+
+### Entry 14 — Post Prompt 25A.4 Precinct ID Normalization Engine
+
+| Field | Value |
+|-------|-------|
+| **Timestamp** | 2026-03-13T01:32:45-07:00 |
+| **Branch** | `rollback/prompt25a4_post_precinct_id_engine` |
+| **Tag** | `v_post_prompt25a4_precinct_id_engine` |
+| **Reason** | Jurisdiction-scoped precinct ID engine complete and validated |
+
+#### What Was Added
+- `engine/precinct_ids/` module: id_rules.yaml (7 schema families), id_schema_detector.py, id_normalizer.py, id_crosswalk_resolver.py, safe_join_engine.py
+- Canonical scoped key: `CA|Sonoma|MPREC|0400127`
+- Confidence tiers: 0.99 exact → 0.95 crosswalk → 0.90 normalized → ≤0.50 ambiguous → 0.00 blocked
+- Ambiguity review queue: `derived/precinct_id_review/`
+- Audit reports: `reports/precinct_ids/`
+- UI: Precinct ID Review tab in Data Manager
+
+#### Validation Results
+- 28/28 assertions passed
+- Cross-jurisdiction blocking confirmed (confidence=0.00)
+- Ambiguous IDs fail closed (no auto-join)
+- SRPREC cannot become MPREC without crosswalk
+- Coverage: **strong**

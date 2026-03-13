@@ -75,9 +75,10 @@ def render_data_manager(data: dict):
     registry = manager.load_registry()
     root_path = Path(PROJECT_ROOT)
 
-    tab_upload, tab_registry, tab_missing = st.tabs([
-        "📤 Upload New File", 
-        "🗂️ File Registry", 
+    tab_upload, tab_registry, tab_precinct, tab_missing = st.tabs([
+        "📤 Upload New File",
+        "🗂️ File Registry",
+        "🔎 Precinct ID Review",
         "🔍 Missing Data Assistant"
     ])
 
@@ -178,7 +179,85 @@ def render_data_manager(data: dict):
                 except Exception as e:
                     render_alert("critical", f"Error saving file: {e}")
 
+    with tab_precinct:
+        st.subheader("Precinct ID Review")
+        st.markdown(
+            "Inspect and validate precinct ID formats before archive ingestion. "
+            "Ambiguous IDs are queued for review — they are **never auto-joined**."
+        )
+
+        pc1, pc2, pc3 = st.columns(3)
+        p_state    = pc1.text_input("State", "CA")
+        p_county   = pc2.text_input("County", "Sonoma")
+        p_boundary = pc3.selectbox("Boundary Type", ["MPREC", "SRPREC", "CITY_PRECINCT", "UNKNOWN_LOCAL"])
+
+        precinct_input = st.text_area(
+            "Precinct IDs to validate (one per line or comma-separated)",
+            placeholder="0400127\n400153\n127\nPCT-42\nSR 99",
+            height=150,
+        )
+
+        if st.button("Run Precinct ID Check", type="primary") and precinct_input.strip():
+            raw_ids = [
+                v.strip() for line in precinct_input.splitlines()
+                for v in line.split(",") if v.strip()
+            ]
+            try:
+                from datetime import datetime as _dt
+                from engine.precinct_ids.safe_join_engine import join_batch
+                run_id = _dt.now().strftime("%Y%m%d__%H%M")
+                batch = join_batch(raw_ids, p_state, p_county, p_boundary, run_id=run_id)
+
+                st.markdown("#### Results")
+                m1, m2, m3, m4, m5, m6 = st.columns(6)
+                m1.metric("Total", batch.total)
+                m2.metric("Exact", batch.exact_matches, delta=None)
+                m3.metric("Crosswalk", batch.crosswalk_matches)
+                m4.metric("Normalized", batch.normalized_matches)
+                m5.metric("Ambiguous", batch.ambiguous,
+                           delta=f"-{batch.ambiguous}" if batch.ambiguous else None,
+                           delta_color="inverse" if batch.ambiguous else "off")
+                m6.metric("Blocked", batch.blocked_cross_jurisdiction,
+                           delta=f"-{batch.blocked_cross_jurisdiction}" if batch.blocked_cross_jurisdiction else None,
+                           delta_color="inverse" if batch.blocked_cross_jurisdiction else "off")
+
+                ready_pct = int(batch.archive_ready_fraction * 100)
+                if ready_pct >= 90:
+                    st.success(f"**Archive-ready: {ready_pct}%** — IDs are safe to join.")
+                elif ready_pct >= 60:
+                    st.warning(f"**Archive-ready: {ready_pct}%** — Some IDs need review.")
+                else:
+                    render_alert("critical", f"**Archive-ready: {ready_pct}%** — Too many ambiguous/unresolved IDs.")
+
+                # Sample mapping table
+                import pandas as _pd
+                rows_df = _pd.DataFrame([{
+                    "Raw ID":       r.raw_precinct,
+                    "Schema":       r.detected_schema,
+                    "Status":       r.join_status,
+                    "Confidence":   f"{r.confidence:.2f}",
+                    "Scoped Key":   r.resolved_scoped_key or "—",
+                    "Reason":       r.reason[:80],
+                } for r in batch.join_results])
+                st.dataframe(rows_df, use_container_width=True, hide_index=True)
+
+                # Review queue links
+                if batch.ambiguous_csv:
+                    from pathlib import Path as _P
+                    render_alert("warning",
+                        f"**{batch.ambiguous + batch.blocked_cross_jurisdiction} rows** written to review queue: "
+                        f"`{_P(batch.ambiguous_csv).name}`"
+                    )
+                if batch.audit_report:
+                    st.caption(f"Full audit: `{batch.audit_report}`")
+
+            except Exception as e:
+                render_alert("critical", f"Precinct ID check error: {e}")
+        else:
+            st.info("Enter precinct IDs above and click **Run Precinct ID Check** to validate.")
+
     with tab_registry:
+
         st.subheader("Active File Registry")
         if not registry:
             render_empty_state("No Files Uploaded", "The file registry is empty.", "🗂️", "Upload a file in the first tab.")

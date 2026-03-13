@@ -1,0 +1,193 @@
+# Precinct ID Schema Rules — Campaign In A Box
+# Prompt 25A.4
+#
+# Defines known precinct ID schema families with regex patterns,
+# normalization rules, examples, and boundary type mappings.
+#
+# Key principle: schema detection is per-jurisdiction, not global.
+# A short numeric ID like "127" may be valid in one county but
+# MUST NOT be joined across jurisdictions without explicit crosswalk.
+# ---
+
+schema_version: "1.0"
+last_updated: "2026-03-13"
+
+# ── Schema Families ──────────────────────────────────────────────────────────
+
+schemas:
+
+  # 7-digit canonical MPREC (CA standard)
+  mprec:
+    label: "Master Precinct (7-digit canonical)"
+    boundary_type: "MPREC"
+    description: >
+      Standard 7-digit California Master Precinct ID used in state-wide
+      election results files and MPREC geometry. Leading zero preserved.
+    examples:
+      - "0400127"
+      - "0400153"
+      - "0401000"
+    regex_patterns:
+      - "^[0-9]{7}$"
+    normalization_rules:
+      - preserve_leading_zero
+    canonical_length: 7
+    confidence_base: 0.99
+    requires_crosswalk: false
+    cross_jurisdiction_safe: false
+
+  # 6-digit MPREC without leading zero
+  mprec_unpadded:
+    label: "Master Precinct Unpadded (6-digit)"
+    boundary_type: "MPREC"
+    description: >
+      6-digit MPREC that is missing the leading zero. Can be safely
+      normalized to canonical 7-digit MPREC by padding within the same
+      jurisdiction. Must validate that padded ID exists in jurisdiction index.
+    examples:
+      - "400127"
+      - "400153"
+    regex_patterns:
+      - "^[0-9]{6}$"
+    normalization_rules:
+      - left_pad_zero_to_7
+    canonical_length: 7
+    confidence_base: 0.90
+    requires_crosswalk: false
+    cross_jurisdiction_safe: false
+
+  # Short numeric precinct (ambiguous — requires crosswalk)
+  short_precinct:
+    label: "Local Short Precinct (ambiguous)"
+    boundary_type: "UNKNOWN_LOCAL"
+    description: >
+      Short 1-5 digit numeric ID. Cannot be safely resolved without
+      an explicit crosswalk or jurisdiction-specific context. These IDs
+      are NOT globally unique and MUST fail closed without a crosswalk.
+    examples:
+      - "127"
+      - "153"
+      - "1041"
+    regex_patterns:
+      - "^[0-9]{1,5}$"
+    normalization_rules:
+      - requires_crosswalk_or_context
+    canonical_length: null
+    confidence_base: 0.50
+    requires_crosswalk: true
+    cross_jurisdiction_safe: false
+
+  # Prefixed precinct (PCT-127, PRECINCT 127)
+  prefixed_precinct:
+    label: "Prefixed Precinct Code"
+    boundary_type: "UNKNOWN_LOCAL"
+    description: >
+      Precinct ID with a text prefix (PCT-, PRECINCT, etc.).
+      Strip prefix to get numeric component, then treat like short_precinct.
+      Still requires crosswalk or context to resolve to canonical MPREC.
+    examples:
+      - "PCT-127"
+      - "PRECINCT 127"
+      - "PCT127"
+      - "Pct. 127"
+    regex_patterns:
+      - "^(pct|precinct|pct\\.)[ .\\-]?[0-9]+$"
+    normalization_rules:
+      - strip_prefix_then_requires_context
+    canonical_length: null
+    confidence_base: 0.45
+    requires_crosswalk: true
+    cross_jurisdiction_safe: false
+
+  # SRPREC / sub-reporting precinct
+  srprec:
+    label: "Sub-Reporting Precinct (SRPREC)"
+    boundary_type: "SRPREC"
+    description: >
+      Sonoma County sub-reporting precinct IDs as used in SRPREC geometry.
+      These are distinct from MPREC. Cannot be treated as MPREC without
+      an explicit SRPREC <-> MPREC crosswalk.
+    examples:
+      - "SRP-127"
+      - "SR 127"
+      - "SRPREC 127"
+    regex_patterns:
+      - "^(sr|srp|srprec)[\\- ]?[0-9]+$"
+    normalization_rules:
+      - extract_numeric_component_then_requires_crosswalk
+    canonical_length: null
+    confidence_base: 0.40
+    requires_crosswalk: true
+    cross_jurisdiction_safe: false
+
+  # City/named precinct label
+  city_precinct:
+    label: "City or Named Reporting Precinct"
+    boundary_type: "CITY_PRECINCT"
+    description: >
+      Precinct IDs prefixed with a city name or division label.
+      Must not be treated as county MPREC. Requires city-to-county crosswalk.
+    examples:
+      - "Santa Rosa 127"
+      - "Petaluma 42"
+      - "SR-127"
+    regex_patterns:
+      - "^(santa rosa|petaluma|rohnert park|healdsburg|sonoma|windsor|cloverdale)[\\- ]?[0-9]+$"
+    normalization_rules:
+      - extract_numeric_component_then_requires_crosswalk
+    canonical_length: null
+    confidence_base: 0.35
+    requires_crosswalk: true
+    cross_jurisdiction_safe: false
+
+  # Alphanumeric hybrid (common in older CA data)
+  alphanumeric_precinct:
+    label: "Alphanumeric Precinct Code"
+    boundary_type: "UNKNOWN_LOCAL"
+    description: >
+      Mixed letter-digit precinct codes. Interpretation varies by county
+      and year. Always requires crosswalk.
+    examples:
+      - "0400A1"
+      - "CA040001"
+      - "SCO-127-A"
+    regex_patterns:
+      - "^[A-Z0-9]{4,12}$"
+      - "^[A-Z]{2,3}[\\-]?[0-9]{3,}[\\-]?[A-Z]?$"
+    normalization_rules:
+      - requires_crosswalk_or_context
+    canonical_length: null
+    confidence_base: 0.40
+    requires_crosswalk: true
+    cross_jurisdiction_safe: false
+
+# ── Canonical Scoped Key Format ───────────────────────────────────────────────
+# Internal key: <STATE>|<COUNTY>|<BOUNDARY_TYPE>|<CANONICAL_ID>
+# Example:       CA|Sonoma|MPREC|0400127
+#
+# Rules:
+#   - state:  2-letter uppercase (CA)
+#   - county: title-case county name (Sonoma)
+#   - boundary_type: MPREC | SRPREC | CITY_PRECINCT | UNKNOWN_LOCAL
+#   - canonical_id: normalized form per schema rules
+#
+# Raw numeric IDs like "127" are NEVER valid scoped keys.
+
+# ── Confidence Policy ─────────────────────────────────────────────────────────
+confidence_policy:
+  exact_canonical_scoped_match:   0.99
+  official_crosswalk_match:       0.95
+  deterministic_same_jurisdiction: 0.90
+  ambiguous_schema:               0.50
+  blocked_cross_jurisdiction:     0.00
+  # No ambiguous row may exceed 0.50 without explicit user approval
+  max_ambiguous_confidence:       0.50
+
+# ── Join Statuses ────────────────────────────────────────────────────────────
+join_statuses:
+  - EXACT_MATCH              # Canonical scoped key matched exactly
+  - CROSSWALK_MATCH          # Resolved via official crosswalk
+  - NORMALIZED_MATCH         # Deterministic same-jurisdiction normalization
+  - AMBIGUOUS                # Multiple valid matches, no crosswalk to disambiguate
+  - NO_MATCH                 # No candidate found
+  - BLOCKED_CROSS_JURISDICTION # Detected cross-county/boundary attempt — blocked

@@ -1,0 +1,4 @@
+# derived/precinct_id_review/.gitkeep
+# Ambiguous and no-match precinct ID review queue outputs.
+# Files: <RUN_ID>__ambiguous_ids.csv, <RUN_ID>__no_match_ids.csv, <RUN_ID>__join_summary.json
+# Do not commit individual review files (add to .gitignore if needed).
