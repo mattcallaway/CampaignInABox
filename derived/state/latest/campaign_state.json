@@ -277,5 +277,13 @@
     "has_real_data": true,
     "turnout_null_pct": 100.0,
     "support_null_pct": 100.0
+  },
+  "source_registry_health": {
+    "verified_sources": 22,
+    "heuristic_sources": 0,
+    "invalid_sources": 0,
+    "suspicious_entries": 0,
+    "registry_coverage": "strong",
+    "last_updated": "2026-03-13T00:34:09.679891"
   }
 }
