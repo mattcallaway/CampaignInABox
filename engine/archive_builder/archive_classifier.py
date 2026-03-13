@@ -1,5 +1,5 @@
 """
-engine/archive_builder/archive_classifier.py — Prompt 25
+engine/archive_builder/archive_classifier.py — Prompt 25 / Prompt 27
 
 File validation and classification layer.
 
@@ -13,6 +13,11 @@ Confidence thresholds:
   ≥ 0.85 fingerprint → auto-processable (still requires join validation)
   < 0.85 fingerprint → user review required
   archive_ready requires ALL: fingerprint, validation, join ≥ thresholds
+
+Archive status values (Prompt 27):
+  ARCHIVE_READY    — all gates passed, flows to modeling inputs automatically
+  REVIEW_REQUIRED  — one or more soft issues; requires human confirmation
+  REJECTED         — hard disqualifier (blocked cross-jurisdiction, empty file, etc.)
 
 Validation flags (must be clean to ingest):
   - negative_vote_counts
@@ -85,7 +90,8 @@ class ClassifiedFile:
 
     # Overall
     overall_confidence: float
-    archive_ready: bool
+    archive_ready: bool          # backward-compat bool (True iff archive_status=ARCHIVE_READY)
+    archive_status: str          # Prompt 27: ARCHIVE_READY | REVIEW_REQUIRED | REJECTED
     requires_user_review: bool
     review_reasons: list[str]
 
@@ -248,6 +254,7 @@ def classify_candidate_file(
             ),
             join_archive_ready_fraction=0.0, join_statuses={},
             overall_confidence=0.0, archive_ready=False,
+            archive_status="REJECTED",
             requires_user_review=True, review_reasons=review_reasons,
             classified_at=datetime.now().isoformat(),
         )
@@ -356,10 +363,24 @@ def classify_candidate_file(
 
     requires_review = not archive_ready or len(review_reasons) > 0
 
+    # ── Prompt 27: Determine archive_status ─────────────────────────────────
+    # Hard REJECTED: validation errors, blocked cross-jurisdiction, empty file
+    hard_blocked = (
+        not validation.valid
+        or (join_statuses.get("BLOCKED_CROSS_JURISDICTION", 0) > 0)
+        or fp.file_type in ("unknown", "parse_error", "file_not_found")
+    )
+    if hard_blocked:
+        archive_status = "REJECTED"
+    elif archive_ready and len(review_reasons) == 0:
+        archive_status = "ARCHIVE_READY"
+    else:
+        archive_status = "REVIEW_REQUIRED"
+
     log.info(
         f"[CLASSIFIER] {path.name}: type={fp.file_type} "
         f"fp_conf={fp.confidence:.2f} overall={overall_confidence:.2f} "
-        f"archive_ready={archive_ready}"
+        f"archive_ready={archive_ready} status={archive_status}"
     )
 
     return ClassifiedFile(
@@ -375,6 +396,7 @@ def classify_candidate_file(
         join_statuses=join_statuses,
         overall_confidence=overall_confidence,
         archive_ready=archive_ready,
+        archive_status=archive_status,
         requires_user_review=requires_review,
         review_reasons=review_reasons,
         classified_at=datetime.now().isoformat(),

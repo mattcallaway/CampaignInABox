@@ -330,3 +330,25 @@ First post-confidence-enforcement snapshot. Registry is now policy-enforced.
 - auth_manager: create_user, role update, disable/enable, permissions all correct
 - campaign_manager: create, set_active (single-active enforced), stage change, archive, audit log all correct
 - Config file integrity: all fields present across all 4 config files
+
+---
+
+### Entry 14 — Pre Prompt 27: Campaign State Isolation & Archive Normalizer Integration
+
+| Field | Value |
+|-------|-------|
+| **Timestamp** | 2026-03-13T19:32:00-07:00 |
+| **Branch** | `rollback/prompt27_pre_state_isolation` |
+| **Tag** | `v_pre_prompt27_state_isolation` |
+| **Reason** | Campaign state isolation + archive normalizer integration |
+| **Note** | Motivated by platform audit (20260313__platform_audit): campaign_switching=0.33 (flat state path), archive normalizer MISSING flag. No new modeling features. |
+
+#### Scope
+- `engine/state/campaign_state_resolver.py` — new: central resolver for campaign-scoped state paths
+- `engine/state/state_builder.py` — route writes to `derived/state/campaigns/<cid>/latest/` and history
+- `engine/state/state_diff.py` + `state_validator.py` — read via resolver
+- `engine/archive_builder/archive_ingestor.py` — add schema detection + hard acceptance gates + join metadata output
+- `engine/archive_builder/archive_classifier.py` — add `archive_status` field (ARCHIVE_READY/REVIEW_REQUIRED/REJECTED)
+- `ui/dashboard/app.py` — use resolver for state bootstrap + cache invalidation on campaign switch
+- `docs/SYSTEM_TECHNICAL_MAP.md` — add campaign-scoped state + archive normalizer docs
+- `data/historical_elections/archive_registry.yaml` — add normalization provenance fields
