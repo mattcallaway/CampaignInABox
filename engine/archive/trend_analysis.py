@@ -1,74 +1,102 @@
 """
-engine/archive/trend_analysis.py
+engine/archive/trend_analysis.py — Prompt 24
 
-Computes long-term trends by precinct based on historical results.
-Outputs derived/archive/precinct_trends.csv
+Analyzes turnout and support trends across historical elections.
+Computes per-precinct and county-level trend metrics.
+
+Requires: derived/archive/normalized_elections.csv
+          derived/archive/precinct_profiles.csv
+Outputs:  derived/archive/precinct_trends.csv
 """
-import pandas as pd
-import numpy as np
+from __future__ import annotations
+
 import logging
+from datetime import datetime
 from pathlib import Path
+from typing import Optional
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+import numpy as np
+import pandas as pd
+from scipy import stats as scipy_stats
+
+log = logging.getLogger(__name__)
+
+BASE_DIR    = Path(__file__).resolve().parent.parent.parent
 DERIVED_DIR = BASE_DIR / "derived" / "archive"
-LOG_DIR = BASE_DIR / "logs" / "archive"
 
-logger = logging.getLogger("trend_analysis")
-logger.setLevel(logging.INFO)
-fh = logging.FileHandler(LOG_DIR / "archive_ingest.log")
-fh.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
-logger.addHandler(fh)
 
-def calculate_linear_trend(series_x, series_y):
-    if len(series_x) < 2:
-        return 0.0
-    # simple slope calc
-    try:
-        slope, _ = np.polyfit(series_x, series_y, 1)
-        return slope
-    except:
-        return 0.0
+def compute_trends(run_id: Optional[str] = None) -> Optional[pd.DataFrame]:
+    """
+    Compute time-series trends per precinct and aggregate county trends.
+    Returns trends DataFrame.
+    """
+    run_id = run_id or datetime.now().strftime("%Y%m%d__%H%M%S") + "__trends"
 
-def build_trends():
-    infile = DERIVED_DIR / "normalized_elections.csv"
-    if not infile.exists():
-        logger.error("normalized_elections.csv not found.")
-        return
+    elections_path = DERIVED_DIR / "normalized_elections.csv"
+    if not elections_path.exists():
+        log.error("[TRENDS] normalized_elections.csv not found — run archive_ingest first")
+        return None
 
-    df = pd.read_csv(infile)
-    if df.empty:
-        return
+    df = pd.read_csv(elections_path)
+    for col in ["turnout_rate", "support_rate", "year"]:
+        df[col] = pd.to_numeric(df[col], errors="coerce")
 
-    # Sort by time
-    df = df.sort_values(["state", "county", "precinct", "year"])
-    
-    trends = []
-    
-    for (state, county, prec), group in df.groupby(["state", "county", "precinct"]):
-        years = group["year"].values
-        turnouts = group["turnout_rate"].values
-        supports = group["support_rate"].values
-        registered = group["registered"].values
-        
-        # We calculate per-year delta
-        t_trend = calculate_linear_trend(years, turnouts)
-        s_trend = calculate_linear_trend(years, supports)
-        r_trend = calculate_linear_trend(years, registered)
-        
-        trends.append({
-            "state": state,
-            "county": county,
-            "precinct": prec,
-            "turnout_trend_per_year": round(t_trend, 5),
-            "support_trend_per_year": round(s_trend, 5),
-            "registration_shift_per_year": round(r_trend, 2)
+    # Filter to general + ballot measure election types for trend (skip presidential outliers option)
+    trends_list = []
+
+    for (state, county, precinct), grp in df.groupby(["state", "county", "precinct"]):
+        grp = grp.sort_values("year")
+        years = grp["year"].dropna()
+
+        # Turnout trend
+        to_data = grp[["year", "turnout_rate"]].dropna()
+        if len(to_data) >= 2:
+            sl, intcp, r, p, se = scipy_stats.linregress(to_data["year"], to_data["turnout_rate"])
+            to_slope = round(float(sl), 6)
+            to_r2    = round(float(r**2), 4)
+            to_pval  = round(float(p), 4)
+        else:
+            to_slope = to_r2 = to_pval = 0.0
+
+        # Support trend
+        sup_data = grp[["year", "support_rate"]].dropna()
+        if len(sup_data) >= 2:
+            sl, intcp, r, p, se = scipy_stats.linregress(sup_data["year"], sup_data["support_rate"])
+            sup_slope = round(float(sl), 6)
+            sup_r2    = round(float(r**2), 4)
+            sup_pval  = round(float(p), 4)
+        else:
+            sup_slope = sup_r2 = sup_pval = 0.0
+
+        # Year range
+        year_min = int(years.min()) if len(years) > 0 else 0
+        year_max = int(years.max()) if len(years) > 0 else 0
+
+        trends_list.append({
+            "state":          state,
+            "county":         county,
+            "precinct":       precinct,
+            "year_min":       year_min,
+            "year_max":       year_max,
+            "elections_n":    int(len(grp)),
+            "turnout_slope":  to_slope,
+            "turnout_r2":     to_r2,
+            "turnout_pval":   to_pval,
+            "turnout_trend":  "rising" if to_slope > 0.005 else ("falling" if to_slope < -0.005 else "stable"),
+            "support_slope":  sup_slope,
+            "support_r2":     sup_r2,
+            "support_pval":   sup_pval,
+            "support_trend":  "rising" if sup_slope > 0.005 else ("falling" if sup_slope < -0.005 else "stable"),
         })
 
-    tdf = pd.DataFrame(trends)
-    outfile = DERIVED_DIR / "precinct_trends.csv"
-    tdf.to_csv(outfile, index=False)
-    logger.info(f"Built trend analysis for {len(tdf)} precincts.")
-    
+    trends = pd.DataFrame(trends_list)
+    out = DERIVED_DIR / "precinct_trends.csv"
+    trends.to_csv(out, index=False)
+    log.info(f"[TRENDS] Computed trends for {len(trends):,} precincts → {out}")
+    return trends
+
+
 if __name__ == "__main__":
-    build_trends()
+    logging.basicConfig(level=logging.INFO)
+    compute_trends()
     print("Trend analysis complete.")

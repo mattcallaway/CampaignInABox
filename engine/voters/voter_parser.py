@@ -16,6 +16,7 @@ Never includes voter_id, name, address, or any individual PII.
 from __future__ import annotations
 
 import logging
+import time
 from pathlib import Path
 from typing import Optional
 
@@ -25,6 +26,24 @@ import yaml
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 SCHEMA_CONFIG = BASE_DIR / "config" / "voter_schema.yaml"
 CROSSWALK_DIR = BASE_DIR / "data" / "CA" / "counties" / "Sonoma" / "geography" / "crosswalks"
+
+# Chunk size in rows for large file reads (used when file > LARGE_FILE_THRESHOLD_MB)
+CHUNK_ROWS           = 50_000
+LARGE_FILE_THRESHOLD  = 50 * 1024 * 1024  # 50 MB
+
+# Explicit dtype map for common VAN export columns (avoids type inference overhead)
+VAN_DTYPE_MAP = {
+    "StateVoterID":      str,
+    "CountyVoterID":     str,
+    "PrecinctSplit":     str,
+    "PrecinctCode":      str,
+    "srprec":            str,
+    "mprec":             str,
+    "PartyCode":         str,
+    "Sex":               str,
+    "LanguagePreference": str,
+    "MailBallotStatus":  str,
+}
 
 log = logging.getLogger(__name__)
 
@@ -233,22 +252,50 @@ def ingest_voter_file(
         _log.info(f"[VOTER_PARSER] No voter file at {filepath} — skipping")
         return None
 
-    _log.info(f"[VOTER_PARSER] Loading voter file: {filepath} ({filepath.stat().st_size:,} bytes)")
+    file_size = filepath.stat().st_size
+    _log.info(f"[VOTER_PARSER] Loading voter file: {filepath} ({file_size:,} bytes)")
 
-    # ── Load ──────────────────────────────────────────────────────────────────
+    # ── Load (chunked for large files) ───────────────────────────────────────
     ext = filepath.suffix.lower()
+    t_load_start = time.time()
+    chunks_read  = 0
+
     try:
         if ext == ".parquet":
             df = pd.read_parquet(filepath)
+            chunks_read = 1
+        elif file_size > LARGE_FILE_THRESHOLD and ext in (".csv", ".tsv", ".txt"):
+            # Chunked read for large files
+            sep = "\t" if ext in (".tsv", ".txt") else ","
+            _log.info(f"[VOTER_PARSER] Large file ({file_size/1024/1024:.1f} MB) "
+                      f"— reading in {CHUNK_ROWS:,}-row chunks")
+            chunk_list = []
+            reader = pd.read_csv(
+                filepath, sep=sep, dtype=str, low_memory=False,
+                chunksize=CHUNK_ROWS,
+            )
+            for chunk in reader:
+                chunk_list.append(chunk)
+                chunks_read += 1
+                if chunks_read % 10 == 0:
+                    _log.info(f"[VOTER_PARSER] Chunks read: {chunks_read}")
+            df = pd.concat(chunk_list, ignore_index=True)
+            del chunk_list
         elif ext in (".tsv", ".txt"):
             df = pd.read_csv(filepath, sep="\t", dtype=str, low_memory=False)
+            chunks_read = 1
         else:  # .csv default
             df = pd.read_csv(filepath, dtype=str, low_memory=False)
+            chunks_read = 1
     except Exception as e:
         _log.warning(f"[VOTER_PARSER] Failed to load voter file: {e}")
         return None
 
-    _log.info(f"[VOTER_PARSER] Loaded {len(df):,} voters, {len(df.columns)} columns")
+    t_load_elapsed = time.time() - t_load_start
+    _log.info(
+        f"[VOTER_PARSER] Loaded {len(df):,} voters, {len(df.columns)} columns "
+        f"| chunks={chunks_read} | elapsed={t_load_elapsed:.1f}s"
+    )
 
     # ── Schema detection ──────────────────────────────────────────────────────
     schema = _load_schema()

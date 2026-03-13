@@ -1,77 +1,9 @@
 {
-  "run_id": "2026-03-10__211126__90c643ce__msi",
+  "run_id": "20260312__p24",
   "recommendations": [
     {
-      "likely_source_type": "Official County Registrar or Secretary of State",
-      "search_keywords": "[County Name] statement of vote results csv xlsx",
-      "actionable_steps": [
-        "Check your county Registrar of Voters website for past election results.",
-        "Look for 'Statement of Vote' (SOV) download links.",
-        "Prefer machine-readable formats like CSV or Excel over PDFs."
-      ],
-      "data_type": "election_results",
-      "why_needed": "Essential for establishing baseline precinct model turning and calibrating assumptions."
-    },
-    {
-      "likely_source_type": "County Registrar or Third-Party Data Vendor",
-      "search_keywords": "[State Name] voter file request forms",
-      "actionable_steps": [
-        "Official voter files usually require formal application or purchase through the state.",
-        "Alternatively, export an active voter list from a partisan platform (VAN, PDI, L2).",
-        "Be extremely cautious downloading PII online."
-      ],
-      "data_type": "voter_file",
-      "why_needed": "Required for building the initial targeting universe and simulating specific voter turnout scores."
-    },
-    {
-      "likely_source_type": "GIS / Open Data Portals",
-      "search_keywords": "[County Name] open data portal voting precinct shapefile",
-      "actionable_steps": [
-        "Search the county GIS portal (often powered by ArcGIS Hub).",
-        "Download exactly one single shapefile (.zip) or geojson format."
-      ],
-      "data_type": "precinct_geometry",
-      "why_needed": "Necessary for generating the interactive map dashboard and cutting field canvassing turfs."
-    },
-    {
-      "likely_source_type": "Statewide Redistricting Databases",
-      "search_keywords": "[State Name] statewide database block to precinct crosswalk",
-      "actionable_steps": [
-        "Search for block-to-precinct mapping tables, often provided by state legislative redistricting commissions."
-      ],
-      "data_type": "crosswalk",
-      "why_needed": "Provides block-to-precinct mapping so geographic allocation is more accurate."
-    },
-    {
-      "likely_source_type": "Campaign Internal Drive or Public Poll Repositories",
-      "search_keywords": "[Contest Name] latest poll cross-tabs pdf csv",
-      "actionable_steps": [
-        "Check internal campaign strategy files or Google Drive folders.",
-        "For public polls, search sites like RealClearPolitics or FiveThirtyEight.",
-        "You only need high-level toplines for Campaign In A Box (Support / Oppose / Undecided)."
-      ],
-      "data_type": "polling",
-      "why_needed": "Crucial external signal for the Intelligence Fusion layer. Without it, the model relies on baselines only."
-    },
-    {
-      "likely_source_type": "County Elections Daily Updates",
-      "search_keywords": "[County Name] daily ballot return statistics",
-      "actionable_steps": [
-        "During the 30-day early voting window, registrars usually post daily aggregate PDFs/CSV.",
-        "Also check partisan resources like Political Data Intelligence (PDI) tracking pages."
-      ],
-      "data_type": "ballot_returns",
-      "why_needed": "Allows the war room to project early voting pace and adjust GOTV targets daily."
-    },
-    {
-      "likely_source_type": "US Census Bureau / American Community Survey",
-      "search_keywords": "Census ACS 5-year estimate [County Name] education income data",
-      "actionable_steps": [
-        "Check data.census.gov.",
-        "Search for Table S1501 (Educational Attainment) or S1901 (Income)."
-      ],
-      "data_type": "demographics",
-      "why_needed": "Can adjust support models (via education/income indexes) if polling is sparse."
+      "file_type": "voter_file",
+      "recommendation": "Obtain from County Registrar of Voters (VAN export) or NGP VAN / TargetSmart"
     }
   ]
 }

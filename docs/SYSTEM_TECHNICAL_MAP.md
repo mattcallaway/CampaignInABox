@@ -1,5 +1,14 @@
 # Campaign In A Box — Living Technical System Map
-**Version:** 1.0 (Prompt 23 Stabilization) | **Maintained:** Update per Change Protocol (Section K)
+**Version:** 1.1 (Prompt 24 — Historical Data & Calibration) | **Maintained:** Update per Change Protocol (Section K)
+
+> **Prompt 24 Changelog (2026-03-12):**
+> - `archive_ingest.py` rebuilt: real file support (CSV/XLS/XLSX/TSV), MPREC normalization, provenance tagging, multi-format, coverage report
+> - `precinct_profiles.py` rebuilt: avg turnout, variance, SD, partisan tilt, OLS trend slopes, special election penalty
+> - `trend_analysis.py` added: OLS slopes + R² + p-values + direction labels per precinct
+> - `election_similarity.py` added: multi-factor similarity scoring against active contest config
+> - `train_support_model.py` upgraded: Isotonic Regression calibration wrapper; graceful fallback with insufficient-data report
+> - `file_registry_pipeline.py` added: File registry as active pipeline step; updates `campaign_state.json`
+> - `voter_parser.py` patched: chunked reads (50k rows) for files >50MB, VAN dtype map, elapsed time logging
 
 ---
 
@@ -151,11 +160,14 @@ This enables full reproducibility — any run can be traced to its exact inputs.
 
 ### archive
 - **Purpose:** Ingests historical election data and trains baseline ML models
-- **Key files:** `archive_ingest.py`, `precinct_profiles.py`, `trend_analysis.py`, `train_turnout_model.py`, `train_support_model.py`, `election_similarity.py`, `generate_archive_summary.py`
-- **Inputs:** `data/election_archive/<state>/<county>/<year>/`
-- **Outputs:** `derived/archive/normalized_elections.csv`, `derived/archive/precinct_profiles.csv`, `derived/archive/precinct_trends.csv`, `derived/models/turnout_model.pkl`, `derived/models/support_model.pkl`
-- **Dependencies:** pandas, numpy, scikit-learn, joblib
-- **Failure modes:** Falls back to synthetic mock data if real archive is absent. ML models trained on mock data degrade all forecasts.
+- **Key files:** `archive_ingest.py`, `precinct_profiles.py`, `trend_analysis.py`, `election_similarity.py`, `train_turnout_model.py`, `train_support_model.py`, `generate_archive_summary.py`
+- **Inputs:** `data/election_archive/<state>/<county>/<year>/` (CSV, XLS, XLSX, TSV)
+- **Outputs:** `derived/archive/normalized_elections.csv`, `precinct_profiles.csv`, `precinct_trends.csv`, `similar_elections.csv`, `derived/models/turnout_model.pkl`, `derived/models/support_model.pkl`
+- **Precinct profiles:** avg_turnout, turnout_variance, support_mean, support_sd, partisan_tilt, special_election_penalty, OLS trend slopes, R², p-values
+- **Election similarity:** scores historical elections against active contest by type, jurisdiction, turnout proximity, support proximity
+- **Calibration status:** Isotonic Regression wrapper implemented. Requires real election result data (precinct-level totals with support_rate) to activate.
+- **Dependencies:** pandas, numpy, scikit-learn, scipy, joblib
+- **Failure modes:** Falls back to synthetic mock data if real archive is absent. Calibration skipped if <50 clean training rows. Both produce explicit reports.
 
 ### advanced_modeling
 - **Purpose:** Applies lift curves, runs scenarios, optimizes resource allocation
@@ -176,9 +188,10 @@ This enables full reproducibility — any run can be traced to its exact inputs.
 
 ### data_intake
 - **Purpose:** Classifies, validates, and routes uploaded data files
-- **Key files:** `data_intake_manager.py`, `github_safety.py`, `missing_data_assistant.py`
-- **Inputs:** Uploaded files via UI
-- **Outputs:** `derived/file_registry/latest/file_registry.json`, files moved to canonical data paths
+- **Key files:** `data_intake_manager.py`, `file_registry_pipeline.py`, `github_safety.py`, `missing_data_assistant.py`
+- **Inputs:** Uploaded files via UI, pipeline run completion hook
+- **Outputs:** `derived/file_registry/latest/file_registry.json`, `missing_data_requests.json`, `source_finder_recommendations.json`; updates `campaign_state.json`
+- **Registry pipeline:** Scans all known pipeline output paths, classifies active vs missing, writes recommendations for missing files
 - **Security note:** `github_safety.py` enforced via `.pre-commit-config.yaml`
 - **Failure modes:** Miscategorized files may land in wrong canonical directory
 
@@ -243,6 +256,7 @@ This enables full reproducibility — any run can be traced to its exact inputs.
 - **Key files:** `voter_parser.py`, `persuasion_model.py`, `turnout_propensity.py`, `universe_builder.py`, `targeting_quadrants.py`, `precinct_voter_metrics.py`
 - **Inputs:** `data/voters/` (gitignored)
 - **Outputs:** `derived/voter_models/`, `derived/voter_segments/`, `derived/voter_universes/`
+- **Performance:** Files >50MB (default threshold) are read in 50k-row chunks for memory safety. Elapsed time logged per file.
 - **Failure modes:** Missing voter file → model runs on synthetic data only
 
 ### war_room
@@ -448,11 +462,11 @@ Cloud: generic Linux server supported. See `deployment/cloud/`.
 
 | Risk | Severity | Status |
 |------|---------|--------|
-| Historical archive contains mock data only | HIGH | Data must be added to `data/election_archive/` |
-| MC underestimates variance (samples lift only, not baseline) | MEDIUM | Known limitation |
-| Large voter files (>200K rows) may be slow | MEDIUM | Chunked reading recommended |
+| Historical archive has voter list only (no election result totals) | HIGH | Place real election result files in `data/election_archive/<YEAR>/` |
+| MC underestimates variance (samples lift only, not baseline) | MEDIUM | Known limitation — improves with multi-year precinct profiles |
+| Large voter files (>200K rows) may be slow | MEDIUM | Chunked reading now active (>50MB triggers 50k-row chunks) |
 | Single-user Streamlit session (no multi-user state isolation) | MEDIUM | Not intended for concurrent editing |
-| Persuasion model requires calibration for probability output | HIGH | Calibration wrapper added Prompt 23 |
+| Persuasion model requires calibration for probability output | HIGH | Calibration wrapper added; awaiting election result data to train |
 
 ---
 

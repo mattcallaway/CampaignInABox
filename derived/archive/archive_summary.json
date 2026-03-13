@@ -1,20 +1,28 @@
 {
-  "years_covered": [
-    2016,
-    2018,
-    2020,
-    2022,
-    2024
-  ],
-  "counties_covered": [
-    "Sonoma"
-  ],
-  "total_elections": 5,
-  "total_precinct_records": 500,
-  "contest_types_present": [
-    "ballot_measure",
-    "local_general",
-    "midterm",
-    "presidential"
-  ]
+  "run_id": "20260312__p24",
+  "generated_at": "2026-03-12T23:00:14.441602",
+  "has_real_data": true,
+  "coverage": {
+    "total_records": 3000,
+    "real_records": 3000,
+    "synthetic_records": 0,
+    "years_ingested": [
+      2024
+    ],
+    "counties": [
+      "Sonoma"
+    ],
+    "states": [
+      "CA"
+    ],
+    "contests": 1,
+    "contest_types": [
+      "local_general"
+    ],
+    "precincts": 55,
+    "has_real_data": true,
+    "turnout_null_pct": 100.0,
+    "support_null_pct": 100.0
+  },
+  "archive_dir": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\election_archive"
 }

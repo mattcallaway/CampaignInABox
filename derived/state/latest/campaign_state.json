@@ -245,5 +245,37 @@
     "campaign_state": null
   },
   "calibration_status": "prior_only",
-  "calibration_sources": []
+  "calibration_sources": [],
+  "file_registry": {
+    "last_updated": "2026-03-12T23:00:16.054779",
+    "run_id": "20260312__p24",
+    "active_files_count": 13,
+    "missing_files_count": 1,
+    "missing_required": [
+      "voter_file"
+    ],
+    "source_recommendations_available": true
+  },
+  "archive_coverage": {
+    "total_records": 3000,
+    "real_records": 3000,
+    "synthetic_records": 0,
+    "years_ingested": [
+      2024
+    ],
+    "counties": [
+      "Sonoma"
+    ],
+    "states": [
+      "CA"
+    ],
+    "contests": 1,
+    "contest_types": [
+      "local_general"
+    ],
+    "precincts": 55,
+    "has_real_data": true,
+    "turnout_null_pct": 100.0,
+    "support_null_pct": 100.0
+  }
 }

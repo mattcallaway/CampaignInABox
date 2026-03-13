@@ -1,0 +1,106 @@
+{
+  "run_id": "20260312__p24",
+  "generated_at": "2026-03-12T23:00:16.050244",
+  "active_files": [
+    {
+      "file_type": "precinct_geometry",
+      "path": "data/CA/counties/Sonoma/geography/boundary_index/boundaries_index.csv",
+      "size_bytes": 131,
+      "modified": "2026-03-10T21:11:26.875076",
+      "file_count": 7,
+      "status": "active"
+    },
+    {
+      "file_type": "crosswalk",
+      "path": "data/CA/counties/Sonoma/geography/crosswalks/mprec_srprec_097_g24.csv",
+      "size_bytes": 28073,
+      "modified": "2026-03-04T22:29:44.675173",
+      "file_count": 6,
+      "status": "active"
+    },
+    {
+      "file_type": "election_archive",
+      "path": "derived/archive/normalized_elections.csv",
+      "size_bytes": 321176,
+      "modified": "2026-03-12T23:00:14.434316",
+      "status": "active"
+    },
+    {
+      "file_type": "precinct_profiles",
+      "path": "derived/archive/precinct_profiles.csv",
+      "size_bytes": 4295,
+      "modified": "2026-03-12T23:00:15.488794",
+      "status": "active"
+    },
+    {
+      "file_type": "precinct_trends",
+      "path": "derived/archive/precinct_trends.csv",
+      "size_bytes": 3952,
+      "modified": "2026-03-12T23:00:15.592337",
+      "status": "active"
+    },
+    {
+      "file_type": "similar_elections",
+      "path": "derived/archive/similar_elections.csv",
+      "size_bytes": 228,
+      "modified": "2026-03-12T23:00:15.638866",
+      "status": "active"
+    },
+    {
+      "file_type": "support_model",
+      "path": "derived/models/support_model.pkl",
+      "size_bytes": 140856,
+      "modified": "2026-03-10T22:29:00.986701",
+      "status": "active"
+    },
+    {
+      "file_type": "calibration_params",
+      "path": "derived/calibration/2026-03-10__152246__e84498d7__msi__forecast_comparison.csv",
+      "size_bytes": 213,
+      "modified": "2026-03-10T16:27:50.962511",
+      "file_count": 1,
+      "status": "active"
+    },
+    {
+      "file_type": "precinct_model_output",
+      "path": "derived/precinct_models/CA/Sonoma/Sonoma_2025_prop_50_special__4/2026-03-10__152246__e84498d7__msi__precinct_model.csv",
+      "size_bytes": 22357,
+      "modified": "2026-03-10T15:24:01.751467",
+      "file_count": 50,
+      "status": "active"
+    },
+    {
+      "file_type": "voter_universes",
+      "path": "derived/voter_universes/2026-03-10__152246__e84498d7__msi__voter_segments.parquet",
+      "size_bytes": 61460,
+      "modified": "2026-03-10T15:22:50.988645",
+      "file_count": 6,
+      "status": "active"
+    },
+    {
+      "file_type": "voter_scores",
+      "path": "derived/voter_models/2026-03-10__152246__e84498d7__msi__precinct_voter_metrics.csv",
+      "size_bytes": 1010,
+      "modified": "2026-03-10T15:22:51.019102",
+      "file_count": 18,
+      "status": "active"
+    },
+    {
+      "file_type": "strategy_output",
+      "path": "derived/strategy/2026-03-10__152246__e84498d7__msi__budget_allocation.csv",
+      "size_bytes": 135,
+      "modified": "2026-03-10T15:23:52.339184",
+      "file_count": 8,
+      "status": "active"
+    },
+    {
+      "file_type": "simulation_output",
+      "path": "derived/advanced_modeling/2025_CA_sonoma_prop_50_special/2026-03-10__152246__e84498d7__msi__advanced_scenarios.csv",
+      "size_bytes": 324,
+      "modified": "2026-03-10T15:25:17.956014",
+      "file_count": 22,
+      "status": "active"
+    }
+  ],
+  "registered_files_count": 0
+}

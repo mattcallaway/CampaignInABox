@@ -87,3 +87,51 @@ This is the last validated point before the systematic critical stabilization fr
 #### Why This Rollback Point Matters
 This is the first validated post-repair snapshot. Use this point if a future feature prompt breaks any of the C01/C02/C03 fixes.
 
+---
+
+### Entry 3 — Pre Prompt 24 Archive & Calibration
+
+| Field | Value |
+|-------|-------|
+| **Timestamp** | 2026-03-12T22:45:00-07:00 |
+| **Branch** | `rollback/prompt24_pre_archive_calibration` |
+| **Tag** | `v_pre_prompt24_archive_calibration` |
+| **Overall Health Score** | ~7.0 / 10 (post Prompt 23 stabilization baseline) |
+| **Created By** | Prompt 24 pre-work protocol |
+
+#### What Was Working (Prompt 23 baseline)
+All Prompt 23 fixes are active and verified. GitHub safety pre-commit hook live. Strategy engine path fixed. Field effects wired. Technical map written.
+
+#### Why This Rollback Point Matters
+Last validated state before the archive population, calibration, and voter parser changes of Prompt 24.
+
+---
+
+### Entry 4 — Post Prompt 24 Archive & Calibration
+
+| Field | Value |
+|-------|-------|
+| **Timestamp** | 2026-03-12T23:00:00-07:00 |
+| **Branch** | `rollback/prompt24_post_archive_calibration` |
+| **Tag** | `v_post_prompt24_archive_calibration` |
+| **Overall Health Score** | ~7.5 / 10 (expected after Prompt 24; ~8.5/10 with real election data) |
+| **Created By** | Prompt 24 post-work protocol |
+
+#### What Was Completed
+- **Archive Ingest:** Real file parsing from `data/election_archive/` — multi-format, MPREC normalization, provenance tagging
+- **Precinct Profiles:** avg_turnout, variance, SD, tilt, special election penalty, OLS trend slopes — from archive data
+- **Trend Analysis:** OLS slopes + R² + p-values + direction labels per precinct
+- **Election Similarity:** Multi-factor scoring (type, jurisdiction, turnout, support) — machine-usable ranking
+- **Calibration Framework:** Isotonic regression wrapper fully implemented; awaiting election result data to activate
+- **File Registry:** Active as normal pipeline step; updates `campaign_state.json` on every run
+- **Voter Parser:** Chunked reads (50k rows) for files >50MB; VAN dtype maps; elapsed time logging
+- **SYSTEM_TECHNICAL_MAP:** Updated with Prompt 24 changelog
+
+#### Remaining Deferred Items
+- Real election result files needed in `data/election_archive/<YEAR>/` for model training to activate
+- Monte Carlo parallelization (optional)
+- Persuasion score calibration (requires election result data)
+
+#### Why This Rollback Point Matters
+First post-calibration-framework snapshot. If Prompt 25 breaks precinct profiles or file registry behavior, restore to this point.
+
