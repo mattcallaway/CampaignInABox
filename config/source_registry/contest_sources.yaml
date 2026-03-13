@@ -1,0 +1,323 @@
+# Contest Source Registry — Campaign In A Box
+# Seeded with known high-confidence sources for Sonoma County and California.
+# Add entries following the schema defined in source_registry_schema.yaml.
+# ---
+
+schema_version: "1.0"
+last_updated: "2026-03-12"
+
+sources:
+
+  # ─── SONOMA COUNTY — REGISTRAR OF VOTERS ────────────────────────────────
+
+  - source_id: ca_sonoma_registrar_election_results
+    jurisdiction_type: county
+    state: CA
+    county: Sonoma
+    source_kind: county_registrar
+    official_status: certified
+    confidence_default: 0.95
+    auto_ingest_allowed: true
+    requires_confirmation: true
+    user_approved: false
+    base_url: "https://socoe.us/elections"
+    page_url: "https://socoe.us/elections/election-results"
+    file_patterns:
+      - "*SOV*.xls*"
+      - "*statement_of_vote*.xls*"
+      - "*results*.xlsx"
+      - "*certified*.xlsx"
+    preferred_formats: [xlsx, xls, csv]
+    precinct_id_format: srprec
+    normalization_rule: srprec_to_mprec
+    notes: >
+      Sonoma County Registrar of Voters posts Statement of Vote and precinct-level
+      results after certification. URL structure varies by election year.
+      Manual download typically required; file naming is inconsistent.
+
+  - source_id: ca_sonoma_registrar_2024_general
+    jurisdiction_type: county
+    state: CA
+    county: Sonoma
+    year: 2024
+    election_type: general
+    contest_scope: countywide
+    source_kind: county_registrar
+    official_status: certified
+    confidence_default: 0.95
+    auto_ingest_allowed: true
+    requires_confirmation: true
+    user_approved: false
+    page_url: "https://socoe.us/elections/election-results/2024-general-election"
+    file_patterns:
+      - "*2024*general*SOV*.xls*"
+      - "*2024*statement*.xls*"
+    preferred_formats: [xlsx, xls]
+    precinct_id_format: srprec
+    normalization_rule: srprec_to_mprec
+    notes: "November 2024 General Election — Sonoma County certified results."
+
+  - source_id: ca_sonoma_registrar_2022_general
+    jurisdiction_type: county
+    state: CA
+    county: Sonoma
+    year: 2022
+    election_type: general
+    contest_scope: countywide
+    source_kind: county_registrar
+    official_status: certified
+    confidence_default: 0.95
+    auto_ingest_allowed: true
+    requires_confirmation: true
+    user_approved: false
+    page_url: "https://socoe.us/elections/election-results/2022-general-election"
+    file_patterns:
+      - "*2022*general*SOV*.xls*"
+      - "*2022*statement*.xls*"
+    preferred_formats: [xlsx, xls]
+    precinct_id_format: srprec
+    normalization_rule: srprec_to_mprec
+    notes: "November 2022 General Election — Sonoma County certified results."
+
+  - source_id: ca_sonoma_registrar_2020_general
+    jurisdiction_type: county
+    state: CA
+    county: Sonoma
+    year: 2020
+    election_type: general
+    contest_scope: countywide
+    source_kind: county_registrar
+    official_status: certified
+    confidence_default: 0.95
+    auto_ingest_allowed: true
+    requires_confirmation: true
+    user_approved: false
+    page_url: "https://socoe.us/elections/election-results/2020-general-election"
+    file_patterns:
+      - "*2020*general*SOV*.xls*"
+      - "*2020*statement*.xls*"
+    preferred_formats: [xlsx, xls]
+    precinct_id_format: srprec
+    normalization_rule: srprec_to_mprec
+    notes: "November 2020 General Election — Sonoma County certified results."
+
+  - source_id: ca_sonoma_registrar_2018_general
+    jurisdiction_type: county
+    state: CA
+    county: Sonoma
+    year: 2018
+    election_type: general
+    contest_scope: countywide
+    source_kind: county_registrar
+    official_status: certified
+    confidence_default: 0.90
+    auto_ingest_allowed: true
+    requires_confirmation: true
+    user_approved: false
+    page_url: "https://socoe.us/elections/election-results/2018-general-election"
+    file_patterns:
+      - "*2018*general*SOV*.xls*"
+      - "*2018*statement*.xls*"
+    preferred_formats: [xlsx, xls]
+    precinct_id_format: srprec
+    normalization_rule: srprec_to_mprec
+    notes: "November 2018 General Election — Sonoma County certified results."
+
+  - source_id: ca_sonoma_registrar_2016_general
+    jurisdiction_type: county
+    state: CA
+    county: Sonoma
+    year: 2016
+    election_type: general
+    contest_scope: countywide
+    source_kind: county_registrar
+    official_status: certified
+    confidence_default: 0.90
+    auto_ingest_allowed: true
+    requires_confirmation: true
+    user_approved: false
+    notes: "November 2016 General Election — Sonoma County. Archive page URL varies; check registrar site."
+    precinct_id_format: srprec
+    normalization_rule: srprec_to_mprec
+
+  - source_id: ca_sonoma_registrar_special_elections
+    jurisdiction_type: county
+    state: CA
+    county: Sonoma
+    election_type: special
+    contest_scope: countywide
+    source_kind: county_registrar
+    official_status: certified
+    confidence_default: 0.80
+    auto_ingest_allowed: false
+    requires_confirmation: true
+    user_approved: false
+    base_url: "https://socoe.us/elections/election-results"
+    notes: >
+      Sonoma County special elections vary significantly by district and year.
+      URL structure and file format differ per election.
+      Manual lookup required; flag as special_election in archive ingest.
+
+  # ─── SONOMA COUNTY — ELECTIONSTATS ─────────────────────────────────────
+
+  - source_id: ca_sonoma_electionstats
+    jurisdiction_type: county
+    state: CA
+    county: Sonoma
+    source_kind: electionstats_database
+    official_status: unofficial
+    confidence_default: 0.80
+    auto_ingest_allowed: true
+    requires_confirmation: true
+    user_approved: false
+    base_url: "https://electionstats.org/county/sonoma"
+    notes: >
+      ElectionStats.org aggregates historical county-level election data.
+      Useful for multi-year precinct-level trend analysis.
+      Data may be slightly different from official certified results due to precinct splits.
+
+  # ─── SONOMA COUNTY — CLARITY ENR ────────────────────────────────────────
+
+  - source_id: ca_sonoma_clarity_enr
+    jurisdiction_type: county
+    state: CA
+    county: Sonoma
+    source_kind: clarity_enr
+    official_status: preliminary
+    confidence_default: 0.75
+    auto_ingest_allowed: false
+    requires_confirmation: true
+    user_approved: false
+    base_url: "https://results.enr.clarityelections.com/CA/Sonoma"
+    notes: >
+      Clarity Elections ENR shows preliminary results on election night.
+      Precinct data is available early but may change through certification.
+      Use for election-night monitoring only; prefer registrar certified for modeling.
+
+  # ─── CALIFORNIA SOS — STATEWIDE ──────────────────────────────────────────
+
+  - source_id: ca_sos_statewide_results
+    jurisdiction_type: state
+    state: CA
+    source_kind: state_sos
+    official_status: certified
+    confidence_default: 0.92
+    auto_ingest_allowed: true
+    requires_confirmation: true
+    user_approved: false
+    base_url: "https://www.sos.ca.gov/elections"
+    page_url: "https://www.sos.ca.gov/elections/prior-elections/statement-vote"
+    file_patterns:
+      - "*sov*.zip"
+      - "*statement_of_vote*.xls*"
+      - "*statewide_results*.zip"
+    preferred_formats: [xlsx, xls, zip]
+    precinct_id_format: mprec
+    normalization_rule: mprec_standard
+    notes: >
+      California SOS posts precinct-level certified results as Statement of Vote.
+      Statewide results include all counties and use MPREC precinct IDs.
+      Zip archives contain per-county XLS files.
+
+  - source_id: ca_sos_2024_general
+    jurisdiction_type: state
+    state: CA
+    year: 2024
+    election_type: general
+    contest_scope: statewide
+    source_kind: state_sos
+    official_status: certified
+    confidence_default: 0.92
+    auto_ingest_allowed: true
+    requires_confirmation: true
+    user_approved: false
+    page_url: "https://www.sos.ca.gov/elections/prior-elections/statewide-election-results/2024-general"
+    file_patterns:
+      - "*2024*nov*sov*.zip"
+      - "*2024*general*statewide*.zip"
+    preferred_formats: [xlsx, zip]
+    precinct_id_format: mprec
+    normalization_rule: mprec_standard
+    notes: "November 2024 Statewide General — CA SOS certified Statement of Vote."
+
+  - source_id: ca_sos_2022_general
+    jurisdiction_type: state
+    state: CA
+    year: 2022
+    election_type: general
+    contest_scope: statewide
+    source_kind: state_sos
+    official_status: certified
+    confidence_default: 0.92
+    auto_ingest_allowed: true
+    requires_confirmation: true
+    user_approved: false
+    page_url: "https://www.sos.ca.gov/elections/prior-elections/statewide-election-results/2022-general"
+    preferred_formats: [xlsx, zip]
+    precinct_id_format: mprec
+    normalization_rule: mprec_standard
+
+  - source_id: ca_sos_2020_general
+    jurisdiction_type: state
+    state: CA
+    year: 2020
+    election_type: general
+    contest_scope: statewide
+    source_kind: state_sos
+    official_status: certified
+    confidence_default: 0.92
+    auto_ingest_allowed: true
+    requires_confirmation: true
+    user_approved: false
+    page_url: "https://www.sos.ca.gov/elections/prior-elections/statewide-election-results/2020-general"
+    preferred_formats: [xlsx, zip]
+    precinct_id_format: mprec
+    normalization_rule: mprec_standard
+
+  - source_id: ca_sos_cdn_precinct_data
+    jurisdiction_type: state
+    state: CA
+    source_kind: state_sos
+    official_status: certified
+    confidence_default: 0.93
+    auto_ingest_allowed: true
+    requires_confirmation: true
+    user_approved: false
+    base_url: "https://elections.cdn.sos.ca.gov/"
+    notes: >
+      CA SOS CDN hosts downloadable precinct-level election data files.
+      Files follow consistent naming convention with year and election type.
+      Preferred source for bulk historical data.
+
+  - source_id: ca_sos_ballot_measures
+    jurisdiction_type: state
+    state: CA
+    district_type: ballot_measure
+    contest_scope: statewide
+    source_kind: state_sos
+    official_status: certified
+    confidence_default: 0.90
+    auto_ingest_allowed: true
+    requires_confirmation: true
+    user_approved: false
+    base_url: "https://vig.cdn.sos.ca.gov/"
+    notes: >
+      Statewide ballot measure results are available from CA SOS.
+      Useful as analog contests for local ballot measures.
+
+  # ─── MANUAL UPLOAD PLACEHOLDER ────────────────────────────────────────
+
+  - source_id: ca_sonoma_manual_upload_placeholder
+    jurisdiction_type: county
+    state: CA
+    county: Sonoma
+    source_kind: manual_upload
+    official_status: unknown
+    confidence_default: 0.70
+    auto_ingest_allowed: false
+    requires_confirmation: true
+    user_approved: false
+    notes: >
+      Placeholder for user-uploaded election result files.
+      When a user uploads a file via the Data Manager, the system should
+      ask whether to register it here with the appropriate metadata.

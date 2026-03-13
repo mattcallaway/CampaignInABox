@@ -1,5 +1,18 @@
 # Campaign In A Box — Living Technical System Map
-**Version:** 1.1 (Prompt 24 — Historical Data & Calibration) | **Maintained:** Update per Change Protocol (Section K)
+**Version:** 1.2 (Prompt 25A — Contest & Geometry Source Registry) | **Maintained:** Update per Change Protocol (Section K)
+
+> **Prompt 25A Changelog (2026-03-13):**
+> - `engine/source_registry/` added: canonical source registry for election result and geometry sources
+>   - `source_registry.py`: loader with override merging, multi-factor match scoring
+>   - `source_resolver.py`: registry-first resolver with high/medium/low confidence tiers
+>   - `source_registry_updates.py`: user approval writeback to `local_overrides.yaml`
+>   - `source_registry_report.py`: diagnostics report + JSON snapshots
+> - `config/source_registry/` added: schema YAML, seeded contest sources (16 entries), seeded geometry sources (10 entries), local_overrides.yaml, notes
+> - Seeded: Sonoma County Registrar 2016-2024, CA SOS statewide, ElectionStats, Clarity ENR
+> - Seeded: CA MPREC (SWDB), Sonoma SRPREC, MPREC<->SRPREC crosswalks, city/supervisorial/school boundaries
+> - `ui/dashboard/source_registry_view.py` added: Source Registry page with approve/reject/prefer/alias/notes/add-manual UI
+> - `ui_pages.yaml` updated: Source Registry added to Data section
+> - `campaign_state.json` updated with `source_registry_summary` block
 
 > **Prompt 24 Changelog (2026-03-12):**
 > - `archive_ingest.py` rebuilt: real file support (CSV/XLS/XLSX/TSV), MPREC normalization, provenance tagging, multi-format, coverage report
@@ -94,6 +107,7 @@
 | `data/campaign_runtime/` | Live field/volunteer data | ❌ gitignored |
 | `data/election_archive/` | Historical election files | ✅ (results only) |
 | `derived/` | All pipeline outputs | ✅ |
+| `config/source_registry/` | Election/geometry source registry | ✅ |
 | `config/` | All configuration files | ✅ |
 | `engine/` | All pipeline code | ✅ |
 | `ui/` | All dashboard code | ✅ |
@@ -142,21 +156,39 @@ This enables full reproducibility — any run can be traced to its exact inputs.
   "state": "CA",
   "county": "Sonoma",
   "generated_at": "...",
-  "campaign_setup": {...},
-  "model_summary": {...},
-  "strategy_summary": {...},
-  "war_room_summary": {...},
-  "archive_summary": {...},
-  "historical_models_active": true/false,
-  "calibration_status": {...},
-  "risks": [...],
-  "recommendations": [...]
+  "campaign_setup": {},
+  "model_summary": {},
+  "strategy_summary": {},
+  "war_room_summary": {},
+  "archive_summary": {},
+  "historical_models_active": "true/false",
+  "calibration_status": {},
+  "source_registry_summary": {
+    "contest_sources": 16,
+    "geometry_sources": 10,
+    "approved_sources": 0,
+    "registry_coverage": "partial|good|strong"
+  },
+  "risks": [],
+  "recommendations": []
 }
 ```
 
 ---
 
 ## D. Engine Subsystem Map
+
+### source_registry
+- **Purpose:** Canonical lookup layer for known election result and geometry sources. Called first by archive discovery and file registry before any web search or user prompt.
+- **Key files:** `source_registry.py`, `source_resolver.py`, `source_registry_updates.py`, `source_registry_report.py`
+- **Config:** `config/source_registry/contest_sources.yaml` (16 seeded), `geometry_sources.yaml` (10 seeded), `local_overrides.yaml` (user approvals)
+- **Resolver flow:** lookup → score by state/county/year/election_type/alias → tier as high/medium/low confidence → return best; fallback_required=True only if no high/medium match
+- **Scoring:** base × county_match × year_match × election_type × contest_alias × confidence_default
+- **High confidence threshold:** ≥0.80 (use directly); Medium: 0.55–0.80 (present for confirmation); Low: <0.55 (fallback only)
+- **User approval writeback:** UI calls `source_registry_updates.py` → persists to `local_overrides.yaml`
+- **Outputs:** `derived/source_registry/<RUN_ID>__contest_registry_snapshot.json`, `geometry_registry_snapshot.json`, `reports/source_registry/<RUN_ID>__source_registry_report.md`; updates `campaign_state.json → source_registry_summary`
+- **Failure modes:** Falls back gracefully if YAML missing; never blocks pipeline
+- **UI:** Source Registry page — approve/reject/preferred/alias/notes/add-manual actions
 
 ### archive
 - **Purpose:** Ingests historical election data and trains baseline ML models

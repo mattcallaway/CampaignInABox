@@ -1,0 +1,52 @@
+# Local Overrides — Campaign In A Box Source Registry
+# This file stores user-approved sources, manual additions, and local overrides.
+# It takes precedence over seeded registry entries for matching source_ids.
+#
+# ⚠️ GITIGNORE NOTE:
+# This file is safe to commit when it contains ONLY public URLs and metadata.
+# If you add LOCAL FILE PATHS that include PII-bearing filenames, gitignore this file.
+# Default: committed (no PII paths are stored here by the engine)
+# ---
+
+schema_version: "1.0"
+last_updated: "2026-03-12"
+
+# User-approved overrides. Format matches contest_sources.yaml / geometry_sources.yaml.
+# Each entry must have a source_id matching an existing registry entry, OR a new source_id.
+
+approved_updates: []
+# Example:
+#   - source_id: ca_sonoma_registrar_2024_general
+#     user_approved: true
+#     notes: "User confirmed this file in the Data Manager on 2026-03-12"
+
+manual_contest_sources: []
+# Example:
+#   - source_id: ca_sonoma_measure_b_2025_special
+#     jurisdiction_type: county
+#     state: CA
+#     county: Sonoma
+#     year: 2025
+#     election_type: special
+#     contest_name: "Measure B — Parks and Recreation"
+#     source_kind: manual_upload
+#     official_status: certified
+#     confidence_default: 0.90
+#     auto_ingest_allowed: false
+#     requires_confirmation: false
+#     user_approved: true
+#     notes: "Uploaded by data director on 2026-03-01"
+
+manual_geometry_sources: []
+# Example:
+#   - source_id: ca_sonoma_fire_district_boundaries_local
+#     state: CA
+#     county: Sonoma
+#     jurisdiction_scope: county
+#     boundary_type: school_district
+#     source_kind: manual_upload
+#     official_status: official
+#     confidence_default: 0.90
+#     preferred: true
+#     user_approved: true
+#     notes: "Local shapefile from Sonoma County data portal, downloaded 2026-01-15"

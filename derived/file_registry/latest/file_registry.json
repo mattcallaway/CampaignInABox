@@ -1,6 +1,6 @@
 {
   "run_id": "20260312__p24",
-  "generated_at": "2026-03-12T23:00:16.050244",
+  "generated_at": "2026-03-12T23:05:25.589710",
   "active_files": [
     {
       "file_type": "precinct_geometry",
@@ -22,28 +22,28 @@
       "file_type": "election_archive",
       "path": "derived/archive/normalized_elections.csv",
       "size_bytes": 321176,
-      "modified": "2026-03-12T23:00:14.434316",
+      "modified": "2026-03-12T23:05:24.116346",
       "status": "active"
     },
     {
       "file_type": "precinct_profiles",
       "path": "derived/archive/precinct_profiles.csv",
       "size_bytes": 4295,
-      "modified": "2026-03-12T23:00:15.488794",
+      "modified": "2026-03-12T23:05:25.133096",
       "status": "active"
     },
     {
       "file_type": "precinct_trends",
       "path": "derived/archive/precinct_trends.csv",
       "size_bytes": 3952,
-      "modified": "2026-03-12T23:00:15.592337",
+      "modified": "2026-03-12T23:05:25.239882",
       "status": "active"
     },
     {
       "file_type": "similar_elections",
       "path": "derived/archive/similar_elections.csv",
       "size_bytes": 228,
-      "modified": "2026-03-12T23:00:15.638866",
+      "modified": "2026-03-12T23:05:25.279832",
       "status": "active"
     },
     {
@@ -102,5 +102,5 @@
       "status": "active"
     }
   ],
-  "registered_files_count": 0
+  "registered_files_count": 4
 }

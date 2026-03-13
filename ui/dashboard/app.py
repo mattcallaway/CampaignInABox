@@ -365,3 +365,7 @@ elif page == "🩺 Diagnostics":
 elif page == "🗄️ Data Explorer":
     from ui.dashboard.data_explorer import render_explorer
     render_explorer(data)
+
+elif page == "🗂️ Source Registry":
+    from ui.dashboard.source_registry_view import render_source_registry
+    render_source_registry(data)

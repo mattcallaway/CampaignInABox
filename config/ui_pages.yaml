@@ -33,6 +33,8 @@ data:
       label: "Data Manager"
     - id: "🗄️ Data Explorer"
       label: "Data Explorer"
+    - id: "🗂️ Source Registry"
+      label: "Source Registry"
 
 geography:
   label: "🗺️ Geography"

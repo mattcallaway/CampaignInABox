@@ -135,3 +135,49 @@ Last validated state before the archive population, calibration, and voter parse
 #### Why This Rollback Point Matters
 First post-calibration-framework snapshot. If Prompt 25 breaks precinct profiles or file registry behavior, restore to this point.
 
+---
+
+### Entry 5 — Pre Prompt 25A Source Registry
+
+| Field | Value |
+|-------|-------|
+| **Timestamp** | 2026-03-13T00:00:00-07:00 |
+| **Branch** | `rollback/prompt25a_pre_source_registry` |
+| **Tag** | `v_pre_prompt25a_source_registry` |
+| **Overall Health Score** | ~7.5 / 10 (post Prompt 24 baseline) |
+
+#### What Was Working
+All Prompt 23 and 24 fixes active. Archive ingest live. Registry active. Precinct profiles built. Technical map v1.1.
+
+#### Why This Rollback Point Matters
+Last validated state before source registry system was added. If source registry causes import errors or UI crashes, restore here.
+
+---
+
+### Entry 6 — Post Prompt 25A Source Registry
+
+| Field | Value |
+|-------|-------|
+| **Timestamp** | 2026-03-13T00:45:00-07:00 |
+| **Branch** | `rollback/prompt25a_post_source_registry` |
+| **Tag** | `v_post_prompt25a_source_registry` |
+| **Overall Health Score** | ~8.0 / 10 |
+
+#### What Was Completed
+- Source Registry: 16 seeded contest sources (Sonoma 2016-2024, CA SOS statewide, ElectionStats, Clarity ENR)
+- Geometry Registry: 10 seeded sources (MPREC, SRPREC, 3 crosswalk types, city/supervisorial/school boundaries)
+- Resolver: Registry-first lookup with high/medium/low confidence tiers, official-status prioritization
+- User Approval Writeback: Persists to `config/source_registry/local_overrides.yaml`
+- Source Registry UI Page: Approve/reject/prefer/alias/notes/add-manual actions; diagnostics runner
+- Diagnostics: Reports and JSON snapshots with coverage analysis, gap detection, year coverage
+- campaign_state.json updated with `source_registry_summary`
+- SYSTEM_TECHNICAL_MAP.md updated to v1.2 with source_registry subsystem
+
+#### Validation Results
+- Contest sources: 16 | Geometry sources: 10
+- Best match for CA/Sonoma/2024/general: `ca_sonoma_registrar_2024_general` (score=1.805)
+- Best crosswalk: `ca_sonoma_mprec_srprec_crosswalk_local`
+- Coverage rating: **strong** | Years covered: 2016, 2018, 2020, 2022, 2024
+
+#### Why This Rollback Point Matters
+First post-source-registry snapshot. If Prompt 25B or later breaks registry-first discovery logic, restore here.
