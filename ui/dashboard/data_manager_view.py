@@ -137,6 +137,27 @@ def render_data_manager(data: dict):
             render_empty_state("No Files Uploaded", "The file registry is empty.", "🗂️", "Upload a file in the first tab.")
         else:
             df_reg = pd.DataFrame(registry)
+
+            # ── Defensive column normalization ────────────────────────────────
+            # Different writers (register_new_file, file_registry_pipeline, etc.)
+            # may not include all fields. Fill missing columns with sensible defaults.
+            _DEFAULT_COLS = {
+                "status":             "ACTIVE",
+                "last_modified":      "",
+                "uploaded_at":        "",
+                "file_id":            "",
+                "current_filename":   "",
+                "campaign_data_type": "unknown",
+                "state":              "",
+                "county":             "",
+                "contest_id":         "",
+                "provenance":         "UNKNOWN",
+            }
+            for col, default in _DEFAULT_COLS.items():
+                if col not in df_reg.columns:
+                    df_reg[col] = default
+            # ── End defensive normalization ───────────────────────────────────
+
             view_status = st.radio("View", ["ACTIVE", "ARCHIVED", "ALL"], horizontal=True)
             if view_status != "ALL":
                 if view_status == "ACTIVE":
@@ -147,7 +168,12 @@ def render_data_manager(data: dict):
             if df_reg.empty:
                 render_empty_state("No Files Found", f"No {view_status.lower()} files currently exist.")
             else:
-                disp_df = df_reg[["file_id", "current_filename", "campaign_data_type", "state", "county", "contest_id", "provenance", "status", "last_modified"]]
+                # Only show columns that actually exist in the DataFrame
+                _display_cols = ["file_id", "current_filename", "campaign_data_type",
+                                 "state", "county", "contest_id", "provenance",
+                                 "status", "last_modified"]
+                disp_cols = [c for c in _display_cols if c in df_reg.columns]
+                disp_df = df_reg[disp_cols]
                 st.dataframe(disp_df, use_container_width=True, hide_index=True)
 
                 st.markdown("#### Manage Existing Files")
