@@ -1,0 +1,72 @@
+{
+  "run_id": "2026-03-14__001450__25f8d317__msi",
+  "run_status": "partial",
+  "total_elapsed_s": 0.072,
+  "started_at": "2026-03-14T07:14:50.601844+00:00",
+  "county_name": "Sonoma",
+  "county_fips": "097",
+  "county_slug": "sonoma",
+  "contest_id": "2026_CA_sonoma_prop_50_special",
+  "registry_version": "1.0",
+  "input_hashes": {},
+  "output_hashes": {
+    "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\boundary_index\\boundaries_index.csv": "b4dff0e71c422e612069cecc47bc83d6f5c0027631171e9fa736bf40cb029e7a"
+  },
+  "coverage": {
+    "canonical_geometry": "MPREC",
+    "categories_present": 12,
+    "categories_missing": 0
+  },
+  "steps": [
+    {
+      "step": "DATA_INTAKE_ANALYSIS",
+      "status": "skipped",
+      "elapsed_s": 0.066,
+      "reason": "'str' object has no attribute 'get'"
+    },
+    {
+      "step": "INGEST_STAGING",
+      "status": "skipped",
+      "elapsed_s": 0.066,
+      "reason": "No --staging-dir provided; skipping ingestion"
+    },
+    {
+      "step": "SCAFFOLD_BOUNDARY_INDEX_Sonoma",
+      "status": "done",
+      "elapsed_s": 0.068,
+      "outputs": [
+        "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\boundary_index\\boundaries_index.csv"
+      ],
+      "hashes_out": {
+        "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\geography\\boundary_index\\boundaries_index.csv": "b4dff0e71c422e612069cecc47bc83d6f5c0027631171e9fa736bf40cb029e7a"
+      },
+      "notes": []
+    },
+    {
+      "step": "VALIDATE_GEOGRAPHY",
+      "status": "done",
+      "elapsed_s": 0.071,
+      "outputs": [],
+      "hashes_out": {},
+      "notes": []
+    },
+    {
+      "step": "VALIDATE_VOTES",
+      "status": "skipped",
+      "elapsed_s": 0.072,
+      "reason": "blocked: missing votes \u2014 detail.xlsx not found"
+    }
+  ],
+  "needs": [
+    {
+      "category": "detail.xlsx",
+      "status": "missing",
+      "blocks": [
+        "parse_contest",
+        "allocate_votes",
+        "export_model"
+      ],
+      "expected_path": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\votes\\2024\\prop_50_special\\detail.xlsx"
+    }
+  ]
+}

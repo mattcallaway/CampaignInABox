@@ -1,0 +1,37 @@
+# Integrity Repair Report
+**Contest:** `2020_CA_sonoma_nov2020_general`  **Run:** `2026-03-14__155005__f37ab520__msi`  **Context:** PrecinctOverview
+
+## Summary
+- Total precincts: 2676
+- Repaired: 0
+- Critical (NOT repaired — data quality issue): 1892
+
+## Countywide Totals
+| Metric | Before | After |
+|---|---|---|
+| Registered | 0 | 0 |
+| Ballots Cast | 2,921,404 | 2,920,854 |
+
+## ⚠️ Critical Rows (Not Repaired)
+| Precinct | Rule | Registered | Ballots | Note |
+|---|---|---|---|---|
+| Polling Place | REG_ZERO_BALLOTS_NONZERO | 0 | 36 | Likely join/extraction error — registered not mapped from workbook |
+| Vote by Mail | REG_ZERO_BALLOTS_NONZERO | 0 | 49 | Likely join/extraction error — registered not mapped from workbook |
+| Canvass | REG_ZERO_BALLOTS_NONZERO | 0 | 44 | Likely join/extraction error — registered not mapped from workbook |
+| Polling Place | REG_ZERO_BALLOTS_NONZERO | 0 | 1 | Likely join/extraction error — registered not mapped from workbook |
+| Vote by Mail | REG_ZERO_BALLOTS_NONZERO | 0 | 1 | Likely join/extraction error — registered not mapped from workbook |
+| Canvass | REG_ZERO_BALLOTS_NONZERO | 0 | 3 | Likely join/extraction error — registered not mapped from workbook |
+| Polling Place | REG_ZERO_BALLOTS_NONZERO | 0 | 113 | Likely join/extraction error — registered not mapped from workbook |
+| Vote by Mail | REG_ZERO_BALLOTS_NONZERO | 0 | 182 | Likely join/extraction error — registered not mapped from workbook |
+| Canvass | REG_ZERO_BALLOTS_NONZERO | 0 | 147 | Likely join/extraction error — registered not mapped from workbook |
+| Polling Place | REG_ZERO_BALLOTS_NONZERO | 0 | 61 | Likely join/extraction error — registered not mapped from workbook |
+| Vote by Mail | REG_ZERO_BALLOTS_NONZERO | 0 | 98 | Likely join/extraction error — registered not mapped from workbook |
+| Canvass | REG_ZERO_BALLOTS_NONZERO | 0 | 75 | Likely join/extraction error — registered not mapped from workbook |
+| Polling Place | REG_ZERO_BALLOTS_NONZERO | 0 | 147 | Likely join/extraction error — registered not mapped from workbook |
+| Vote by Mail | REG_ZERO_BALLOTS_NONZERO | 0 | 249 | Likely join/extraction error — registered not mapped from workbook |
+| Canvass | REG_ZERO_BALLOTS_NONZERO | 0 | 164 | Likely join/extraction error — registered not mapped from workbook |
+| Polling Place | REG_ZERO_BALLOTS_NONZERO | 0 | 153 | Likely join/extraction error — registered not mapped from workbook |
+| Vote by Mail | REG_ZERO_BALLOTS_NONZERO | 0 | 234 | Likely join/extraction error — registered not mapped from workbook |
+| Canvass | REG_ZERO_BALLOTS_NONZERO | 0 | 190 | Likely join/extraction error — registered not mapped from workbook |
+| Polling Place | REG_ZERO_BALLOTS_NONZERO | 0 | 23 | Likely join/extraction error — registered not mapped from workbook |
+| Vote by Mail | REG_ZERO_BALLOTS_NONZERO | 0 | 40 | Likely join/extraction error — registered not mapped from workbook |

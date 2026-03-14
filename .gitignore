@@ -67,3 +67,12 @@ derived/war_room/private/*
 /data/campaign_runtime/
 /data/private/
 /data/intelligence/private/
+
+# Historical Archive
+# Allowed: models/, derived/archive/, reports/archive/
+# Ignored: data/election_archive/raw_unnormalized/ (if any)
+
+
+# Prompt 20.8 — Persistent session store (local only, never committed)
+data/local_sessions/
+

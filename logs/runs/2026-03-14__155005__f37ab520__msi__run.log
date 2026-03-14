@@ -1,0 +1,1546 @@
+[2026-03-14T22:50:05.666Z] [INFO] ========================================================================
+  Campaign In A Box — Pipeline Run
+  RUN_ID  : 2026-03-14__155005__f37ab520__msi
+  Started : 2026-03-14T22:50:05.665546+00:00
+========================================================================
+[2026-03-14T22:50:05.666Z] [INFO ] Pipeline v2 starting
+[2026-03-14T22:50:05.666Z] [INFO ]   state=CA  county=Sonoma  year=2020  contest_slug=nov2020_general
+[2026-03-14T22:50:05.666Z] [INFO ]   membership_method=auto  log_level=verbose
+[2026-03-14T22:50:05.715Z] [STEP ] START  -> DATA_INTAKE_ANALYSIS
+[2026-03-14T22:50:05.737Z] [STEP ] DONE   [OK] DATA_INTAKE_ANALYSIS (0.072s)
+[2026-03-14T22:50:05.737Z] [STEP ] SKIP   [SKIP] INGEST_STAGING -- No --staging-dir provided; skipping ingestion
+[2026-03-14T22:50:05.737Z] [INFO ] === Processing County: Sonoma ===
+[2026-03-14T22:50:05.737Z] [STEP ] START  -> SCAFFOLD_BOUNDARY_INDEX_Sonoma
+[2026-03-14T22:50:05.737Z] [INFO ]   Boundary index exists: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\boundary_index\boundaries_index.csv
+[2026-03-14T22:50:05.739Z] [WARN ]   Boundary index scaffolded (no boundary files found yet)
+[2026-03-14T22:50:05.739Z] [INFO ]   output: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\boundary_index\boundaries_index.csv  [sha256:b4dff0e71c42...]
+[2026-03-14T22:50:05.739Z] [STEP ] DONE   [OK] SCAFFOLD_BOUNDARY_INDEX_Sonoma (0.074s)
+[2026-03-14T22:50:05.739Z] [STEP ] START  -> VALIDATE_GEOGRAPHY
+[2026-03-14T22:50:05.739Z] [INFO ]   expected: data/CA/counties/Sonoma/geography/precinct_shapes/
+[2026-03-14T22:50:05.739Z] [INFO ]   expected: data/CA/counties/Sonoma/geography/crosswalks/
+[2026-03-14T22:50:05.740Z] [INFO ]   [present] MPREC GeoJSON
+[2026-03-14T22:50:05.740Z] [INFO ]   [present] MPREC GeoPackage
+[2026-03-14T22:50:05.741Z] [INFO ]   [present] MPREC Shapefile
+[2026-03-14T22:50:05.741Z] [INFO ]   [present] SRPREC GeoJSON
+[2026-03-14T22:50:05.742Z] [INFO ]   [present] SRPREC GeoPackage
+[2026-03-14T22:50:05.742Z] [INFO ]   [present] SRPREC Shapefile
+[2026-03-14T22:50:05.743Z] [INFO ]   [present] 2020 BLK TO MPREC
+[2026-03-14T22:50:05.743Z] [INFO ]   [present] RGPREC TO 2020 BLK
+[2026-03-14T22:50:05.743Z] [INFO ]   [present] SRPREC TO 2020 BLK
+[2026-03-14T22:50:05.743Z] [INFO ]   [present] RG to RR to SR to SVPREC
+[2026-03-14T22:50:05.744Z] [INFO ]   [present] MPREC to SRPREC
+[2026-03-14T22:50:05.744Z] [INFO ]   [present] SRPREC to CITY
+[2026-03-14T22:50:05.744Z] [INFO ] Geography validation: 12/12 present, canonical=MPREC
+[2026-03-14T22:50:05.744Z] [STEP ] DONE   [OK] VALIDATE_GEOGRAPHY (0.079s)
+[2026-03-14T22:50:05.744Z] [STEP ] START  -> VALIDATE_VOTES
+[2026-03-14T22:50:05.744Z] [INFO ]   expected: data/contests/CA/Sonoma/2020/nov2020_general/raw/<file>  (canonical, P28)
+[2026-03-14T22:50:05.744Z] [INFO ]   expected: votes/2020/CA/Sonoma/nov2020_general/detail.xlsx              (legacy fallback)
+[2026-03-14T22:50:05.746Z] [INFO ]   [VOTES] Found via ContestResolver (canonical P28): data\contests\CA\Sonoma\2020\nov2020_general\raw\StatementOfVotesCast-Webnov32020.xlsx
+[2026-03-14T22:50:05.756Z] [INFO ]   input: detail.xlsx -> C:\Users\Mathew C\Campaign In A Box\data\contests\CA\Sonoma\2020\nov2020_general\raw\StatementOfVotesCast-Webnov32020.xlsx  [sha256:28eb1f9b312c...]
+[2026-03-14T22:50:05.757Z] [STEP ] DONE   [OK] VALIDATE_VOTES (0.091s)
+[2026-03-14T22:50:05.757Z] [STEP ] START  -> LOAD_GEOMETRY
+[2026-03-14T22:50:05.757Z] [INFO ]   expected: MPREC preferred; SRPREC fallback
+[2026-03-14T22:50:05.757Z] [INFO ] Loading MPREC geometry from: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\MPREC_GeoJSON\mprec_097_g24_v01.geojson
+[2026-03-14T22:50:08.015Z] [INFO ] Loaded 1405 features from mprec_097_g24_v01.geojson
+[2026-03-14T22:50:08.015Z] [STEP ] DONE   [OK] LOAD_GEOMETRY (2.35s)
+[2026-03-14T22:50:08.015Z] [STEP ] START  -> LOAD_CROSSWALKS
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971502062002': weights sum to 0.996867 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971503063000': weights sum to 0.994863 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971505022016': weights sum to 0.998417 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971505022004': weights sum to 0.981481 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971505022018': weights sum to 0.989644 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971505022019': weights sum to 0.951394 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971501003054': weights sum to 0.892498 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971501003055': weights sum to 0.874043 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971535024025': weights sum to 0.998974 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971541003007': weights sum to 0.998845 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971502052006': weights sum to 1.001625 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971501003056': weights sum to 0.994914 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971501003042': weights sum to 0.998813 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971501003027': weights sum to 0.997993 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971501003021': weights sum to 0.998859 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971501003040': weights sum to 0.996408 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971541004063': weights sum to 0.992273 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971541004009': weights sum to 0.997554 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971541004000': weights sum to 0.998641 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971541003045': weights sum to 0.997268 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971541003046': weights sum to 0.528088 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971541003043': weights sum to 0.998298 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971541003044': weights sum to 0.969116 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971506122052': weights sum to 0.996519 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971506122048': weights sum to 0.998826 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971507023006': weights sum to 0.997727 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971506122024': weights sum to 0.927860 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971526021000': weights sum to 0.998171 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971535024006': weights sum to 0.981596 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971535024012': weights sum to 0.990210 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971535024010': weights sum to 0.993908 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971535024011': weights sum to 0.993709 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971543081006': weights sum to 0.998454 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971516012006': weights sum to 0.997678 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971526021040': weights sum to 0.986180 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971526021065': weights sum to 0.991842 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.053Z] [WARN ]   crosswalk warning: Source precinct '060971526021068': weights sum to 0.990418 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.054Z] [WARN ]   crosswalk warning: Source precinct '060971526021051': weights sum to 0.977816 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.054Z] [WARN ]   crosswalk warning: Source precinct '060971526021052': weights sum to 0.630230 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.054Z] [WARN ]   crosswalk warning: Source precinct '060971526021042': weights sum to 0.998371 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.054Z] [WARN ]   crosswalk warning: Source precinct '060971506092018': weights sum to 1.001461 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.054Z] [WARN ]   crosswalk warning: Source precinct '060971526021038': weights sum to 0.969775 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.054Z] [WARN ]   crosswalk warning: Source precinct '060971506122025': weights sum to 0.997043 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.054Z] [WARN ]   crosswalk warning: Source precinct '060971506123067': weights sum to 0.996731 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.054Z] [WARN ]   crosswalk warning: Source precinct '060971506123066': weights sum to 0.978822 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.054Z] [WARN ]   crosswalk warning: Source precinct '060971507023007': weights sum to 0.995257 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.054Z] [WARN ]   crosswalk warning: Source precinct '060971507023008': weights sum to 0.992713 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.054Z] [WARN ]   crosswalk warning: Source precinct '060971516012000': weights sum to 0.996871 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.054Z] [WARN ]   crosswalk warning: Source precinct '060971516012028': weights sum to 0.988650 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.054Z] [WARN ]   crosswalk warning: Source precinct '060971526021066': weights sum to 0.960402 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.054Z] [WARN ]   crosswalk warning: Source precinct '060971508004024': weights sum to 0.998485 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.054Z] [WARN ]   crosswalk warning: Source precinct '060971511003009': weights sum to 0.997536 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.054Z] [WARN ]   crosswalk warning: Source precinct '060971508004025': weights sum to 0.997804 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.054Z] [WARN ]   crosswalk warning: Source precinct '060971501001000': weights sum to 0.995501 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.054Z] [WARN ]   crosswalk warning: Source precinct '060971541003000': weights sum to 0.993792 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.054Z] [WARN ]   crosswalk warning: Source precinct '060971541003031': weights sum to 0.996955 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.054Z] [WARN ]   crosswalk warning: Source precinct '060971541003032': weights sum to 0.997974 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.054Z] [WARN ]   crosswalk warning: Source precinct '060971541003054': weights sum to 0.987447 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.054Z] [WARN ]   crosswalk warning: Source precinct '060971541003030': weights sum to 0.926757 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.054Z] [WARN ]   crosswalk warning: Source precinct '060971543051029': weights sum to 0.993373 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.054Z] [WARN ]   crosswalk warning: Source precinct '060971543051004': weights sum to 0.998497 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.054Z] [WARN ]   crosswalk warning: Source precinct '060971543051026': weights sum to 0.913292 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.054Z] [WARN ]   crosswalk warning: Source precinct '060971543051025': weights sum to 0.990442 (expected 1.0 ± 0.001)
+[2026-03-14T22:50:08.065Z] [INFO ] Loaded crosswalk crosswalks: 7563 source precincts
+[2026-03-14T22:50:08.237Z] [INFO ]   [CROSSWALKS] Discovered 6/6 crosswalks
+[2026-03-14T22:50:08.387Z] [INFO ]   [P29-INTROSPECT] 6 crosswalk files — 6 detection OK, 0 detection failed
+[2026-03-14T22:50:08.388Z] [STEP ] DONE   [OK] LOAD_CROSSWALKS (2.723s)
+[2026-03-14T22:50:08.388Z] [STEP ] START  -> SCAFFOLD_CONTEST_JSON
+[2026-03-14T22:50:08.390Z] [INFO ]   output: C:\Users\Mathew C\Campaign In A Box\votes\2020\CA\Sonoma\nov2020_general\contest.json  [sha256:e9dbe99a1be4...]
+[2026-03-14T22:50:08.390Z] [STEP ] DONE   [OK] SCAFFOLD_CONTEST_JSON (2.725s)
+[2026-03-14T22:50:08.390Z] [STEP ] START  -> PARSE_CONTEST
+[2026-03-14T22:50:08.390Z] [INFO ]   expected: Detect sheet types; aggregate vote methods
+[2026-03-14T22:50:15.531Z] [INFO ] Parsing sheet: 'President'
+[2026-03-14T22:50:15.543Z] [INFO ]   parse_contest_sheet: title='President and Vice President' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'JOSEPH R. BIDEN\n(DEM)', 'DONALD J. TRUMP\n(REP)', 'GLORIA LA RIVA\n(PF)', 'ROQUE "ROCKY" DE LA FUENTE GUERRA\n(AI)', 'HOWIE HAWKINS\n(GRN)', 'JO JORGENSEN\n(LIB)', 'QUALIFIED WRITE IN CANDIDATES:', 'BRIAN CARROLL', 'MARK CHARLES', 'JOSEPH KISHORE', 'BROCK PIERCE', 'JESSE VENTURA'] rows=3341
+[2026-03-14T22:50:15.561Z] [INFO ]   -> 2673 precincts, type=candidate_race
+[2026-03-14T22:50:15.561Z] [INFO ] Parsing sheet: 'US Rep-2nd Dist'
+[2026-03-14T22:50:15.562Z] [INFO ]   parse_contest_sheet: title='U S Representative 2nd District' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'JARED HUFFMAN\n(DEM)', 'DALE K. MENSING\n(REP)'] rows=1276
+[2026-03-14T22:50:15.568Z] [INFO ]   -> 1021 precincts, type=candidate_race
+[2026-03-14T22:50:15.568Z] [INFO ] Parsing sheet: 'US Rep-5th Dist'
+[2026-03-14T22:50:15.571Z] [INFO ]   parse_contest_sheet: title='U S Representative 5th District' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'MIKE THOMPSON\n(DEM)', 'SCOTT GIBLIN\n(REP)'] rows=2066
+[2026-03-14T22:50:15.577Z] [INFO ]   -> 1653 precincts, type=candidate_race
+[2026-03-14T22:50:15.577Z] [INFO ] Parsing sheet: 'State Sen-3rd Dist'
+[2026-03-14T22:50:15.579Z] [INFO ]   parse_contest_sheet: title='State Senator 3rd District' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'BILL DODD\n(DEM)', 'CARLOS SANTAMARIA\n(REP)'] rows=811
+[2026-03-14T22:50:15.585Z] [INFO ]   -> 649 precincts, type=candidate_race
+[2026-03-14T22:50:15.585Z] [INFO ] Parsing sheet: '2nd Assembly Dist'
+[2026-03-14T22:50:15.587Z] [INFO ]   parse_contest_sheet: title='Member of Assembly 2nd District' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'JIM WOOD\n(DEM)', 'CHARLOTTE SVOLOS\n(REP)'] rows=1561
+[2026-03-14T22:50:15.593Z] [INFO ]   -> 1249 precincts, type=candidate_race
+[2026-03-14T22:50:15.593Z] [INFO ] Parsing sheet: '4th Assembly Dist'
+[2026-03-14T22:50:15.595Z] [INFO ]   parse_contest_sheet: title='Member of Assembly 4th District' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'MATTHEW L. NELSON\n(REP)', 'CECILIA AGUIAR-CURRY\n(DEM)'] rows=661
+[2026-03-14T22:50:15.600Z] [INFO ]   -> 529 precincts, type=candidate_race
+[2026-03-14T22:50:15.600Z] [INFO ] Parsing sheet: '10th Assembly Dist'
+[2026-03-14T22:50:15.601Z] [INFO ]   parse_contest_sheet: title='Member of Assembly 10th District' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'VERONICA "RONI" JACOBI\n(DEM)', 'MARC LEVINE\n(DEM)'] rows=1121
+[2026-03-14T22:50:15.607Z] [INFO ]   -> 897 precincts, type=candidate_race
+[2026-03-14T22:50:15.607Z] [INFO ] Parsing sheet: 'SoCo BOE-Area 1'
+[2026-03-14T22:50:15.609Z] [INFO ]   parse_contest_sheet: title='Sonoma County Board of Education Area 1' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'DIANNA MACDONALD', 'GINA CUCLIS'] rows=826
+[2026-03-14T22:50:15.617Z] [INFO ]   -> 661 precincts, type=candidate_race
+[2026-03-14T22:50:15.617Z] [INFO ] Parsing sheet: 'SRJC - SR Area'
+[2026-03-14T22:50:15.620Z] [INFO ]   parse_contest_sheet: title='So Co Jr College Dist Santa Rosa Area (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'CAROLINE BAÑUELOS', 'DON EDGAR', 'SARICHON REX TOEUNG', 'MARIANA MARTINEZ', 'KERRY REGO'] rows=1299
+[2026-03-14T22:50:15.632Z] [INFO ]   -> 1039 precincts, type=candidate_race
+[2026-03-14T22:50:15.632Z] [INFO ] Parsing sheet: 'Calistoga Jt USD'
+[2026-03-14T22:50:15.633Z] [INFO ]   parse_contest_sheet: title='Calistoga Joint Unified School District (Vote for  3)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'JULIANNE PAULA ELKESHEN', 'MARK L. GALINDO', 'RUDY GONZALEZ', 'MATTHEW REID', 'STEPHANIE ROTHBERG-ALLAN'] rows=36
+[2026-03-14T22:50:15.639Z] [INFO ]   -> 29 precincts, type=candidate_race
+[2026-03-14T22:50:15.639Z] [INFO ] Parsing sheet: 'Cloverdale USD'
+[2026-03-14T22:50:15.640Z] [INFO ]   parse_contest_sheet: title='Cloverdale Unified School District (Vote for  3)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'PRESTON W. ADDISON', 'BRANDON AXELL', 'JOHANNES J. HOEVERTSZ', 'GABRIELA MENDOZA-TORRES', 'ASHLEY WHITE'] rows=36
+[2026-03-14T22:50:15.646Z] [INFO ]   -> 29 precincts, type=candidate_race
+[2026-03-14T22:50:15.646Z] [INFO ] Parsing sheet: 'Cotati-RP USD Area 5'
+[2026-03-14T22:50:15.647Z] [INFO ]   parse_contest_sheet: title='Cotati-Rohnert Park Unif Trustee Area 5' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'TIM NONN', 'MICHELLE WING'] rows=81
+[2026-03-14T22:50:15.652Z] [INFO ]   -> 65 precincts, type=candidate_race
+[2026-03-14T22:50:15.652Z] [INFO ] Parsing sheet: 'Sonoma Valley USD Area 4'
+[2026-03-14T22:50:15.653Z] [INFO ]   parse_contest_sheet: title='Sonoma Vly Unif Sch Dist Trustee Area 4' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'ADAM LOBSINGER', 'TROY KNOX'] rows=61
+[2026-03-14T22:50:15.658Z] [INFO ]   -> 49 precincts, type=candidate_race
+[2026-03-14T22:50:15.658Z] [INFO ] Parsing sheet: 'Sonoma Valley USD Area 5'
+[2026-03-14T22:50:15.659Z] [INFO ]   parse_contest_sheet: title='Sonoma Vly Unif Sch Dist Trustee Area 5' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'ANNE CHING', 'BRITTA JOHNSON'] rows=116
+[2026-03-14T22:50:15.665Z] [INFO ]   -> 93 precincts, type=candidate_race
+[2026-03-14T22:50:15.665Z] [INFO ] Parsing sheet: 'Petaluma Jt UHSD'
+[2026-03-14T22:50:15.666Z] [INFO ]   parse_contest_sheet: title='Petaluma Jt Union High School District (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'SHELDON GEN', 'CAROL ANN STREET', 'ELLEN WEBSTER', 'LINDA JUDAH'] rows=316
+[2026-03-14T22:50:15.675Z] [INFO ]   -> 253 precincts, type=candidate_race
+[2026-03-14T22:50:15.675Z] [INFO ] Parsing sheet: 'Pt Arena Jt-Arena UHSD'
+[2026-03-14T22:50:15.676Z] [INFO ]   parse_contest_sheet: title='Pt Arena Jt Un High/ Arena Union Dist (Vote for  3)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'MIQUETTE THOMPSON', 'BOB GARDINER', 'SIGRID A. HILLSCAN', 'RON MILES', 'JIM DEWILDER'] rows=16
+[2026-03-14T22:50:15.682Z] [INFO ]   -> 13 precincts, type=candidate_race
+[2026-03-14T22:50:15.683Z] [INFO ] Parsing sheet: 'City of SR HSD Area 1'
+[2026-03-14T22:50:15.684Z] [INFO ]   parse_contest_sheet: title='City of Santa Rosa High School District Trustee Area 1' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'EVER FLORES', 'JENNI KLOSE'] rows=121
+[2026-03-14T22:50:15.688Z] [INFO ]   -> 97 precincts, type=candidate_race
+[2026-03-14T22:50:15.688Z] [INFO ] Parsing sheet: 'West SoCo UHSD'
+[2026-03-14T22:50:15.690Z] [INFO ]   parse_contest_sheet: title='West Sonoma County Union High School Dist (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'JULIE AIELLO', 'LYNN SCHALLEBAUM GLEESON', "KYLE O'CONNOR", 'LAURIE ANN FADAVE'] rows=486
+[2026-03-14T22:50:15.696Z] [INFO ]   -> 389 precincts, type=candidate_race
+[2026-03-14T22:50:15.696Z] [INFO ] Parsing sheet: 'Harmony USD'
+[2026-03-14T22:50:15.697Z] [INFO ]   parse_contest_sheet: title='Harmony Union School District (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'MARIAH LANDER', 'AMANDA SOLTER', 'YURI SPRINGSTORM KOSLEN'] rows=36
+[2026-03-14T22:50:15.702Z] [INFO ]   -> 29 precincts, type=candidate_race
+[2026-03-14T22:50:15.702Z] [INFO ] Parsing sheet: 'Oak Grove USD-FT'
+[2026-03-14T22:50:15.703Z] [INFO ]   parse_contest_sheet: title='Oak Grove Union School District F/T (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'ERIN LAGOURGUE', 'ROBBIE WOOSLEY', 'BRIAN P. JACOBS', 'LESLEY JONES'] rows=36
+[2026-03-14T22:50:15.709Z] [INFO ]   -> 29 precincts, type=candidate_race
+[2026-03-14T22:50:15.710Z] [INFO ] Parsing sheet: 'Oak Grove USD-ST'
+[2026-03-14T22:50:15.710Z] [INFO ]   parse_contest_sheet: title='Oak Grove Union School District  S/T' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'RAHINE PATEL', 'HANNAH KALLOK'] rows=36
+[2026-03-14T22:50:15.715Z] [INFO ]   -> 29 precincts, type=candidate_race
+[2026-03-14T22:50:15.715Z] [INFO ] Parsing sheet: 'Rincon Valley USD'
+[2026-03-14T22:50:15.716Z] [INFO ]   parse_contest_sheet: title='Rincon Valley Union School District (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'JANELLE TAYLOR', 'ERIC C. HEINS', 'MIKE COOK'] rows=336
+[2026-03-14T22:50:15.721Z] [INFO ]   -> 269 precincts, type=candidate_race
+[2026-03-14T22:50:15.721Z] [INFO ] Parsing sheet: 'Roseland SD-FT'
+[2026-03-14T22:50:15.722Z] [INFO ]   parse_contest_sheet: title='Roseland School District  F/T (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'SONDRA BEAM', 'TIFFANY KAMPMANN', 'PATRICIA S. KRUEGER'] rows=31
+[2026-03-14T22:50:15.727Z] [INFO ]   -> 25 precincts, type=candidate_race
+[2026-03-14T22:50:15.727Z] [INFO ] Parsing sheet: 'SR City Council-Dist 1'
+[2026-03-14T22:50:15.728Z] [INFO ]   parse_contest_sheet: title='Member, City Council Santa Rosa District 1' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'EDDIE ALVAREZ', 'DUANE DE WITT', 'JORGE INOCENCIO', 'ELIZABETH VALENTE'] rows=66
+[2026-03-14T22:50:15.733Z] [INFO ]   -> 53 precincts, type=candidate_race
+[2026-03-14T22:50:15.733Z] [INFO ] Parsing sheet: 'SR City Council-Dist 3'
+[2026-03-14T22:50:15.734Z] [INFO ]   parse_contest_sheet: title='Member, City Council Santa Rosa District 3' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'HARRISON "JACK" TIBBETTS', 'QUALIFIED WRITE IN CANDIDATES:', 'KEITH RHINEHART'] rows=126
+[2026-03-14T22:50:15.738Z] [INFO ]   -> 101 precincts, type=candidate_race
+[2026-03-14T22:50:15.738Z] [INFO ] Parsing sheet: 'SR City Council-Dist 5'
+[2026-03-14T22:50:15.739Z] [INFO ]   parse_contest_sheet: title='Member, City Council Santa Rosa District 5' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'AZMINA R. HANNA', 'CHRIS ROGERS'] rows=76
+[2026-03-14T22:50:15.743Z] [INFO ]   -> 61 precincts, type=candidate_race
+[2026-03-14T22:50:15.744Z] [INFO ] Parsing sheet: 'SR City Council-Dist 7'
+[2026-03-14T22:50:15.744Z] [INFO ]   parse_contest_sheet: title='Member, City Council Santa Rosa District 7' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'DANIELA PAVONE', 'ERIC CHRISTENSEN', 'NATALIE ROGERS'] rows=106
+[2026-03-14T22:50:15.750Z] [INFO ]   -> 85 precincts, type=candidate_race
+[2026-03-14T22:50:15.751Z] [INFO ] Parsing sheet: 'Cloverdale City Council'
+[2026-03-14T22:50:15.751Z] [INFO ]   parse_contest_sheet: title='Member, City Council Cloverdale (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'MELANIE BAGBY', 'MARY ANN BRIGHAM', 'TODD LANDS', 'NICOLE GARCIA-HINCHLIFFE', 'JENNY CANDELARIA-ORR'] rows=16
+[2026-03-14T22:50:15.758Z] [INFO ]   -> 13 precincts, type=candidate_race
+[2026-03-14T22:50:15.758Z] [INFO ] Parsing sheet: 'Cotati City Council'
+[2026-03-14T22:50:15.759Z] [INFO ]   parse_contest_sheet: title='Member, City Council Cotati (Vote for  3)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'SUSAN HARVEY', 'LAURA SPARKS', 'BRITTANY MURPHY', 'BEN FORD'] rows=61
+[2026-03-14T22:50:15.766Z] [INFO ]   -> 49 precincts, type=candidate_race
+[2026-03-14T22:50:15.766Z] [INFO ] Parsing sheet: 'Healdsburg City Council'
+[2026-03-14T22:50:15.767Z] [INFO ]   parse_contest_sheet: title='Member, City Council Healdsburg (Vote for  3)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'DAVID HAGELE', 'DORALICE HANDAL', 'SKYLAER PALACIOS', 'CHARLES A. DUFFY', 'ARIEL KELLEY', 'DAVID R. JONES'] rows=26
+[2026-03-14T22:50:15.774Z] [INFO ]   -> 21 precincts, type=candidate_race
+[2026-03-14T22:50:15.774Z] [INFO ] Parsing sheet: 'Petaluma City Council'
+[2026-03-14T22:50:15.776Z] [INFO ]   parse_contest_sheet: title='Member, City Council Petaluma (Vote for  3)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'BRIAN BARNACLE', 'MIKE HEALY', 'DENNIS POCEKAY', 'KATHY MILLER', 'ROBERT CONKLIN', 'GABE KEARNEY', 'SUSAN KIRKS', 'LIZZIE WALLACK'] rows=126
+[2026-03-14T22:50:15.782Z] [INFO ]   -> 101 precincts, type=candidate_race
+[2026-03-14T22:50:15.782Z] [INFO ] Parsing sheet: 'RP City Council-Dist 1'
+[2026-03-14T22:50:15.783Z] [INFO ]   parse_contest_sheet: title='Member, City Council Rohnert Park District 1' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'WALTER "WILLY" LINARES', 'DAVE SOLDAVINI'] rows=31
+[2026-03-14T22:50:15.788Z] [INFO ]   -> 25 precincts, type=candidate_race
+[2026-03-14T22:50:15.788Z] [INFO ] Parsing sheet: 'RP City Council-Dist 3'
+[2026-03-14T22:50:15.790Z] [INFO ]   parse_contest_sheet: title='Member, City Council Rohnert Park District 3' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'GERARD GIUDICE', 'JOSEPH T. CALLINAN'] rows=66
+[2026-03-14T22:50:15.795Z] [INFO ]   -> 53 precincts, type=candidate_race
+[2026-03-14T22:50:15.795Z] [INFO ] Parsing sheet: 'RP City Council-Dist 4'
+[2026-03-14T22:50:15.796Z] [INFO ]   parse_contest_sheet: title='Member, City Council Rohnert Park District 4' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'JACKIE ELWARD', 'JAKE MACKENZIE'] rows=41
+[2026-03-14T22:50:15.800Z] [INFO ]   -> 33 precincts, type=candidate_race
+[2026-03-14T22:50:15.800Z] [INFO ] Parsing sheet: 'Sebastopol City Council'
+[2026-03-14T22:50:15.801Z] [INFO ]   parse_contest_sheet: title='Member, City Council Sebastopol (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'VAUGHN RICHARD HIGGINBOTHAM', 'NEYSA HINTON', 'EVARISTO "EVERT" FERNANDEZ', 'MICHAEL CARNACCHI', 'DIANA RICH'] rows=26
+[2026-03-14T22:50:15.807Z] [INFO ]   -> 21 precincts, type=candidate_race
+[2026-03-14T22:50:15.807Z] [INFO ] Parsing sheet: 'Sonoma City Council'
+[2026-03-14T22:50:15.808Z] [INFO ]   parse_contest_sheet: title='Member, City Council Sonoma (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'AMY HARRINGTON', 'JACK DING'] rows=91
+[2026-03-14T22:50:15.814Z] [INFO ]   -> 73 precincts, type=candidate_race
+[2026-03-14T22:50:15.814Z] [INFO ] Parsing sheet: 'Town of Windsor-Mayor'
+[2026-03-14T22:50:15.815Z] [INFO ]   parse_contest_sheet: title='Mayor, Town of Windsor (Vote for  1)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'TANYA POTTER', 'SAM SALMON', 'DOMINIC FOPPOLI', 'ROSA REYNOZA'] rows=176
+[2026-03-14T22:50:15.821Z] [INFO ]   -> 141 precincts, type=candidate_race
+[2026-03-14T22:50:15.821Z] [INFO ] Parsing sheet: 'Windsor Town Council-Dist 3'
+[2026-03-14T22:50:15.822Z] [INFO ]   parse_contest_sheet: title='Member, Town Council Windsor District 3' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'JEFFREY  LEASURE', 'DEBORA FUDGE'] rows=26
+[2026-03-14T22:50:15.844Z] [INFO ]   -> 21 precincts, type=candidate_race
+[2026-03-14T22:50:15.844Z] [INFO ] Parsing sheet: 'Graton Fire Protection Dist'
+[2026-03-14T22:50:15.845Z] [INFO ]   parse_contest_sheet: title='Graton Fire Protection Dist (Vote for  3)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'LINDA TRIPOLI', 'ZANE W. GRAY', 'JASON NUNES', 'TORREY FARMER'] rows=71
+[2026-03-14T22:50:15.851Z] [INFO ]   -> 57 precincts, type=candidate_race
+[2026-03-14T22:50:15.851Z] [INFO ] Parsing sheet: 'Prop 14'
+[2026-03-14T22:50:15.854Z] [INFO ]   parse_contest_sheet: title='Prop 14 - Continue Funding Stem Cell and Medical Research' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T22:50:15.861Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:15.861Z] [INFO ] Parsing sheet: 'Prop 15'
+[2026-03-14T22:50:15.864Z] [INFO ]   parse_contest_sheet: title='Prop 15 - Increases Funding for Public Schools' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T22:50:15.871Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:15.871Z] [INFO ] Parsing sheet: 'Prop 16'
+[2026-03-14T22:50:15.874Z] [INFO ]   parse_contest_sheet: title='Prop 16 - Government Preferences' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T22:50:15.881Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:15.881Z] [INFO ] Parsing sheet: 'Prop 17'
+[2026-03-14T22:50:15.884Z] [INFO ]   parse_contest_sheet: title='Prop 17 - Disqualification Of Electors' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T22:50:15.891Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:15.891Z] [INFO ] Parsing sheet: 'Prop 18'
+[2026-03-14T22:50:15.894Z] [INFO ]   parse_contest_sheet: title='Prop 18 - Voting Age' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T22:50:15.901Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:15.901Z] [INFO ] Parsing sheet: 'Prop 19'
+[2026-03-14T22:50:15.904Z] [INFO ]   parse_contest_sheet: title='Prop 19 - Home Protection' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T22:50:15.911Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:15.911Z] [INFO ] Parsing sheet: 'Prop 20'
+[2026-03-14T22:50:15.915Z] [INFO ]   parse_contest_sheet: title='Prop 20 - Restricts Parole For Non-Violent Offenders' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T22:50:15.921Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:15.922Z] [INFO ] Parsing sheet: 'Prop 21'
+[2026-03-14T22:50:15.925Z] [INFO ]   parse_contest_sheet: title="Prop 21 - Expands Local Governments' Authority To Enact Rent Control" type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T22:50:15.932Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:15.932Z] [INFO ] Parsing sheet: 'Prop 22'
+[2026-03-14T22:50:15.935Z] [INFO ]   parse_contest_sheet: title='Prop 22 - Changes Classification for App-Based Delivery Drivers' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T22:50:15.944Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:15.944Z] [INFO ] Parsing sheet: 'Prop 23'
+[2026-03-14T22:50:15.948Z] [INFO ]   parse_contest_sheet: title='Prop 23 - Authorizes State Regulation of Kidney Dialysis Clinics' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T22:50:15.957Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:15.957Z] [INFO ] Parsing sheet: 'Prop 24'
+[2026-03-14T22:50:15.961Z] [INFO ]   parse_contest_sheet: title='Prop 24 - Amends Consumer Privacy Laws' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T22:50:15.970Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:15.970Z] [INFO ] Parsing sheet: 'Prop 25'
+[2026-03-14T22:50:15.975Z] [INFO ]   parse_contest_sheet: title='Prop 25 - Referendum To Overturn A 2018 Law That Replaced Money Bail System' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T22:50:15.984Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:15.984Z] [INFO ] Parsing sheet: 'Measure L'
+[2026-03-14T22:50:15.985Z] [INFO ]   parse_contest_sheet: title='Measure L - Shoreline Unified School District Parcel Tax' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=61
+[2026-03-14T22:50:15.991Z] [INFO ]   -> 49 precincts, type=ballot_measure
+[2026-03-14T22:50:15.991Z] [INFO ] Parsing sheet: 'Measure M'
+[2026-03-14T22:50:15.992Z] [INFO ]   parse_contest_sheet: title='Measure M - Fort Ross School District Parcel Tax' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=31
+[2026-03-14T22:50:15.996Z] [INFO ]   -> 25 precincts, type=ballot_measure
+[2026-03-14T22:50:15.996Z] [INFO ] Parsing sheet: 'Measure N'
+[2026-03-14T22:50:15.997Z] [INFO ]   parse_contest_sheet: title='Measure N - Sebastopol Union School District Parcel Tax' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=91
+[2026-03-14T22:50:16.001Z] [INFO ]   -> 73 precincts, type=ballot_measure
+[2026-03-14T22:50:16.001Z] [INFO ] Parsing sheet: 'Measure O'
+[2026-03-14T22:50:16.005Z] [INFO ]   parse_contest_sheet: title='Measure O - County of Sonoma Mental Health, Addiction & Homeless Services Transaction & Use Tax' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T22:50:16.013Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:16.013Z] [INFO ] Parsing sheet: 'Measure P'
+[2026-03-14T22:50:16.017Z] [INFO ]   parse_contest_sheet: title='Measure P - County of Sonoma Evelyn Cheatham Effective IOLERO' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T22:50:16.024Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:16.025Z] [INFO ] Parsing sheet: 'Measure Q'
+[2026-03-14T22:50:16.026Z] [INFO ]   parse_contest_sheet: title='Measure Q - City of Santa Rosa Transactions and Use Tax' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=786
+[2026-03-14T22:50:16.032Z] [INFO ]   -> 629 precincts, type=ballot_measure
+[2026-03-14T22:50:16.033Z] [INFO ] Parsing sheet: 'Measure R'
+[2026-03-14T22:50:16.034Z] [INFO ]   parse_contest_sheet: title="Measure R - City of Cloverdale Utility Users' Tax Extension" type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=16
+[2026-03-14T22:50:16.039Z] [INFO ]   -> 13 precincts, type=ballot_measure
+[2026-03-14T22:50:16.039Z] [INFO ] Parsing sheet: 'Measure S'
+[2026-03-14T22:50:16.040Z] [INFO ]   parse_contest_sheet: title='Measure S - City of Cotati Transactions and Use Tax Extension' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=61
+[2026-03-14T22:50:16.044Z] [INFO ]   -> 49 precincts, type=ballot_measure
+[2026-03-14T22:50:16.044Z] [INFO ] Parsing sheet: 'Measure T'
+[2026-03-14T22:50:16.045Z] [INFO ]   parse_contest_sheet: title='Measure T - City of Healdsburg Sales Tax Extension' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=26
+[2026-03-14T22:50:16.049Z] [INFO ]   -> 21 precincts, type=ballot_measure
+[2026-03-14T22:50:16.049Z] [INFO ] Parsing sheet: 'Measure U'
+[2026-03-14T22:50:16.050Z] [INFO ]   parse_contest_sheet: title='Measure U - City of Petaluma Transactions and Use Tax' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=126
+[2026-03-14T22:50:16.054Z] [INFO ]   -> 101 precincts, type=ballot_measure
+[2026-03-14T22:50:16.054Z] [INFO ] Parsing sheet: 'Measure V'
+[2026-03-14T22:50:16.055Z] [INFO ]   parse_contest_sheet: title='Measure V - City of Sonoma Sales Tax Extension' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=91
+[2026-03-14T22:50:16.059Z] [INFO ]   -> 73 precincts, type=ballot_measure
+[2026-03-14T22:50:16.059Z] [INFO ] Parsing sheet: 'Measure W'
+[2026-03-14T22:50:16.060Z] [INFO ]   parse_contest_sheet: title='Measure W - City of Sonoma Growth Boundary' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=91
+[2026-03-14T22:50:16.064Z] [INFO ]   -> 73 precincts, type=ballot_measure
+[2026-03-14T22:50:16.064Z] [INFO ] Parsing sheet: 'Measure X'
+[2026-03-14T22:50:16.065Z] [INFO ]   parse_contest_sheet: title='Measure X - City of Sonoma Cannabis Business Tax' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=91
+[2026-03-14T22:50:16.070Z] [INFO ]   -> 73 precincts, type=ballot_measure
+[2026-03-14T22:50:16.070Z] [INFO ] Parsing sheet: 'Measure Y'
+[2026-03-14T22:50:16.071Z] [INFO ]   parse_contest_sheet: title='Measure Y - City of Sonoma Cannabis Cultivation and Business' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=91
+[2026-03-14T22:50:16.076Z] [INFO ]   -> 73 precincts, type=ballot_measure
+[2026-03-14T22:50:16.076Z] [INFO ] Parsing sheet: 'Measure Z'
+[2026-03-14T22:50:16.077Z] [INFO ]   parse_contest_sheet: title='Measure Z - Kenwood Fire Protection Ratify Appropriations Limit' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=41
+[2026-03-14T22:50:16.081Z] [INFO ]   -> 33 precincts, type=ballot_measure
+[2026-03-14T22:50:16.081Z] [INFO ] Parsing sheet: 'Measure AA'
+[2026-03-14T22:50:16.081Z] [INFO ]   parse_contest_sheet: title='Measure AA - Timber Cove Fire Protection Parcel Tax' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=16
+[2026-03-14T22:50:16.085Z] [INFO ]   -> 13 precincts, type=ballot_measure
+[2026-03-14T22:50:16.085Z] [INFO ] Parsing sheet: 'Measure BB'
+[2026-03-14T22:50:16.086Z] [INFO ]   parse_contest_sheet: title='Measure BB - North Sonoma County Healthcare Hospital Purchase Agreement' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=396
+[2026-03-14T22:50:16.090Z] [INFO ]   -> 317 precincts, type=ballot_measure
+[2026-03-14T22:50:16.091Z] [INFO ] Parsing sheet: 'Measure CC'
+[2026-03-14T22:50:16.092Z] [INFO ]   parse_contest_sheet: title='Measure CC - Petaluma Health Care Hospital Purchase Agreement' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=346
+[2026-03-14T22:50:16.096Z] [INFO ]   -> 277 precincts, type=ballot_measure
+[2026-03-14T22:50:16.096Z] [INFO ] Parsing sheet: 'Measure DD'
+[2026-03-14T22:50:16.099Z] [INFO ]   parse_contest_sheet: title='Measure DD - Sonoma County Transportation Authority Sales Tax' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T22:50:16.106Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:16.106Z] [INFO ] Parsing sheet: 'PrecinctOverview'
+[2026-03-14T22:50:16.108Z] [INFO ]   parse_contest_sheet: title='1002 MB' type=candidate_race prec_col='Precinct' choice_cols=['Registered\nVoters', 'Voters Cast', '% Turnout'] rows=3344
+[2026-03-14T22:50:16.115Z] [INFO ]   -> 2676 precincts, type=candidate_race
+[2026-03-14T22:50:16.121Z] [STEP ] DONE   [OK] PARSE_CONTEST (10.456s)
+[2026-03-14T22:50:16.121Z] [INFO ] Contest Mode: CANDIDATE (Inferred CANDIDATE (found candidate_race headers))
+[2026-03-14T22:50:16.121Z] [INFO ] [PATHWAY] contest_mode=candidate  contest_mode_reason=Inferred CANDIDATE (found candidate_race headers)
+[2026-03-14T22:50:16.121Z] [STEP ] START  -> ALLOCATE_VOTES
+[2026-03-14T22:50:16.121Z] [INFO ]   Sheet 'President': 2673 precincts, type=candidate_race
+[2026-03-14T22:50:16.135Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.136Z] [INFO ]     Allocation: crosswalk, 2673 target precincts
+[2026-03-14T22:50:16.137Z] [STEP ] START  -> NORMALIZE_SCHEMA/President
+[2026-03-14T22:50:16.137Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.138Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.138Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.144Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/President (10.479s)
+[2026-03-14T22:50:16.144Z] [STEP ] START  -> SANITY/President
+[2026-03-14T22:50:16.144Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T22:50:16.144Z] [STEP ] DONE   [OK] SANITY/President (10.479s)
+[2026-03-14T22:50:16.144Z] [STEP ] START  -> BUILD_MODEL/President
+[2026-03-14T22:50:16.168Z] [STEP ] DONE   [OK] BUILD_MODEL/President (10.503s)
+[2026-03-14T22:50:16.168Z] [INFO ]   Sheet 'US Rep-2nd Dist': 1021 precincts, type=candidate_race
+[2026-03-14T22:50:16.182Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.182Z] [INFO ]     Allocation: crosswalk, 1021 target precincts
+[2026-03-14T22:50:16.182Z] [STEP ] START  -> NORMALIZE_SCHEMA/US Rep-2nd Dist
+[2026-03-14T22:50:16.182Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.183Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.183Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.187Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/US Rep-2nd Dist (10.522s)
+[2026-03-14T22:50:16.187Z] [STEP ] START  -> SANITY/US Rep-2nd Dist
+[2026-03-14T22:50:16.187Z] [INFO ]   SANITY [OK] Non-empty model: 1021 rows
+[2026-03-14T22:50:16.187Z] [STEP ] DONE   [OK] SANITY/US Rep-2nd Dist (10.522s)
+[2026-03-14T22:50:16.187Z] [STEP ] START  -> BUILD_MODEL/US Rep-2nd Dist
+[2026-03-14T22:50:16.199Z] [STEP ] DONE   [OK] BUILD_MODEL/US Rep-2nd Dist (10.534s)
+[2026-03-14T22:50:16.199Z] [INFO ]   Sheet 'US Rep-5th Dist': 1653 precincts, type=candidate_race
+[2026-03-14T22:50:16.211Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.211Z] [INFO ]     Allocation: crosswalk, 1653 target precincts
+[2026-03-14T22:50:16.211Z] [STEP ] START  -> NORMALIZE_SCHEMA/US Rep-5th Dist
+[2026-03-14T22:50:16.212Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.212Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.212Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.216Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/US Rep-5th Dist (10.551s)
+[2026-03-14T22:50:16.216Z] [STEP ] START  -> SANITY/US Rep-5th Dist
+[2026-03-14T22:50:16.216Z] [INFO ]   SANITY [OK] Non-empty model: 1653 rows
+[2026-03-14T22:50:16.216Z] [STEP ] DONE   [OK] SANITY/US Rep-5th Dist (10.551s)
+[2026-03-14T22:50:16.216Z] [STEP ] START  -> BUILD_MODEL/US Rep-5th Dist
+[2026-03-14T22:50:16.228Z] [STEP ] DONE   [OK] BUILD_MODEL/US Rep-5th Dist (10.562s)
+[2026-03-14T22:50:16.228Z] [INFO ]   Sheet 'State Sen-3rd Dist': 649 precincts, type=candidate_race
+[2026-03-14T22:50:16.239Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.239Z] [INFO ]     Allocation: crosswalk, 649 target precincts
+[2026-03-14T22:50:16.239Z] [STEP ] START  -> NORMALIZE_SCHEMA/State Sen-3rd Dist
+[2026-03-14T22:50:16.240Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.240Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.240Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.244Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/State Sen-3rd Dist (10.579s)
+[2026-03-14T22:50:16.244Z] [STEP ] START  -> SANITY/State Sen-3rd Dist
+[2026-03-14T22:50:16.244Z] [INFO ]   SANITY [OK] Non-empty model: 649 rows
+[2026-03-14T22:50:16.244Z] [STEP ] DONE   [OK] SANITY/State Sen-3rd Dist (10.579s)
+[2026-03-14T22:50:16.244Z] [STEP ] START  -> BUILD_MODEL/State Sen-3rd Dist
+[2026-03-14T22:50:16.253Z] [STEP ] DONE   [OK] BUILD_MODEL/State Sen-3rd Dist (10.588s)
+[2026-03-14T22:50:16.253Z] [INFO ]   Sheet '2nd Assembly Dist': 1249 precincts, type=candidate_race
+[2026-03-14T22:50:16.263Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.263Z] [INFO ]     Allocation: crosswalk, 1249 target precincts
+[2026-03-14T22:50:16.263Z] [STEP ] START  -> NORMALIZE_SCHEMA/2nd Assembly Dist
+[2026-03-14T22:50:16.264Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.264Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.264Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.267Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/2nd Assembly Dist (10.602s)
+[2026-03-14T22:50:16.267Z] [STEP ] START  -> SANITY/2nd Assembly Dist
+[2026-03-14T22:50:16.267Z] [INFO ]   SANITY [OK] Non-empty model: 1249 rows
+[2026-03-14T22:50:16.267Z] [STEP ] DONE   [OK] SANITY/2nd Assembly Dist (10.602s)
+[2026-03-14T22:50:16.267Z] [STEP ] START  -> BUILD_MODEL/2nd Assembly Dist
+[2026-03-14T22:50:16.277Z] [STEP ] DONE   [OK] BUILD_MODEL/2nd Assembly Dist (10.612s)
+[2026-03-14T22:50:16.277Z] [INFO ]   Sheet '4th Assembly Dist': 529 precincts, type=candidate_race
+[2026-03-14T22:50:16.286Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.286Z] [INFO ]     Allocation: crosswalk, 529 target precincts
+[2026-03-14T22:50:16.287Z] [STEP ] START  -> NORMALIZE_SCHEMA/4th Assembly Dist
+[2026-03-14T22:50:16.287Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.287Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.287Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.290Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/4th Assembly Dist (10.625s)
+[2026-03-14T22:50:16.290Z] [STEP ] START  -> SANITY/4th Assembly Dist
+[2026-03-14T22:50:16.290Z] [INFO ]   SANITY [OK] Non-empty model: 529 rows
+[2026-03-14T22:50:16.290Z] [STEP ] DONE   [OK] SANITY/4th Assembly Dist (10.625s)
+[2026-03-14T22:50:16.290Z] [STEP ] START  -> BUILD_MODEL/4th Assembly Dist
+[2026-03-14T22:50:16.298Z] [STEP ] DONE   [OK] BUILD_MODEL/4th Assembly Dist (10.633s)
+[2026-03-14T22:50:16.298Z] [INFO ]   Sheet '10th Assembly Dist': 897 precincts, type=candidate_race
+[2026-03-14T22:50:16.308Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.308Z] [INFO ]     Allocation: crosswalk, 897 target precincts
+[2026-03-14T22:50:16.308Z] [STEP ] START  -> NORMALIZE_SCHEMA/10th Assembly Dist
+[2026-03-14T22:50:16.309Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.309Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.309Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.312Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/10th Assembly Dist (10.647s)
+[2026-03-14T22:50:16.312Z] [STEP ] START  -> SANITY/10th Assembly Dist
+[2026-03-14T22:50:16.312Z] [INFO ]   SANITY [OK] Non-empty model: 897 rows
+[2026-03-14T22:50:16.312Z] [STEP ] DONE   [OK] SANITY/10th Assembly Dist (10.647s)
+[2026-03-14T22:50:16.312Z] [STEP ] START  -> BUILD_MODEL/10th Assembly Dist
+[2026-03-14T22:50:16.321Z] [STEP ] DONE   [OK] BUILD_MODEL/10th Assembly Dist (10.656s)
+[2026-03-14T22:50:16.321Z] [INFO ]   Sheet 'SoCo BOE-Area 1': 661 precincts, type=candidate_race
+[2026-03-14T22:50:16.333Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.333Z] [INFO ]     Allocation: crosswalk, 661 target precincts
+[2026-03-14T22:50:16.333Z] [STEP ] START  -> NORMALIZE_SCHEMA/SoCo BOE-Area 1
+[2026-03-14T22:50:16.334Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.334Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.335Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.338Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/SoCo BOE-Area 1 (10.673s)
+[2026-03-14T22:50:16.338Z] [STEP ] START  -> SANITY/SoCo BOE-Area 1
+[2026-03-14T22:50:16.338Z] [INFO ]   SANITY [OK] Non-empty model: 661 rows
+[2026-03-14T22:50:16.338Z] [STEP ] DONE   [OK] SANITY/SoCo BOE-Area 1 (10.673s)
+[2026-03-14T22:50:16.338Z] [STEP ] START  -> BUILD_MODEL/SoCo BOE-Area 1
+[2026-03-14T22:50:16.348Z] [STEP ] DONE   [OK] BUILD_MODEL/SoCo BOE-Area 1 (10.683s)
+[2026-03-14T22:50:16.349Z] [INFO ]   Sheet 'SRJC - SR Area': 1039 precincts, type=candidate_race
+[2026-03-14T22:50:16.368Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.369Z] [INFO ]     Allocation: crosswalk, 1039 target precincts
+[2026-03-14T22:50:16.369Z] [STEP ] START  -> NORMALIZE_SCHEMA/SRJC - SR Area
+[2026-03-14T22:50:16.369Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.370Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.370Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.374Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/SRJC - SR Area (10.708s)
+[2026-03-14T22:50:16.374Z] [STEP ] START  -> SANITY/SRJC - SR Area
+[2026-03-14T22:50:16.374Z] [INFO ]   SANITY [OK] Non-empty model: 1039 rows
+[2026-03-14T22:50:16.374Z] [STEP ] DONE   [OK] SANITY/SRJC - SR Area (10.709s)
+[2026-03-14T22:50:16.374Z] [STEP ] START  -> BUILD_MODEL/SRJC - SR Area
+[2026-03-14T22:50:16.387Z] [STEP ] DONE   [OK] BUILD_MODEL/SRJC - SR Area (10.722s)
+[2026-03-14T22:50:16.387Z] [INFO ]   Sheet 'Calistoga Jt USD': 29 precincts, type=candidate_race
+[2026-03-14T22:50:16.400Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.401Z] [INFO ]     Allocation: crosswalk, 29 target precincts
+[2026-03-14T22:50:16.401Z] [STEP ] START  -> NORMALIZE_SCHEMA/Calistoga Jt USD
+[2026-03-14T22:50:16.401Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.401Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.401Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.404Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Calistoga Jt USD (10.739s)
+[2026-03-14T22:50:16.404Z] [STEP ] START  -> SANITY/Calistoga Jt USD
+[2026-03-14T22:50:16.404Z] [INFO ]   SANITY [OK] Non-empty model: 29 rows
+[2026-03-14T22:50:16.404Z] [STEP ] DONE   [OK] SANITY/Calistoga Jt USD (10.739s)
+[2026-03-14T22:50:16.404Z] [STEP ] START  -> BUILD_MODEL/Calistoga Jt USD
+[2026-03-14T22:50:16.411Z] [STEP ] DONE   [OK] BUILD_MODEL/Calistoga Jt USD (10.746s)
+[2026-03-14T22:50:16.411Z] [INFO ]   Sheet 'Cloverdale USD': 29 precincts, type=candidate_race
+[2026-03-14T22:50:16.422Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.423Z] [INFO ]     Allocation: crosswalk, 29 target precincts
+[2026-03-14T22:50:16.423Z] [STEP ] START  -> NORMALIZE_SCHEMA/Cloverdale USD
+[2026-03-14T22:50:16.423Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.423Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.423Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.427Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Cloverdale USD (10.762s)
+[2026-03-14T22:50:16.427Z] [STEP ] START  -> SANITY/Cloverdale USD
+[2026-03-14T22:50:16.427Z] [INFO ]   SANITY [OK] Non-empty model: 29 rows
+[2026-03-14T22:50:16.427Z] [STEP ] DONE   [OK] SANITY/Cloverdale USD (10.762s)
+[2026-03-14T22:50:16.427Z] [STEP ] START  -> BUILD_MODEL/Cloverdale USD
+[2026-03-14T22:50:16.434Z] [STEP ] DONE   [OK] BUILD_MODEL/Cloverdale USD (10.769s)
+[2026-03-14T22:50:16.434Z] [INFO ]   Sheet 'Cotati-RP USD Area 5': 65 precincts, type=candidate_race
+[2026-03-14T22:50:16.445Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.445Z] [INFO ]     Allocation: crosswalk, 65 target precincts
+[2026-03-14T22:50:16.445Z] [STEP ] START  -> NORMALIZE_SCHEMA/Cotati-RP USD Area 5
+[2026-03-14T22:50:16.445Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.446Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.446Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.449Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Cotati-RP USD Area 5 (10.784s)
+[2026-03-14T22:50:16.449Z] [STEP ] START  -> SANITY/Cotati-RP USD Area 5
+[2026-03-14T22:50:16.449Z] [INFO ]   SANITY [OK] Non-empty model: 65 rows
+[2026-03-14T22:50:16.449Z] [STEP ] DONE   [OK] SANITY/Cotati-RP USD Area 5 (10.784s)
+[2026-03-14T22:50:16.449Z] [STEP ] START  -> BUILD_MODEL/Cotati-RP USD Area 5
+[2026-03-14T22:50:16.459Z] [STEP ] DONE   [OK] BUILD_MODEL/Cotati-RP USD Area 5 (10.794s)
+[2026-03-14T22:50:16.459Z] [INFO ]   Sheet 'Sonoma Valley USD Area 4': 49 precincts, type=candidate_race
+[2026-03-14T22:50:16.469Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.470Z] [INFO ]     Allocation: crosswalk, 49 target precincts
+[2026-03-14T22:50:16.470Z] [STEP ] START  -> NORMALIZE_SCHEMA/Sonoma Valley USD Area 4
+[2026-03-14T22:50:16.470Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.470Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.470Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.473Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Sonoma Valley USD Area 4 (10.808s)
+[2026-03-14T22:50:16.473Z] [STEP ] START  -> SANITY/Sonoma Valley USD Area 4
+[2026-03-14T22:50:16.473Z] [INFO ]   SANITY [OK] Non-empty model: 49 rows
+[2026-03-14T22:50:16.473Z] [STEP ] DONE   [OK] SANITY/Sonoma Valley USD Area 4 (10.808s)
+[2026-03-14T22:50:16.474Z] [STEP ] START  -> BUILD_MODEL/Sonoma Valley USD Area 4
+[2026-03-14T22:50:16.480Z] [STEP ] DONE   [OK] BUILD_MODEL/Sonoma Valley USD Area 4 (10.815s)
+[2026-03-14T22:50:16.480Z] [INFO ]   Sheet 'Sonoma Valley USD Area 5': 93 precincts, type=candidate_race
+[2026-03-14T22:50:16.489Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.490Z] [INFO ]     Allocation: crosswalk, 93 target precincts
+[2026-03-14T22:50:16.490Z] [STEP ] START  -> NORMALIZE_SCHEMA/Sonoma Valley USD Area 5
+[2026-03-14T22:50:16.490Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.490Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.490Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.493Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Sonoma Valley USD Area 5 (10.828s)
+[2026-03-14T22:50:16.493Z] [STEP ] START  -> SANITY/Sonoma Valley USD Area 5
+[2026-03-14T22:50:16.493Z] [INFO ]   SANITY [OK] Non-empty model: 93 rows
+[2026-03-14T22:50:16.493Z] [STEP ] DONE   [OK] SANITY/Sonoma Valley USD Area 5 (10.828s)
+[2026-03-14T22:50:16.493Z] [STEP ] START  -> BUILD_MODEL/Sonoma Valley USD Area 5
+[2026-03-14T22:50:16.501Z] [STEP ] DONE   [OK] BUILD_MODEL/Sonoma Valley USD Area 5 (10.836s)
+[2026-03-14T22:50:16.501Z] [INFO ]   Sheet 'Petaluma Jt UHSD': 253 precincts, type=candidate_race
+[2026-03-14T22:50:16.536Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.536Z] [INFO ]     Allocation: crosswalk, 253 target precincts
+[2026-03-14T22:50:16.536Z] [STEP ] START  -> NORMALIZE_SCHEMA/Petaluma Jt UHSD
+[2026-03-14T22:50:16.537Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.537Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.537Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.541Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Petaluma Jt UHSD (10.876s)
+[2026-03-14T22:50:16.541Z] [STEP ] START  -> SANITY/Petaluma Jt UHSD
+[2026-03-14T22:50:16.542Z] [INFO ]   SANITY [OK] Non-empty model: 253 rows
+[2026-03-14T22:50:16.542Z] [STEP ] DONE   [OK] SANITY/Petaluma Jt UHSD (10.876s)
+[2026-03-14T22:50:16.542Z] [STEP ] START  -> BUILD_MODEL/Petaluma Jt UHSD
+[2026-03-14T22:50:16.552Z] [STEP ] DONE   [OK] BUILD_MODEL/Petaluma Jt UHSD (10.887s)
+[2026-03-14T22:50:16.553Z] [INFO ]   Sheet 'Pt Arena Jt-Arena UHSD': 13 precincts, type=candidate_race
+[2026-03-14T22:50:16.569Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.570Z] [INFO ]     Allocation: crosswalk, 13 target precincts
+[2026-03-14T22:50:16.570Z] [STEP ] START  -> NORMALIZE_SCHEMA/Pt Arena Jt-Arena UHSD
+[2026-03-14T22:50:16.571Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.571Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.571Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.575Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Pt Arena Jt-Arena UHSD (10.91s)
+[2026-03-14T22:50:16.576Z] [STEP ] START  -> SANITY/Pt Arena Jt-Arena UHSD
+[2026-03-14T22:50:16.576Z] [INFO ]   SANITY [OK] Non-empty model: 13 rows
+[2026-03-14T22:50:16.576Z] [STEP ] DONE   [OK] SANITY/Pt Arena Jt-Arena UHSD (10.911s)
+[2026-03-14T22:50:16.576Z] [STEP ] START  -> BUILD_MODEL/Pt Arena Jt-Arena UHSD
+[2026-03-14T22:50:16.584Z] [STEP ] DONE   [OK] BUILD_MODEL/Pt Arena Jt-Arena UHSD (10.919s)
+[2026-03-14T22:50:16.584Z] [INFO ]   Sheet 'City of SR HSD Area 1': 97 precincts, type=candidate_race
+[2026-03-14T22:50:16.597Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.597Z] [INFO ]     Allocation: crosswalk, 97 target precincts
+[2026-03-14T22:50:16.597Z] [STEP ] START  -> NORMALIZE_SCHEMA/City of SR HSD Area 1
+[2026-03-14T22:50:16.598Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.598Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.598Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.601Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/City of SR HSD Area 1 (10.936s)
+[2026-03-14T22:50:16.601Z] [STEP ] START  -> SANITY/City of SR HSD Area 1
+[2026-03-14T22:50:16.601Z] [INFO ]   SANITY [OK] Non-empty model: 97 rows
+[2026-03-14T22:50:16.601Z] [STEP ] DONE   [OK] SANITY/City of SR HSD Area 1 (10.936s)
+[2026-03-14T22:50:16.601Z] [STEP ] START  -> BUILD_MODEL/City of SR HSD Area 1
+[2026-03-14T22:50:16.609Z] [STEP ] DONE   [OK] BUILD_MODEL/City of SR HSD Area 1 (10.944s)
+[2026-03-14T22:50:16.609Z] [INFO ]   Sheet 'West SoCo UHSD': 389 precincts, type=candidate_race
+[2026-03-14T22:50:16.624Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.625Z] [INFO ]     Allocation: crosswalk, 389 target precincts
+[2026-03-14T22:50:16.625Z] [STEP ] START  -> NORMALIZE_SCHEMA/West SoCo UHSD
+[2026-03-14T22:50:16.625Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.625Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.625Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.630Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/West SoCo UHSD (10.964s)
+[2026-03-14T22:50:16.630Z] [STEP ] START  -> SANITY/West SoCo UHSD
+[2026-03-14T22:50:16.630Z] [INFO ]   SANITY [OK] Non-empty model: 389 rows
+[2026-03-14T22:50:16.630Z] [STEP ] DONE   [OK] SANITY/West SoCo UHSD (10.965s)
+[2026-03-14T22:50:16.630Z] [STEP ] START  -> BUILD_MODEL/West SoCo UHSD
+[2026-03-14T22:50:16.637Z] [STEP ] DONE   [OK] BUILD_MODEL/West SoCo UHSD (10.972s)
+[2026-03-14T22:50:16.637Z] [INFO ]   Sheet 'Harmony USD': 29 precincts, type=candidate_race
+[2026-03-14T22:50:16.649Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.649Z] [INFO ]     Allocation: crosswalk, 29 target precincts
+[2026-03-14T22:50:16.649Z] [STEP ] START  -> NORMALIZE_SCHEMA/Harmony USD
+[2026-03-14T22:50:16.650Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.650Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.650Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.653Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Harmony USD (10.988s)
+[2026-03-14T22:50:16.653Z] [STEP ] START  -> SANITY/Harmony USD
+[2026-03-14T22:50:16.653Z] [INFO ]   SANITY [OK] Non-empty model: 29 rows
+[2026-03-14T22:50:16.653Z] [STEP ] DONE   [OK] SANITY/Harmony USD (10.988s)
+[2026-03-14T22:50:16.653Z] [STEP ] START  -> BUILD_MODEL/Harmony USD
+[2026-03-14T22:50:16.660Z] [STEP ] DONE   [OK] BUILD_MODEL/Harmony USD (10.995s)
+[2026-03-14T22:50:16.660Z] [INFO ]   Sheet 'Oak Grove USD-FT': 29 precincts, type=candidate_race
+[2026-03-14T22:50:16.671Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.672Z] [INFO ]     Allocation: crosswalk, 29 target precincts
+[2026-03-14T22:50:16.672Z] [STEP ] START  -> NORMALIZE_SCHEMA/Oak Grove USD-FT
+[2026-03-14T22:50:16.672Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.672Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.672Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.675Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Oak Grove USD-FT (11.01s)
+[2026-03-14T22:50:16.675Z] [STEP ] START  -> SANITY/Oak Grove USD-FT
+[2026-03-14T22:50:16.675Z] [INFO ]   SANITY [OK] Non-empty model: 29 rows
+[2026-03-14T22:50:16.676Z] [STEP ] DONE   [OK] SANITY/Oak Grove USD-FT (11.01s)
+[2026-03-14T22:50:16.676Z] [STEP ] START  -> BUILD_MODEL/Oak Grove USD-FT
+[2026-03-14T22:50:16.682Z] [STEP ] DONE   [OK] BUILD_MODEL/Oak Grove USD-FT (11.017s)
+[2026-03-14T22:50:16.682Z] [INFO ]   Sheet 'Oak Grove USD-ST': 29 precincts, type=candidate_race
+[2026-03-14T22:50:16.692Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.692Z] [INFO ]     Allocation: crosswalk, 29 target precincts
+[2026-03-14T22:50:16.692Z] [STEP ] START  -> NORMALIZE_SCHEMA/Oak Grove USD-ST
+[2026-03-14T22:50:16.693Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.693Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.693Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.696Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Oak Grove USD-ST (11.031s)
+[2026-03-14T22:50:16.696Z] [STEP ] START  -> SANITY/Oak Grove USD-ST
+[2026-03-14T22:50:16.696Z] [INFO ]   SANITY [OK] Non-empty model: 29 rows
+[2026-03-14T22:50:16.696Z] [STEP ] DONE   [OK] SANITY/Oak Grove USD-ST (11.031s)
+[2026-03-14T22:50:16.696Z] [STEP ] START  -> BUILD_MODEL/Oak Grove USD-ST
+[2026-03-14T22:50:16.702Z] [STEP ] DONE   [OK] BUILD_MODEL/Oak Grove USD-ST (11.037s)
+[2026-03-14T22:50:16.702Z] [INFO ]   Sheet 'Rincon Valley USD': 269 precincts, type=candidate_race
+[2026-03-14T22:50:16.713Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.714Z] [INFO ]     Allocation: crosswalk, 269 target precincts
+[2026-03-14T22:50:16.714Z] [STEP ] START  -> NORMALIZE_SCHEMA/Rincon Valley USD
+[2026-03-14T22:50:16.714Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.714Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.715Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.717Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Rincon Valley USD (11.052s)
+[2026-03-14T22:50:16.718Z] [STEP ] START  -> SANITY/Rincon Valley USD
+[2026-03-14T22:50:16.718Z] [INFO ]   SANITY [OK] Non-empty model: 269 rows
+[2026-03-14T22:50:16.718Z] [STEP ] DONE   [OK] SANITY/Rincon Valley USD (11.053s)
+[2026-03-14T22:50:16.718Z] [STEP ] START  -> BUILD_MODEL/Rincon Valley USD
+[2026-03-14T22:50:16.726Z] [STEP ] DONE   [OK] BUILD_MODEL/Rincon Valley USD (11.061s)
+[2026-03-14T22:50:16.726Z] [INFO ]   Sheet 'Roseland SD-FT': 25 precincts, type=candidate_race
+[2026-03-14T22:50:16.741Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.742Z] [INFO ]     Allocation: crosswalk, 25 target precincts
+[2026-03-14T22:50:16.742Z] [STEP ] START  -> NORMALIZE_SCHEMA/Roseland SD-FT
+[2026-03-14T22:50:16.742Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.743Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.744Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.747Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Roseland SD-FT (11.082s)
+[2026-03-14T22:50:16.747Z] [STEP ] START  -> SANITY/Roseland SD-FT
+[2026-03-14T22:50:16.748Z] [INFO ]   SANITY [OK] Non-empty model: 25 rows
+[2026-03-14T22:50:16.748Z] [STEP ] DONE   [OK] SANITY/Roseland SD-FT (11.083s)
+[2026-03-14T22:50:16.748Z] [STEP ] START  -> BUILD_MODEL/Roseland SD-FT
+[2026-03-14T22:50:16.757Z] [STEP ] DONE   [OK] BUILD_MODEL/Roseland SD-FT (11.092s)
+[2026-03-14T22:50:16.758Z] [INFO ]   Sheet 'SR City Council-Dist 1': 53 precincts, type=candidate_race
+[2026-03-14T22:50:16.768Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.769Z] [INFO ]     Allocation: crosswalk, 53 target precincts
+[2026-03-14T22:50:16.769Z] [STEP ] START  -> NORMALIZE_SCHEMA/SR City Council-Dist 1
+[2026-03-14T22:50:16.769Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.769Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.769Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.772Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/SR City Council-Dist 1 (11.107s)
+[2026-03-14T22:50:16.772Z] [STEP ] START  -> SANITY/SR City Council-Dist 1
+[2026-03-14T22:50:16.772Z] [INFO ]   SANITY [OK] Non-empty model: 53 rows
+[2026-03-14T22:50:16.772Z] [STEP ] DONE   [OK] SANITY/SR City Council-Dist 1 (11.107s)
+[2026-03-14T22:50:16.772Z] [STEP ] START  -> BUILD_MODEL/SR City Council-Dist 1
+[2026-03-14T22:50:16.780Z] [STEP ] DONE   [OK] BUILD_MODEL/SR City Council-Dist 1 (11.114s)
+[2026-03-14T22:50:16.780Z] [INFO ]   Sheet 'SR City Council-Dist 3': 101 precincts, type=candidate_race
+[2026-03-14T22:50:16.793Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.794Z] [INFO ]     Allocation: crosswalk, 101 target precincts
+[2026-03-14T22:50:16.794Z] [STEP ] START  -> NORMALIZE_SCHEMA/SR City Council-Dist 3
+[2026-03-14T22:50:16.794Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.794Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.795Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.798Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/SR City Council-Dist 3 (11.132s)
+[2026-03-14T22:50:16.798Z] [STEP ] START  -> SANITY/SR City Council-Dist 3
+[2026-03-14T22:50:16.798Z] [INFO ]   SANITY [OK] Non-empty model: 101 rows
+[2026-03-14T22:50:16.798Z] [STEP ] DONE   [OK] SANITY/SR City Council-Dist 3 (11.133s)
+[2026-03-14T22:50:16.798Z] [STEP ] START  -> BUILD_MODEL/SR City Council-Dist 3
+[2026-03-14T22:50:16.807Z] [STEP ] DONE   [OK] BUILD_MODEL/SR City Council-Dist 3 (11.142s)
+[2026-03-14T22:50:16.807Z] [INFO ]   Sheet 'SR City Council-Dist 5': 61 precincts, type=candidate_race
+[2026-03-14T22:50:16.818Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.818Z] [INFO ]     Allocation: crosswalk, 61 target precincts
+[2026-03-14T22:50:16.818Z] [STEP ] START  -> NORMALIZE_SCHEMA/SR City Council-Dist 5
+[2026-03-14T22:50:16.818Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.819Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.819Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.822Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/SR City Council-Dist 5 (11.157s)
+[2026-03-14T22:50:16.822Z] [STEP ] START  -> SANITY/SR City Council-Dist 5
+[2026-03-14T22:50:16.822Z] [INFO ]   SANITY [OK] Non-empty model: 61 rows
+[2026-03-14T22:50:16.822Z] [STEP ] DONE   [OK] SANITY/SR City Council-Dist 5 (11.157s)
+[2026-03-14T22:50:16.822Z] [STEP ] START  -> BUILD_MODEL/SR City Council-Dist 5
+[2026-03-14T22:50:16.830Z] [STEP ] DONE   [OK] BUILD_MODEL/SR City Council-Dist 5 (11.165s)
+[2026-03-14T22:50:16.830Z] [INFO ]   Sheet 'SR City Council-Dist 7': 85 precincts, type=candidate_race
+[2026-03-14T22:50:16.842Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.842Z] [INFO ]     Allocation: crosswalk, 85 target precincts
+[2026-03-14T22:50:16.842Z] [STEP ] START  -> NORMALIZE_SCHEMA/SR City Council-Dist 7
+[2026-03-14T22:50:16.842Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.843Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.843Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.846Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/SR City Council-Dist 7 (11.181s)
+[2026-03-14T22:50:16.846Z] [STEP ] START  -> SANITY/SR City Council-Dist 7
+[2026-03-14T22:50:16.846Z] [INFO ]   SANITY [OK] Non-empty model: 85 rows
+[2026-03-14T22:50:16.846Z] [STEP ] DONE   [OK] SANITY/SR City Council-Dist 7 (11.181s)
+[2026-03-14T22:50:16.846Z] [STEP ] START  -> BUILD_MODEL/SR City Council-Dist 7
+[2026-03-14T22:50:16.852Z] [STEP ] DONE   [OK] BUILD_MODEL/SR City Council-Dist 7 (11.187s)
+[2026-03-14T22:50:16.852Z] [INFO ]   Sheet 'Cloverdale City Council': 13 precincts, type=candidate_race
+[2026-03-14T22:50:16.862Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.862Z] [INFO ]     Allocation: crosswalk, 13 target precincts
+[2026-03-14T22:50:16.862Z] [STEP ] START  -> NORMALIZE_SCHEMA/Cloverdale City Council
+[2026-03-14T22:50:16.862Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.863Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.863Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.866Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Cloverdale City Council (11.2s)
+[2026-03-14T22:50:16.866Z] [STEP ] START  -> SANITY/Cloverdale City Council
+[2026-03-14T22:50:16.866Z] [INFO ]   SANITY [OK] Non-empty model: 13 rows
+[2026-03-14T22:50:16.866Z] [STEP ] DONE   [OK] SANITY/Cloverdale City Council (11.201s)
+[2026-03-14T22:50:16.866Z] [STEP ] START  -> BUILD_MODEL/Cloverdale City Council
+[2026-03-14T22:50:16.872Z] [STEP ] DONE   [OK] BUILD_MODEL/Cloverdale City Council (11.207s)
+[2026-03-14T22:50:16.872Z] [INFO ]   Sheet 'Cotati City Council': 49 precincts, type=candidate_race
+[2026-03-14T22:50:16.882Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.882Z] [INFO ]     Allocation: crosswalk, 49 target precincts
+[2026-03-14T22:50:16.882Z] [STEP ] START  -> NORMALIZE_SCHEMA/Cotati City Council
+[2026-03-14T22:50:16.882Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.883Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.883Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.886Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Cotati City Council (11.22s)
+[2026-03-14T22:50:16.886Z] [STEP ] START  -> SANITY/Cotati City Council
+[2026-03-14T22:50:16.886Z] [INFO ]   SANITY [OK] Non-empty model: 49 rows
+[2026-03-14T22:50:16.886Z] [STEP ] DONE   [OK] SANITY/Cotati City Council (11.221s)
+[2026-03-14T22:50:16.886Z] [STEP ] START  -> BUILD_MODEL/Cotati City Council
+[2026-03-14T22:50:16.893Z] [STEP ] DONE   [OK] BUILD_MODEL/Cotati City Council (11.228s)
+[2026-03-14T22:50:16.894Z] [INFO ]   Sheet 'Healdsburg City Council': 21 precincts, type=candidate_race
+[2026-03-14T22:50:16.905Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.906Z] [INFO ]     Allocation: crosswalk, 21 target precincts
+[2026-03-14T22:50:16.906Z] [STEP ] START  -> NORMALIZE_SCHEMA/Healdsburg City Council
+[2026-03-14T22:50:16.906Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.906Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.906Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.910Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Healdsburg City Council (11.245s)
+[2026-03-14T22:50:16.910Z] [STEP ] START  -> SANITY/Healdsburg City Council
+[2026-03-14T22:50:16.910Z] [INFO ]   SANITY [OK] Non-empty model: 21 rows
+[2026-03-14T22:50:16.910Z] [STEP ] DONE   [OK] SANITY/Healdsburg City Council (11.245s)
+[2026-03-14T22:50:16.910Z] [STEP ] START  -> BUILD_MODEL/Healdsburg City Council
+[2026-03-14T22:50:16.921Z] [STEP ] DONE   [OK] BUILD_MODEL/Healdsburg City Council (11.256s)
+[2026-03-14T22:50:16.921Z] [INFO ]   Sheet 'Petaluma City Council': 101 precincts, type=candidate_race
+[2026-03-14T22:50:16.932Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.933Z] [INFO ]     Allocation: crosswalk, 101 target precincts
+[2026-03-14T22:50:16.933Z] [STEP ] START  -> NORMALIZE_SCHEMA/Petaluma City Council
+[2026-03-14T22:50:16.933Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.933Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.934Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.937Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Petaluma City Council (11.272s)
+[2026-03-14T22:50:16.937Z] [STEP ] START  -> SANITY/Petaluma City Council
+[2026-03-14T22:50:16.937Z] [INFO ]   SANITY [OK] Non-empty model: 101 rows
+[2026-03-14T22:50:16.937Z] [STEP ] DONE   [OK] SANITY/Petaluma City Council (11.272s)
+[2026-03-14T22:50:16.937Z] [STEP ] START  -> BUILD_MODEL/Petaluma City Council
+[2026-03-14T22:50:16.945Z] [STEP ] DONE   [OK] BUILD_MODEL/Petaluma City Council (11.28s)
+[2026-03-14T22:50:16.945Z] [INFO ]   Sheet 'RP City Council-Dist 1': 25 precincts, type=candidate_race
+[2026-03-14T22:50:16.959Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.960Z] [INFO ]     Allocation: crosswalk, 25 target precincts
+[2026-03-14T22:50:16.960Z] [STEP ] START  -> NORMALIZE_SCHEMA/RP City Council-Dist 1
+[2026-03-14T22:50:16.960Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.960Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.960Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.963Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/RP City Council-Dist 1 (11.298s)
+[2026-03-14T22:50:16.963Z] [STEP ] START  -> SANITY/RP City Council-Dist 1
+[2026-03-14T22:50:16.963Z] [INFO ]   SANITY [OK] Non-empty model: 25 rows
+[2026-03-14T22:50:16.963Z] [STEP ] DONE   [OK] SANITY/RP City Council-Dist 1 (11.298s)
+[2026-03-14T22:50:16.963Z] [STEP ] START  -> BUILD_MODEL/RP City Council-Dist 1
+[2026-03-14T22:50:16.971Z] [STEP ] DONE   [OK] BUILD_MODEL/RP City Council-Dist 1 (11.306s)
+[2026-03-14T22:50:16.971Z] [INFO ]   Sheet 'RP City Council-Dist 3': 53 precincts, type=candidate_race
+[2026-03-14T22:50:16.986Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:16.986Z] [INFO ]     Allocation: crosswalk, 53 target precincts
+[2026-03-14T22:50:16.986Z] [STEP ] START  -> NORMALIZE_SCHEMA/RP City Council-Dist 3
+[2026-03-14T22:50:16.986Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:16.987Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:16.987Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:16.990Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/RP City Council-Dist 3 (11.325s)
+[2026-03-14T22:50:16.990Z] [STEP ] START  -> SANITY/RP City Council-Dist 3
+[2026-03-14T22:50:16.990Z] [INFO ]   SANITY [OK] Non-empty model: 53 rows
+[2026-03-14T22:50:16.990Z] [STEP ] DONE   [OK] SANITY/RP City Council-Dist 3 (11.325s)
+[2026-03-14T22:50:16.990Z] [STEP ] START  -> BUILD_MODEL/RP City Council-Dist 3
+[2026-03-14T22:50:16.997Z] [STEP ] DONE   [OK] BUILD_MODEL/RP City Council-Dist 3 (11.332s)
+[2026-03-14T22:50:16.997Z] [INFO ]   Sheet 'RP City Council-Dist 4': 33 precincts, type=candidate_race
+[2026-03-14T22:50:17.006Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.007Z] [INFO ]     Allocation: crosswalk, 33 target precincts
+[2026-03-14T22:50:17.007Z] [STEP ] START  -> NORMALIZE_SCHEMA/RP City Council-Dist 4
+[2026-03-14T22:50:17.007Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.007Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.007Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.010Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/RP City Council-Dist 4 (11.345s)
+[2026-03-14T22:50:17.010Z] [STEP ] START  -> SANITY/RP City Council-Dist 4
+[2026-03-14T22:50:17.010Z] [INFO ]   SANITY [OK] Non-empty model: 33 rows
+[2026-03-14T22:50:17.010Z] [STEP ] DONE   [OK] SANITY/RP City Council-Dist 4 (11.345s)
+[2026-03-14T22:50:17.010Z] [STEP ] START  -> BUILD_MODEL/RP City Council-Dist 4
+[2026-03-14T22:50:17.017Z] [STEP ] DONE   [OK] BUILD_MODEL/RP City Council-Dist 4 (11.352s)
+[2026-03-14T22:50:17.017Z] [INFO ]   Sheet 'Sebastopol City Council': 21 precincts, type=candidate_race
+[2026-03-14T22:50:17.028Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.028Z] [INFO ]     Allocation: crosswalk, 21 target precincts
+[2026-03-14T22:50:17.028Z] [STEP ] START  -> NORMALIZE_SCHEMA/Sebastopol City Council
+[2026-03-14T22:50:17.029Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.029Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.029Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.032Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Sebastopol City Council (11.367s)
+[2026-03-14T22:50:17.032Z] [STEP ] START  -> SANITY/Sebastopol City Council
+[2026-03-14T22:50:17.032Z] [INFO ]   SANITY [OK] Non-empty model: 21 rows
+[2026-03-14T22:50:17.032Z] [STEP ] DONE   [OK] SANITY/Sebastopol City Council (11.367s)
+[2026-03-14T22:50:17.032Z] [STEP ] START  -> BUILD_MODEL/Sebastopol City Council
+[2026-03-14T22:50:17.038Z] [STEP ] DONE   [OK] BUILD_MODEL/Sebastopol City Council (11.373s)
+[2026-03-14T22:50:17.038Z] [INFO ]   Sheet 'Sonoma City Council': 73 precincts, type=candidate_race
+[2026-03-14T22:50:17.048Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.048Z] [INFO ]     Allocation: crosswalk, 73 target precincts
+[2026-03-14T22:50:17.048Z] [STEP ] START  -> NORMALIZE_SCHEMA/Sonoma City Council
+[2026-03-14T22:50:17.049Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.049Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.049Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.052Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Sonoma City Council (11.387s)
+[2026-03-14T22:50:17.052Z] [STEP ] START  -> SANITY/Sonoma City Council
+[2026-03-14T22:50:17.052Z] [INFO ]   SANITY [OK] Non-empty model: 73 rows
+[2026-03-14T22:50:17.052Z] [STEP ] DONE   [OK] SANITY/Sonoma City Council (11.387s)
+[2026-03-14T22:50:17.052Z] [STEP ] START  -> BUILD_MODEL/Sonoma City Council
+[2026-03-14T22:50:17.062Z] [STEP ] DONE   [OK] BUILD_MODEL/Sonoma City Council (11.397s)
+[2026-03-14T22:50:17.062Z] [INFO ]   Sheet 'Town of Windsor-Mayor': 141 precincts, type=candidate_race
+[2026-03-14T22:50:17.081Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.081Z] [INFO ]     Allocation: crosswalk, 141 target precincts
+[2026-03-14T22:50:17.081Z] [STEP ] START  -> NORMALIZE_SCHEMA/Town of Windsor-Mayor
+[2026-03-14T22:50:17.082Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.082Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.083Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.087Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Town of Windsor-Mayor (11.422s)
+[2026-03-14T22:50:17.087Z] [STEP ] START  -> SANITY/Town of Windsor-Mayor
+[2026-03-14T22:50:17.087Z] [INFO ]   SANITY [OK] Non-empty model: 141 rows
+[2026-03-14T22:50:17.087Z] [STEP ] DONE   [OK] SANITY/Town of Windsor-Mayor (11.422s)
+[2026-03-14T22:50:17.087Z] [STEP ] START  -> BUILD_MODEL/Town of Windsor-Mayor
+[2026-03-14T22:50:17.096Z] [STEP ] DONE   [OK] BUILD_MODEL/Town of Windsor-Mayor (11.431s)
+[2026-03-14T22:50:17.096Z] [INFO ]   Sheet 'Windsor Town Council-Dist 3': 21 precincts, type=candidate_race
+[2026-03-14T22:50:17.108Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.108Z] [INFO ]     Allocation: crosswalk, 21 target precincts
+[2026-03-14T22:50:17.108Z] [STEP ] START  -> NORMALIZE_SCHEMA/Windsor Town Council-Dist 3
+[2026-03-14T22:50:17.109Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.109Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.109Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.112Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Windsor Town Council-Dist 3 (11.447s)
+[2026-03-14T22:50:17.112Z] [STEP ] START  -> SANITY/Windsor Town Council-Dist 3
+[2026-03-14T22:50:17.112Z] [INFO ]   SANITY [OK] Non-empty model: 21 rows
+[2026-03-14T22:50:17.112Z] [STEP ] DONE   [OK] SANITY/Windsor Town Council-Dist 3 (11.447s)
+[2026-03-14T22:50:17.112Z] [STEP ] START  -> BUILD_MODEL/Windsor Town Council-Dist 3
+[2026-03-14T22:50:17.119Z] [STEP ] DONE   [OK] BUILD_MODEL/Windsor Town Council-Dist 3 (11.454s)
+[2026-03-14T22:50:17.119Z] [INFO ]   Sheet 'Graton Fire Protection Dist': 57 precincts, type=candidate_race
+[2026-03-14T22:50:17.133Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.133Z] [INFO ]     Allocation: crosswalk, 57 target precincts
+[2026-03-14T22:50:17.133Z] [STEP ] START  -> NORMALIZE_SCHEMA/Graton Fire Protection Dist
+[2026-03-14T22:50:17.134Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.134Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.134Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.137Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Graton Fire Protection Dist (11.472s)
+[2026-03-14T22:50:17.137Z] [STEP ] START  -> SANITY/Graton Fire Protection Dist
+[2026-03-14T22:50:17.137Z] [INFO ]   SANITY [OK] Non-empty model: 57 rows
+[2026-03-14T22:50:17.137Z] [STEP ] DONE   [OK] SANITY/Graton Fire Protection Dist (11.472s)
+[2026-03-14T22:50:17.137Z] [STEP ] START  -> BUILD_MODEL/Graton Fire Protection Dist
+[2026-03-14T22:50:17.146Z] [STEP ] DONE   [OK] BUILD_MODEL/Graton Fire Protection Dist (11.48s)
+[2026-03-14T22:50:17.146Z] [INFO ]   Sheet 'Prop 14': 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:17.155Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.156Z] [INFO ]     Allocation: crosswalk, 2673 target precincts
+[2026-03-14T22:50:17.156Z] [STEP ] START  -> NORMALIZE_SCHEMA/Prop 14
+[2026-03-14T22:50:17.156Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.156Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.157Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.157Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.157Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.162Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Prop 14 (11.497s)
+[2026-03-14T22:50:17.162Z] [STEP ] START  -> SANITY/Prop 14
+[2026-03-14T22:50:17.162Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T22:50:17.162Z] [STEP ] DONE   [OK] SANITY/Prop 14 (11.497s)
+[2026-03-14T22:50:17.162Z] [STEP ] START  -> BUILD_MODEL/Prop 14
+[2026-03-14T22:50:17.177Z] [STEP ] DONE   [OK] BUILD_MODEL/Prop 14 (11.512s)
+[2026-03-14T22:50:17.178Z] [INFO ]   Sheet 'Prop 15': 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:17.195Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.195Z] [INFO ]     Allocation: crosswalk, 2673 target precincts
+[2026-03-14T22:50:17.195Z] [STEP ] START  -> NORMALIZE_SCHEMA/Prop 15
+[2026-03-14T22:50:17.196Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.197Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.197Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.197Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.198Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.204Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Prop 15 (11.539s)
+[2026-03-14T22:50:17.204Z] [STEP ] START  -> SANITY/Prop 15
+[2026-03-14T22:50:17.204Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T22:50:17.204Z] [STEP ] DONE   [OK] SANITY/Prop 15 (11.539s)
+[2026-03-14T22:50:17.204Z] [STEP ] START  -> BUILD_MODEL/Prop 15
+[2026-03-14T22:50:17.224Z] [STEP ] DONE   [OK] BUILD_MODEL/Prop 15 (11.559s)
+[2026-03-14T22:50:17.224Z] [INFO ]   Sheet 'Prop 16': 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:17.233Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.234Z] [INFO ]     Allocation: crosswalk, 2673 target precincts
+[2026-03-14T22:50:17.234Z] [STEP ] START  -> NORMALIZE_SCHEMA/Prop 16
+[2026-03-14T22:50:17.234Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.234Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.234Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.235Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.235Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.239Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Prop 16 (11.574s)
+[2026-03-14T22:50:17.239Z] [STEP ] START  -> SANITY/Prop 16
+[2026-03-14T22:50:17.239Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T22:50:17.239Z] [STEP ] DONE   [OK] SANITY/Prop 16 (11.574s)
+[2026-03-14T22:50:17.239Z] [STEP ] START  -> BUILD_MODEL/Prop 16
+[2026-03-14T22:50:17.253Z] [STEP ] DONE   [OK] BUILD_MODEL/Prop 16 (11.588s)
+[2026-03-14T22:50:17.253Z] [INFO ]   Sheet 'Prop 17': 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:17.263Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.263Z] [INFO ]     Allocation: crosswalk, 2673 target precincts
+[2026-03-14T22:50:17.263Z] [STEP ] START  -> NORMALIZE_SCHEMA/Prop 17
+[2026-03-14T22:50:17.264Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.264Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.264Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.265Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.265Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.271Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Prop 17 (11.606s)
+[2026-03-14T22:50:17.271Z] [STEP ] START  -> SANITY/Prop 17
+[2026-03-14T22:50:17.271Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T22:50:17.271Z] [STEP ] DONE   [OK] SANITY/Prop 17 (11.606s)
+[2026-03-14T22:50:17.271Z] [STEP ] START  -> BUILD_MODEL/Prop 17
+[2026-03-14T22:50:17.287Z] [STEP ] DONE   [OK] BUILD_MODEL/Prop 17 (11.622s)
+[2026-03-14T22:50:17.287Z] [INFO ]   Sheet 'Prop 18': 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:17.300Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.301Z] [INFO ]     Allocation: crosswalk, 2673 target precincts
+[2026-03-14T22:50:17.301Z] [STEP ] START  -> NORMALIZE_SCHEMA/Prop 18
+[2026-03-14T22:50:17.302Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.302Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.302Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.302Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.303Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.307Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Prop 18 (11.642s)
+[2026-03-14T22:50:17.307Z] [STEP ] START  -> SANITY/Prop 18
+[2026-03-14T22:50:17.307Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T22:50:17.307Z] [STEP ] DONE   [OK] SANITY/Prop 18 (11.642s)
+[2026-03-14T22:50:17.307Z] [STEP ] START  -> BUILD_MODEL/Prop 18
+[2026-03-14T22:50:17.322Z] [STEP ] DONE   [OK] BUILD_MODEL/Prop 18 (11.657s)
+[2026-03-14T22:50:17.322Z] [INFO ]   Sheet 'Prop 19': 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:17.334Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.335Z] [INFO ]     Allocation: crosswalk, 2673 target precincts
+[2026-03-14T22:50:17.335Z] [STEP ] START  -> NORMALIZE_SCHEMA/Prop 19
+[2026-03-14T22:50:17.335Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.336Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.336Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.336Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.337Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.342Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Prop 19 (11.677s)
+[2026-03-14T22:50:17.342Z] [STEP ] START  -> SANITY/Prop 19
+[2026-03-14T22:50:17.343Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T22:50:17.343Z] [STEP ] DONE   [OK] SANITY/Prop 19 (11.678s)
+[2026-03-14T22:50:17.343Z] [STEP ] START  -> BUILD_MODEL/Prop 19
+[2026-03-14T22:50:17.357Z] [STEP ] DONE   [OK] BUILD_MODEL/Prop 19 (11.692s)
+[2026-03-14T22:50:17.357Z] [INFO ]   Sheet 'Prop 20': 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:17.370Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.371Z] [INFO ]     Allocation: crosswalk, 2673 target precincts
+[2026-03-14T22:50:17.371Z] [STEP ] START  -> NORMALIZE_SCHEMA/Prop 20
+[2026-03-14T22:50:17.371Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.371Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.372Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.372Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.372Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.376Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Prop 20 (11.711s)
+[2026-03-14T22:50:17.376Z] [STEP ] START  -> SANITY/Prop 20
+[2026-03-14T22:50:17.377Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T22:50:17.377Z] [STEP ] DONE   [OK] SANITY/Prop 20 (11.712s)
+[2026-03-14T22:50:17.377Z] [STEP ] START  -> BUILD_MODEL/Prop 20
+[2026-03-14T22:50:17.392Z] [STEP ] DONE   [OK] BUILD_MODEL/Prop 20 (11.726s)
+[2026-03-14T22:50:17.392Z] [INFO ]   Sheet 'Prop 21': 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:17.403Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.403Z] [INFO ]     Allocation: crosswalk, 2673 target precincts
+[2026-03-14T22:50:17.403Z] [STEP ] START  -> NORMALIZE_SCHEMA/Prop 21
+[2026-03-14T22:50:17.404Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.404Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.404Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.405Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.405Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.409Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Prop 21 (11.744s)
+[2026-03-14T22:50:17.409Z] [STEP ] START  -> SANITY/Prop 21
+[2026-03-14T22:50:17.409Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T22:50:17.409Z] [STEP ] DONE   [OK] SANITY/Prop 21 (11.744s)
+[2026-03-14T22:50:17.409Z] [STEP ] START  -> BUILD_MODEL/Prop 21
+[2026-03-14T22:50:17.423Z] [STEP ] DONE   [OK] BUILD_MODEL/Prop 21 (11.758s)
+[2026-03-14T22:50:17.423Z] [INFO ]   Sheet 'Prop 22': 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:17.432Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.433Z] [INFO ]     Allocation: crosswalk, 2673 target precincts
+[2026-03-14T22:50:17.433Z] [STEP ] START  -> NORMALIZE_SCHEMA/Prop 22
+[2026-03-14T22:50:17.433Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.433Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.434Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.434Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.434Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.438Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Prop 22 (11.773s)
+[2026-03-14T22:50:17.438Z] [STEP ] START  -> SANITY/Prop 22
+[2026-03-14T22:50:17.438Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T22:50:17.438Z] [STEP ] DONE   [OK] SANITY/Prop 22 (11.773s)
+[2026-03-14T22:50:17.438Z] [STEP ] START  -> BUILD_MODEL/Prop 22
+[2026-03-14T22:50:17.452Z] [STEP ] DONE   [OK] BUILD_MODEL/Prop 22 (11.787s)
+[2026-03-14T22:50:17.452Z] [INFO ]   Sheet 'Prop 23': 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:17.462Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.462Z] [INFO ]     Allocation: crosswalk, 2673 target precincts
+[2026-03-14T22:50:17.462Z] [STEP ] START  -> NORMALIZE_SCHEMA/Prop 23
+[2026-03-14T22:50:17.462Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.463Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.463Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.463Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.463Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.467Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Prop 23 (11.802s)
+[2026-03-14T22:50:17.467Z] [STEP ] START  -> SANITY/Prop 23
+[2026-03-14T22:50:17.467Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T22:50:17.467Z] [STEP ] DONE   [OK] SANITY/Prop 23 (11.802s)
+[2026-03-14T22:50:17.467Z] [STEP ] START  -> BUILD_MODEL/Prop 23
+[2026-03-14T22:50:17.483Z] [STEP ] DONE   [OK] BUILD_MODEL/Prop 23 (11.818s)
+[2026-03-14T22:50:17.483Z] [INFO ]   Sheet 'Prop 24': 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:17.492Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.493Z] [INFO ]     Allocation: crosswalk, 2673 target precincts
+[2026-03-14T22:50:17.493Z] [STEP ] START  -> NORMALIZE_SCHEMA/Prop 24
+[2026-03-14T22:50:17.493Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.494Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.494Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.495Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.495Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.501Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Prop 24 (11.836s)
+[2026-03-14T22:50:17.501Z] [STEP ] START  -> SANITY/Prop 24
+[2026-03-14T22:50:17.501Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T22:50:17.501Z] [STEP ] DONE   [OK] SANITY/Prop 24 (11.836s)
+[2026-03-14T22:50:17.501Z] [STEP ] START  -> BUILD_MODEL/Prop 24
+[2026-03-14T22:50:17.519Z] [STEP ] DONE   [OK] BUILD_MODEL/Prop 24 (11.854s)
+[2026-03-14T22:50:17.519Z] [INFO ]   Sheet 'Prop 25': 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:17.532Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.532Z] [INFO ]     Allocation: crosswalk, 2673 target precincts
+[2026-03-14T22:50:17.532Z] [STEP ] START  -> NORMALIZE_SCHEMA/Prop 25
+[2026-03-14T22:50:17.533Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.533Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.533Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.534Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.534Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.538Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Prop 25 (11.873s)
+[2026-03-14T22:50:17.538Z] [STEP ] START  -> SANITY/Prop 25
+[2026-03-14T22:50:17.538Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T22:50:17.538Z] [STEP ] DONE   [OK] SANITY/Prop 25 (11.873s)
+[2026-03-14T22:50:17.539Z] [STEP ] START  -> BUILD_MODEL/Prop 25
+[2026-03-14T22:50:17.553Z] [STEP ] DONE   [OK] BUILD_MODEL/Prop 25 (11.888s)
+[2026-03-14T22:50:17.553Z] [INFO ]   Sheet 'Measure L': 49 precincts, type=ballot_measure
+[2026-03-14T22:50:17.564Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.564Z] [INFO ]     Allocation: crosswalk, 49 target precincts
+[2026-03-14T22:50:17.564Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure L
+[2026-03-14T22:50:17.564Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.565Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.565Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.565Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.565Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.571Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure L (11.906s)
+[2026-03-14T22:50:17.571Z] [STEP ] START  -> SANITY/Measure L
+[2026-03-14T22:50:17.571Z] [INFO ]   SANITY [OK] Non-empty model: 49 rows
+[2026-03-14T22:50:17.571Z] [STEP ] DONE   [OK] SANITY/Measure L (11.906s)
+[2026-03-14T22:50:17.571Z] [STEP ] START  -> BUILD_MODEL/Measure L
+[2026-03-14T22:50:17.578Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure L (11.913s)
+[2026-03-14T22:50:17.579Z] [INFO ]   Sheet 'Measure M': 25 precincts, type=ballot_measure
+[2026-03-14T22:50:17.589Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.589Z] [INFO ]     Allocation: crosswalk, 25 target precincts
+[2026-03-14T22:50:17.589Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure M
+[2026-03-14T22:50:17.589Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.590Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.590Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.590Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.591Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.595Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure M (11.93s)
+[2026-03-14T22:50:17.595Z] [STEP ] START  -> SANITY/Measure M
+[2026-03-14T22:50:17.595Z] [INFO ]   SANITY [OK] Non-empty model: 25 rows
+[2026-03-14T22:50:17.595Z] [STEP ] DONE   [OK] SANITY/Measure M (11.93s)
+[2026-03-14T22:50:17.595Z] [STEP ] START  -> BUILD_MODEL/Measure M
+[2026-03-14T22:50:17.603Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure M (11.938s)
+[2026-03-14T22:50:17.603Z] [INFO ]   Sheet 'Measure N': 73 precincts, type=ballot_measure
+[2026-03-14T22:50:17.615Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.616Z] [INFO ]     Allocation: crosswalk, 73 target precincts
+[2026-03-14T22:50:17.616Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure N
+[2026-03-14T22:50:17.616Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.616Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.616Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.617Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.617Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.621Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure N (11.955s)
+[2026-03-14T22:50:17.621Z] [STEP ] START  -> SANITY/Measure N
+[2026-03-14T22:50:17.621Z] [INFO ]   SANITY [OK] Non-empty model: 73 rows
+[2026-03-14T22:50:17.621Z] [STEP ] DONE   [OK] SANITY/Measure N (11.956s)
+[2026-03-14T22:50:17.621Z] [STEP ] START  -> BUILD_MODEL/Measure N
+[2026-03-14T22:50:17.628Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure N (11.963s)
+[2026-03-14T22:50:17.628Z] [INFO ]   Sheet 'Measure O': 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:17.637Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.638Z] [INFO ]     Allocation: crosswalk, 2673 target precincts
+[2026-03-14T22:50:17.638Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure O
+[2026-03-14T22:50:17.638Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.638Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.639Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.639Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.639Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.643Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure O (11.978s)
+[2026-03-14T22:50:17.643Z] [STEP ] START  -> SANITY/Measure O
+[2026-03-14T22:50:17.643Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T22:50:17.643Z] [STEP ] DONE   [OK] SANITY/Measure O (11.978s)
+[2026-03-14T22:50:17.643Z] [STEP ] START  -> BUILD_MODEL/Measure O
+[2026-03-14T22:50:17.658Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure O (11.992s)
+[2026-03-14T22:50:17.658Z] [INFO ]   Sheet 'Measure P': 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:17.667Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.667Z] [INFO ]     Allocation: crosswalk, 2673 target precincts
+[2026-03-14T22:50:17.667Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure P
+[2026-03-14T22:50:17.668Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.668Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.668Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.669Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.669Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.673Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure P (12.008s)
+[2026-03-14T22:50:17.673Z] [STEP ] START  -> SANITY/Measure P
+[2026-03-14T22:50:17.673Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T22:50:17.673Z] [STEP ] DONE   [OK] SANITY/Measure P (12.008s)
+[2026-03-14T22:50:17.673Z] [STEP ] START  -> BUILD_MODEL/Measure P
+[2026-03-14T22:50:17.687Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure P (12.022s)
+[2026-03-14T22:50:17.687Z] [INFO ]   Sheet 'Measure Q': 629 precincts, type=ballot_measure
+[2026-03-14T22:50:17.707Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.708Z] [INFO ]     Allocation: crosswalk, 629 target precincts
+[2026-03-14T22:50:17.708Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure Q
+[2026-03-14T22:50:17.708Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.708Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.709Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.709Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.709Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.713Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure Q (12.048s)
+[2026-03-14T22:50:17.714Z] [STEP ] START  -> SANITY/Measure Q
+[2026-03-14T22:50:17.714Z] [INFO ]   SANITY [OK] Non-empty model: 629 rows
+[2026-03-14T22:50:17.714Z] [STEP ] DONE   [OK] SANITY/Measure Q (12.049s)
+[2026-03-14T22:50:17.714Z] [STEP ] START  -> BUILD_MODEL/Measure Q
+[2026-03-14T22:50:17.724Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure Q (12.059s)
+[2026-03-14T22:50:17.724Z] [INFO ]   Sheet 'Measure R': 13 precincts, type=ballot_measure
+[2026-03-14T22:50:17.737Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.737Z] [INFO ]     Allocation: crosswalk, 13 target precincts
+[2026-03-14T22:50:17.737Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure R
+[2026-03-14T22:50:17.738Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.738Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.738Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.738Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.739Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.743Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure R (12.078s)
+[2026-03-14T22:50:17.743Z] [STEP ] START  -> SANITY/Measure R
+[2026-03-14T22:50:17.743Z] [INFO ]   SANITY [OK] Non-empty model: 13 rows
+[2026-03-14T22:50:17.743Z] [STEP ] DONE   [OK] SANITY/Measure R (12.078s)
+[2026-03-14T22:50:17.743Z] [STEP ] START  -> BUILD_MODEL/Measure R
+[2026-03-14T22:50:17.751Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure R (12.086s)
+[2026-03-14T22:50:17.751Z] [INFO ]   Sheet 'Measure S': 49 precincts, type=ballot_measure
+[2026-03-14T22:50:17.762Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.763Z] [INFO ]     Allocation: crosswalk, 49 target precincts
+[2026-03-14T22:50:17.763Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure S
+[2026-03-14T22:50:17.763Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.764Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.764Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.764Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.764Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.769Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure S (12.104s)
+[2026-03-14T22:50:17.769Z] [STEP ] START  -> SANITY/Measure S
+[2026-03-14T22:50:17.769Z] [INFO ]   SANITY [OK] Non-empty model: 49 rows
+[2026-03-14T22:50:17.769Z] [STEP ] DONE   [OK] SANITY/Measure S (12.104s)
+[2026-03-14T22:50:17.769Z] [STEP ] START  -> BUILD_MODEL/Measure S
+[2026-03-14T22:50:17.777Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure S (12.112s)
+[2026-03-14T22:50:17.777Z] [INFO ]   Sheet 'Measure T': 21 precincts, type=ballot_measure
+[2026-03-14T22:50:17.789Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.789Z] [INFO ]     Allocation: crosswalk, 21 target precincts
+[2026-03-14T22:50:17.789Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure T
+[2026-03-14T22:50:17.789Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.790Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.790Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.790Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.790Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.796Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure T (12.131s)
+[2026-03-14T22:50:17.796Z] [STEP ] START  -> SANITY/Measure T
+[2026-03-14T22:50:17.796Z] [INFO ]   SANITY [OK] Non-empty model: 21 rows
+[2026-03-14T22:50:17.796Z] [STEP ] DONE   [OK] SANITY/Measure T (12.131s)
+[2026-03-14T22:50:17.796Z] [STEP ] START  -> BUILD_MODEL/Measure T
+[2026-03-14T22:50:17.804Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure T (12.139s)
+[2026-03-14T22:50:17.804Z] [INFO ]   Sheet 'Measure U': 101 precincts, type=ballot_measure
+[2026-03-14T22:50:17.815Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.815Z] [INFO ]     Allocation: crosswalk, 101 target precincts
+[2026-03-14T22:50:17.815Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure U
+[2026-03-14T22:50:17.816Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.816Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.816Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.816Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.817Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.820Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure U (12.155s)
+[2026-03-14T22:50:17.821Z] [STEP ] START  -> SANITY/Measure U
+[2026-03-14T22:50:17.821Z] [INFO ]   SANITY [OK] Non-empty model: 101 rows
+[2026-03-14T22:50:17.821Z] [STEP ] DONE   [OK] SANITY/Measure U (12.156s)
+[2026-03-14T22:50:17.821Z] [STEP ] START  -> BUILD_MODEL/Measure U
+[2026-03-14T22:50:17.828Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure U (12.163s)
+[2026-03-14T22:50:17.828Z] [INFO ]   Sheet 'Measure V': 73 precincts, type=ballot_measure
+[2026-03-14T22:50:17.837Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.837Z] [INFO ]     Allocation: crosswalk, 73 target precincts
+[2026-03-14T22:50:17.837Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure V
+[2026-03-14T22:50:17.838Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.838Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.838Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.838Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.839Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.843Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure V (12.178s)
+[2026-03-14T22:50:17.844Z] [STEP ] START  -> SANITY/Measure V
+[2026-03-14T22:50:17.844Z] [INFO ]   SANITY [OK] Non-empty model: 73 rows
+[2026-03-14T22:50:17.844Z] [STEP ] DONE   [OK] SANITY/Measure V (12.179s)
+[2026-03-14T22:50:17.844Z] [STEP ] START  -> BUILD_MODEL/Measure V
+[2026-03-14T22:50:17.851Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure V (12.186s)
+[2026-03-14T22:50:17.851Z] [INFO ]   Sheet 'Measure W': 73 precincts, type=ballot_measure
+[2026-03-14T22:50:17.860Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.861Z] [INFO ]     Allocation: crosswalk, 73 target precincts
+[2026-03-14T22:50:17.861Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure W
+[2026-03-14T22:50:17.861Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.861Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.861Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.862Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.862Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.866Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure W (12.2s)
+[2026-03-14T22:50:17.866Z] [STEP ] START  -> SANITY/Measure W
+[2026-03-14T22:50:17.866Z] [INFO ]   SANITY [OK] Non-empty model: 73 rows
+[2026-03-14T22:50:17.866Z] [STEP ] DONE   [OK] SANITY/Measure W (12.201s)
+[2026-03-14T22:50:17.866Z] [STEP ] START  -> BUILD_MODEL/Measure W
+[2026-03-14T22:50:17.875Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure W (12.21s)
+[2026-03-14T22:50:17.875Z] [INFO ]   Sheet 'Measure X': 73 precincts, type=ballot_measure
+[2026-03-14T22:50:17.887Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.887Z] [INFO ]     Allocation: crosswalk, 73 target precincts
+[2026-03-14T22:50:17.887Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure X
+[2026-03-14T22:50:17.887Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.888Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.888Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.888Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.888Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.893Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure X (12.228s)
+[2026-03-14T22:50:17.893Z] [STEP ] START  -> SANITY/Measure X
+[2026-03-14T22:50:17.894Z] [INFO ]   SANITY [OK] Non-empty model: 73 rows
+[2026-03-14T22:50:17.894Z] [STEP ] DONE   [OK] SANITY/Measure X (12.229s)
+[2026-03-14T22:50:17.894Z] [STEP ] START  -> BUILD_MODEL/Measure X
+[2026-03-14T22:50:17.904Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure X (12.239s)
+[2026-03-14T22:50:17.904Z] [INFO ]   Sheet 'Measure Y': 73 precincts, type=ballot_measure
+[2026-03-14T22:50:17.917Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.917Z] [INFO ]     Allocation: crosswalk, 73 target precincts
+[2026-03-14T22:50:17.917Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure Y
+[2026-03-14T22:50:17.918Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.918Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.918Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.918Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.919Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.922Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure Y (12.257s)
+[2026-03-14T22:50:17.922Z] [STEP ] START  -> SANITY/Measure Y
+[2026-03-14T22:50:17.923Z] [INFO ]   SANITY [OK] Non-empty model: 73 rows
+[2026-03-14T22:50:17.923Z] [STEP ] DONE   [OK] SANITY/Measure Y (12.258s)
+[2026-03-14T22:50:17.923Z] [STEP ] START  -> BUILD_MODEL/Measure Y
+[2026-03-14T22:50:17.931Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure Y (12.266s)
+[2026-03-14T22:50:17.931Z] [INFO ]   Sheet 'Measure Z': 33 precincts, type=ballot_measure
+[2026-03-14T22:50:17.943Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.944Z] [INFO ]     Allocation: crosswalk, 33 target precincts
+[2026-03-14T22:50:17.944Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure Z
+[2026-03-14T22:50:17.944Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.944Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.944Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.945Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.945Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.949Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure Z (12.283s)
+[2026-03-14T22:50:17.949Z] [STEP ] START  -> SANITY/Measure Z
+[2026-03-14T22:50:17.949Z] [INFO ]   SANITY [OK] Non-empty model: 33 rows
+[2026-03-14T22:50:17.949Z] [STEP ] DONE   [OK] SANITY/Measure Z (12.284s)
+[2026-03-14T22:50:17.949Z] [STEP ] START  -> BUILD_MODEL/Measure Z
+[2026-03-14T22:50:17.956Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure Z (12.291s)
+[2026-03-14T22:50:17.956Z] [INFO ]   Sheet 'Measure AA': 13 precincts, type=ballot_measure
+[2026-03-14T22:50:17.970Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.970Z] [INFO ]     Allocation: crosswalk, 13 target precincts
+[2026-03-14T22:50:17.970Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure AA
+[2026-03-14T22:50:17.970Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.971Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.971Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.971Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.971Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.975Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure AA (12.31s)
+[2026-03-14T22:50:17.975Z] [STEP ] START  -> SANITY/Measure AA
+[2026-03-14T22:50:17.976Z] [INFO ]   SANITY [OK] Non-empty model: 13 rows
+[2026-03-14T22:50:17.976Z] [STEP ] DONE   [OK] SANITY/Measure AA (12.31s)
+[2026-03-14T22:50:17.976Z] [STEP ] START  -> BUILD_MODEL/Measure AA
+[2026-03-14T22:50:17.983Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure AA (12.318s)
+[2026-03-14T22:50:17.983Z] [INFO ]   Sheet 'Measure BB': 317 precincts, type=ballot_measure
+[2026-03-14T22:50:17.994Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:17.994Z] [INFO ]     Allocation: crosswalk, 317 target precincts
+[2026-03-14T22:50:17.994Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure BB
+[2026-03-14T22:50:17.995Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:17.995Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:17.995Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:17.995Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:17.996Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:17.999Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure BB (12.334s)
+[2026-03-14T22:50:17.999Z] [STEP ] START  -> SANITY/Measure BB
+[2026-03-14T22:50:17.999Z] [INFO ]   SANITY [OK] Non-empty model: 317 rows
+[2026-03-14T22:50:17.999Z] [STEP ] DONE   [OK] SANITY/Measure BB (12.334s)
+[2026-03-14T22:50:17.999Z] [STEP ] START  -> BUILD_MODEL/Measure BB
+[2026-03-14T22:50:18.008Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure BB (12.343s)
+[2026-03-14T22:50:18.008Z] [INFO ]   Sheet 'Measure CC': 277 precincts, type=ballot_measure
+[2026-03-14T22:50:18.018Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:18.018Z] [INFO ]     Allocation: crosswalk, 277 target precincts
+[2026-03-14T22:50:18.018Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure CC
+[2026-03-14T22:50:18.018Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:18.018Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:18.019Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:18.019Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:18.019Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:18.023Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure CC (12.358s)
+[2026-03-14T22:50:18.023Z] [STEP ] START  -> SANITY/Measure CC
+[2026-03-14T22:50:18.023Z] [INFO ]   SANITY [OK] Non-empty model: 277 rows
+[2026-03-14T22:50:18.023Z] [STEP ] DONE   [OK] SANITY/Measure CC (12.358s)
+[2026-03-14T22:50:18.023Z] [STEP ] START  -> BUILD_MODEL/Measure CC
+[2026-03-14T22:50:18.031Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure CC (12.366s)
+[2026-03-14T22:50:18.031Z] [INFO ]   Sheet 'Measure DD': 2673 precincts, type=ballot_measure
+[2026-03-14T22:50:18.041Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:18.041Z] [INFO ]     Allocation: crosswalk, 2673 target precincts
+[2026-03-14T22:50:18.041Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure DD
+[2026-03-14T22:50:18.042Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:18.042Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:18.042Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:18.043Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T22:50:18.043Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T22:50:18.047Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure DD (12.382s)
+[2026-03-14T22:50:18.047Z] [STEP ] START  -> SANITY/Measure DD
+[2026-03-14T22:50:18.047Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T22:50:18.048Z] [STEP ] DONE   [OK] SANITY/Measure DD (12.382s)
+[2026-03-14T22:50:18.048Z] [STEP ] START  -> BUILD_MODEL/Measure DD
+[2026-03-14T22:50:18.063Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure DD (12.398s)
+[2026-03-14T22:50:18.063Z] [INFO ]   Sheet 'PrecinctOverview': 2676 precincts, type=candidate_race
+[2026-03-14T22:50:18.076Z] [WARN ]   [ALLOCATE] Crosswalk error: safe_merge() got an unexpected keyword argument 'left_on'. Falling back to area-weighted.
+[2026-03-14T22:50:18.077Z] [INFO ]     Allocation: crosswalk, 2676 target precincts
+[2026-03-14T22:50:18.077Z] [STEP ] START  -> NORMALIZE_SCHEMA/PrecinctOverview
+[2026-03-14T22:50:18.077Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T22:50:18.078Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T22:50:18.078Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T22:50:18.083Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/PrecinctOverview (12.418s)
+[2026-03-14T22:50:18.084Z] [STEP ] START  -> SANITY/PrecinctOverview
+[2026-03-14T22:50:18.084Z] [INFO ]   SANITY [OK] Non-empty model: 2676 rows
+[2026-03-14T22:50:18.084Z] [STEP ] DONE   [OK] SANITY/PrecinctOverview (12.419s)
+[2026-03-14T22:50:18.084Z] [STEP ] START  -> BUILD_MODEL/PrecinctOverview
+[2026-03-14T22:50:18.098Z] [STEP ] DONE   [OK] BUILD_MODEL/PrecinctOverview (12.433s)
+[2026-03-14T22:50:18.098Z] [STEP ] DONE   [OK] ALLOCATE_VOTES (12.433s)
+[2026-03-14T22:50:18.098Z] [STEP ] START  -> INTEGRITY_ENFORCEMENT
+[2026-03-14T22:50:18.352Z] [WARN ]   [INTEGRITY] 1889 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:18.451Z] [WARN ]   [INTEGRITY] 722 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:18.603Z] [WARN ]   [INTEGRITY] 1168 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:18.667Z] [WARN ]   [INTEGRITY] 460 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:18.787Z] [WARN ]   [INTEGRITY] 881 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:18.841Z] [WARN ]   [INTEGRITY] 367 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:18.927Z] [WARN ]   [INTEGRITY] 643 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:18.991Z] [WARN ]   [INTEGRITY] 460 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.089Z] [WARN ]   [INTEGRITY] 755 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.095Z] [WARN ]   [INTEGRITY] 22 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.101Z] [WARN ]   [INTEGRITY] 22 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.111Z] [WARN ]   [INTEGRITY] 43 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.119Z] [WARN ]   [INTEGRITY] 34 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.131Z] [WARN ]   [INTEGRITY] 61 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.158Z] [WARN ]   [INTEGRITY] 184 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.163Z] [WARN ]   [INTEGRITY] 10 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.179Z] [WARN ]   [INTEGRITY] 73 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.224Z] [WARN ]   [INTEGRITY] 274 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.230Z] [WARN ]   [INTEGRITY] 22 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.236Z] [WARN ]   [INTEGRITY] 19 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.243Z] [WARN ]   [INTEGRITY] 19 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.273Z] [WARN ]   [INTEGRITY] 196 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.280Z] [WARN ]   [INTEGRITY] 19 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.288Z] [WARN ]   [INTEGRITY] 40 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.301Z] [WARN ]   [INTEGRITY] 76 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.310Z] [WARN ]   [INTEGRITY] 43 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.322Z] [WARN ]   [INTEGRITY] 61 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.327Z] [WARN ]   [INTEGRITY] 10 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.334Z] [WARN ]   [INTEGRITY] 37 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.340Z] [WARN ]   [INTEGRITY] 13 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.352Z] [WARN ]   [INTEGRITY] 76 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.358Z] [WARN ]   [INTEGRITY] 19 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.367Z] [WARN ]   [INTEGRITY] 37 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.373Z] [WARN ]   [INTEGRITY] 25 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.379Z] [WARN ]   [INTEGRITY] 16 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.389Z] [WARN ]   [INTEGRITY] 49 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.410Z] [WARN ]   [INTEGRITY] 103 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.416Z] [WARN ]   [INTEGRITY] 16 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.425Z] [WARN ]   [INTEGRITY] 40 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:19.786Z] [WARN ]   [INTEGRITY] 1723 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:20.155Z] [WARN ]   [INTEGRITY] 1726 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:20.528Z] [WARN ]   [INTEGRITY] 1724 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:20.891Z] [WARN ]   [INTEGRITY] 1726 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:21.255Z] [WARN ]   [INTEGRITY] 1727 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:21.615Z] [WARN ]   [INTEGRITY] 1725 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:21.977Z] [WARN ]   [INTEGRITY] 1722 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:22.352Z] [WARN ]   [INTEGRITY] 1723 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:22.712Z] [WARN ]   [INTEGRITY] 1723 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:23.087Z] [WARN ]   [INTEGRITY] 1720 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:23.453Z] [WARN ]   [INTEGRITY] 1716 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:23.818Z] [WARN ]   [INTEGRITY] 1715 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:23.830Z] [WARN ]   [INTEGRITY] 26 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:23.840Z] [WARN ]   [INTEGRITY] 15 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:23.854Z] [WARN ]   [INTEGRITY] 47 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:24.233Z] [WARN ]   [INTEGRITY] 1727 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:24.596Z] [WARN ]   [INTEGRITY] 1724 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:24.686Z] [WARN ]   [INTEGRITY] 438 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:24.693Z] [WARN ]   [INTEGRITY] 10 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:24.704Z] [WARN ]   [INTEGRITY] 35 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:24.711Z] [WARN ]   [INTEGRITY] 13 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:24.729Z] [WARN ]   [INTEGRITY] 76 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:24.744Z] [WARN ]   [INTEGRITY] 49 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:24.759Z] [WARN ]   [INTEGRITY] 49 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:24.773Z] [WARN ]   [INTEGRITY] 49 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:24.788Z] [WARN ]   [INTEGRITY] 49 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:24.798Z] [WARN ]   [INTEGRITY] 18 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:24.804Z] [WARN ]   [INTEGRITY] 8 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:24.851Z] [WARN ]   [INTEGRITY] 205 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:24.893Z] [WARN ]   [INTEGRITY] 184 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:25.259Z] [WARN ]   [INTEGRITY] 1723 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:25.509Z] [WARN ]   [INTEGRITY] 1892 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T22:50:25.515Z] [STEP ] DONE   [OK] INTEGRITY_ENFORCEMENT (19.85s)
+[2026-03-14T22:50:25.515Z] [STEP ] START  -> FEATURE_ENGINEERING
+[2026-03-14T22:50:25.515Z] [WARN ] Voter file not found at C:\Users\Mathew C\Campaign In A Box\voters\CA\Sonoma\voters.csv
+[2026-03-14T22:50:26.134Z] [STEP ] DONE   [OK] FEATURE_ENGINEERING (20.469s)
+[2026-03-14T22:50:26.134Z] [STEP ] START  -> UNIVERSE_BUILDING
+[2026-03-14T22:50:27.640Z] [STEP ] DONE   [OK] UNIVERSE_BUILDING (21.975s)
+[2026-03-14T22:50:27.641Z] [STEP ] START  -> SCORING_V2
+[2026-03-14T22:50:27.645Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:28.149Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:28.215Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:28.393Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:28.429Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:28.534Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:28.561Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:28.625Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:28.670Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:28.772Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:28.787Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:28.797Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:28.807Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:28.817Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:28.830Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:28.844Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:28.856Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:28.870Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:28.896Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:28.909Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:28.923Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:28.938Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:28.955Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:28.969Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:28.978Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:28.986Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:28.995Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:29.004Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:29.012Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:29.021Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:29.029Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:29.037Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:29.045Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:29.054Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:29.062Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:29.070Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:29.078Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:29.087Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:29.095Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:29.104Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:29.581Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:30.123Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:30.601Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:31.074Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:31.516Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:31.998Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:32.569Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:33.074Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:33.564Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:34.091Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:34.619Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:35.060Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:35.074Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:35.087Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:35.103Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:35.543Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:36.017Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:36.062Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:36.072Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:36.081Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:36.091Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:36.101Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:36.113Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:36.125Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:36.147Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:36.161Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:36.175Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:36.186Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:36.203Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:36.217Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:36.720Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T22:50:37.235Z] [STEP ] DONE   [OK] SCORING_V2 (31.57s)
+[2026-03-14T22:50:37.260Z] [STEP ] START  -> REGION_CLUSTERING
+[2026-03-14T22:50:37.261Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:39.808Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:40.123Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:40.927Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:41.052Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:41.514Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:41.597Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:41.841Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:41.969Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.383Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.390Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.397Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.408Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.415Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.423Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.446Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.452Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.460Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.506Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.512Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.519Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.525Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.550Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.556Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.564Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.572Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.581Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.588Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.594Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.601Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.607Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.616Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.621Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.629Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.635Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.641Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.651Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.662Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.668Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:42.675Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:50:54.412Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:51:04.926Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:51:15.148Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:51:25.775Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:51:36.223Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:51:47.529Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:51:57.952Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:52:08.599Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:52:18.873Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:52:29.101Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:52:38.805Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:52:48.935Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:52:48.954Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:52:48.965Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:52:48.982Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:53:00.236Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:53:10.311Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:53:10.814Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:53:10.823Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:53:10.831Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:53:10.840Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:53:10.858Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:53:10.871Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:53:10.886Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:53:10.897Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:53:10.910Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:53:10.921Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:53:10.928Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:53:11.062Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:53:11.162Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:53:19.313Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T22:53:21.530Z] [STEP ] DONE   [OK] REGION_CLUSTERING (195.864s)
+[2026-03-14T22:53:21.530Z] [STEP ] START  -> FIELD_PLANNING

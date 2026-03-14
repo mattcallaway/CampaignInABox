@@ -1,0 +1,3 @@
+# logs/admin/campaign_admin_log.csv — Prompt 20.8
+# Auto-created by engine/admin/campaign_manager.py
+# Fields: timestamp,actor_user_id,action,campaign_id,old_status,new_status,old_stage,new_stage,notes

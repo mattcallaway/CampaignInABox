@@ -1,7 +1,7 @@
 # Artifact Validation Report ✅
-**Run:** `2026-03-10__152246__e84498d7__msi`  **Contest:** `2025_CA_sonoma_prop_50_special`
+**Run:** `2026-03-14__044900__9b7d76d6__msi`  **Contest:** `2025_CA_sonoma_nov2025_special`
 **Present:** 13/13  **Stubbed:** 0  **Truly missing:** 0
-**Checked at:** 2026-03-10T15:24:07.248412
+**Checked at:** 2026-03-14T04:50:20.298941
 
 ## Found Artifacts
 - ✅ `run.log`

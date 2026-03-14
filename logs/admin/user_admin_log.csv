@@ -1,0 +1,7 @@
+# logs/admin/user_admin_log.csv — Prompt 20.8
+# Auto-created by engine/auth/auth_manager.py
+# Fields: timestamp,actor_user_id,target_user_id,action,old_role,new_role,notes
+2026-03-13T09:24:15.015415,mcallaway,test_p208,create_user,,analyst,Created: Test Admin User
+2026-03-13T09:24:15.022348,mcallaway,test_p208,update_role,analyst,viewer,test downgrade
+2026-03-13T09:24:15.029040,mcallaway,test_p208,disable_user,,,test disable
+2026-03-13T09:24:15.035482,mcallaway,test_p208,enable_user,,,test re-enable

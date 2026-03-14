@@ -1,0 +1,273 @@
+[2026-03-14T09:06:38.051Z] [INFO] ========================================================================
+  Campaign In A Box — Pipeline Run
+  RUN_ID  : 2026-03-14__020637__116b2740__msi
+  Started : 2026-03-14T09:06:38.050859+00:00
+========================================================================
+[2026-03-14T09:06:38.051Z] [INFO ] Pipeline v2 starting
+[2026-03-14T09:06:38.051Z] [INFO ]   state=CA  county=Sonoma  year=2025  contest_slug=nov2025_special
+[2026-03-14T09:06:38.051Z] [INFO ]   membership_method=auto  log_level=verbose
+[2026-03-14T09:06:38.118Z] [STEP ] START  -> DATA_INTAKE_ANALYSIS
+[2026-03-14T09:06:38.131Z] [STEP ] DONE   [OK] DATA_INTAKE_ANALYSIS (0.08s)
+[2026-03-14T09:06:38.131Z] [STEP ] SKIP   [SKIP] INGEST_STAGING -- No --staging-dir provided; skipping ingestion
+[2026-03-14T09:06:38.131Z] [INFO ] === Processing County: Sonoma ===
+[2026-03-14T09:06:38.131Z] [STEP ] START  -> SCAFFOLD_BOUNDARY_INDEX_Sonoma
+[2026-03-14T09:06:38.131Z] [INFO ]   Boundary index exists: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\boundary_index\boundaries_index.csv
+[2026-03-14T09:06:38.134Z] [WARN ]   Boundary index scaffolded (no boundary files found yet)
+[2026-03-14T09:06:38.134Z] [INFO ]   output: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\boundary_index\boundaries_index.csv  [sha256:b4dff0e71c42...]
+[2026-03-14T09:06:38.134Z] [STEP ] DONE   [OK] SCAFFOLD_BOUNDARY_INDEX_Sonoma (0.083s)
+[2026-03-14T09:06:38.134Z] [STEP ] START  -> VALIDATE_GEOGRAPHY
+[2026-03-14T09:06:38.134Z] [INFO ]   expected: data/CA/counties/Sonoma/geography/precinct_shapes/
+[2026-03-14T09:06:38.134Z] [INFO ]   expected: data/CA/counties/Sonoma/geography/crosswalks/
+[2026-03-14T09:06:38.135Z] [INFO ]   [present] MPREC GeoJSON
+[2026-03-14T09:06:38.136Z] [INFO ]   [present] MPREC GeoPackage
+[2026-03-14T09:06:38.141Z] [INFO ]   [present] MPREC Shapefile
+[2026-03-14T09:06:38.142Z] [INFO ]   [present] SRPREC GeoJSON
+[2026-03-14T09:06:38.143Z] [INFO ]   [present] SRPREC GeoPackage
+[2026-03-14T09:06:38.145Z] [INFO ]   [present] SRPREC Shapefile
+[2026-03-14T09:06:38.145Z] [INFO ]   [present] 2020 BLK TO MPREC
+[2026-03-14T09:06:38.146Z] [INFO ]   [present] RGPREC TO 2020 BLK
+[2026-03-14T09:06:38.146Z] [INFO ]   [present] SRPREC TO 2020 BLK
+[2026-03-14T09:06:38.146Z] [INFO ]   [present] RG to RR to SR to SVPREC
+[2026-03-14T09:06:38.147Z] [INFO ]   [present] MPREC to SRPREC
+[2026-03-14T09:06:38.147Z] [INFO ]   [present] SRPREC to CITY
+[2026-03-14T09:06:38.147Z] [INFO ] Geography validation: 12/12 present, canonical=MPREC
+[2026-03-14T09:06:38.147Z] [STEP ] DONE   [OK] VALIDATE_GEOGRAPHY (0.097s)
+[2026-03-14T09:06:38.147Z] [STEP ] START  -> VALIDATE_VOTES
+[2026-03-14T09:06:38.147Z] [INFO ]   expected: data/contests/CA/Sonoma/2025/nov2025_special/raw/<file>  (canonical, P28)
+[2026-03-14T09:06:38.147Z] [INFO ]   expected: votes/2025/CA/Sonoma/nov2025_special/detail.xlsx              (legacy fallback)
+[2026-03-14T09:06:38.151Z] [INFO ]   [VOTES] Found via ContestResolver (canonical P28): data\contests\CA\Sonoma\2025\nov2025_special\raw\SoCoNov2025StatewideSpclElec_PctCanvass (1).xlsx
+[2026-03-14T09:06:38.152Z] [INFO ]   input: detail.xlsx -> C:\Users\Mathew C\Campaign In A Box\data\contests\CA\Sonoma\2025\nov2025_special\raw\SoCoNov2025StatewideSpclElec_PctCanvass (1).xlsx  [sha256:1c558d828c8f...]
+[2026-03-14T09:06:38.152Z] [STEP ] DONE   [OK] VALIDATE_VOTES (0.102s)
+[2026-03-14T09:06:38.152Z] [STEP ] START  -> LOAD_GEOMETRY
+[2026-03-14T09:06:38.152Z] [INFO ]   expected: MPREC preferred; SRPREC fallback
+[2026-03-14T09:06:38.153Z] [INFO ] Loading MPREC geometry from: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\MPREC_GeoJSON\mprec_097_g24_v01.geojson
+[2026-03-14T09:06:40.920Z] [INFO ] Loaded 1405 features from mprec_097_g24_v01.geojson
+[2026-03-14T09:06:40.921Z] [STEP ] DONE   [OK] LOAD_GEOMETRY (2.87s)
+[2026-03-14T09:06:40.921Z] [STEP ] START  -> LOAD_CROSSWALKS
+[2026-03-14T09:06:40.946Z] [WARN ] Cannot detect source/target columns in blk_mprec_097_g24_v01.csv: ['block', 'mprec', 'pct_block']
+[2026-03-14T09:06:40.968Z] [WARN ] Cannot detect source/target columns in blk_mprec_097_g24_v01.csv: ['block', 'mprec', 'pct_block']
+[2026-03-14T09:06:41.210Z] [INFO ]   [CROSSWALKS] Discovered 4/6 crosswalks
+[2026-03-14T09:06:41.210Z] [STEP ] SKIP   [SKIP] LOAD_CROSSWALKS -- No crosswalk files; using identity mapping
+[2026-03-14T09:06:41.210Z] [STEP ] START  -> SCAFFOLD_CONTEST_JSON
+[2026-03-14T09:06:41.212Z] [INFO ]   output: C:\Users\Mathew C\Campaign In A Box\votes\2025\CA\Sonoma\nov2025_special\contest.json  [sha256:83305688c312...]
+[2026-03-14T09:06:41.212Z] [STEP ] DONE   [OK] SCAFFOLD_CONTEST_JSON (3.161s)
+[2026-03-14T09:06:41.212Z] [STEP ] START  -> PARSE_CONTEST
+[2026-03-14T09:06:41.212Z] [INFO ]   expected: Detect sheet types; aggregate vote methods
+[2026-03-14T09:06:41.363Z] [INFO ] Parsing sheet: 'Document map'
+[2026-03-14T09:06:41.363Z] [INFO ]   parse_contest_sheet: title='PrecinctCanvass' type=candidate_race prec_col='PrecinctCanvass' choice_cols=['PrecinctCanvass'] rows=3
+[2026-03-14T09:06:41.368Z] [INFO ]   -> 3 precincts, type=candidate_race
+[2026-03-14T09:06:41.369Z] [INFO ] Parsing sheet: 'Sheet2'
+[2026-03-14T09:06:41.370Z] [INFO ]   parse_contest_sheet: title='1 Timber Cove County Water District' type=candidate_race prec_col='unnamed_0' choice_cols=['1', '1_1', '1_2', '1_3', '1_4', '1_5', '1_6', '1_7'] rows=6
+[2026-03-14T09:06:41.376Z] [INFO ]   -> 4 precincts, type=candidate_race
+[2026-03-14T09:06:41.376Z] [INFO ] Parsing sheet: 'Sheet3'
+[2026-03-14T09:06:41.378Z] [INFO ]   parse_contest_sheet: title='1 Proposition 50 - Special State Measure Redistricting' type=candidate_race prec_col='unnamed_0' choice_cols=['1', '1_1', '1_2', '1_3', '1_4'] rows=395
+[2026-03-14T09:06:41.384Z] [INFO ]   -> 393 precincts, type=candidate_race
+[2026-03-14T09:06:41.384Z] [INFO ] Parsing sheet: 'Sheet4'
+[2026-03-14T09:06:41.385Z] [INFO ]   parse_contest_sheet: title='1 Measure I - Petaluma Joint Union High School District Parcel Tax - 2/3 Vote To Pass' type=candidate_race prec_col='unnamed_0' choice_cols=['1', '1_1', '1_2', '1_3', '1_4'] rows=60
+[2026-03-14T09:06:41.391Z] [INFO ]   -> 58 precincts, type=candidate_race
+[2026-03-14T09:06:41.392Z] [STEP ] DONE   [OK] PARSE_CONTEST (3.341s)
+[2026-03-14T09:06:41.392Z] [INFO ] Contest Mode: CANDIDATE (Inferred CANDIDATE (found candidate_race headers))
+[2026-03-14T09:06:41.392Z] [INFO ] [PATHWAY] contest_mode=candidate  contest_mode_reason=Inferred CANDIDATE (found candidate_race headers)
+[2026-03-14T09:06:41.392Z] [STEP ] START  -> ALLOCATE_VOTES
+[2026-03-14T09:06:41.392Z] [INFO ]   Sheet 'Document map': 3 precincts, type=candidate_race
+[2026-03-14T09:06:41.393Z] [INFO ]     Allocation: area_weighted_fallback, 3 target precincts
+[2026-03-14T09:06:41.393Z] [STEP ] START  -> NORMALIZE_SCHEMA/Document map
+[2026-03-14T09:06:41.393Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T09:06:41.393Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T09:06:41.393Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T09:06:41.397Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Document map (3.347s)
+[2026-03-14T09:06:41.397Z] [STEP ] START  -> SANITY/Document map
+[2026-03-14T09:06:41.398Z] [INFO ]   SANITY [OK] Non-empty model: 3 rows
+[2026-03-14T09:06:41.398Z] [STEP ] DONE   [OK] SANITY/Document map (3.347s)
+[2026-03-14T09:06:41.398Z] [STEP ] START  -> BUILD_MODEL/Document map
+[2026-03-14T09:06:41.408Z] [STEP ] DONE   [OK] BUILD_MODEL/Document map (3.357s)
+[2026-03-14T09:06:41.408Z] [INFO ]   Sheet 'Sheet2': 4 precincts, type=candidate_race
+[2026-03-14T09:06:41.408Z] [INFO ]     Allocation: area_weighted_fallback, 4 target precincts
+[2026-03-14T09:06:41.408Z] [STEP ] START  -> NORMALIZE_SCHEMA/Sheet2
+[2026-03-14T09:06:41.408Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T09:06:41.409Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T09:06:41.409Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T09:06:41.412Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Sheet2 (3.361s)
+[2026-03-14T09:06:41.412Z] [STEP ] START  -> SANITY/Sheet2
+[2026-03-14T09:06:41.412Z] [INFO ]   SANITY [OK] Non-empty model: 4 rows
+[2026-03-14T09:06:41.412Z] [STEP ] DONE   [OK] SANITY/Sheet2 (3.362s)
+[2026-03-14T09:06:41.412Z] [STEP ] START  -> BUILD_MODEL/Sheet2
+[2026-03-14T09:06:41.422Z] [STEP ] DONE   [OK] BUILD_MODEL/Sheet2 (3.372s)
+[2026-03-14T09:06:41.422Z] [INFO ]   Sheet 'Sheet3': 393 precincts, type=candidate_race
+[2026-03-14T09:06:41.423Z] [INFO ]     Allocation: area_weighted_fallback, 393 target precincts
+[2026-03-14T09:06:41.423Z] [STEP ] START  -> NORMALIZE_SCHEMA/Sheet3
+[2026-03-14T09:06:41.423Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T09:06:41.423Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T09:06:41.424Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T09:06:41.428Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Sheet3 (3.377s)
+[2026-03-14T09:06:41.428Z] [STEP ] START  -> SANITY/Sheet3
+[2026-03-14T09:06:41.428Z] [INFO ]   SANITY [OK] Non-empty model: 393 rows
+[2026-03-14T09:06:41.428Z] [STEP ] DONE   [OK] SANITY/Sheet3 (3.377s)
+[2026-03-14T09:06:41.428Z] [STEP ] START  -> BUILD_MODEL/Sheet3
+[2026-03-14T09:06:41.441Z] [STEP ] DONE   [OK] BUILD_MODEL/Sheet3 (3.391s)
+[2026-03-14T09:06:41.441Z] [INFO ]   Sheet 'Sheet4': 58 precincts, type=candidate_race
+[2026-03-14T09:06:41.442Z] [INFO ]     Allocation: area_weighted_fallback, 58 target precincts
+[2026-03-14T09:06:41.442Z] [STEP ] START  -> NORMALIZE_SCHEMA/Sheet4
+[2026-03-14T09:06:41.442Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T09:06:41.443Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T09:06:41.443Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T09:06:41.447Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Sheet4 (3.397s)
+[2026-03-14T09:06:41.447Z] [STEP ] START  -> SANITY/Sheet4
+[2026-03-14T09:06:41.447Z] [INFO ]   SANITY [OK] Non-empty model: 58 rows
+[2026-03-14T09:06:41.447Z] [STEP ] DONE   [OK] SANITY/Sheet4 (3.397s)
+[2026-03-14T09:06:41.447Z] [STEP ] START  -> BUILD_MODEL/Sheet4
+[2026-03-14T09:06:41.457Z] [STEP ] DONE   [OK] BUILD_MODEL/Sheet4 (3.407s)
+[2026-03-14T09:06:41.457Z] [STEP ] DONE   [OK] ALLOCATE_VOTES (3.407s)
+[2026-03-14T09:06:41.457Z] [STEP ] START  -> INTEGRITY_ENFORCEMENT
+[2026-03-14T09:06:41.460Z] [INFO ]   [INTEGRITY] All 3 precincts pass constraints — no repairs needed
+[2026-03-14T09:06:41.463Z] [WARN ]   [INTEGRITY] 2 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T09:06:41.513Z] [WARN ]   [INTEGRITY] 320 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T09:06:41.525Z] [WARN ]   [INTEGRITY] 44 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T09:06:41.527Z] [STEP ] DONE   [OK] INTEGRITY_ENFORCEMENT (3.477s)
+[2026-03-14T09:06:41.528Z] [STEP ] START  -> FEATURE_ENGINEERING
+[2026-03-14T09:06:41.528Z] [WARN ] Voter file not found at C:\Users\Mathew C\Campaign In A Box\voters\CA\Sonoma\voters.csv
+[2026-03-14T09:06:41.570Z] [STEP ] DONE   [OK] FEATURE_ENGINEERING (3.519s)
+[2026-03-14T09:06:41.570Z] [STEP ] START  -> UNIVERSE_BUILDING
+[2026-03-14T09:06:41.618Z] [STEP ] DONE   [OK] UNIVERSE_BUILDING (3.568s)
+[2026-03-14T09:06:41.618Z] [STEP ] START  -> SCORING_V2
+[2026-03-14T09:06:41.626Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T09:06:41.640Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T09:06:41.655Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T09:06:41.668Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T09:06:41.675Z] [STEP ] DONE   [OK] SCORING_V2 (3.624s)
+[2026-03-14T09:06:41.676Z] [STEP ] START  -> REGION_CLUSTERING
+[2026-03-14T09:06:41.676Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T09:06:41.686Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T09:06:41.694Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T09:06:41.702Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T09:06:41.709Z] [STEP ] DONE   [OK] REGION_CLUSTERING (3.659s)
+[2026-03-14T09:06:41.709Z] [STEP ] START  -> FIELD_PLANNING
+[2026-03-14T09:06:41.732Z] [STEP ] DONE   [OK] FIELD_PLANNING (3.681s)
+[2026-03-14T09:06:41.732Z] [STEP ] START  -> SIMULATION
+[2026-03-14T09:06:41.734Z] [STEP ] DONE   [OK] SIMULATION (3.683s)
+[2026-03-14T09:06:41.734Z] [STEP ] START  -> VOTER_UNIVERSE_EXPORT
+[2026-03-14T09:06:41.734Z] [STEP ] SKIP   [SKIP] VOTER_UNIVERSE_EXPORT -- No voter file present
+[2026-03-14T09:06:41.734Z] [STEP ] START  -> LOAD_VOTER_FILE
+[2026-03-14T09:06:41.735Z] [STEP ] SKIP   [SKIP] LOAD_VOTER_FILE -- No voter file found in data/voters/CA/Sonoma/ — place a CSV there to enable voter intelligence
+[2026-03-14T09:06:41.735Z] [STEP ] START  -> BUILD_VOTER_UNIVERSES
+[2026-03-14T09:06:41.735Z] [STEP ] SKIP   [SKIP] BUILD_VOTER_UNIVERSES -- No voter file loaded
+[2026-03-14T09:06:41.735Z] [STEP ] START  -> SCORE_VOTER_TURNOUT
+[2026-03-14T09:06:41.735Z] [STEP ] SKIP   [SKIP] SCORE_VOTER_TURNOUT -- No voter file loaded
+[2026-03-14T09:06:41.735Z] [STEP ] START  -> SCORE_VOTER_PERSUASION
+[2026-03-14T09:06:41.735Z] [STEP ] SKIP   [SKIP] SCORE_VOTER_PERSUASION -- No TPS-scored voter file
+[2026-03-14T09:06:41.735Z] [STEP ] START  -> BUILD_TARGETING_QUADRANTS
+[2026-03-14T09:06:41.735Z] [STEP ] SKIP   [SKIP] BUILD_TARGETING_QUADRANTS -- TPS+PS scores not available
+[2026-03-14T09:06:41.735Z] [STEP ] START  -> BUILD_PRECINCT_VOTER_METRICS
+[2026-03-14T09:06:41.735Z] [STEP ] SKIP   [SKIP] BUILD_PRECINCT_VOTER_METRICS -- No quadrant data
+[2026-03-14T09:06:41.735Z] [STEP ] START  -> DOWNLOAD_HISTORICAL_ELECTIONS
+[2026-03-14T09:06:41.900Z] [INFO ] [DOWNLOADER] 2016: automatic download failed — manual download required (see download_status.json)
+[2026-03-14T09:06:41.978Z] [INFO ] [DOWNLOADER] 2018: automatic download failed — manual download required (see download_status.json)
+[2026-03-14T09:07:02.085Z] [INFO ] [DOWNLOADER] 2020: automatic download failed — manual download required (see download_status.json)
+[2026-03-14T09:07:22.173Z] [INFO ] [DOWNLOADER] 2022: automatic download failed — manual download required (see download_status.json)
+[2026-03-14T09:07:42.256Z] [INFO ] [DOWNLOADER] 2024: automatic download failed — manual download required (see download_status.json)
+[2026-03-14T09:07:42.259Z] [INFO ] [DOWNLOADER] Status: 0 downloaded, 0 already present, 5 failed. See C:\Users\Mathew C\Campaign In A Box\data\elections\CA\Sonoma\download_status.json
+[2026-03-14T09:07:42.259Z] [STEP ] DONE   [OK] DOWNLOAD_HISTORICAL_ELECTIONS (64.208s)
+[2026-03-14T09:07:42.259Z] [STEP ] START  -> CALIBRATE_MODEL
+[2026-03-14T09:07:42.260Z] [INFO ] [HIST_PARSER] No historical election directories found
+[2026-03-14T09:07:42.267Z] [INFO ] [CALIBRATOR] No historical data — using prior parameters
+[2026-03-14T09:07:42.269Z] [INFO ] [CALIBRATOR] Wrote calibration parameters → C:\Users\Mathew C\Campaign In A Box\derived\calibration\model_parameters.json
+[2026-03-14T09:07:42.270Z] [STEP ] DONE   [OK] CALIBRATE_MODEL (64.219s)
+[2026-03-14T09:07:42.270Z] [STEP ] START  -> CAMPAIGN_STRATEGY
+[2026-03-14T09:07:42.398Z] [STEP ] DONE   [OK] CAMPAIGN_STRATEGY (64.348s)
+[2026-03-14T09:07:42.398Z] [STEP ] START  -> CALIBRATION
+[2026-03-14T09:07:42.401Z] [INFO ] [CALIB_ENGINE] Starting calibration | run_id=2026-03-14__020637__116b2740__msi | contest=2025_CA_sonoma_nov2025_special
+[2026-03-14T09:07:42.404Z] [INFO ] [HIST_PARSER] No historical election directories found
+[2026-03-14T09:07:42.413Z] [INFO ] [CALIB_ENGINE] Data sources: []
+[2026-03-14T09:07:42.423Z] [INFO ] [TURNOUT_CAL] Written → turnout_parameters.json
+[2026-03-14T09:07:42.429Z] [INFO ] [PERSUASION_CAL] Written → persuasion_parameters.json
+[2026-03-14T09:07:42.432Z] [INFO ] [LIFT_CAL] Written → turnout_lift_parameters.json
+[2026-03-14T09:07:42.434Z] [INFO ] [FORECAST_ACC] Insufficient data for accuracy tracking
+[2026-03-14T09:07:42.438Z] [INFO ] [CALIBRATOR] No historical data — using prior parameters
+[2026-03-14T09:07:42.439Z] [INFO ] [CALIBRATOR] Wrote calibration parameters → C:\Users\Mathew C\Campaign In A Box\derived\calibration\model_parameters.json
+[2026-03-14T09:07:42.450Z] [INFO ] [CALIB_ENGINE] Calibration summary written → 2026-03-14__020637__116b2740__msi__calibration_summary.json
+[2026-03-14T09:07:42.452Z] [INFO ] [CALIB_ENGINE] Done | status=prior_only | confidence=none | sources=[]
+[2026-03-14T09:07:42.452Z] [STEP ] DONE   [OK] CALIBRATION (64.402s)
+[2026-03-14T09:07:42.452Z] [STEP ] START  -> INTELLIGENCE
+[2026-03-14T09:07:42.467Z] [INFO ] [POLLING] No polling files found — returning empty DataFrame
+[2026-03-14T09:07:42.468Z] [INFO ] [POLL_AGG] No polls to aggregate — returning None
+[2026-03-14T09:07:42.469Z] [INFO ] [REG] No registration files found
+[2026-03-14T09:07:42.471Z] [INFO ] [BALLOT_RETURNS] No return files found
+[2026-03-14T09:07:42.476Z] [INFO ] [MACRO] Environment score=+0.01950 | sources=[]
+[2026-03-14T09:07:42.484Z] [INFO ] [INTEL_FUSION] Model baseline=0.5000
+[2026-03-14T09:07:42.485Z] [INFO ] [INTEL_FUSION] adjustment=+0.00098 | adjusted=0.5010 | impact=NEUTRAL | source=SIMULATED
+[2026-03-14T09:07:42.491Z] [STEP ] DONE   [OK] INTELLIGENCE (64.44s)
+[2026-03-14T09:07:42.491Z] [STEP ] START  -> BUILD_PROVENANCE
+[2026-03-14T09:07:42.511Z] [STEP ] DONE   [OK] BUILD_PROVENANCE (64.461s)
+[2026-03-14T09:07:42.511Z] [STEP ] START  -> GENERATE_DATA_REQUESTS
+[2026-03-14T09:07:42.515Z] [STEP ] DONE   [OK] GENERATE_DATA_REQUESTS (64.464s)
+[2026-03-14T09:07:42.515Z] [STEP ] START  -> WAR_ROOM_STATUS
+[2026-03-14T09:07:42.528Z] [STEP ] DONE   [OK] WAR_ROOM_STATUS (64.478s)
+[2026-03-14T09:07:42.528Z] [STEP ] START  -> WAR_ROOM_FORECAST_UPDATE
+[2026-03-14T09:07:42.563Z] [STEP ] DONE   [OK] WAR_ROOM_FORECAST_UPDATE (64.513s)
+[2026-03-14T09:07:42.563Z] [STEP ] START  -> PERFORMANCE_RECONCILIATION
+[2026-03-14T09:07:42.591Z] [STEP ] DONE   [OK] PERFORMANCE_RECONCILIATION (64.541s)
+[2026-03-14T09:07:42.591Z] [STEP ] START  -> FORECAST_GENERATION
+[2026-03-14T09:07:42.666Z] [STEP ] DONE   [OK] FORECAST_GENERATION (64.616s)
+[2026-03-14T09:07:42.666Z] [STEP ] START  -> TURF_GENERATION
+[2026-03-14T09:07:42.721Z] [STEP ] DONE   [OK] TURF_GENERATION (64.671s)
+[2026-03-14T09:07:42.721Z] [STEP ] START  -> EXPORT_V2_OUTPUTS
+[2026-03-14T09:07:44.874Z] [INFO ] [KEPLER] Loaded geometry: 1405 precincts from sonoma_mprec_g24_v01.geojson
+[2026-03-14T09:07:44.878Z] [INFO ] [KEPLER] Joined 1405/1405 precincts to model data
+[2026-03-14T09:07:46.601Z] [INFO ] [KEPLER] Wrote derived\maps\Sonoma_2025_nov2025_special__Document map__kepler.geojson (22,724,994 bytes)
+[2026-03-14T09:07:46.621Z] [INFO ]   Generated turf packs in C:\Users\Mathew C\Campaign In A Box\derived\turfs\CA\Sonoma\Sonoma_2025_nov2025_special__Document map\2026-03-14__020637__116b2740__msi__turf_packs
+[2026-03-14T09:07:48.666Z] [INFO ] [KEPLER] Loaded geometry: 1405 precincts from sonoma_mprec_g24_v01.geojson
+[2026-03-14T09:07:48.670Z] [INFO ] [KEPLER] Joined 1405/1405 precincts to model data
+[2026-03-14T09:07:50.493Z] [INFO ] [KEPLER] Wrote derived\maps\Sonoma_2025_nov2025_special__Sheet2__kepler.geojson (22,724,988 bytes)
+[2026-03-14T09:07:50.507Z] [INFO ]   Generated turf packs in C:\Users\Mathew C\Campaign In A Box\derived\turfs\CA\Sonoma\Sonoma_2025_nov2025_special__Sheet2\2026-03-14__020637__116b2740__msi__turf_packs
+[2026-03-14T09:07:52.478Z] [INFO ] [KEPLER] Loaded geometry: 1405 precincts from sonoma_mprec_g24_v01.geojson
+[2026-03-14T09:07:52.482Z] [INFO ] [KEPLER] Joined 1405/1405 precincts to model data
+[2026-03-14T09:07:54.282Z] [INFO ] [KEPLER] Wrote derived\maps\Sonoma_2025_nov2025_special__Sheet3__kepler.geojson (22,724,988 bytes)
+[2026-03-14T09:07:54.322Z] [INFO ]   Generated turf packs in C:\Users\Mathew C\Campaign In A Box\derived\turfs\CA\Sonoma\Sonoma_2025_nov2025_special__Sheet3\2026-03-14__020637__116b2740__msi__turf_packs
+[2026-03-14T09:07:56.608Z] [INFO ] [KEPLER] Loaded geometry: 1405 precincts from sonoma_mprec_g24_v01.geojson
+[2026-03-14T09:07:56.612Z] [INFO ] [KEPLER] Joined 1405/1405 precincts to model data
+[2026-03-14T09:07:58.380Z] [INFO ] [KEPLER] Wrote derived\maps\Sonoma_2025_nov2025_special__Sheet4__kepler.geojson (22,724,988 bytes)
+[2026-03-14T09:07:58.397Z] [INFO ]   Generated turf packs in C:\Users\Mathew C\Campaign In A Box\derived\turfs\CA\Sonoma\Sonoma_2025_nov2025_special__Sheet4\2026-03-14__020637__116b2740__msi__turf_packs
+[2026-03-14T09:07:58.406Z] [STEP ] DONE   [OK] EXPORT_V2_OUTPUTS (80.356s)
+[2026-03-14T09:07:58.406Z] [STEP ] START  -> DIAGNOSTICS
+[2026-03-14T09:07:58.479Z] [STEP ] DONE   [OK] DIAGNOSTICS (80.429s)
+[2026-03-14T09:07:58.479Z] [STEP ] START  -> STRATEGY_GENERATOR
+[2026-03-14T09:07:58.479Z] [INFO ] [STRATEGY] Loading inputs for contest_id=2025_CA_sonoma_nov2025_special
+[2026-03-14T09:07:59.177Z] [INFO ] [STRATEGY]  derived_mode=full
+[2026-03-14T09:07:59.177Z] [INFO ] [STRATEGY]  found=['target_ranking', 'walk_turfs', 'scenario_forecasts', 'precinct_universes', 'regions', 'field_plan', 'simulation_results']
+[2026-03-14T09:07:59.177Z] [INFO ] [STRATEGY]  missing=[]
+[2026-03-14T09:07:59.177Z] [INFO ] [STRATEGY]  contest_mode=candidate (explicit override: candidate)
+[2026-03-14T09:07:59.210Z] [INFO ]   Strategy pack written to C:\Users\Mathew C\Campaign In A Box\derived\strategy_packs\2025_CA_sonoma_nov2025_special\2026-03-14__020637__116b2740__msi
+[2026-03-14T09:07:59.262Z] [INFO ]   [STRATEGY] Prompt 12 voter targeting files: GOTV_TARGETS.csv, PERSUASION_TARGETS.csv, TARGETING_QUADRANTS.csv, TPS_DISTRIBUTION.csv, PS_DISTRIBUTION.csv, VOTER_UNIVERSE_SUMMARY.csv
+[2026-03-14T09:07:59.308Z] [INFO ] [STRATEGY] Pack written → C:\Users\Mathew C\Campaign In A Box\derived\strategy_packs\2025_CA_sonoma_nov2025_special\2026-03-14__020637__116b2740__msi
+[2026-03-14T09:07:59.308Z] [STEP ] DONE   [OK] STRATEGY_GENERATOR (81.258s)
+[2026-03-14T09:07:59.308Z] [STEP ] START  -> GEO_VALIDATION
+[2026-03-14T09:07:59.651Z] [INFO ]   [GEO_VALIDATION] status=WARN, precincts=1405
+[2026-03-14T09:07:59.651Z] [STEP ] DONE   [OK] GEO_VALIDATION (81.601s)
+[2026-03-14T09:07:59.651Z] [STEP ] START  -> JOIN_GUARD_VALIDATION
+[2026-03-14T09:07:59.659Z] [INFO ]   [JOIN_GUARD_VALIDATION] 4 joins, overall=PASS
+[2026-03-14T09:07:59.659Z] [STEP ] DONE   [OK] JOIN_GUARD_VALIDATION (81.608s)
+[2026-03-14T09:07:59.659Z] [STEP ] START  -> INTEGRITY_REPAIRS_WRITE
+[2026-03-14T09:07:59.664Z] [STEP ] DONE   [OK] INTEGRITY_REPAIRS_WRITE (81.614s)
+[2026-03-14T09:07:59.664Z] [STEP ] START  -> ARTIFACT_VALIDATION
+[2026-03-14T09:07:59.681Z] [INFO ]   [ARTIFACT_VALIDATION] 13/13 present, 0 stubbed, 0 truly missing
+[2026-03-14T09:07:59.681Z] [STEP ] DONE   [OK] ARTIFACT_VALIDATION (81.631s)
+[2026-03-14T09:07:59.681Z] [STEP ] START  -> POST_RUN_AUDIT
+[2026-03-14T09:07:59.701Z] [INFO ]   [POST_AUDIT] system_health=HEALTHY, artifacts=13/13, missing=[]
+[2026-03-14T09:07:59.701Z] [STEP ] DONE   [OK] POST_RUN_AUDIT (81.65s)
+[2026-03-14T09:07:59.701Z] [STEP ] START  -> STATE_BUILD
+[2026-03-14T09:07:59.846Z] [STEP ] DONE   [OK] STATE_BUILD (81.796s)
+[2026-03-14T09:07:59.846Z] [STEP ] START  -> STATE_DIFF
+[2026-03-14T09:07:59.882Z] [STEP ] DONE   [OK] STATE_DIFF (81.831s)
+[2026-03-14T09:07:59.892Z] [STEP ] START  -> ADVANCED_UNIVERSE_ESTIMATES
+[2026-03-14T09:07:59.903Z] [STEP ] DONE   [OK] ADVANCED_UNIVERSE_ESTIMATES (81.852s)
+[2026-03-14T09:07:59.903Z] [STEP ] START  -> OPTIMIZER
+[2026-03-14T09:07:59.905Z] [STEP ] DONE   [OK] OPTIMIZER (81.854s)
+[2026-03-14T09:07:59.905Z] [STEP ] START  -> ADVANCED_LIFT_MODEL
+[2026-03-14T09:07:59.905Z] [STEP ] DONE   [OK] ADVANCED_LIFT_MODEL (81.855s)
+[2026-03-14T09:07:59.905Z] [STEP ] START  -> ADVANCED_SCENARIOS
+[2026-03-14T09:09:07.474Z] [STEP ] DONE   [OK] ADVANCED_SCENARIOS (149.423s)
+[2026-03-14T09:09:07.474Z] [STEP ] START  -> ADVANCED_QA
+[2026-03-14T09:09:07.478Z] [STEP ] DONE   [OK] ADVANCED_QA (149.427s)
+[2026-03-14T09:09:07.478Z] [INFO ] ========================================================================
+  Run complete — SUCCESS  elapsed: 149.427s
+========================================================================
