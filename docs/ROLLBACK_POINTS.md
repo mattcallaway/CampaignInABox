@@ -444,3 +444,9 @@ git checkout tags/v_pre_prompt28_contest_reset
 - **Tag:** `v_pre_prompt31_user_guidance`
 - **Reason:** User guidance layer, auto-pipeline detection, ops playbook, diagnostics.
 - **Note:** No UI layout changes, no data deletion, observation/automation only.
+
+## 2026-03-14T13:53:30-07:00 — pre-Prompt-31.5 Campaign Mission Control
+- **Branch:** `rollback/prompt315_pre_mission_control`
+- **Tag:** `v_pre_prompt315_mission_control`
+- **Reason:** Adding Campaign Mission Control UI orchestration layer
+- **Note:** UI overlay only — no modeling changes, no page removals, built on Prompt 31 diagnostics

@@ -1,3 +1,9 @@
+mission_control:
+  label: "🎯 Mission Control"
+  pages:
+    - id: "🎯 Mission Control"
+      label: "Campaign Mission Control"
+
 campaign_command:
   label: "🏠 Campaign Command"
   pages:

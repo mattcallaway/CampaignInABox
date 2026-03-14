@@ -942,3 +942,144 @@ UI PAGES REFRESH
 3. Look for VALIDATE_VOTES SKIP in log ? root cause
 4. Fix: place file at ``data/contests/{state}/{county}/{year}/{slug}/raw/``
 
+
+---
+
+## Section AA — Campaign Mission Control Architecture (Prompt 31.5)
+
+### Overview
+
+Campaign Mission Control is the primary user-facing workflow dashboard added in Prompt 31.5. It is a **workflow orchestration overlay** — it does not replace any existing page, does not modify modeling logic, and does not alter campaign state isolation. It sits at the top of the sidebar navigation and serves as the canonical entry point for all campaign operations.
+
+**File:** `ui/dashboard/mission_control_view.py`
+
+**Registration:** `config/ui_pages.yaml` — first group entry `mission_control` with page ID `?? Mission Control`
+
+**Routing:** `ui/dashboard/app.py` — first `if` branch at page routing block
+
+### Architecture Diagram
+
+`
+User lands on Mission Control
+           ¦
+    +-----------------------------------------+
+    ¦  LEFT COLUMN (main)                      ¦
+    ¦  - Next Recommended Action banner        ¦
+    ¦  - Workflow Progress Bar (7 stages)      ¦
+    ¦  - Stage 1: Campaign Setup (expander)    ¦
+    ¦  - Stage 2: Data Ingestion (expanded)    ¦
+    ¦  - Stage 3: Historical Analysis          ¦
+    ¦  - Stage 4: Targeting & Modeling         ¦
+    ¦  - Stage 5: Strategy Planning            ¦
+    ¦  - Stage 6: War Room Operations          ¦
+    ¦  - Stage 7: Advanced Tools               ¦
+    ¦  - UX Insights (from Prompt 31 analyzer) ¦
+    ¦  - All Guidance Items expander           ¦
+    +------------------------------------------+
+    +------------------------------------------+
+    ¦  RIGHT COLUMN (sidebar panel)            ¦
+    ¦  - System Readiness (from P31 engine)    ¦  
+    ¦  - Latest Pipeline Run (from observer)   ¦
+    ¦  - Quick Navigation buttons              ¦
+    +------------------------------------------+
+`
+
+---
+
+## Section AB — Workflow Stages
+
+Mission Control organizes the application into 7 ordered workflow stages. Each stage is rendered as a Streamlit expander with status, data bindings, and navigation.
+
+| Stage | Name | Default State | Key Trigger |
+|---|---|---|---|
+| 1 | Campaign Setup | Collapsed | Always show active campaign |
+| 2 | Data Ingestion | **Expanded** | Most critical — user confusion point |
+| 3 | Historical Analysis | Expanded when archive missing | Requires pipeline success |
+| 4 | Targeting & Modeling | Collapsed | Requires archive |
+| 5 | Strategy Planning | Collapsed | Requires simulations |
+| 6 | War Room Operations | Collapsed | Requires strategy |
+| 7 | Advanced Tools | Collapsed | Power users only |
+
+**Stage readiness logic:**
+- Stage 2 status: "? Ready" if pipeline ran, "?? Pipeline Needed" if files present, "? No Data" otherwise
+- Stage 3 status: checks eadiness.checks for Archive entry
+- Stage 4 status: checks for Model Calibration in readiness
+- Stage 5 status: checks derived/strategy/*.md glob
+
+---
+
+## Section AC — Integration with Prompt 31 Diagnostics
+
+Mission Control consumes all 7 Prompt 31 engine modules:
+
+| Module | Integration Function | Data Used |
+|---|---|---|
+| `engine.diagnostics.system_readiness` | `_load_readiness(base_dir)` | `readiness.checks`, `readiness.overall` |
+| `engine.ui.user_guidance` | `_load_guidance(base_dir)` | `guidance.items[0]` (next action), all items |
+| `engine.ingestion.contest_file_watcher` | `_load_detected_files(base_dir)` | `DetectedContestFile.filename`, `.status`, `.contest_slug` |
+| `engine.ingestion.auto_pipeline_runner` | `_load_pipeline_suggestions(base_dir)` | `PipelineRunSuggestion.suggestion`, `.reason` |
+| `engine.diagnostics.pipeline_observer` | `_load_latest_run(base_dir)` | `pipeline_summary.json` fields |
+| `engine.ui.user_flow_analyzer` | `_load_flow_findings(base_dir)` | Reads `reports/ui_analysis/user_flow_analysis.md` |
+| `engine.ui.ui_workflow_mapper` | Passive — output consumed | `docs/UI_WORKFLOW_MAP.md` |
+
+All integrations use `try/except` guards. If any module is unavailable, Mission Control degrades gracefully and shows a fallback message rather than crashing.
+
+---
+
+## Section AD — User Guidance System
+
+The Next Recommended Action banner always shows the top-priority item from `engine.ui.user_guidance.evaluate_guidance()`.
+
+**Priority mapping:**
+
+| Priority Level | Icon | Display Color |
+|---|---|---|
+| CRITICAL | ?? | Dark red background |
+| IMPORTANT | ?? | Dark green background |
+| INFO | ?? | Dark green background |
+| OK | ? | Dark green background |
+
+The banner renders:
+`
+{icon} Next Recommended Action
+{top_item.action}
+?? {top_item.where_in_ui}
+`
+
+All remaining items are available in the "All System Guidance Items" expander.
+
+---
+
+## Section AE — Pipeline Monitoring
+
+Mission Control shows the most recent pipeline run in the right panel via `_load_latest_run(base_dir)`.
+
+**Resolution order:**
+1. Scan `reports/pipeline_runs/` for subdirectories (newest first)
+2. Read `{run_dir}/pipeline_summary.json` (written by `pipeline_observer.write_run_summary()`)
+3. If JSON unavailable: use directory name as run_id with status UNKNOWN
+
+**Displayed fields:**
+- `contest_slug` — which election contest
+- `overall` — SUCCESS / FAIL / CRASH / UNKNOWN
+- `rows_loaded` — number of rows processed
+- `precinct_join_rate` — join percentage (formatted as %)
+- `archive_built` — boolean
+
+Status badges use color-coded backgrounds: green for OK/SUCCESS, amber for WARN/PARTIAL, red for FAIL/MISSING.
+
+---
+
+## Section AF — UI Workflow Observability
+
+Mission Control includes a UX Insights section that surfaces the top 3 friction findings from `engine.ui.user_flow_analyzer`.
+
+**Source:** `reports/ui_analysis/user_flow_analysis.md`
+
+**Extraction:** Markdown headers matching `### N. ?? ??` or `### N. ?? ??` patterns are extracted as finding titles.
+
+**Purpose:** These insights are informational — they document where users get confused, for future UI simplification. They do not trigger any changes to the current UI.
+
+**Example insight displayed:**
+
+> Upload Contest Data and Data Manager appear in separate menus. Users may not realize they are related.

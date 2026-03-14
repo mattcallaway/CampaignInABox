@@ -361,7 +361,11 @@ except:
     pass
 
 # ── Page routing ─────────────────────────────────────────────────────────────
-if page == "🏠 Overview":
+if page == "🎯 Mission Control":
+    from ui.dashboard.mission_control_view import render_mission_control
+    render_mission_control({**data, "base_dir": str(BASE_DIR)})
+
+elif page == "🏠 Overview":
     from ui.dashboard.layout import render_overview
     render_overview(data)
 

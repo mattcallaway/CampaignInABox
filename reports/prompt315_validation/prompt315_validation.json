@@ -1,0 +1,65 @@
+{
+  "prompt": "31.5",
+  "title": "Campaign Mission Control Layer",
+  "generated_at": "2026-03-14T13:50:00-07:00",
+  "rollback": {
+    "branch": "rollback/prompt315_pre_mission_control",
+    "tag": "v_pre_prompt315_mission_control"
+  },
+  "files_created": [
+    "ui/dashboard/mission_control_view.py"
+  ],
+  "files_modified": [
+    "config/ui_pages.yaml",
+    "ui/dashboard/app.py",
+    "docs/SYSTEM_TECHNICAL_MAP.md"
+  ],
+  "docs_created": [],
+  "reports_created": [
+    "reports/prompt315_validation/mission_control_render_test.md",
+    "reports/prompt315_validation/workflow_stage_validation.md",
+    "reports/prompt315_validation/guidance_engine_output.md",
+    "reports/prompt315_validation/system_readiness_snapshot.md",
+    "reports/prompt315_validation/pipeline_status_snapshot.md",
+    "reports/prompt315_validation/prompt315_validation.json"
+  ],
+  "syntax_checks": {
+    "mission_control_view.py": "PASS",
+    "app.py": "PASS",
+    "ui_pages.yaml": "PASS"
+  },
+  "stage_definitions": [
+    {"id": 1, "name": "Campaign Setup", "implemented": true},
+    {"id": 2, "name": "Data Ingestion", "implemented": true, "special": "most prominent - expanded by default"},
+    {"id": 3, "name": "Historical Analysis", "implemented": true},
+    {"id": 4, "name": "Targeting & Modeling", "implemented": true},
+    {"id": 5, "name": "Strategy Planning", "implemented": true},
+    {"id": 6, "name": "War Room Operations", "implemented": true},
+    {"id": 7, "name": "Advanced Tools", "implemented": true}
+  ],
+  "prompt31_integrations": {
+    "contest_file_watcher": true,
+    "auto_pipeline_runner": true,
+    "user_guidance": true,
+    "ui_workflow_mapper": true,
+    "user_flow_analyzer": true,
+    "system_readiness": true,
+    "pipeline_observer": true
+  },
+  "safety_checks": {
+    "existing_pages_removed": false,
+    "sidebar_restructured": false,
+    "modeling_math_changed": false,
+    "campaign_isolation_broken": false,
+    "archive_safety_compromised": false
+  },
+  "success_criteria": {
+    "MC_appears_in_sidebar": true,
+    "workflow_stages_display": true,
+    "system_readiness_visible": true,
+    "next_action_visible": true,
+    "pipeline_status_visible": true,
+    "navigation_links_work": true,
+    "existing_pages_untouched": true
+  }
+}
