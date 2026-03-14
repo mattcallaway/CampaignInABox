@@ -469,16 +469,43 @@ def render_data_manager(data: dict):
                         if st.button("💾 Save Changes", key=f"update_{edit_id}"):
                             try:
                                 if is_canonical:
-                                    # Canonical records: patch via ContestIntake registry
+                                    # Canonical records: patch metadata AND move file if year/slug changed
+                                    import shutil as _shutil
                                     from engine.contest_data.contest_intake import ContestIntake
                                     ci = ContestIntake(root_path)
+
                                     patch: dict = {}
                                     if new_year    and new_year    != _cur_year:    patch["year"]         = new_year
                                     if new_contest and new_contest != _cur_contest: patch["contest_slug"] = new_contest
                                     if new_prov    != _cur_prov:                    patch["provenance"]   = new_prov
+
+                                    if patch and ("year" in patch or "contest_slug" in patch):
+                                        # Need to physically move the file to the new canonical path
+                                        _st   = rec.get("state",  norm_rec.get("state",  "CA"))
+                                        _co   = rec.get("county", norm_rec.get("county", "Sonoma"))
+                                        _yr   = patch.get("year", _cur_year)
+                                        _slug = patch.get("contest_slug", _cur_contest)
+                                        _fname = norm_rec["filename"]
+
+                                        _old_path = (
+                                            root_path / rec.get("canonical_path", "")
+                                            if rec.get("canonical_path")
+                                            else root_path / "data" / "contests" / _st / _co / _cur_year / _cur_contest / "raw" / _fname
+                                        )
+                                        _new_dir  = root_path / "data" / "contests" / _st / _co / _yr / _slug / "raw"
+                                        _new_path = _new_dir / _fname
+                                        _new_dir.mkdir(parents=True, exist_ok=True)
+
+                                        if _old_path.exists() and _old_path != _new_path:
+                                            _shutil.move(str(_old_path), str(_new_path))
+                                            patch["canonical_path"] = str(
+                                                _new_path.relative_to(root_path)
+                                            ).replace("\\", "/")
+                                            st.info(f"📁 File moved to `{patch['canonical_path']}`")
+
                                     if patch:
                                         ci._update_registry_record(edit_id, patch)
-                                        st.success(f"Re-tagged: {patch}")
+                                        st.success(f"✅ Re-tagged successfully: {list(patch.keys())}")
                                     else:
                                         st.info("No changes detected.")
                                 else:
