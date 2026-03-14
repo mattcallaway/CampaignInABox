@@ -432,3 +432,9 @@ git checkout tags/v_pre_prompt28_contest_reset
   but all Sonoma crosswalk files use lowercase short names (block, mprec, srprec).
   Every crosswalk join was silently falling back to identity mapping.
 - **Note:** This point precedes a verification audit (P29 validation run).
+
+## 2026-03-14T04:05:38-07:00 — pre-Prompt-30 Live Verification
+- **Branch:** `rollback/prompt30_pre_live_verification`
+- **Tag:** `v_pre_prompt30_live_verification`
+- **Reason:** Live end-to-end verification audit (Prompt 30).
+- **Note:** This prompt may perform targeted debugging after observing live behavior.

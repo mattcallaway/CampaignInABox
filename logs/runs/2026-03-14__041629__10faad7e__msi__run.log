@@ -1,0 +1,336 @@
+[2026-03-14T11:16:29.861Z] [INFO] ========================================================================
+  Campaign In A Box — Pipeline Run
+  RUN_ID  : 2026-03-14__041629__10faad7e__msi
+  Started : 2026-03-14T11:16:29.856793+00:00
+========================================================================
+[2026-03-14T11:16:29.862Z] [INFO ] Pipeline v2 starting
+[2026-03-14T11:16:29.863Z] [INFO ]   state=CA  county=Sonoma  year=2020  contest_slug=nov2020_general
+[2026-03-14T11:16:29.864Z] [INFO ]   membership_method=auto  log_level=verbose
+[2026-03-14T11:16:30.131Z] [STEP ] START  -> DATA_INTAKE_ANALYSIS
+[2026-03-14T11:16:30.194Z] [STEP ] DONE   [OK] DATA_INTAKE_ANALYSIS (0.338s)
+[2026-03-14T11:16:30.195Z] [STEP ] SKIP   [SKIP] INGEST_STAGING -- No --staging-dir provided; skipping ingestion
+[2026-03-14T11:16:30.195Z] [INFO ] === Processing County: Sonoma ===
+[2026-03-14T11:16:30.195Z] [STEP ] START  -> SCAFFOLD_BOUNDARY_INDEX_Sonoma
+[2026-03-14T11:16:30.196Z] [INFO ]   Boundary index exists: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\boundary_index\boundaries_index.csv
+[2026-03-14T11:16:30.211Z] [WARN ]   Boundary index scaffolded (no boundary files found yet)
+[2026-03-14T11:16:30.212Z] [INFO ]   output: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\boundary_index\boundaries_index.csv  [sha256:b4dff0e71c42...]
+[2026-03-14T11:16:30.212Z] [STEP ] DONE   [OK] SCAFFOLD_BOUNDARY_INDEX_Sonoma (0.356s)
+[2026-03-14T11:16:30.212Z] [STEP ] START  -> VALIDATE_GEOGRAPHY
+[2026-03-14T11:16:30.212Z] [INFO ]   expected: data/CA/counties/Sonoma/geography/precinct_shapes/
+[2026-03-14T11:16:30.213Z] [INFO ]   expected: data/CA/counties/Sonoma/geography/crosswalks/
+[2026-03-14T11:16:30.213Z] [INFO ]   [present] MPREC GeoJSON
+[2026-03-14T11:16:30.221Z] [INFO ]   [present] MPREC GeoPackage
+[2026-03-14T11:16:30.227Z] [INFO ]   [present] MPREC Shapefile
+[2026-03-14T11:16:30.231Z] [INFO ]   [present] SRPREC GeoJSON
+[2026-03-14T11:16:30.239Z] [INFO ]   [present] SRPREC GeoPackage
+[2026-03-14T11:16:30.247Z] [INFO ]   [present] SRPREC Shapefile
+[2026-03-14T11:16:30.250Z] [INFO ]   [present] 2020 BLK TO MPREC
+[2026-03-14T11:16:30.253Z] [INFO ]   [present] RGPREC TO 2020 BLK
+[2026-03-14T11:16:30.254Z] [INFO ]   [present] SRPREC TO 2020 BLK
+[2026-03-14T11:16:30.257Z] [INFO ]   [present] RG to RR to SR to SVPREC
+[2026-03-14T11:16:30.259Z] [INFO ]   [present] MPREC to SRPREC
+[2026-03-14T11:16:30.261Z] [INFO ]   [present] SRPREC to CITY
+[2026-03-14T11:16:30.261Z] [INFO ] Geography validation: 12/12 present, canonical=MPREC
+[2026-03-14T11:16:30.261Z] [STEP ] DONE   [OK] VALIDATE_GEOGRAPHY (0.405s)
+[2026-03-14T11:16:30.261Z] [STEP ] START  -> VALIDATE_VOTES
+[2026-03-14T11:16:30.261Z] [INFO ]   expected: data/contests/CA/Sonoma/2020/nov2020_general/raw/<file>  (canonical, P28)
+[2026-03-14T11:16:30.261Z] [INFO ]   expected: votes/2020/CA/Sonoma/nov2020_general/detail.xlsx              (legacy fallback)
+[2026-03-14T11:16:30.271Z] [INFO ]   [VOTES] Found via ContestResolver (canonical P28): data\contests\CA\Sonoma\2020\nov2020_general\raw\StatementOfVotesCast-Webnov32020.xlsx
+[2026-03-14T11:16:30.320Z] [INFO ]   input: detail.xlsx -> C:\Users\Mathew C\Campaign In A Box\data\contests\CA\Sonoma\2020\nov2020_general\raw\StatementOfVotesCast-Webnov32020.xlsx  [sha256:28eb1f9b312c...]
+[2026-03-14T11:16:30.320Z] [STEP ] DONE   [OK] VALIDATE_VOTES (0.464s)
+[2026-03-14T11:16:30.320Z] [STEP ] START  -> LOAD_GEOMETRY
+[2026-03-14T11:16:30.320Z] [INFO ]   expected: MPREC preferred; SRPREC fallback
+[2026-03-14T11:16:30.322Z] [INFO ] Loading MPREC geometry from: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\MPREC_GeoJSON\mprec_097_g24_v01.geojson
+[2026-03-14T11:16:37.330Z] [INFO ] Loaded 1405 features from mprec_097_g24_v01.geojson
+[2026-03-14T11:16:37.331Z] [STEP ] DONE   [OK] LOAD_GEOMETRY (7.475s)
+[2026-03-14T11:16:37.331Z] [STEP ] START  -> LOAD_CROSSWALKS
+[2026-03-14T11:16:37.467Z] [WARN ]   crosswalk warning: Source precinct '060971502062002': weights sum to 0.996867 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.467Z] [WARN ]   crosswalk warning: Source precinct '060971503063000': weights sum to 0.994863 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.467Z] [WARN ]   crosswalk warning: Source precinct '060971505022016': weights sum to 0.998417 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.467Z] [WARN ]   crosswalk warning: Source precinct '060971505022004': weights sum to 0.981481 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.467Z] [WARN ]   crosswalk warning: Source precinct '060971505022018': weights sum to 0.989644 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.467Z] [WARN ]   crosswalk warning: Source precinct '060971505022019': weights sum to 0.951394 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.467Z] [WARN ]   crosswalk warning: Source precinct '060971501003054': weights sum to 0.892498 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.467Z] [WARN ]   crosswalk warning: Source precinct '060971501003055': weights sum to 0.874043 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.467Z] [WARN ]   crosswalk warning: Source precinct '060971535024025': weights sum to 0.998974 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.468Z] [WARN ]   crosswalk warning: Source precinct '060971541003007': weights sum to 0.998845 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.468Z] [WARN ]   crosswalk warning: Source precinct '060971502052006': weights sum to 1.001625 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.468Z] [WARN ]   crosswalk warning: Source precinct '060971501003056': weights sum to 0.994914 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.468Z] [WARN ]   crosswalk warning: Source precinct '060971501003042': weights sum to 0.998813 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.468Z] [WARN ]   crosswalk warning: Source precinct '060971501003027': weights sum to 0.997993 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.468Z] [WARN ]   crosswalk warning: Source precinct '060971501003021': weights sum to 0.998859 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.468Z] [WARN ]   crosswalk warning: Source precinct '060971501003040': weights sum to 0.996408 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.468Z] [WARN ]   crosswalk warning: Source precinct '060971541004063': weights sum to 0.992273 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.468Z] [WARN ]   crosswalk warning: Source precinct '060971541004009': weights sum to 0.997554 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.468Z] [WARN ]   crosswalk warning: Source precinct '060971541004000': weights sum to 0.998641 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.468Z] [WARN ]   crosswalk warning: Source precinct '060971541003045': weights sum to 0.997268 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.468Z] [WARN ]   crosswalk warning: Source precinct '060971541003046': weights sum to 0.528088 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.468Z] [WARN ]   crosswalk warning: Source precinct '060971541003043': weights sum to 0.998298 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.468Z] [WARN ]   crosswalk warning: Source precinct '060971541003044': weights sum to 0.969116 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.468Z] [WARN ]   crosswalk warning: Source precinct '060971506122052': weights sum to 0.996519 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.468Z] [WARN ]   crosswalk warning: Source precinct '060971506122048': weights sum to 0.998826 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.468Z] [WARN ]   crosswalk warning: Source precinct '060971507023006': weights sum to 0.997727 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.468Z] [WARN ]   crosswalk warning: Source precinct '060971506122024': weights sum to 0.927860 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.468Z] [WARN ]   crosswalk warning: Source precinct '060971526021000': weights sum to 0.998171 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.468Z] [WARN ]   crosswalk warning: Source precinct '060971535024006': weights sum to 0.981596 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.468Z] [WARN ]   crosswalk warning: Source precinct '060971535024012': weights sum to 0.990210 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.468Z] [WARN ]   crosswalk warning: Source precinct '060971535024010': weights sum to 0.993908 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.469Z] [WARN ]   crosswalk warning: Source precinct '060971535024011': weights sum to 0.993709 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.469Z] [WARN ]   crosswalk warning: Source precinct '060971543081006': weights sum to 0.998454 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.469Z] [WARN ]   crosswalk warning: Source precinct '060971516012006': weights sum to 0.997678 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.469Z] [WARN ]   crosswalk warning: Source precinct '060971526021040': weights sum to 0.986180 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.469Z] [WARN ]   crosswalk warning: Source precinct '060971526021065': weights sum to 0.991842 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.469Z] [WARN ]   crosswalk warning: Source precinct '060971526021068': weights sum to 0.990418 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.469Z] [WARN ]   crosswalk warning: Source precinct '060971526021051': weights sum to 0.977816 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.469Z] [WARN ]   crosswalk warning: Source precinct '060971526021052': weights sum to 0.630230 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.469Z] [WARN ]   crosswalk warning: Source precinct '060971526021042': weights sum to 0.998371 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.469Z] [WARN ]   crosswalk warning: Source precinct '060971506092018': weights sum to 1.001461 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.469Z] [WARN ]   crosswalk warning: Source precinct '060971526021038': weights sum to 0.969775 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.469Z] [WARN ]   crosswalk warning: Source precinct '060971506122025': weights sum to 0.997043 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.469Z] [WARN ]   crosswalk warning: Source precinct '060971506123067': weights sum to 0.996731 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.469Z] [WARN ]   crosswalk warning: Source precinct '060971506123066': weights sum to 0.978822 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.469Z] [WARN ]   crosswalk warning: Source precinct '060971507023007': weights sum to 0.995257 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.469Z] [WARN ]   crosswalk warning: Source precinct '060971507023008': weights sum to 0.992713 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.469Z] [WARN ]   crosswalk warning: Source precinct '060971516012000': weights sum to 0.996871 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.469Z] [WARN ]   crosswalk warning: Source precinct '060971516012028': weights sum to 0.988650 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.470Z] [WARN ]   crosswalk warning: Source precinct '060971526021066': weights sum to 0.960402 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.470Z] [WARN ]   crosswalk warning: Source precinct '060971508004024': weights sum to 0.998485 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.470Z] [WARN ]   crosswalk warning: Source precinct '060971511003009': weights sum to 0.997536 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.470Z] [WARN ]   crosswalk warning: Source precinct '060971508004025': weights sum to 0.997804 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.470Z] [WARN ]   crosswalk warning: Source precinct '060971501001000': weights sum to 0.995501 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.470Z] [WARN ]   crosswalk warning: Source precinct '060971541003000': weights sum to 0.993792 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.470Z] [WARN ]   crosswalk warning: Source precinct '060971541003031': weights sum to 0.996955 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.470Z] [WARN ]   crosswalk warning: Source precinct '060971541003032': weights sum to 0.997974 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.470Z] [WARN ]   crosswalk warning: Source precinct '060971541003054': weights sum to 0.987447 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.470Z] [WARN ]   crosswalk warning: Source precinct '060971541003030': weights sum to 0.926757 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.470Z] [WARN ]   crosswalk warning: Source precinct '060971543051029': weights sum to 0.993373 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.470Z] [WARN ]   crosswalk warning: Source precinct '060971543051004': weights sum to 0.998497 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.470Z] [WARN ]   crosswalk warning: Source precinct '060971543051026': weights sum to 0.913292 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.470Z] [WARN ]   crosswalk warning: Source precinct '060971543051025': weights sum to 0.990442 (expected 1.0 ± 0.001)
+[2026-03-14T11:16:37.536Z] [INFO ] Loaded crosswalk crosswalks: 7563 source precincts
+[2026-03-14T11:16:38.026Z] [INFO ]   [CROSSWALKS] Discovered 6/6 crosswalks
+[2026-03-14T11:16:38.383Z] [INFO ]   [P29-INTROSPECT] 6 crosswalk files — 6 detection OK, 0 detection failed
+[2026-03-14T11:16:38.385Z] [STEP ] DONE   [OK] LOAD_CROSSWALKS (8.529s)
+[2026-03-14T11:16:38.386Z] [STEP ] START  -> SCAFFOLD_CONTEST_JSON
+[2026-03-14T11:16:38.396Z] [INFO ]   output: C:\Users\Mathew C\Campaign In A Box\votes\2020\CA\Sonoma\nov2020_general\contest.json  [sha256:36c713ae74d7...]
+[2026-03-14T11:16:38.396Z] [STEP ] DONE   [OK] SCAFFOLD_CONTEST_JSON (8.54s)
+[2026-03-14T11:16:38.396Z] [STEP ] START  -> PARSE_CONTEST
+[2026-03-14T11:16:38.396Z] [INFO ]   expected: Detect sheet types; aggregate vote methods
+[2026-03-14T11:17:06.937Z] [INFO ] Parsing sheet: 'President'
+[2026-03-14T11:17:06.974Z] [INFO ]   parse_contest_sheet: title='President and Vice President' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'JOSEPH R. BIDEN\n(DEM)', 'DONALD J. TRUMP\n(REP)', 'GLORIA LA RIVA\n(PF)', 'ROQUE "ROCKY" DE LA FUENTE GUERRA\n(AI)', 'HOWIE HAWKINS\n(GRN)', 'JO JORGENSEN\n(LIB)', 'QUALIFIED WRITE IN CANDIDATES:', 'BRIAN CARROLL', 'MARK CHARLES', 'JOSEPH KISHORE', 'BROCK PIERCE', 'JESSE VENTURA'] rows=3341
+[2026-03-14T11:17:07.061Z] [INFO ]   -> 2673 precincts, type=candidate_race
+[2026-03-14T11:17:07.062Z] [INFO ] Parsing sheet: 'US Rep-2nd Dist'
+[2026-03-14T11:17:07.073Z] [INFO ]   parse_contest_sheet: title='U S Representative 2nd District' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'JARED HUFFMAN\n(DEM)', 'DALE K. MENSING\n(REP)'] rows=1276
+[2026-03-14T11:17:07.096Z] [INFO ]   -> 1021 precincts, type=candidate_race
+[2026-03-14T11:17:07.096Z] [INFO ] Parsing sheet: 'US Rep-5th Dist'
+[2026-03-14T11:17:07.108Z] [INFO ]   parse_contest_sheet: title='U S Representative 5th District' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'MIKE THOMPSON\n(DEM)', 'SCOTT GIBLIN\n(REP)'] rows=2066
+[2026-03-14T11:17:07.146Z] [INFO ]   -> 1653 precincts, type=candidate_race
+[2026-03-14T11:17:07.146Z] [INFO ] Parsing sheet: 'State Sen-3rd Dist'
+[2026-03-14T11:17:07.152Z] [INFO ]   parse_contest_sheet: title='State Senator 3rd District' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'BILL DODD\n(DEM)', 'CARLOS SANTAMARIA\n(REP)'] rows=811
+[2026-03-14T11:17:07.182Z] [INFO ]   -> 649 precincts, type=candidate_race
+[2026-03-14T11:17:07.182Z] [INFO ] Parsing sheet: '2nd Assembly Dist'
+[2026-03-14T11:17:07.195Z] [INFO ]   parse_contest_sheet: title='Member of Assembly 2nd District' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'JIM WOOD\n(DEM)', 'CHARLOTTE SVOLOS\n(REP)'] rows=1561
+[2026-03-14T11:17:07.233Z] [INFO ]   -> 1249 precincts, type=candidate_race
+[2026-03-14T11:17:07.233Z] [INFO ] Parsing sheet: '4th Assembly Dist'
+[2026-03-14T11:17:07.242Z] [INFO ]   parse_contest_sheet: title='Member of Assembly 4th District' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'MATTHEW L. NELSON\n(REP)', 'CECILIA AGUIAR-CURRY\n(DEM)'] rows=661
+[2026-03-14T11:17:07.285Z] [INFO ]   -> 529 precincts, type=candidate_race
+[2026-03-14T11:17:07.286Z] [INFO ] Parsing sheet: '10th Assembly Dist'
+[2026-03-14T11:17:07.306Z] [INFO ]   parse_contest_sheet: title='Member of Assembly 10th District' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'VERONICA "RONI" JACOBI\n(DEM)', 'MARC LEVINE\n(DEM)'] rows=1121
+[2026-03-14T11:17:07.342Z] [INFO ]   -> 897 precincts, type=candidate_race
+[2026-03-14T11:17:07.342Z] [INFO ] Parsing sheet: 'SoCo BOE-Area 1'
+[2026-03-14T11:17:07.345Z] [INFO ]   parse_contest_sheet: title='Sonoma County Board of Education Area 1' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'DIANNA MACDONALD', 'GINA CUCLIS'] rows=826
+[2026-03-14T11:17:07.379Z] [INFO ]   -> 661 precincts, type=candidate_race
+[2026-03-14T11:17:07.379Z] [INFO ] Parsing sheet: 'SRJC - SR Area'
+[2026-03-14T11:17:07.400Z] [INFO ]   parse_contest_sheet: title='So Co Jr College Dist Santa Rosa Area (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'CAROLINE BAÑUELOS', 'DON EDGAR', 'SARICHON REX TOEUNG', 'MARIANA MARTINEZ', 'KERRY REGO'] rows=1299
+[2026-03-14T11:17:07.470Z] [INFO ]   -> 1039 precincts, type=candidate_race
+[2026-03-14T11:17:07.470Z] [INFO ] Parsing sheet: 'Calistoga Jt USD'
+[2026-03-14T11:17:07.477Z] [INFO ]   parse_contest_sheet: title='Calistoga Joint Unified School District (Vote for  3)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'JULIANNE PAULA ELKESHEN', 'MARK L. GALINDO', 'RUDY GONZALEZ', 'MATTHEW REID', 'STEPHANIE ROTHBERG-ALLAN'] rows=36
+[2026-03-14T11:17:07.532Z] [INFO ]   -> 29 precincts, type=candidate_race
+[2026-03-14T11:17:07.532Z] [INFO ] Parsing sheet: 'Cloverdale USD'
+[2026-03-14T11:17:07.538Z] [INFO ]   parse_contest_sheet: title='Cloverdale Unified School District (Vote for  3)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'PRESTON W. ADDISON', 'BRANDON AXELL', 'JOHANNES J. HOEVERTSZ', 'GABRIELA MENDOZA-TORRES', 'ASHLEY WHITE'] rows=36
+[2026-03-14T11:17:07.589Z] [INFO ]   -> 29 precincts, type=candidate_race
+[2026-03-14T11:17:07.589Z] [INFO ] Parsing sheet: 'Cotati-RP USD Area 5'
+[2026-03-14T11:17:07.593Z] [INFO ]   parse_contest_sheet: title='Cotati-Rohnert Park Unif Trustee Area 5' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'TIM NONN', 'MICHELLE WING'] rows=81
+[2026-03-14T11:17:07.636Z] [INFO ]   -> 65 precincts, type=candidate_race
+[2026-03-14T11:17:07.637Z] [INFO ] Parsing sheet: 'Sonoma Valley USD Area 4'
+[2026-03-14T11:17:07.642Z] [INFO ]   parse_contest_sheet: title='Sonoma Vly Unif Sch Dist Trustee Area 4' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'ADAM LOBSINGER', 'TROY KNOX'] rows=61
+[2026-03-14T11:17:07.685Z] [INFO ]   -> 49 precincts, type=candidate_race
+[2026-03-14T11:17:07.688Z] [INFO ] Parsing sheet: 'Sonoma Valley USD Area 5'
+[2026-03-14T11:17:07.695Z] [INFO ]   parse_contest_sheet: title='Sonoma Vly Unif Sch Dist Trustee Area 5' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'ANNE CHING', 'BRITTA JOHNSON'] rows=116
+[2026-03-14T11:17:07.725Z] [INFO ]   -> 93 precincts, type=candidate_race
+[2026-03-14T11:17:07.725Z] [INFO ] Parsing sheet: 'Petaluma Jt UHSD'
+[2026-03-14T11:17:07.734Z] [INFO ]   parse_contest_sheet: title='Petaluma Jt Union High School District (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'SHELDON GEN', 'CAROL ANN STREET', 'ELLEN WEBSTER', 'LINDA JUDAH'] rows=316
+[2026-03-14T11:17:07.844Z] [INFO ]   -> 253 precincts, type=candidate_race
+[2026-03-14T11:17:07.845Z] [INFO ] Parsing sheet: 'Pt Arena Jt-Arena UHSD'
+[2026-03-14T11:17:07.854Z] [INFO ]   parse_contest_sheet: title='Pt Arena Jt Un High/ Arena Union Dist (Vote for  3)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'MIQUETTE THOMPSON', 'BOB GARDINER', 'SIGRID A. HILLSCAN', 'RON MILES', 'JIM DEWILDER'] rows=16
+[2026-03-14T11:17:07.914Z] [INFO ]   -> 13 precincts, type=candidate_race
+[2026-03-14T11:17:07.915Z] [INFO ] Parsing sheet: 'City of SR HSD Area 1'
+[2026-03-14T11:17:07.924Z] [INFO ]   parse_contest_sheet: title='City of Santa Rosa High School District Trustee Area 1' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'EVER FLORES', 'JENNI KLOSE'] rows=121
+[2026-03-14T11:17:07.959Z] [INFO ]   -> 97 precincts, type=candidate_race
+[2026-03-14T11:17:07.959Z] [INFO ] Parsing sheet: 'West SoCo UHSD'
+[2026-03-14T11:17:07.966Z] [INFO ]   parse_contest_sheet: title='West Sonoma County Union High School Dist (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'JULIE AIELLO', 'LYNN SCHALLEBAUM GLEESON', "KYLE O'CONNOR", 'LAURIE ANN FADAVE'] rows=486
+[2026-03-14T11:17:08.018Z] [INFO ]   -> 389 precincts, type=candidate_race
+[2026-03-14T11:17:08.018Z] [INFO ] Parsing sheet: 'Harmony USD'
+[2026-03-14T11:17:08.024Z] [INFO ]   parse_contest_sheet: title='Harmony Union School District (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'MARIAH LANDER', 'AMANDA SOLTER', 'YURI SPRINGSTORM KOSLEN'] rows=36
+[2026-03-14T11:17:08.046Z] [INFO ]   -> 29 precincts, type=candidate_race
+[2026-03-14T11:17:08.046Z] [INFO ] Parsing sheet: 'Oak Grove USD-FT'
+[2026-03-14T11:17:08.053Z] [INFO ]   parse_contest_sheet: title='Oak Grove Union School District F/T (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'ERIN LAGOURGUE', 'ROBBIE WOOSLEY', 'BRIAN P. JACOBS', 'LESLEY JONES'] rows=36
+[2026-03-14T11:17:08.094Z] [INFO ]   -> 29 precincts, type=candidate_race
+[2026-03-14T11:17:08.094Z] [INFO ] Parsing sheet: 'Oak Grove USD-ST'
+[2026-03-14T11:17:08.096Z] [INFO ]   parse_contest_sheet: title='Oak Grove Union School District  S/T' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'RAHINE PATEL', 'HANNAH KALLOK'] rows=36
+[2026-03-14T11:17:08.129Z] [INFO ]   -> 29 precincts, type=candidate_race
+[2026-03-14T11:17:08.129Z] [INFO ] Parsing sheet: 'Rincon Valley USD'
+[2026-03-14T11:17:08.141Z] [INFO ]   parse_contest_sheet: title='Rincon Valley Union School District (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'JANELLE TAYLOR', 'ERIC C. HEINS', 'MIKE COOK'] rows=336
+[2026-03-14T11:17:08.177Z] [INFO ]   -> 269 precincts, type=candidate_race
+[2026-03-14T11:17:08.177Z] [INFO ] Parsing sheet: 'Roseland SD-FT'
+[2026-03-14T11:17:08.178Z] [INFO ]   parse_contest_sheet: title='Roseland School District  F/T (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'SONDRA BEAM', 'TIFFANY KAMPMANN', 'PATRICIA S. KRUEGER'] rows=31
+[2026-03-14T11:17:08.213Z] [INFO ]   -> 25 precincts, type=candidate_race
+[2026-03-14T11:17:08.213Z] [INFO ] Parsing sheet: 'SR City Council-Dist 1'
+[2026-03-14T11:17:08.219Z] [INFO ]   parse_contest_sheet: title='Member, City Council Santa Rosa District 1' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'EDDIE ALVAREZ', 'DUANE DE WITT', 'JORGE INOCENCIO', 'ELIZABETH VALENTE'] rows=66
+[2026-03-14T11:17:08.261Z] [INFO ]   -> 53 precincts, type=candidate_race
+[2026-03-14T11:17:08.262Z] [INFO ] Parsing sheet: 'SR City Council-Dist 3'
+[2026-03-14T11:17:08.273Z] [INFO ]   parse_contest_sheet: title='Member, City Council Santa Rosa District 3' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'HARRISON "JACK" TIBBETTS', 'QUALIFIED WRITE IN CANDIDATES:', 'KEITH RHINEHART'] rows=126
+[2026-03-14T11:17:08.317Z] [INFO ]   -> 101 precincts, type=candidate_race
+[2026-03-14T11:17:08.318Z] [INFO ] Parsing sheet: 'SR City Council-Dist 5'
+[2026-03-14T11:17:08.325Z] [INFO ]   parse_contest_sheet: title='Member, City Council Santa Rosa District 5' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'AZMINA R. HANNA', 'CHRIS ROGERS'] rows=76
+[2026-03-14T11:17:08.360Z] [INFO ]   -> 61 precincts, type=candidate_race
+[2026-03-14T11:17:08.360Z] [INFO ] Parsing sheet: 'SR City Council-Dist 7'
+[2026-03-14T11:17:08.361Z] [INFO ]   parse_contest_sheet: title='Member, City Council Santa Rosa District 7' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'DANIELA PAVONE', 'ERIC CHRISTENSEN', 'NATALIE ROGERS'] rows=106
+[2026-03-14T11:17:08.413Z] [INFO ]   -> 85 precincts, type=candidate_race
+[2026-03-14T11:17:08.415Z] [INFO ] Parsing sheet: 'Cloverdale City Council'
+[2026-03-14T11:17:08.422Z] [INFO ]   parse_contest_sheet: title='Member, City Council Cloverdale (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'MELANIE BAGBY', 'MARY ANN BRIGHAM', 'TODD LANDS', 'NICOLE GARCIA-HINCHLIFFE', 'JENNY CANDELARIA-ORR'] rows=16
+[2026-03-14T11:17:08.479Z] [INFO ]   -> 13 precincts, type=candidate_race
+[2026-03-14T11:17:08.480Z] [INFO ] Parsing sheet: 'Cotati City Council'
+[2026-03-14T11:17:08.486Z] [INFO ]   parse_contest_sheet: title='Member, City Council Cotati (Vote for  3)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'SUSAN HARVEY', 'LAURA SPARKS', 'BRITTANY MURPHY', 'BEN FORD'] rows=61
+[2026-03-14T11:17:08.560Z] [INFO ]   -> 49 precincts, type=candidate_race
+[2026-03-14T11:17:08.560Z] [INFO ] Parsing sheet: 'Healdsburg City Council'
+[2026-03-14T11:17:08.568Z] [INFO ]   parse_contest_sheet: title='Member, City Council Healdsburg (Vote for  3)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'DAVID HAGELE', 'DORALICE HANDAL', 'SKYLAER PALACIOS', 'CHARLES A. DUFFY', 'ARIEL KELLEY', 'DAVID R. JONES'] rows=26
+[2026-03-14T11:17:08.616Z] [INFO ]   -> 21 precincts, type=candidate_race
+[2026-03-14T11:17:08.616Z] [INFO ] Parsing sheet: 'Petaluma City Council'
+[2026-03-14T11:17:08.629Z] [INFO ]   parse_contest_sheet: title='Member, City Council Petaluma (Vote for  3)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'BRIAN BARNACLE', 'MIKE HEALY', 'DENNIS POCEKAY', 'KATHY MILLER', 'ROBERT CONKLIN', 'GABE KEARNEY', 'SUSAN KIRKS', 'LIZZIE WALLACK'] rows=126
+[2026-03-14T11:17:08.680Z] [INFO ]   -> 101 precincts, type=candidate_race
+[2026-03-14T11:17:08.680Z] [INFO ] Parsing sheet: 'RP City Council-Dist 1'
+[2026-03-14T11:17:08.690Z] [INFO ]   parse_contest_sheet: title='Member, City Council Rohnert Park District 1' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'WALTER "WILLY" LINARES', 'DAVE SOLDAVINI'] rows=31
+[2026-03-14T11:17:08.742Z] [INFO ]   -> 25 precincts, type=candidate_race
+[2026-03-14T11:17:08.742Z] [INFO ] Parsing sheet: 'RP City Council-Dist 3'
+[2026-03-14T11:17:08.750Z] [INFO ]   parse_contest_sheet: title='Member, City Council Rohnert Park District 3' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'GERARD GIUDICE', 'JOSEPH T. CALLINAN'] rows=66
+[2026-03-14T11:17:08.800Z] [INFO ]   -> 53 precincts, type=candidate_race
+[2026-03-14T11:17:08.801Z] [INFO ] Parsing sheet: 'RP City Council-Dist 4'
+[2026-03-14T11:17:08.825Z] [INFO ]   parse_contest_sheet: title='Member, City Council Rohnert Park District 4' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'JACKIE ELWARD', 'JAKE MACKENZIE'] rows=41
+[2026-03-14T11:17:08.886Z] [INFO ]   -> 33 precincts, type=candidate_race
+[2026-03-14T11:17:08.886Z] [INFO ] Parsing sheet: 'Sebastopol City Council'
+[2026-03-14T11:17:08.894Z] [INFO ]   parse_contest_sheet: title='Member, City Council Sebastopol (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'VAUGHN RICHARD HIGGINBOTHAM', 'NEYSA HINTON', 'EVARISTO "EVERT" FERNANDEZ', 'MICHAEL CARNACCHI', 'DIANA RICH'] rows=26
+[2026-03-14T11:17:08.945Z] [INFO ]   -> 21 precincts, type=candidate_race
+[2026-03-14T11:17:08.945Z] [INFO ] Parsing sheet: 'Sonoma City Council'
+[2026-03-14T11:17:08.950Z] [INFO ]   parse_contest_sheet: title='Member, City Council Sonoma (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'AMY HARRINGTON', 'JACK DING'] rows=91
+[2026-03-14T11:17:08.994Z] [INFO ]   -> 73 precincts, type=candidate_race
+[2026-03-14T11:17:08.994Z] [INFO ] Parsing sheet: 'Town of Windsor-Mayor'
+[2026-03-14T11:17:09.001Z] [INFO ]   parse_contest_sheet: title='Mayor, Town of Windsor (Vote for  1)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'TANYA POTTER', 'SAM SALMON', 'DOMINIC FOPPOLI', 'ROSA REYNOZA'] rows=176
+[2026-03-14T11:17:09.066Z] [INFO ]   -> 141 precincts, type=candidate_race
+[2026-03-14T11:17:09.067Z] [INFO ] Parsing sheet: 'Windsor Town Council-Dist 3'
+[2026-03-14T11:17:09.073Z] [INFO ]   parse_contest_sheet: title='Member, Town Council Windsor District 3' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'JEFFREY  LEASURE', 'DEBORA FUDGE'] rows=26
+[2026-03-14T11:17:09.103Z] [INFO ]   -> 21 precincts, type=candidate_race
+[2026-03-14T11:17:09.103Z] [INFO ] Parsing sheet: 'Graton Fire Protection Dist'
+[2026-03-14T11:17:09.112Z] [INFO ]   parse_contest_sheet: title='Graton Fire Protection Dist (Vote for  3)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'LINDA TRIPOLI', 'ZANE W. GRAY', 'JASON NUNES', 'TORREY FARMER'] rows=71
+[2026-03-14T11:17:09.162Z] [INFO ]   -> 57 precincts, type=candidate_race
+[2026-03-14T11:17:09.162Z] [INFO ] Parsing sheet: 'Prop 14'
+[2026-03-14T11:17:09.182Z] [INFO ]   parse_contest_sheet: title='Prop 14 - Continue Funding Stem Cell and Medical Research' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T11:17:09.231Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T11:17:09.231Z] [INFO ] Parsing sheet: 'Prop 15'
+[2026-03-14T11:17:09.250Z] [INFO ]   parse_contest_sheet: title='Prop 15 - Increases Funding for Public Schools' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T11:17:09.308Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T11:17:09.309Z] [INFO ] Parsing sheet: 'Prop 16'
+[2026-03-14T11:17:09.325Z] [INFO ]   parse_contest_sheet: title='Prop 16 - Government Preferences' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T11:17:09.383Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T11:17:09.383Z] [INFO ] Parsing sheet: 'Prop 17'
+[2026-03-14T11:17:09.399Z] [INFO ]   parse_contest_sheet: title='Prop 17 - Disqualification Of Electors' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T11:17:09.449Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T11:17:09.449Z] [INFO ] Parsing sheet: 'Prop 18'
+[2026-03-14T11:17:09.472Z] [INFO ]   parse_contest_sheet: title='Prop 18 - Voting Age' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T11:17:09.523Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T11:17:09.523Z] [INFO ] Parsing sheet: 'Prop 19'
+[2026-03-14T11:17:09.544Z] [INFO ]   parse_contest_sheet: title='Prop 19 - Home Protection' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T11:17:09.575Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T11:17:09.575Z] [INFO ] Parsing sheet: 'Prop 20'
+[2026-03-14T11:17:09.588Z] [INFO ]   parse_contest_sheet: title='Prop 20 - Restricts Parole For Non-Violent Offenders' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T11:17:09.619Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T11:17:09.620Z] [INFO ] Parsing sheet: 'Prop 21'
+[2026-03-14T11:17:09.652Z] [INFO ]   parse_contest_sheet: title="Prop 21 - Expands Local Governments' Authority To Enact Rent Control" type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T11:17:09.709Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T11:17:09.709Z] [INFO ] Parsing sheet: 'Prop 22'
+[2026-03-14T11:17:09.728Z] [INFO ]   parse_contest_sheet: title='Prop 22 - Changes Classification for App-Based Delivery Drivers' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T11:17:09.791Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T11:17:09.791Z] [INFO ] Parsing sheet: 'Prop 23'
+[2026-03-14T11:17:09.812Z] [INFO ]   parse_contest_sheet: title='Prop 23 - Authorizes State Regulation of Kidney Dialysis Clinics' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T11:17:09.878Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T11:17:09.878Z] [INFO ] Parsing sheet: 'Prop 24'
+[2026-03-14T11:17:09.908Z] [INFO ]   parse_contest_sheet: title='Prop 24 - Amends Consumer Privacy Laws' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T11:17:09.981Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T11:17:09.982Z] [INFO ] Parsing sheet: 'Prop 25'
+[2026-03-14T11:17:10.002Z] [INFO ]   parse_contest_sheet: title='Prop 25 - Referendum To Overturn A 2018 Law That Replaced Money Bail System' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T11:17:10.066Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T11:17:10.066Z] [INFO ] Parsing sheet: 'Measure L'
+[2026-03-14T11:17:10.077Z] [INFO ]   parse_contest_sheet: title='Measure L - Shoreline Unified School District Parcel Tax' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=61
+[2026-03-14T11:17:10.124Z] [INFO ]   -> 49 precincts, type=ballot_measure
+[2026-03-14T11:17:10.124Z] [INFO ] Parsing sheet: 'Measure M'
+[2026-03-14T11:17:10.131Z] [INFO ]   parse_contest_sheet: title='Measure M - Fort Ross School District Parcel Tax' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=31
+[2026-03-14T11:17:10.179Z] [INFO ]   -> 25 precincts, type=ballot_measure
+[2026-03-14T11:17:10.180Z] [INFO ] Parsing sheet: 'Measure N'
+[2026-03-14T11:17:10.193Z] [INFO ]   parse_contest_sheet: title='Measure N - Sebastopol Union School District Parcel Tax' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=91
+[2026-03-14T11:17:10.220Z] [INFO ]   -> 73 precincts, type=ballot_measure
+[2026-03-14T11:17:10.221Z] [INFO ] Parsing sheet: 'Measure O'
+[2026-03-14T11:17:10.253Z] [INFO ]   parse_contest_sheet: title='Measure O - County of Sonoma Mental Health, Addiction & Homeless Services Transaction & Use Tax' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T11:17:10.309Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T11:17:10.309Z] [INFO ] Parsing sheet: 'Measure P'
+[2026-03-14T11:17:10.341Z] [INFO ]   parse_contest_sheet: title='Measure P - County of Sonoma Evelyn Cheatham Effective IOLERO' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T11:17:10.410Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T11:17:10.410Z] [INFO ] Parsing sheet: 'Measure Q'
+[2026-03-14T11:17:10.416Z] [INFO ]   parse_contest_sheet: title='Measure Q - City of Santa Rosa Transactions and Use Tax' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=786
+[2026-03-14T11:17:10.461Z] [INFO ]   -> 629 precincts, type=ballot_measure
+[2026-03-14T11:17:10.462Z] [INFO ] Parsing sheet: 'Measure R'
+[2026-03-14T11:17:10.472Z] [INFO ]   parse_contest_sheet: title="Measure R - City of Cloverdale Utility Users' Tax Extension" type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=16
+[2026-03-14T11:17:10.521Z] [INFO ]   -> 13 precincts, type=ballot_measure
+[2026-03-14T11:17:10.522Z] [INFO ] Parsing sheet: 'Measure S'
+[2026-03-14T11:17:10.529Z] [INFO ]   parse_contest_sheet: title='Measure S - City of Cotati Transactions and Use Tax Extension' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=61
+[2026-03-14T11:17:10.577Z] [INFO ]   -> 49 precincts, type=ballot_measure
+[2026-03-14T11:17:10.584Z] [INFO ] Parsing sheet: 'Measure T'
+[2026-03-14T11:17:10.593Z] [INFO ]   parse_contest_sheet: title='Measure T - City of Healdsburg Sales Tax Extension' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=26
+[2026-03-14T11:17:10.626Z] [INFO ]   -> 21 precincts, type=ballot_measure
+[2026-03-14T11:17:10.626Z] [INFO ] Parsing sheet: 'Measure U'
+[2026-03-14T11:17:10.635Z] [INFO ]   parse_contest_sheet: title='Measure U - City of Petaluma Transactions and Use Tax' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=126
+[2026-03-14T11:17:10.703Z] [INFO ]   -> 101 precincts, type=ballot_measure
+[2026-03-14T11:17:10.703Z] [INFO ] Parsing sheet: 'Measure V'
+[2026-03-14T11:17:10.715Z] [INFO ]   parse_contest_sheet: title='Measure V - City of Sonoma Sales Tax Extension' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=91
+[2026-03-14T11:17:10.742Z] [INFO ]   -> 73 precincts, type=ballot_measure
+[2026-03-14T11:17:10.742Z] [INFO ] Parsing sheet: 'Measure W'
+[2026-03-14T11:17:10.752Z] [INFO ]   parse_contest_sheet: title='Measure W - City of Sonoma Growth Boundary' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=91
+[2026-03-14T11:17:10.796Z] [INFO ]   -> 73 precincts, type=ballot_measure
+[2026-03-14T11:17:10.796Z] [INFO ] Parsing sheet: 'Measure X'
+[2026-03-14T11:17:10.802Z] [INFO ]   parse_contest_sheet: title='Measure X - City of Sonoma Cannabis Business Tax' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=91
+[2026-03-14T11:17:10.843Z] [INFO ]   -> 73 precincts, type=ballot_measure
+[2026-03-14T11:17:10.843Z] [INFO ] Parsing sheet: 'Measure Y'
+[2026-03-14T11:17:10.849Z] [INFO ]   parse_contest_sheet: title='Measure Y - City of Sonoma Cannabis Cultivation and Business' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=91
+[2026-03-14T11:17:10.873Z] [INFO ]   -> 73 precincts, type=ballot_measure
+[2026-03-14T11:17:10.873Z] [INFO ] Parsing sheet: 'Measure Z'
+[2026-03-14T11:17:10.877Z] [INFO ]   parse_contest_sheet: title='Measure Z - Kenwood Fire Protection Ratify Appropriations Limit' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=41
+[2026-03-14T11:17:10.909Z] [INFO ]   -> 33 precincts, type=ballot_measure
+[2026-03-14T11:17:10.909Z] [INFO ] Parsing sheet: 'Measure AA'
+[2026-03-14T11:17:10.911Z] [INFO ]   parse_contest_sheet: title='Measure AA - Timber Cove Fire Protection Parcel Tax' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=16
+[2026-03-14T11:17:10.931Z] [INFO ]   -> 13 precincts, type=ballot_measure
+[2026-03-14T11:17:10.931Z] [INFO ] Parsing sheet: 'Measure BB'
+[2026-03-14T11:17:10.936Z] [INFO ]   parse_contest_sheet: title='Measure BB - North Sonoma County Healthcare Hospital Purchase Agreement' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=396
+[2026-03-14T11:17:10.963Z] [INFO ]   -> 317 precincts, type=ballot_measure
+[2026-03-14T11:17:10.964Z] [INFO ] Parsing sheet: 'Measure CC'
+[2026-03-14T11:17:10.969Z] [INFO ]   parse_contest_sheet: title='Measure CC - Petaluma Health Care Hospital Purchase Agreement' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=346
+[2026-03-14T11:17:10.995Z] [INFO ]   -> 277 precincts, type=ballot_measure
+[2026-03-14T11:17:10.995Z] [INFO ] Parsing sheet: 'Measure DD'
+[2026-03-14T11:17:11.016Z] [INFO ]   parse_contest_sheet: title='Measure DD - Sonoma County Transportation Authority Sales Tax' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T11:17:11.049Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T11:17:11.049Z] [INFO ] Parsing sheet: 'PrecinctOverview'
+[2026-03-14T11:17:11.067Z] [INFO ]   parse_contest_sheet: title='1002 MB' type=candidate_race prec_col='Precinct' choice_cols=['Registered\nVoters', 'Voters Cast', '% Turnout'] rows=3344
+[2026-03-14T11:17:11.120Z] [INFO ]   -> 2676 precincts, type=candidate_race
+[2026-03-14T11:17:11.171Z] [STEP ] DONE   [OK] PARSE_CONTEST (41.315s)
+[2026-03-14T11:17:11.171Z] [INFO ] Contest Mode: CANDIDATE (Inferred CANDIDATE (found candidate_race headers))
+[2026-03-14T11:17:11.171Z] [INFO ] [PATHWAY] contest_mode=candidate  contest_mode_reason=Inferred CANDIDATE (found candidate_race headers)
+[2026-03-14T11:17:11.172Z] [STEP ] START  -> ALLOCATE_VOTES
+[2026-03-14T11:17:11.172Z] [INFO ]   Sheet 'President': 2673 precincts, type=candidate_race

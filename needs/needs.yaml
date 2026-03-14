@@ -10,7 +10,7 @@ crosswalks:
   RGPREC_TO_2020_BLK:
     blocks:
     - rgprec_weighted_allocation
-    status: missing
+    status: found
   RG_to_RR_to_SR_to_SVPREC:
     blocks:
     - rg_to_svprec_join
@@ -18,7 +18,7 @@ crosswalks:
   SRPREC_TO_2020_BLK:
     blocks:
     - block_weighted_allocation
-    status: missing
+    status: found
   SRPREC_to_CITY:
     blocks:
     - city_aggregation

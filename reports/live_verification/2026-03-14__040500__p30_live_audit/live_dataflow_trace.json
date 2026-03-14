@@ -1,0 +1,66 @@
+{
+  "run_id": "2026-03-14__040500__p30_live_audit",
+  "audit_time": "2026-03-14T04:05:00-07:00",
+  "app_startup": {
+    "command": "streamlit run ui/dashboard/app.py --server.port 8501",
+    "python": "C:/Users/Mathew C/AppData/Local/Programs/Python/Python313/Scripts/streamlit.exe",
+    "pid": 16268,
+    "http_status": 200,
+    "startup_warnings": []
+  },
+  "active_campaign": {
+    "name": "Prop 50 Special Election 2026",
+    "contest_id": "2025_CA_sonoma_nov2025_special",
+    "state": "CA",
+    "county": "Sonoma",
+    "health": "MEDIUM",
+    "user": "Matthew Callaway"
+  },
+  "data_manager": {
+    "file_registry": [
+      {"file": "StatementOfVotesCast-Webnov32020.xlsx", "type": "election_results", "year": 2020, "status": "REGISTERED"},
+      {"file": "SoCoNov2025StatewideSpclElec_PctCanvass (1).xlsx", "type": "election_results", "year": 2025, "status": "REGISTERED"},
+      {"file": "detail.xlsx", "type": "unknown", "year": 2020, "status": "REGISTERED", "issue": "year_tag_mismatch:in_2025_slot"}
+    ],
+    "election_archive_rows": 1,
+    "election_archive_entries": ["2024_general_test (coverage=0.92)"]
+  },
+  "pipeline_run": {
+    "contest": "nov2020_general",
+    "state": "CA",
+    "county": "Sonoma",
+    "year": 2020,
+    "steps": {
+      "DATA_INTAKE_ANALYSIS": "OK",
+      "LOAD_GEOMETRY": "unknown",
+      "LOAD_CROSSWALKS": {"status": "OK", "crosswalk_detection": "6/6 files OK"},
+      "PARSE_CONTEST": {"status": "OK", "duration_s": 41.1},
+      "ALLOCATE_VOTES": {"status": "CRASH", "error": "AttributeError: dict has no .columns", "line": 565},
+      "ARCHIVE_INGEST": "not_reached",
+      "BUILD_PRECINCT_PROFILES": "not_reached"
+    },
+    "crash_fixed": true,
+    "fix_file": "scripts/run_pipeline.py",
+    "fix_description": "xwalk dict converted to DataFrame before safe_merge"
+  },
+  "ui_state": {
+    "precinct_map": {"precincts_shown": 1, "status": "sparse_pre_fix"},
+    "historical_archive": {"rows": 1, "contest": "2024_general_test"},
+    "strategy": {"status": "empty"},
+    "simulations": {"scenarios": 4, "all_values": 0.0},
+    "diagnostics": {"health": "GREEN", "geometry": "WARN", "join_guard": "PASS"}
+  },
+  "p29_crosswalk_introspect": {
+    "files_inspected": 6,
+    "detection_ok": 6,
+    "detection_failed": 0
+  },
+  "repairs_applied": ["ALLOCATE_VOTES dict-to-DataFrame fix at run_pipeline.py:558-600"],
+  "pending": [
+    "Full end-to-end pipeline run with fix applied",
+    "Verify geometry join succeeds",
+    "Verify archive outputs populate",
+    "Resolve detail.xlsx year tag mismatch",
+    "Confirm 2020 contest file in canonical path"
+  ]
+}
