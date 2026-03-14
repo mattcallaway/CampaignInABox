@@ -389,3 +389,36 @@ git checkout rollback/prompt25C_pre_directory_predictor
 git checkout tags/v_pre_prompt25C_directory_predictor
 python scripts/tools/run_p25b_validation.py   # should still pass 58/58
 ```
+
+
+### Entry 16 — Pre Prompt 28: Canonical Contest Data Intake Unification
+
+| Field | Value |
+|-------|-------|
+| **Timestamp** | 2026-03-14T08:13:18+00:00 |
+| **Branch** | `rollback/prompt28_pre_contest_reset` |
+| **Tag** | `v_pre_prompt28_contest_reset` |
+| **Reason** | Canonical contest data intake unification + surgical purge of contest/result data |
+| **Note** | This is a surgical purge of contest/result data ONLY. Geography, crosswalk, source registry, campaign config, user accounts, code, and all rollback history are preserved. The audit (P28 pre-audit) identified 7 failure points including FP-01 (2020 file not in pipeline votes/ tree), FP-03 (archive normalized with synthetic data), FP-06 (slug mismatch on 2024 real data). This repair creates one canonical contest data path: `data/contests/`. |
+
+#### What Is Being Reset (contest/result data only)
+- `data/elections/` — manually uploaded results dumped by Data Manager
+- `data/CA/counties/Sonoma/votes/` — pipeline vote files (stubs and real)
+- `data/election_archive/normalized/` and `data/election_archive/raw/`
+- `derived/archive/normalized_elections.csv`, `precinct_profiles.csv`, `precinct_trends.csv`, `similar_elections.csv`
+- Contest-result entries in `file_registry.json`
+
+#### What Is Preserved
+- All geometry/boundary data (MPREC/SRPREC GeoJSON, GeoPackage, Shapefile)
+- All crosswalk files (6 crosswalk CSVs in `data/CA/counties/Sonoma/geography/crosswalks/`)
+- Source registry (`config/source_registry/`)
+- User and campaign configs (`config/users_registry.json`, `config/campaign_registry.yaml`)
+- All rollback branches and tags
+- All code, docs, UI
+
+#### To Restore
+```bash
+git checkout rollback/prompt28_pre_contest_reset
+# or
+git checkout tags/v_pre_prompt28_contest_reset
+```
