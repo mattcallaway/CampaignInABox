@@ -531,18 +531,70 @@ def render_data_manager(data: dict):
 
                     with ecol2:
                         st.markdown("<br>", unsafe_allow_html=True)
-                        if norm_rec["status"] != "ARCHIVED":
-                            if st.button("🚨 Archive File", type="primary", key=f"archive_{edit_id}"):
+                        _status = norm_rec["status"]
+
+                        # ── Archive / Unarchive ───────────────────────────────
+                        if _status not in ("ARCHIVED",):
+                            if st.button("🗃️ Archive File", key=f"archive_{edit_id}"):
                                 if is_canonical:
                                     from engine.contest_data.contest_intake import ContestIntake
-                                    ci = ContestIntake(root_path)
-                                    ci._update_registry_record(edit_id, {"archive_status": "ARCHIVED"})
+                                    ContestIntake(root_path)._update_registry_record(
+                                        edit_id, {"archive_status": "ARCHIVED", "status": "ARCHIVED"})
                                 else:
                                     manager.archive_file(edit_id)
-                                st.success("File archived safely.")
+                                st.success("File archived.")
                                 st.rerun()
                         else:
-                            render_alert("warning", "File is already archived.")
+                            if st.button("♻️ Unarchive File", key=f"unarchive_{edit_id}"):
+                                if is_canonical:
+                                    from engine.contest_data.contest_intake import ContestIntake
+                                    ContestIntake(root_path)._update_registry_record(
+                                        edit_id, {"archive_status": "ACTIVE", "status": "REGISTERED"})
+                                else:
+                                    _reg = manager.load_registry()
+                                    for _r in _reg:
+                                        if _r.get("file_id") == edit_id:
+                                            _r["status"] = "ACTIVE"
+                                    manager._save_registry(_reg)
+                                st.success("File restored to active.")
+                                st.rerun()
+
+                        st.markdown("---")
+
+                        # ── Delete ────────────────────────────────────────────
+                        _confirm_del = st.checkbox("⚠️ Confirm delete", key=f"confirm_del_{edit_id}",
+                                                    help="Check this box first, then click Delete")
+                        _also_disk = st.checkbox("Also delete file from disk", key=f"del_disk_{edit_id}",
+                                                  help="Permanently removes the file — cannot be undone")
+                        if st.button("🗑️ Delete Record", key=f"delete_{edit_id}",
+                                     disabled=not _confirm_del):
+                            try:
+                                if _also_disk:
+                                    _fpath = (
+                                        root_path / rec.get("canonical_path", "")
+                                        if rec.get("canonical_path")
+                                        else root_path / rec.get("current_path", "")
+                                        if rec.get("current_path")
+                                        else None
+                                    )
+                                    if _fpath and _fpath.exists():
+                                        _fpath.unlink()
+                                        st.info(f"Deleted from disk: `{_fpath.name}`")
+                                # Remove from registry
+                                if is_canonical:
+                                    from engine.contest_data.contest_intake import ContestIntake
+                                    _ci = ContestIntake(root_path)
+                                    _creg = _ci._load_registry()
+                                    _creg = [_r for _r in _creg if _r.get("file_id") != edit_id]
+                                    _ci._save_registry(_creg)
+                                else:
+                                    _reg2 = manager.load_registry()
+                                    _reg2 = [_r for _r in _reg2 if _r.get("file_id") != edit_id]
+                                    manager._save_registry(_reg2)
+                                st.success("Record deleted.")
+                                st.rerun()
+                            except Exception as _de:
+                                st.error(f"Delete failed: {_de}")
 
 
     with tab_missing:
