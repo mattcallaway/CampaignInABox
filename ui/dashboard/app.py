@@ -425,6 +425,10 @@ elif page == "🧠 Voter Intelligence":
     from ui.dashboard.voter_intelligence_view import render_voter_intelligence
     render_voter_intelligence(data)
 
+elif page == "▶️ Pipeline Runner":
+    from ui.dashboard.pipeline_runner_view import render_pipeline_runner
+    render_pipeline_runner(data)
+
 elif page == "🩺 Diagnostics":
     from ui.dashboard.diagnostics_view import render_diagnostics
     render_diagnostics(data)

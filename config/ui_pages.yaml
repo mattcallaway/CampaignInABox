@@ -61,6 +61,8 @@ strategy_modeling:
 system:
   label: "🛠 System"
   pages:
+    - id: "▶️ Pipeline Runner"
+      label: "Pipeline Runner"
     - id: "🩺 Diagnostics"
       label: "Diagnostics"
 
