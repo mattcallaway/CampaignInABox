@@ -437,7 +437,7 @@ def render_data_manager(data: dict):
 
                     st.write(f"**Selected:** `{norm_rec['filename']}` ({norm_rec['campaign_data_type']})")
                     if is_canonical:
-                        st.caption("ℹ️ This is a **canonical contest** record (P28). Only notes and archive status can be edited here.")
+                        st.caption("ℹ️ This is a **canonical contest** record. Category/rename are locked, but year, contest slug, and provenance can be re-tagged below.")
 
                     ecol1, ecol2 = st.columns(2)
                     with ecol1:
@@ -448,19 +448,65 @@ def render_data_manager(data: dict):
                                                   disabled=is_canonical)
                         new_name  = st.text_input("Rename File", norm_rec["filename"],
                                                    key=f"rename_{edit_id}", disabled=is_canonical)
-                        if st.button("Update Metadata", disabled=is_canonical):
-                            manager.update_file(file_id=edit_id, new_name=new_name, new_category=new_cat)
-                            st.success("File updated successfully.")
-                            st.rerun()
-                        if is_canonical:
-                            st.caption("Rename/category changes are managed in `data/contests/` manifests.")
 
                     with ecol2:
-                        st.markdown("<br><br>", unsafe_allow_html=True)
-                        if norm_rec["status"] != "ARCHIVED":
-                            if st.button("🚨 Archive File", type="primary"):
+                        # ── Re-tag fields (available for ALL record types) ────
+                        _cur_year    = str(norm_rec.get("year", "") or rec.get("year", ""))
+                        _cur_contest = str(norm_rec.get("contest", "") or rec.get("contest_slug", "") or rec.get("contest_id", ""))
+                        _cur_prov    = norm_rec.get("provenance", "REAL")
+                        _prov_opts   = ["REAL", "EXTERNAL", "ESTIMATED", "SIMULATED"]
+
+                        new_year    = st.text_input("Year", _cur_year, key=f"retag_year_{edit_id}",
+                                                    help="e.g. 2020, 2024, 2025")
+                        new_contest = st.text_input("Contest Slug", _cur_contest,
+                                                    key=f"retag_contest_{edit_id}",
+                                                    help="e.g. nov2020_general, nov2025_special")
+                        new_prov    = st.selectbox("Provenance", _prov_opts,
+                                                   index=_prov_opts.index(_cur_prov) if _cur_prov in _prov_opts else 0,
+                                                   key=f"retag_prov_{edit_id}")
+
+                    with ecol1:
+                        if st.button("💾 Save Changes", key=f"update_{edit_id}"):
+                            try:
                                 if is_canonical:
-                                    # For canonical records: update archive_status in canonical registry
+                                    # Canonical records: patch via ContestIntake registry
+                                    from engine.contest_data.contest_intake import ContestIntake
+                                    ci = ContestIntake(root_path)
+                                    patch: dict = {}
+                                    if new_year    and new_year    != _cur_year:    patch["year"]         = new_year
+                                    if new_contest and new_contest != _cur_contest: patch["contest_slug"] = new_contest
+                                    if new_prov    != _cur_prov:                    patch["provenance"]   = new_prov
+                                    if patch:
+                                        ci._update_registry_record(edit_id, patch)
+                                        st.success(f"Re-tagged: {patch}")
+                                    else:
+                                        st.info("No changes detected.")
+                                else:
+                                    # Non-canonical records
+                                    manager.update_file(file_id=edit_id, new_name=new_name, new_category=new_cat)
+                                    # Also patch year/contest/provenance directly in registry
+                                    patch = {}
+                                    if new_year    and new_year    != _cur_year:    patch["year"]       = new_year
+                                    if new_contest and new_contest != _cur_contest: patch["contest_id"] = new_contest
+                                    if new_prov    != _cur_prov:                    patch["provenance"] = new_prov
+                                    if patch:
+                                        reg = manager.load_registry()
+                                        for r in reg:
+                                            if r.get("file_id") == edit_id:
+                                                r.update(patch)
+                                        manager._save_registry(reg)
+                                    st.success("File updated successfully.")
+                                st.rerun()
+                            except Exception as _ue:
+                                st.error(f"Error updating file: {_ue}")
+                        if is_canonical:
+                            st.caption("Rename/category locked — managed in `data/contests/` manifests.")
+
+                    with ecol2:
+                        st.markdown("<br>", unsafe_allow_html=True)
+                        if norm_rec["status"] != "ARCHIVED":
+                            if st.button("🚨 Archive File", type="primary", key=f"archive_{edit_id}"):
+                                if is_canonical:
                                     from engine.contest_data.contest_intake import ContestIntake
                                     ci = ContestIntake(root_path)
                                     ci._update_registry_record(edit_id, {"archive_status": "ARCHIVED"})
