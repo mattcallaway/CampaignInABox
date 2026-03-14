@@ -153,14 +153,14 @@ def render_data_manager(data: dict):
             col1, col2 = st.columns(2)
             with col1:
                 form_cat  = st.selectbox("Campaign Data Type", list(manager._DESTINATION_RULES.keys()), index=list(manager._DESTINATION_RULES.keys()).index(cat) if cat in manager._DESTINATION_RULES else 0)
-                form_name = st.text_input("Filename", uploaded_file.name)
+                form_name = st.text_input("Filename", uploaded_file.name, key="upload_filename")
             
             with col2:
                 opts = ["REAL", "EXTERNAL", "ESTIMATED", "SIMULATED"]
                 form_prov = st.selectbox("Provenance", opts, index=opts.index(prov) if prov in opts else 1)
-                form_state = st.text_input("State Code (e.g. CA)", "CA")
-                form_county = st.text_input("County", "Sonoma")
-                form_contest = st.text_input("Contest ID", "2025_prop50_special")
+                form_state = st.text_input("State Code (e.g. CA)", "CA", key="upload_state")
+                form_county = st.text_input("County", "Sonoma", key="upload_county")
+                form_contest = st.text_input("Contest ID", "2025_prop50_special", key="upload_contest")
 
             proposed_dest = manager.propose_destination(form_name, form_cat, form_state, form_county, form_contest)
             render_alert("info", f"**Proposed Destination:** `{proposed_dest}`")
@@ -188,8 +188,8 @@ def render_data_manager(data: dict):
         )
 
         pc1, pc2, pc3 = st.columns(3)
-        p_state    = pc1.text_input("State", "CA")
-        p_county   = pc2.text_input("County", "Sonoma")
+        p_state    = pc1.text_input("State", "CA", key="prec_state")
+        p_county   = pc2.text_input("County", "Sonoma", key="prec_county")
         p_boundary = pc3.selectbox("Boundary Type", ["MPREC", "SRPREC", "CITY_PRECINCT", "UNKNOWN_LOCAL"])
 
         precinct_input = st.text_area(
@@ -380,7 +380,7 @@ def render_data_manager(data: dict):
                     ecol1, ecol2 = st.columns(2)
                     with ecol1:
                         new_cat = st.selectbox("Change Category", list(manager._DESTINATION_RULES.keys()), index=list(manager._DESTINATION_RULES.keys()).index(rec["campaign_data_type"]))
-                        new_name = st.text_input("Rename File", rec["current_filename"])
+                        new_name = st.text_input("Rename File", rec["current_filename"], key=f"rename_{edit_id}")
                         if st.button("Update Metadata"):
                             manager.update_file(file_id=edit_id, new_name=new_name, new_category=new_cat)
                             st.success("File updated successfully.")
