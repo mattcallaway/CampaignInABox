@@ -94,6 +94,10 @@ def render_data_manager(data: dict):
             temp_dir.mkdir(parents=True, exist_ok=True)
             temp_path = temp_dir / uploaded_file.name
             temp_path.write_bytes(uploaded_file.getbuffer())
+            # Capture raw bytes NOW before any preview/fingerprint opens the file.
+            # On Windows, openpyxl holds an exclusive lock, so we cannot
+            # re-read from temp_path later. Store bytes in session_state.
+            st.session_state["_upload_raw_bytes"] = uploaded_file.getvalue()
 
             st.markdown("#### File Preview")
             _preview_file(temp_path)
@@ -169,10 +173,12 @@ def render_data_manager(data: dict):
 
             if st.button("Confirm & Save File", type="primary"):
                 try:
+                    raw = st.session_state.get("_upload_raw_bytes")
                     record = manager.register_new_file(
                         source_file=temp_path, category=form_cat, provenance=form_prov,
                         state=form_state, county=form_county, contest_id=form_contest,
-                        notes=form_notes, proposed_name=form_name
+                        notes=form_notes, proposed_name=form_name,
+                        raw_bytes=raw,
                     )
                     if temp_path.exists(): temp_path.unlink()
                     st.success(f"File saved to `{record['current_path']}` and registered!")

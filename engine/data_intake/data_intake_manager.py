@@ -164,9 +164,12 @@ class FileRegistryManager:
         contest_id: str = "",
         notes: str = "",
         proposed_name: str = "",
+        raw_bytes: bytes | None = None,
     ) -> dict:
         """
         Move a source file to canonical location and add to registry.
+        raw_bytes: if provided, use these bytes instead of reading source_file
+                   (avoids WinError 32 when openpyxl holds the file lock on Windows).
         """
         orig_name = source_file.name
         new_name  = proposed_name if proposed_name else orig_name
@@ -175,16 +178,18 @@ class FileRegistryManager:
 
         dest_abs.parent.mkdir(parents=True, exist_ok=True)
 
-        # Use explicit binary read/write instead of shutil.copy2.
-        # On Windows, pandas/openpyxl may hold the source file open during
-        # preview/fingerprint analysis, causing WinError 32 with shutil.copy2.
-        try:
-            dest_abs.write_bytes(source_file.read_bytes())
-        except PermissionError:
-            # Last-resort fallback: read in chunks with shared-read mode
-            import ctypes
-            with open(source_file, "rb") as src_f:
-                dest_abs.write_bytes(src_f.read())
+        if raw_bytes is not None:
+            # Write from in-memory bytes — no file lock issue
+            dest_abs.write_bytes(raw_bytes)
+        else:
+            # Fall back to reading from disk
+            try:
+                dest_abs.write_bytes(source_file.read_bytes())
+            except (PermissionError, OSError) as e:
+                raise OSError(
+                    f"Cannot read source file (likely held by another process): {source_file}\n"
+                    f"Original error: {e}"
+                ) from e
 
         record = {
             "file_id": f"F_{uuid.uuid4().hex[:8].upper()}",
