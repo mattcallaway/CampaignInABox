@@ -74,7 +74,10 @@ class PipelineRunSummary:
 # Patterns for parsing pipeline log lines
 _STEP_PATTERN   = re.compile(r"\[STEP \] (DONE|SKIP|FAIL|CRASH)\s+\[(\w+)\]\s+([\w_]+)\s*(?:\(([0-9.]+)s\))?")
 _ROWS_PATTERN   = re.compile(r"(\d+)\s+(?:precinct\s+rows|rows loaded|precincts)", re.IGNORECASE)
-_ARCHIVE_PATTERN = re.compile(r"ARCHIVE_INGEST.*DONE", re.IGNORECASE)
+# Archive is built when DOWNLOAD_HISTORICAL_ELECTIONS or ARCHIVE_INGEST step succeeds
+_ARCHIVE_PATTERN = re.compile(
+    r"(DOWNLOAD_HISTORICAL_ELECTIONS|ARCHIVE_INGEST|ARCHIVE_BUILD).*DONE", re.IGNORECASE
+)
 _JOIN_PATTERN   = re.compile(r"join(?:ed)?\s+(\d+)\s*/\s*(\d+)", re.IGNORECASE)
 
 
@@ -110,8 +113,23 @@ def parse_run_log(log_path: Path) -> PipelineRunSummary:
     rows_m = _ROWS_PATTERN.search(text)
     rows_loaded = int(rows_m.group(1)) if rows_m else None
 
-    # Archive built?
+    # Archive built? Check log AND disk presence as fallback
     archive_built = bool(_ARCHIVE_PATTERN.search(text))
+    if not archive_built:
+        # Fallback: check if derived/archive/ dir has content on disk
+        # (handles cases where the step name changed or log was truncated)
+        archive_disk = log_path.parent.parent.parent.parent / "derived" / "archive"
+        if not archive_disk.exists():
+            # Try resolving from log path up to project root
+            p = log_path
+            for _ in range(10):
+                candidate = p / "derived" / "archive"
+                if candidate.exists():
+                    archive_disk = candidate
+                    break
+                p = p.parent
+        if archive_disk.exists() and any(archive_disk.iterdir()):
+            archive_built = True
 
     # Join rate
     join_m = _JOIN_PATTERN.search(text)

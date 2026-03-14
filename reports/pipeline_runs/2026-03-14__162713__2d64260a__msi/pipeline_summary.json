@@ -1,0 +1,326 @@
+{
+  "run_id": "2026-03-14__162713__2d64260a__msi",
+  "overall": "SUCCESS",
+  "contest_slug": "nov2025_special",
+  "rows_loaded": 3,
+  "archive_built": true,
+  "precinct_join_rate": 1.0,
+  "geometry_join": "UNKNOWN",
+  "steps": [
+    {
+      "step": "DATA_INTAKE_ANALYSIS",
+      "status": "DONE",
+      "duration_s": 0.268
+    },
+    {
+      "step": "INGEST_STAGING",
+      "status": "SKIP",
+      "duration_s": null
+    },
+    {
+      "step": "SCAFFOLD_BOUNDARY_INDEX_Sonoma",
+      "status": "DONE",
+      "duration_s": 0.273
+    },
+    {
+      "step": "VALIDATE_GEOGRAPHY",
+      "status": "DONE",
+      "duration_s": 0.293
+    },
+    {
+      "step": "VALIDATE_VOTES",
+      "status": "DONE",
+      "duration_s": 0.31
+    },
+    {
+      "step": "LOAD_GEOMETRY",
+      "status": "DONE",
+      "duration_s": 9.792
+    },
+    {
+      "step": "LOAD_CROSSWALKS",
+      "status": "DONE",
+      "duration_s": 11.329
+    },
+    {
+      "step": "SCAFFOLD_CONTEST_JSON",
+      "status": "DONE",
+      "duration_s": 11.347
+    },
+    {
+      "step": "PARSE_CONTEST",
+      "status": "DONE",
+      "duration_s": 12.551
+    },
+    {
+      "step": "NORMALIZE_SCHEMA",
+      "status": "DONE",
+      "duration_s": null
+    },
+    {
+      "step": "SANITY",
+      "status": "DONE",
+      "duration_s": null
+    },
+    {
+      "step": "BUILD_MODEL",
+      "status": "DONE",
+      "duration_s": null
+    },
+    {
+      "step": "NORMALIZE_SCHEMA",
+      "status": "DONE",
+      "duration_s": null
+    },
+    {
+      "step": "SANITY",
+      "status": "DONE",
+      "duration_s": null
+    },
+    {
+      "step": "BUILD_MODEL",
+      "status": "DONE",
+      "duration_s": null
+    },
+    {
+      "step": "NORMALIZE_SCHEMA",
+      "status": "DONE",
+      "duration_s": null
+    },
+    {
+      "step": "SANITY",
+      "status": "DONE",
+      "duration_s": null
+    },
+    {
+      "step": "BUILD_MODEL",
+      "status": "DONE",
+      "duration_s": null
+    },
+    {
+      "step": "NORMALIZE_SCHEMA",
+      "status": "DONE",
+      "duration_s": null
+    },
+    {
+      "step": "SANITY",
+      "status": "DONE",
+      "duration_s": null
+    },
+    {
+      "step": "BUILD_MODEL",
+      "status": "DONE",
+      "duration_s": null
+    },
+    {
+      "step": "ALLOCATE_VOTES",
+      "status": "DONE",
+      "duration_s": 14.525
+    },
+    {
+      "step": "INTEGRITY_ENFORCEMENT",
+      "status": "DONE",
+      "duration_s": 14.899
+    },
+    {
+      "step": "FEATURE_ENGINEERING",
+      "status": "DONE",
+      "duration_s": 15.121
+    },
+    {
+      "step": "UNIVERSE_BUILDING",
+      "status": "DONE",
+      "duration_s": 15.424
+    },
+    {
+      "step": "SCORING_V2",
+      "status": "DONE",
+      "duration_s": 15.646
+    },
+    {
+      "step": "REGION_CLUSTERING",
+      "status": "DONE",
+      "duration_s": 15.904
+    },
+    {
+      "step": "FIELD_PLANNING",
+      "status": "DONE",
+      "duration_s": 16.205
+    },
+    {
+      "step": "SIMULATION",
+      "status": "DONE",
+      "duration_s": 16.223
+    },
+    {
+      "step": "VOTER_UNIVERSE_EXPORT",
+      "status": "SKIP",
+      "duration_s": null
+    },
+    {
+      "step": "LOAD_VOTER_FILE",
+      "status": "SKIP",
+      "duration_s": null
+    },
+    {
+      "step": "BUILD_VOTER_UNIVERSES",
+      "status": "SKIP",
+      "duration_s": null
+    },
+    {
+      "step": "SCORE_VOTER_TURNOUT",
+      "status": "SKIP",
+      "duration_s": null
+    },
+    {
+      "step": "SCORE_VOTER_PERSUASION",
+      "status": "SKIP",
+      "duration_s": null
+    },
+    {
+      "step": "BUILD_TARGETING_QUADRANTS",
+      "status": "SKIP",
+      "duration_s": null
+    },
+    {
+      "step": "BUILD_PRECINCT_VOTER_METRICS",
+      "status": "SKIP",
+      "duration_s": null
+    },
+    {
+      "step": "DOWNLOAD_HISTORICAL_ELECTIONS",
+      "status": "DONE",
+      "duration_s": 76.924
+    },
+    {
+      "step": "CALIBRATE_MODEL",
+      "status": "DONE",
+      "duration_s": 76.985
+    },
+    {
+      "step": "CAMPAIGN_STRATEGY",
+      "status": "DONE",
+      "duration_s": 77.776
+    },
+    {
+      "step": "CALIBRATION",
+      "status": "DONE",
+      "duration_s": 78.135
+    },
+    {
+      "step": "INTELLIGENCE",
+      "status": "DONE",
+      "duration_s": 78.377
+    },
+    {
+      "step": "BUILD_PROVENANCE",
+      "status": "DONE",
+      "duration_s": 78.412
+    },
+    {
+      "step": "GENERATE_DATA_REQUESTS",
+      "status": "DONE",
+      "duration_s": 78.417
+    },
+    {
+      "step": "WAR_ROOM_STATUS",
+      "status": "DONE",
+      "duration_s": 78.464
+    },
+    {
+      "step": "WAR_ROOM_FORECAST_UPDATE",
+      "status": "DONE",
+      "duration_s": 78.477
+    },
+    {
+      "step": "PERFORMANCE_RECONCILIATION",
+      "status": "DONE",
+      "duration_s": 78.506
+    },
+    {
+      "step": "FORECAST_GENERATION",
+      "status": "DONE",
+      "duration_s": 78.606
+    },
+    {
+      "step": "TURF_GENERATION",
+      "status": "DONE",
+      "duration_s": 78.659
+    },
+    {
+      "step": "EXPORT_V2_OUTPUTS",
+      "status": "DONE",
+      "duration_s": 99.728
+    },
+    {
+      "step": "DIAGNOSTICS",
+      "status": "DONE",
+      "duration_s": 99.856
+    },
+    {
+      "step": "STRATEGY_GENERATOR",
+      "status": "DONE",
+      "duration_s": 100.702
+    },
+    {
+      "step": "GEO_VALIDATION",
+      "status": "DONE",
+      "duration_s": 101.115
+    },
+    {
+      "step": "JOIN_GUARD_VALIDATION",
+      "status": "DONE",
+      "duration_s": 101.12
+    },
+    {
+      "step": "INTEGRITY_REPAIRS_WRITE",
+      "status": "DONE",
+      "duration_s": 101.126
+    },
+    {
+      "step": "ARTIFACT_VALIDATION",
+      "status": "DONE",
+      "duration_s": 101.149
+    },
+    {
+      "step": "POST_RUN_AUDIT",
+      "status": "DONE",
+      "duration_s": 101.165
+    },
+    {
+      "step": "STATE_BUILD",
+      "status": "DONE",
+      "duration_s": 101.311
+    },
+    {
+      "step": "STATE_DIFF",
+      "status": "DONE",
+      "duration_s": 101.316
+    },
+    {
+      "step": "ADVANCED_UNIVERSE_ESTIMATES",
+      "status": "DONE",
+      "duration_s": 101.33
+    },
+    {
+      "step": "OPTIMIZER",
+      "status": "DONE",
+      "duration_s": 101.332
+    },
+    {
+      "step": "ADVANCED_LIFT_MODEL",
+      "status": "DONE",
+      "duration_s": 101.332
+    },
+    {
+      "step": "ADVANCED_SCENARIOS",
+      "status": "DONE",
+      "duration_s": 176.208
+    },
+    {
+      "step": "ADVANCED_QA",
+      "status": "DONE",
+      "duration_s": 176.211
+    }
+  ]
+}

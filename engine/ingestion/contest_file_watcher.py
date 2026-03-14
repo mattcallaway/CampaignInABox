@@ -18,11 +18,18 @@ logger = logging.getLogger(__name__)
 # Supported raw file extensions
 SUPPORTED_EXTENSIONS = {".xlsx", ".xls", ".csv", ".tsv", ".json"}
 
-# Known precinct column name candidates
+# Known precinct column name candidates — ordered by likelihood
 PRECINCT_COLUMN_CANDIDATES = [
-    "SRPREC", "srprec", "Precinct", "precinct", "PrecinctID",
-    "MPREC", "mprec", "PCT Number", "pct_num", "precinct_id",
+    "SRPREC", "srprec", "MPREC", "mprec",
+    "Precinct", "precinct", "PrecinctID", "precinct_id",
+    "PrecinctCanvass",  # Sonoma canvass-style
+    "PCT Number", "pct_num", "PCT", "pct",
+    "Pct", "Pct.", "Precinct Number", "PrecinctName",
 ]
+
+# When checking for precinct columns, also look for any column that starts
+# with these prefixes (case-insensitive).
+PRECINCT_PREFIX_CANDIDATES = ("prec", "srprec", "mprec", "pct")
 
 
 @dataclass
@@ -57,25 +64,59 @@ def _classify_filename(filename: str) -> str:
 
 
 def _sniff_precinct_column(filepath: Path) -> tuple[Optional[str], Optional[int]]:
-    """Try to detect precinct column and row count from file."""
+    """
+    Try to detect precinct column and row count from file.
+
+    Handles preamble rows (e.g. title rows before actual headers) by trying
+    skiprows 0-5. Returns the first matching column name and total row count.
+    """
     try:
         import pandas as pd
-        if filepath.suffix.lower() in (".xlsx", ".xls"):
-            df = pd.read_excel(filepath, nrows=5)
-        elif filepath.suffix.lower() in (".csv", ".tsv"):
-            sep = "\t" if filepath.suffix.lower() == ".tsv" else ","
-            df = pd.read_csv(filepath, nrows=5, sep=sep)
-        else:
+        is_excel = filepath.suffix.lower() in (".xlsx", ".xls")
+        is_csv = filepath.suffix.lower() in (".csv", ".tsv")
+        if not (is_excel or is_csv):
             return None, None
 
-        for candidate in PRECINCT_COLUMN_CANDIDATES:
-            if candidate in df.columns:
-                # Get full row count
-                if filepath.suffix.lower() in (".xlsx", ".xls"):
-                    full_df = pd.read_excel(filepath, usecols=[candidate])
+        # Try skiprows 0-5 to skip past preamble/title rows
+        for skip in range(6):
+            try:
+                if is_excel:
+                    df = pd.read_excel(filepath, nrows=5, skiprows=skip if skip > 0 else None)
                 else:
-                    full_df = pd.read_csv(filepath, usecols=[candidate])
-                return candidate, len(full_df)
+                    sep = "\t" if filepath.suffix.lower() == ".tsv" else ","
+                    df = pd.read_csv(filepath, nrows=5, sep=sep, skiprows=skip if skip > 0 else None)
+            except Exception:
+                continue
+
+            # Skip if all columns are Unnamed (still in preamble)
+            real_cols = [c for c in df.columns if not str(c).startswith("Unnamed")]
+            if not real_cols:
+                continue
+
+            # Check explicit candidates
+            for candidate in PRECINCT_COLUMN_CANDIDATES:
+                if candidate in df.columns:
+                    try:
+                        if is_excel:
+                            full_df = pd.read_excel(filepath, usecols=[candidate],
+                                                    skiprows=skip if skip > 0 else None)
+                        else:
+                            full_df = pd.read_csv(filepath, usecols=[candidate],
+                                                  skiprows=skip if skip > 0 else None)
+                        return candidate, len(full_df)
+                    except Exception:
+                        return candidate, None
+
+            # Prefix-match fallback: any column starting with prec/pct/srprec/mprec
+            for col in real_cols:
+                col_lower = str(col).lower().strip()
+                if any(col_lower.startswith(pfx) for pfx in PRECINCT_PREFIX_CANDIDATES):
+                    logger.debug(f"[WATCHER] Prefix match: '{col}' in {filepath.name}")
+                    return col, None
+
+            # Found real columns but no precinct col — stop preamble search
+            break
+
         return None, None
     except Exception as exc:
         logger.debug(f"[WATCHER] Could not sniff {filepath.name}: {exc}")

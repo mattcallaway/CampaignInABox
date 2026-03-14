@@ -1,0 +1,82 @@
+# Pipeline Run Summary — 2026-03-14__162713__2d64260a__msi
+**Status:** ✅ SUCCESS
+**Contest:** nov2025_special
+**State/County/Year:** CA / Sonoma / 2025
+**Started:** 2026-03-14T23:27:14.090378+00:00
+
+## Key Metrics
+
+| Metric | Value |
+|---|---|
+| Rows Loaded | 3 |
+| Precinct Join Rate | 100.0% |
+| Geometry Join | UNKNOWN |
+| Archive Built | YES |
+
+## Step Results
+
+| Step | Status | Duration | Note |
+|---|---|---|---|
+| DATA_INTAKE_ANALYSIS | ✅ DONE | 0.3s | OK |
+| INGEST_STAGING | ⏭️ SKIP | — | SKIP |
+| SCAFFOLD_BOUNDARY_INDEX_Sonoma | ✅ DONE | 0.3s | OK |
+| VALIDATE_GEOGRAPHY | ✅ DONE | 0.3s | OK |
+| VALIDATE_VOTES | ✅ DONE | 0.3s | OK |
+| LOAD_GEOMETRY | ✅ DONE | 9.8s | OK |
+| LOAD_CROSSWALKS | ✅ DONE | 11.3s | OK |
+| SCAFFOLD_CONTEST_JSON | ✅ DONE | 11.3s | OK |
+| PARSE_CONTEST | ✅ DONE | 12.6s | OK |
+| NORMALIZE_SCHEMA | ✅ DONE | — | OK |
+| SANITY | ✅ DONE | — | OK |
+| BUILD_MODEL | ✅ DONE | — | OK |
+| NORMALIZE_SCHEMA | ✅ DONE | — | OK |
+| SANITY | ✅ DONE | — | OK |
+| BUILD_MODEL | ✅ DONE | — | OK |
+| NORMALIZE_SCHEMA | ✅ DONE | — | OK |
+| SANITY | ✅ DONE | — | OK |
+| BUILD_MODEL | ✅ DONE | — | OK |
+| NORMALIZE_SCHEMA | ✅ DONE | — | OK |
+| SANITY | ✅ DONE | — | OK |
+| BUILD_MODEL | ✅ DONE | — | OK |
+| ALLOCATE_VOTES | ✅ DONE | 14.5s | OK |
+| INTEGRITY_ENFORCEMENT | ✅ DONE | 14.9s | OK |
+| FEATURE_ENGINEERING | ✅ DONE | 15.1s | OK |
+| UNIVERSE_BUILDING | ✅ DONE | 15.4s | OK |
+| SCORING_V2 | ✅ DONE | 15.6s | OK |
+| REGION_CLUSTERING | ✅ DONE | 15.9s | OK |
+| FIELD_PLANNING | ✅ DONE | 16.2s | OK |
+| SIMULATION | ✅ DONE | 16.2s | OK |
+| VOTER_UNIVERSE_EXPORT | ⏭️ SKIP | — | SKIP |
+| LOAD_VOTER_FILE | ⏭️ SKIP | — | SKIP |
+| BUILD_VOTER_UNIVERSES | ⏭️ SKIP | — | SKIP |
+| SCORE_VOTER_TURNOUT | ⏭️ SKIP | — | SKIP |
+| SCORE_VOTER_PERSUASION | ⏭️ SKIP | — | SKIP |
+| BUILD_TARGETING_QUADRANTS | ⏭️ SKIP | — | SKIP |
+| BUILD_PRECINCT_VOTER_METRICS | ⏭️ SKIP | — | SKIP |
+| DOWNLOAD_HISTORICAL_ELECTIONS | ✅ DONE | 76.9s | OK |
+| CALIBRATE_MODEL | ✅ DONE | 77.0s | OK |
+| CAMPAIGN_STRATEGY | ✅ DONE | 77.8s | OK |
+| CALIBRATION | ✅ DONE | 78.1s | OK |
+| INTELLIGENCE | ✅ DONE | 78.4s | OK |
+| BUILD_PROVENANCE | ✅ DONE | 78.4s | OK |
+| GENERATE_DATA_REQUESTS | ✅ DONE | 78.4s | OK |
+| WAR_ROOM_STATUS | ✅ DONE | 78.5s | OK |
+| WAR_ROOM_FORECAST_UPDATE | ✅ DONE | 78.5s | OK |
+| PERFORMANCE_RECONCILIATION | ✅ DONE | 78.5s | OK |
+| FORECAST_GENERATION | ✅ DONE | 78.6s | OK |
+| TURF_GENERATION | ✅ DONE | 78.7s | OK |
+| EXPORT_V2_OUTPUTS | ✅ DONE | 99.7s | OK |
+| DIAGNOSTICS | ✅ DONE | 99.9s | OK |
+| STRATEGY_GENERATOR | ✅ DONE | 100.7s | OK |
+| GEO_VALIDATION | ✅ DONE | 101.1s | OK |
+| JOIN_GUARD_VALIDATION | ✅ DONE | 101.1s | OK |
+| INTEGRITY_REPAIRS_WRITE | ✅ DONE | 101.1s | OK |
+| ARTIFACT_VALIDATION | ✅ DONE | 101.1s | OK |
+| POST_RUN_AUDIT | ✅ DONE | 101.2s | OK |
+| STATE_BUILD | ✅ DONE | 101.3s | OK |
+| STATE_DIFF | ✅ DONE | 101.3s | OK |
+| ADVANCED_UNIVERSE_ESTIMATES | ✅ DONE | 101.3s | OK |
+| OPTIMIZER | ✅ DONE | 101.3s | OK |
+| ADVANCED_LIFT_MODEL | ✅ DONE | 101.3s | OK |
+| ADVANCED_SCENARIOS | ✅ DONE | 176.2s | OK |
+| ADVANCED_QA | ✅ DONE | 176.2s | OK |
