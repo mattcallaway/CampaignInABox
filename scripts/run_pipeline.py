@@ -441,7 +441,7 @@ def run_pipeline(
         if not (rebuild_maps_only or rebuild_memberships_only):
             logger.step_start("SCAFFOLD_CONTEST_JSON")
             contest_json_path = scaffold_contest_json(
-                votes_root, year=year, state=state, loop_county=loop_county, contest_slug=contest_slug,
+                votes_root, year=year, state=state, county=loop_county, contest_slug=contest_slug,
             )
             logger.step_done("SCAFFOLD_CONTEST_JSON", outputs=[contest_json_path])
             all_artifacts.append(contest_json_path)
