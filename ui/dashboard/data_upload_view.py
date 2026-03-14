@@ -1,556 +1,404 @@
 """
-ui/dashboard/data_upload_view.py — Contest Data Manager
+ui/dashboard/data_upload_view.py — Contest Data Upload (Prompt 31.5 Overhaul)
 
-Full data management interface for campaign contest files:
-  - Browse + manage existing files (rename, delete, enable/disable)
-  - Upload new files (XLS, GeoJSON, CSV)
-  - Data weight + usage controls per dataset
-  - Writes data_config.json alongside files for pipeline use
+Canonical upload flow for campaign contest files:
+  - Smart defaults from active campaign config
+  - Tag-on-intake: user sets state/county/year/slug/file-type BEFORE saving
+  - Saves to canonical path: data/contests/<state>/<county>/<year>/<slug>/raw/<file>
+  - Writes intake manifest to .../manifests/primary_result_file.json
+  - Shows existing contests at page top for context
+
+Safe path: data/contests/<state>/<county>/<year>/<slug>/raw/
+Legacy paths (data/CA/counties/, data/votes/) are NO LONGER used.
 """
 from __future__ import annotations
 
 import io
 import json
-import os
-import shutil
 import datetime
+import shutil
 from pathlib import Path
-from typing import Any
 
 import streamlit as st
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+# Canonical contest root
+CONTESTS_DIR = BASE_DIR / "data" / "contests"
+
 US_STATES = ["CA", "TX", "FL", "NY", "AZ", "GA", "PA", "NV", "WI", "MI"]
 
-CONFIG_FILE = "data_config.json"
+CURRENT_YEAR = datetime.datetime.now().year
+YEAR_OPTIONS = [CURRENT_YEAR + 1, CURRENT_YEAR, CURRENT_YEAR - 1,
+                CURRENT_YEAR - 2, CURRENT_YEAR - 3, CURRENT_YEAR - 4]
 
 
-# ── Config helpers ─────────────────────────────────────────────────────────────
+# ── Helpers ───────────────────────────────────────────────────────────────────
 
-def _cfg_path(contest_dir: Path) -> Path:
-    return contest_dir / CONFIG_FILE
-
-
-def _load_cfg(contest_dir: Path) -> dict[str, Any]:
-    p = _cfg_path(contest_dir)
-    if p.exists():
-        try:
-            return json.loads(p.read_text(encoding="utf-8"))
-        except Exception:
-            pass
-    return {"files": {}, "updated_at": None}
+def _load_active_campaign() -> dict:
+    """Read active_campaign.yaml for smart defaults."""
+    try:
+        import yaml
+        p = BASE_DIR / "config" / "active_campaign.yaml"
+        if p.exists():
+            return yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+    except Exception:
+        pass
+    return {}
 
 
-def _save_cfg(contest_dir: Path, cfg: dict) -> None:
-    cfg["updated_at"] = datetime.datetime.now().isoformat()
-    _cfg_path(contest_dir).write_text(json.dumps(cfg, indent=2), encoding="utf-8")
+def _scan_existing_contests() -> list[dict]:
+    """Return list of contests already in data/contests/."""
+    found = []
+    if not CONTESTS_DIR.exists():
+        return found
+    for state_dir in sorted(CONTESTS_DIR.iterdir()):
+        if not state_dir.is_dir():
+            continue
+        for county_dir in sorted(state_dir.iterdir()):
+            if not county_dir.is_dir():
+                continue
+            for year_dir in sorted(county_dir.iterdir()):
+                if not year_dir.is_dir():
+                    continue
+                for slug_dir in sorted(year_dir.iterdir()):
+                    if not slug_dir.is_dir():
+                        continue
+                    raw_dir = slug_dir / "raw"
+                    files = list(raw_dir.glob("*.xlsx")) + list(raw_dir.glob("*.xls")) + list(raw_dir.glob("*.csv")) if raw_dir.exists() else []
+                    found.append({
+                        "state":  state_dir.name,
+                        "county": county_dir.name,
+                        "year":   year_dir.name,
+                        "slug":   slug_dir.name,
+                        "files":  [f.name for f in files],
+                        "path":   str(slug_dir.relative_to(BASE_DIR)),
+                        "has_manifest": (slug_dir / "manifests" / "primary_result_file.json").exists(),
+                    })
+    return found
 
 
-def _file_cfg(cfg: dict, filename: str) -> dict:
-    return cfg.setdefault("files", {}).setdefault(filename, {
-        "enabled": True, "weight": 1.0, "notes": ""
-    })
+def _write_manifest(raw_file: Path, state: str, county: str, year: str,
+                    slug: str, file_type: str, notes: str) -> None:
+    """Write/update the primary_result_file.json manifest."""
+    manifests_dir = raw_file.parent.parent / "manifests"
+    manifests_dir.mkdir(parents=True, exist_ok=True)
+    manifest = {
+        "state": state,
+        "county": county,
+        "year": year,
+        "contest_slug": slug,
+        "file_type": file_type,
+        "filename": raw_file.name,
+        "canonical_path": str(raw_file.relative_to(BASE_DIR)),
+        "notes": notes,
+        "ingested_at": datetime.datetime.now().isoformat(),
+    }
+    manifest_path = manifests_dir / "primary_result_file.json"
+    manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
 
 
-# ── Main render ────────────────────────────────────────────────────────────────
+def _write_contest_metadata(slug_dir: Path, state: str, county: str,
+                             year: str, slug: str) -> None:
+    """Write contest_metadata.json if not present."""
+    manifests_dir = slug_dir / "manifests"
+    manifests_dir.mkdir(parents=True, exist_ok=True)
+    meta_path = manifests_dir / "contest_metadata.json"
+    if not meta_path.exists():
+        meta_path.write_text(json.dumps({
+            "state": state, "county": county,
+            "year": year, "slug": slug,
+            "created_at": datetime.datetime.now().isoformat(),
+        }, indent=2), encoding="utf-8")
+
+
+# ── Main render ───────────────────────────────────────────────────────────────
 
 def render_upload() -> None:
     st.markdown("""
     <div style='background:linear-gradient(135deg,#0F766E,#0D9488);
          border-radius:12px;padding:18px 28px;margin-bottom:20px;color:white'>
-      <h2 style='margin:0;color:white'>📂 Contest Data Manager</h2>
+      <h2 style='margin:0;color:white'>📂 Upload Contest Data</h2>
       <p style='margin:4px 0 0 0;color:#CCFBF1'>
-        Browse · Upload · Rename · Delete · Enable/Disable · Set Weights
+        Tag your file on the way in — state, county, year, contest slug, and type are set before saving.
       </p>
     </div>""", unsafe_allow_html=True)
 
-    # ── Contest selector ──────────────────────────────────────────────────────
-    with st.container():
-        col1, col2, col3, col4 = st.columns(4)
-        with col1:
-            state = st.selectbox("State", US_STATES, key="dm_state")
-        with col2:
-            county = st.text_input("County", "Sonoma", key="dm_county").strip()
-        with col3:
-            year = st.selectbox("Year", [2026, 2025, 2024, 2023, 2022], index=2, key="dm_year")
-        with col4:
-            slug = st.text_input("Contest Slug", "nov2024_general", key="dm_slug").strip()
-
-    if not county or not slug:
-        st.warning("Fill in County and Contest Slug to continue.")
-        return
-
-    # Derived directories
-    contest_dir = BASE_DIR / "data" / state / "counties" / county / "votes" / str(year) / slug
-    geo_dir     = BASE_DIR / "data" / state / "counties" / county / "geography" / "precinct_shapes" / "MPREC_GeoJSON"
-    voter_dir   = BASE_DIR / "data" / state / "counties" / county / "voters" / str(year)
-    xwalk_dir   = BASE_DIR / "data" / state / "counties" / county / "crosswalks"
-
-    # Config
-    contest_dir.mkdir(parents=True, exist_ok=True)
-    cfg = _load_cfg(contest_dir)
+    # ── Existing contests panel ───────────────────────────────────────────────
+    existing = _scan_existing_contests()
+    if existing:
+        with st.expander(f"📁 Existing contests ({len(existing)} found) — click to see what's already loaded", expanded=False):
+            for c in existing:
+                files_str = ", ".join(c["files"]) if c["files"] else "_(no raw files yet)_"
+                manifest_badge = "✅" if c["has_manifest"] else "⚠️ no manifest"
+                st.markdown(
+                    f"**{c['state']} / {c['county']} / {c['year']} / `{c['slug']}`** "
+                    f"— {manifest_badge}  \n"
+                    f"📄 {files_str}  \n"
+                    f"<small style='color:#64748b'>`{c['path']}`</small>",
+                    unsafe_allow_html=True,
+                )
+                st.markdown("<hr style='margin:6px 0;border-color:#e2e8f0'>", unsafe_allow_html=True)
+    else:
+        st.info("No contests loaded yet. Upload your first file below.")
 
     st.divider()
 
-    tab_browse, tab_upload, tab_weights, tab_run = st.tabs([
-        "📁 Browse & Manage",
-        "⬆️ Upload New File",
-        "⚖️ Data Weights & Usage",
-        "▶️ Run Pipeline",
-    ])
-
-    with tab_browse:
-        _render_browse(contest_dir, geo_dir, voter_dir, xwalk_dir, cfg)
-
-    with tab_upload:
-        _render_upload(contest_dir, geo_dir, voter_dir, xwalk_dir, cfg)
-
-    with tab_weights:
-        _render_weights(contest_dir, geo_dir, voter_dir, xwalk_dir, cfg)
-
-    with tab_run:
-        _render_run(state, county, slug, year, contest_dir)
-
-
-# ── Tab: Browse & Manage ───────────────────────────────────────────────────────
-
-def _render_browse(contest_dir, geo_dir, voter_dir, xwalk_dir, cfg):
-    st.subheader("📁 Browse Files")
-
-    # Contest-scoped sections (need year + slug)
-    contest_sections = {
-        f"📊 Election Results  (`…/votes/{contest_dir.parent.name}/{contest_dir.name}/`)" +
-        "  ⬩ *contest-specific*": (
-            contest_dir, ["*.xlsx", "*.xls", "*.csv", "*.json"]
-        ),
-    }
-    # County-level sections (shared across all contests in county)
-    county_sections = {
-        f"🗺️ Geometry  (`…/MPREC_GeoJSON/`)" +
-        "  ⬩ *county-level — applies to all contests*": (
-            geo_dir, ["*.geojson", "*.json"]
-        ),
-        f"🗂️ Voter Files  (`…/voters/{voter_dir.name}/`)" +
-        "  ⬩ *year-level*": (
-            voter_dir, ["*.csv"]
-        ),
-        f"🔗 Crosswalks  (`…/crosswalks/`)" +
-        "  ⬩ *county-level*": (
-            xwalk_dir, ["*.csv", "*.json"]
-        ),
-    }
-
-    any_files = False
-    for section_label, (d, globs) in {**contest_sections, **county_sections}.items():
-        files = []
-        if d.exists():
-            for g in globs:
-                files += [f for f in d.glob(g) if f.name != CONFIG_FILE]
-        files = sorted(set(files))
-        if not files:
-            continue
-        any_files = True
-        with st.expander(section_label, expanded=(d == contest_dir)):
-            for f in files:
-                _file_row(f, contest_dir, cfg)
-
-    if not any_files:
-        st.info("No data files found. Use the **Upload** tab to add files.")
-
-    _save_cfg(contest_dir, cfg)
-
-
-def _file_row(f: Path, contest_dir: Path, cfg: dict):
-    """Render one file row with rename / delete / notes controls."""
-    fname = f.name
-    sz    = f.stat().st_size
-    mtime = datetime.datetime.fromtimestamp(f.stat().st_mtime).strftime("%Y-%m-%d %H:%M")
-    fc    = _file_cfg(cfg, fname)
-
-    # Status badge
-    enabled = fc.get("enabled", True)
-    badge = "🟢" if enabled else "🔴"
-
-    with st.container():
-        col_name, col_meta, col_en, col_actions = st.columns([3, 2, 1, 2])
-
-        with col_name:
-            st.markdown(f"**{badge} {fname}**")
-            st.caption(f"{sz:,} bytes · modified {mtime}")
-
-        with col_meta:
-            w = fc.get("weight", 1.0)
-            st.caption(f"Weight: **{w:.2f}**")
-            notes = fc.get("notes", "")
-            if notes:
-                st.caption(f"📝 {notes[:50]}")
-
-        with col_en:
-            new_en = st.toggle("On", value=enabled, key=f"en_{fname}", label_visibility="collapsed")
-            if new_en != enabled:
-                fc["enabled"] = new_en
-                st.rerun()
-
-        with col_actions:
-            a1, a2, a3 = st.columns(3)
-            with a1:
-                # Download
-                data = f.read_bytes()
-                st.download_button("⬇️", data, file_name=fname, key=f"dl_{fname}",
-                                   help="Download", use_container_width=True)
-            with a2:
-                # Rename
-                if st.button("✏️", key=f"rename_btn_{fname}", help="Rename", use_container_width=True):
-                    st.session_state[f"renaming_{fname}"] = True
-            with a3:
-                # Delete
-                if st.button("🗑️", key=f"del_btn_{fname}", help="Delete", use_container_width=True):
-                    st.session_state[f"confirm_del_{fname}"] = True
-
-        # Rename form
-        if st.session_state.get(f"renaming_{fname}"):
-            new_name = st.text_input("New filename", value=fname, key=f"new_name_{fname}")
-            rc1, rc2 = st.columns(2)
-            with rc1:
-                if st.button("✅ Save rename", key=f"save_rename_{fname}"):
-                    new_name = new_name.strip()
-                    if new_name and new_name != fname:
-                        new_path = f.parent / new_name
-                        if new_path.exists():
-                            st.error(f"`{new_name}` already exists.")
-                        else:
-                            f.rename(new_path)
-                            # Move config entry
-                            if fname in cfg.get("files", {}):
-                                cfg["files"][new_name] = cfg["files"].pop(fname)
-                            st.success(f"Renamed → `{new_name}`")
-                            del st.session_state[f"renaming_{fname}"]
-                            st.rerun()
-            with rc2:
-                if st.button("❌ Cancel", key=f"cancel_rename_{fname}"):
-                    del st.session_state[f"renaming_{fname}"]
-                    st.rerun()
-
-        # Delete confirmation
-        if st.session_state.get(f"confirm_del_{fname}"):
-            st.warning(f"⚠️ Delete `{fname}` permanently?")
-            dc1, dc2 = st.columns(2)
-            with dc1:
-                if st.button("🗑️ Yes, delete", key=f"confirm_yes_{fname}", type="primary"):
-                    f.unlink()
-                    cfg.get("files", {}).pop(fname, None)
-                    st.success(f"Deleted `{fname}`.")
-                    del st.session_state[f"confirm_del_{fname}"]
-                    st.rerun()
-            with dc2:
-                if st.button("↩️ Cancel", key=f"confirm_no_{fname}"):
-                    del st.session_state[f"confirm_del_{fname}"]
-                    st.rerun()
-
-        st.markdown("<hr style='margin:4px 0;border-color:#E2E8F0'>", unsafe_allow_html=True)
-
-
-# ── Tab: Upload ────────────────────────────────────────────────────────────────
-
-def _render_upload(contest_dir, geo_dir, voter_dir, xwalk_dir, cfg):
-    st.subheader("⬆️ Upload a New File")
-
-    file_type = st.radio(
-        "What are you uploading?",
-        ["📊 Election Results (XLSX/XLS)", "🗺️ Precinct Geometry (GeoJSON)", "🗂️ CSV (voter file / crosswalk / other)"],
-        horizontal=True, key="up_type",
+    # ── File type selector ────────────────────────────────────────────────────
+    st.markdown("### Step 1 — What are you uploading?")
+    file_type_label = st.radio(
+        "File type",
+        ["📊 Election Results (XLSX / XLS)",
+         "🗺️ Precinct Geometry (GeoJSON)",
+         "🗂️ Voter File / Crosswalk / Other (CSV)"],
+        horizontal=True,
+        key="up_file_type",
+        label_visibility="collapsed",
     )
 
-    if "Election Results" in file_type:
-        st.caption(
-            f"📌 **Contest-specific.** Will be saved to:  "
-            f"`data/{contest_dir.relative_to(BASE_DIR / 'data')}/`"
-        )
-        _upload_results(contest_dir, cfg)
+    st.divider()
 
-    elif "GeoJSON" in file_type:
-        st.caption(
-            "📌 **County-level** — GeoJSON boundaries apply to all contests in this county, "
-            "not just one year or slug. Year / Contest Slug above are **ignored** for this file type."
-        )
-        # Geo path: state + county only — derive fresh from sidebar values
-        _state = st.session_state.get("dm_state", "CA")
-        _county = st.session_state.get("dm_county", "Sonoma").strip()
-        _geo_dir = BASE_DIR / "data" / _state / "counties" / _county / "geography" / "precinct_shapes" / "MPREC_GeoJSON"
-        st.info(f"Save location: `{_geo_dir.relative_to(BASE_DIR)}`")
-        _upload_geojson(_geo_dir)
-
+    if "Election Results" in file_type_label:
+        _upload_results_flow()
+    elif "GeoJSON" in file_type_label:
+        _upload_geojson_flow()
     else:
-        st.caption(
-            "📌 Voter files are **year-level** (all contests in a year share one voter file). "
-            "Crosswalks are **county-level**. Contest Slug above is ignored for these."
-        )
-        _state  = st.session_state.get("dm_state",  "CA")
-        _county = st.session_state.get("dm_county", "Sonoma").strip()
-        _year   = st.session_state.get("dm_year",   2024)
-        _voter_dir = BASE_DIR / "data" / _state / "counties" / _county / "voters" / str(_year)
-        _xwalk_dir = BASE_DIR / "data" / _state / "counties" / _county / "crosswalks"
-        _upload_csv(_voter_dir, _xwalk_dir)
+        _upload_csv_flow()
 
 
-def _upload_results(contest_dir: Path, cfg: dict):
-    existing = list(contest_dir.glob("detail*.xlsx")) + list(contest_dir.glob("detail*.xls"))
-    if existing:
-        st.success(f"✅ `{existing[0].name}` already exists — uploading will overwrite or add alongside it.")
-    else:
-        st.warning("⚠️ No results workbook yet for this contest.")
+# ── Election results flow ─────────────────────────────────────────────────────
 
-    up = st.file_uploader("Choose detail.xlsx or detail.xls", type=["xlsx","xls"], key="up_results")
-    if up:
-        try:
-            import pandas as pd
-            df = pd.read_excel(io.BytesIO(up.getvalue()), sheet_name=0, nrows=5)
-            st.caption(f"Preview — {len(df.columns)} columns: `{list(df.columns)}`")
-            st.dataframe(df, use_container_width=True, hide_index=True)
-        except Exception as e:
-            st.warning(f"Can't preview ({e}) — you can still save.")
-
-        save_name = st.text_input("Save as filename", value="detail.xlsx", key="up_results_name")
-        if st.button("💾 Save", key="save_results", type="primary"):
-            contest_dir.mkdir(parents=True, exist_ok=True)
-            out = contest_dir / save_name.strip()
-            out.write_bytes(up.getvalue())
-            _file_cfg(cfg, out.name)  # register in config
-            _save_cfg(contest_dir, cfg)
-            st.success(f"✅ Saved → `{out.relative_to(BASE_DIR)}`")
-            st.balloons()
-
-
-def _upload_geojson(geo_dir: Path):
-    up = st.file_uploader("Choose a .geojson file", type=["geojson","json"], key="up_geo")
-    if up:
-        import json as _j
-        try:
-            gj = _j.loads(up.getvalue())
-            st.info(f"ℹ️ {len(gj.get('features',[]))} features detected.")
-        except Exception as e:
-            st.error(f"Invalid GeoJSON: {e}"); return
-
-        fname = up.name if up.name.endswith(".geojson") else up.name.replace(".json",".geojson")
-        save_name = st.text_input("Save as filename", value=fname, key="up_geo_name")
-        if st.button("💾 Save", key="save_geo", type="primary"):
-            geo_dir.mkdir(parents=True, exist_ok=True)
-            out = geo_dir / save_name.strip()
-            out.write_bytes(up.getvalue())
-            st.success(f"✅ Saved → `{out.relative_to(BASE_DIR)}`")
-
-
-def _upload_csv(voter_dir: Path, xwalk_dir: Path):
-    purpose = st.selectbox("File purpose", ["Voter File", "Crosswalk", "Other"], key="up_csv_pur")
-    target  = voter_dir if purpose == "Voter File" else (xwalk_dir if purpose == "Crosswalk" else voter_dir.parent / "supplemental")
-    up = st.file_uploader("Choose a .csv file", type=["csv"], key="up_csv")
-    if up:
-        import pandas as pd
-        try:
-            df = pd.read_csv(io.BytesIO(up.getvalue()), nrows=5)
-            st.caption(f"Preview — {len(df.columns)} cols: `{list(df.columns)}`")
-            st.dataframe(df, use_container_width=True, hide_index=True)
-        except Exception as e:
-            st.warning(f"Can't preview: {e}")
-
-        save_name = st.text_input("Save as filename", value=up.name, key="up_csv_name")
-        if st.button("💾 Save", key="save_csv", type="primary"):
-            target.mkdir(parents=True, exist_ok=True)
-            out = target / save_name.strip()
-            out.write_bytes(up.getvalue())
-            st.success(f"✅ Saved → `{out.relative_to(BASE_DIR)}`")
-
-
-# ── Tab: Weights & Usage ───────────────────────────────────────────────────────
-
-def _render_weights(contest_dir, geo_dir, voter_dir, xwalk_dir, cfg):
-    st.subheader("⚖️ Data Weights & Usage")
-    st.markdown(
-        "Control **which files are used** in the next pipeline run and how much weight they carry. "
-        "Disabled files are skipped entirely. Weight affects blending when multiple datasets overlap.\n\n"
-        "> Settings are saved to `data_config.json` in the contest directory and read by the pipeline."
+def _upload_results_flow():
+    """Full tag-on-intake flow for election result workbooks."""
+    st.markdown("### Step 2 — Choose your file")
+    up = st.file_uploader(
+        "Upload election results workbook (.xlsx or .xls)",
+        type=["xlsx", "xls"],
+        key="up_results_file",
     )
 
-    # Collect all files across all relevant dirs
-    all_dirs   = [contest_dir, geo_dir, voter_dir, xwalk_dir]
-    all_files  = []
-    for d in all_dirs:
-        if d.exists():
-            all_files += [f for f in d.rglob("*") if f.is_file() and f.name != CONFIG_FILE]
-
-    if not all_files:
-        st.info("No files found. Upload files first.")
+    if not up:
+        st.caption("Accepted: Statement of Votes Cast, Canvass Report, Detail Export, etc.")
         return
 
-    changed = False
-    for f in sorted(all_files):
-        fname = f.name
-        fc    = _file_cfg(cfg, fname)
+    # ── File preview ─────────────────────────────────────────────────────────
+    try:
+        import pandas as pd
+        df = pd.read_excel(io.BytesIO(up.getvalue()), sheet_name=0, nrows=5)
+        with st.expander("🔍 File preview (first 5 rows)", expanded=True):
+            st.caption(f"{len(df.columns)} columns: `{list(df.columns)[:10]}`")
+            st.dataframe(df, use_container_width=True, hide_index=True)
+    except Exception as e:
+        st.warning(f"Can't preview: {e}")
 
-        with st.container():
-            c1, c2, c3, c4 = st.columns([3, 1, 2, 3])
-            with c1:
-                st.markdown(f"**{fname}**")
-                st.caption(str(f.relative_to(BASE_DIR)))
-            with c2:
-                en = st.toggle("Use", value=fc.get("enabled", True), key=f"w_en_{fname}")
-                if en != fc.get("enabled", True):
-                    fc["enabled"] = en; changed = True
-            with c3:
-                w = st.number_input(
-                    "Weight", min_value=0.0, max_value=10.0,
-                    value=float(fc.get("weight", 1.0)), step=0.1,
-                    key=f"w_val_{fname}",
-                    help="1.0 = normal. 0 = ignored. 2.0 = double weight.",
-                    disabled=not fc.get("enabled", True),
-                )
-                if abs(w - fc.get("weight", 1.0)) > 0.001:
-                    fc["weight"] = round(w, 2); changed = True
-            with c4:
-                notes = st.text_input(
-                    "Notes", value=fc.get("notes", ""),
-                    key=f"w_notes_{fname}",
-                    placeholder="e.g. 'prelim only', 'use for turnout only'",
-                    label_visibility="collapsed",
-                )
-                if notes != fc.get("notes", ""):
-                    fc["notes"] = notes; changed = True
+    st.divider()
+    st.markdown("### Step 3 — Tag this file before saving")
+    st.caption("These tags determine where the file is saved and how the pipeline finds it.")
 
-        st.markdown("<hr style='margin:4px 0;border-color:#E2E8F0'>", unsafe_allow_html=True)
+    # Pre-fill from active campaign
+    ac = _load_active_campaign()
 
-    if st.button("💾 Save weight settings", type="primary", key="save_weights"):
-        _save_cfg(contest_dir, cfg)
-        st.success("✅ `data_config.json` updated — weights will be applied on next pipeline run.")
-    elif changed:
-        _save_cfg(contest_dir, cfg)
-
-    # Show raw config
-    with st.expander("🔍 View data_config.json"):
-        st.json(cfg)
-
-    st.download_button(
-        "⬇️ Download data_config.json",
-        json.dumps(cfg, indent=2).encode("utf-8"),
-        file_name=CONFIG_FILE, mime="application/json",
-    )
-
-
-# ── Tab: Run Pipeline ──────────────────────────────────────────────────────────
-
-def _find_detail_path(contest_dir: Path, state: str, county: str, year: str, slug: str) -> Path | None:
-    """
-    Search for the detail.xlsx/xls in priority order:
-      1. contest_dir itself (data/CA/counties/<county>/votes/<year>/<slug>/)
-      2. data_config.json registered file path in contest_dir
-      3. Legacy votes/<year>/<state>/<county>/<slug>/
-    Returns the first Path that exists, or None.
-    """
-    # 1. Canonical dir
-    for ext in (".xlsx", ".xls"):
-        p = contest_dir / f"detail{ext}"
-        if p.exists():
-            return p
-
-    # 2. data_config.json registered file
-    cfg_path = contest_dir / "data_config.json"
-    if cfg_path.exists():
-        try:
-            cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
-            for fname, finfo in cfg.get("files", {}).items():
-                if finfo.get("enabled", True) and fname.lower() in ("detail.xlsx", "detail.xls"):
-                    p = contest_dir / fname
-                    if p.exists():
-                        return p
-        except Exception:
-            pass
-
-    # 3. Legacy path
-    legacy = BASE_DIR / "votes" / str(year) / state / county / slug
-    for ext in (".xlsx", ".xls"):
-        p = legacy / f"detail{ext}"
-        if p.exists():
-            return p
-
-    return None
-
-
-def _render_run(state, county, slug, year, contest_dir: Path):
-    st.subheader("▶️ Run Pipeline for This Contest")
-
-    # Auto-detect the detail file
-    detail_path = _find_detail_path(contest_dir, state, county, str(year), slug)
-
-    if detail_path:
-        st.success(f"✅ Election results file found: `{detail_path.relative_to(BASE_DIR)}`")
-        detail_flag = f' --detail-path "{detail_path.relative_to(BASE_DIR)}"'
-        detail_args = ["--detail-path", str(detail_path)]
-    else:
-        st.warning(
-            "⚠️ No `detail.xlsx` / `detail.xls` found for this contest. "
-            "Upload the election results file in the **Upload New File** tab first."
-        )
-        detail_flag = ""
-        detail_args = []
-
-    cmd_str = (
-        f"python scripts/run_pipeline.py --state {state} --county {county} "
-        f"--year {year} --contest-slug {slug}{detail_flag}"
-    )
-    st.code(cmd_str, language="bash")
-
-    st.markdown(
-        "After uploading or modifying files, run the pipeline to process the contest data and regenerate all outputs.\n\n"
-        "_Typical runtime: ~2 minutes. Map output requires `geopandas` (optional)._"
-    )
-
-    col1, col2 = st.columns([2, 3])
+    col1, col2, col3, col4 = st.columns(4)
     with col1:
-        run_clicked = st.button(
-            "▶️ Run Now",
-            type="primary" if detail_path else "secondary",
-            key="run_pipe",
-            use_container_width=True,
-            disabled=(not detail_path),
-        )
+        ac_state = ac.get("state", "CA")
+        default_state_idx = US_STATES.index(ac_state) if ac_state in US_STATES else 0
+        state = st.selectbox("State *", US_STATES, index=default_state_idx, key="up_state")
     with col2:
-        force_run = st.checkbox(
-            "Run anyway (no election results)",
-            key="force_run_chk",
-            disabled=bool(detail_path),
-            help="Run geo-only steps even without a detail file.",
+        county = st.text_input("County *", value=ac.get("county", ""), key="up_county",
+                               placeholder="e.g. Sonoma").strip()
+    with col3:
+        ac_year = int(ac.get("year", CURRENT_YEAR))
+        safe_year = ac_year if ac_year in YEAR_OPTIONS else CURRENT_YEAR
+        year = st.selectbox("Election Year *", YEAR_OPTIONS,
+                            index=YEAR_OPTIONS.index(safe_year), key="up_year")
+    with col4:
+        slug = st.text_input("Contest Slug *", value=ac.get("contest_slug", ""), key="up_slug",
+                             placeholder="e.g. nov2025_special",
+                             help="URL-safe name: month+year+type, e.g. nov2025_general").strip()
+
+    col5, col6 = st.columns(2)
+    with col5:
+        file_subtype = st.selectbox(
+            "File subtype",
+            ["canvass", "detail", "statement_of_votes", "totals", "other"],
+            key="up_subtype",
+            help="How this file is used by the pipeline",
+        )
+    with col6:
+        save_name = st.text_input("Save as filename", value=up.name, key="up_save_name")
+
+    notes = st.text_input("Provenance note (optional)", key="up_notes",
+                          placeholder="e.g. 'Sonoma ROV official canvass 2025-11-05'")
+
+    # ── Destination preview ───────────────────────────────────────────────────
+    if county and slug:
+        dest = CONTESTS_DIR / state / county / str(year) / slug / "raw" / save_name.strip()
+        st.markdown(
+            f"<div style='background:#0f172a;border-radius:8px;padding:10px 16px;margin:10px 0;"
+            f"font-size:0.85rem;color:#94a3b8'>📁 Will save to:<br>"
+            f"<b style='color:#38bdf8'>{dest.relative_to(BASE_DIR)}</b></div>",
+            unsafe_allow_html=True,
         )
 
-    if run_clicked or (force_run and st.button("▶️ Force Run", key="force_run_btn")):
-        import subprocess, sys
-        base_cmd = [
-            sys.executable, "scripts/run_pipeline.py",
-            "--state", state, "--county", county,
-            "--year", str(year), "--contest-slug", slug,
-            "--no-commit",
-        ]
-        if detail_args:
-            base_cmd += detail_args
-
-        with st.spinner("Running pipeline… (this may take 1–2 minutes)"):
-            result = subprocess.run(
-                base_cmd,
-                capture_output=True, text=True, timeout=360, cwd=str(BASE_DIR),
-            )
-
-        if result.returncode == 0:
-            st.success("✅ Pipeline completed successfully!")
+        # ── Save button ───────────────────────────────────────────────────────
+        if not slug:
+            st.warning("Fill in Contest Slug before saving.")
         else:
-            st.error("❌ Pipeline returned an error — see output below.")
-
-        # Show output with key metrics highlighted
-        raw_out = (result.stdout or "") + (result.stderr or "")
-        step_lines = [l for l in raw_out.splitlines() if any(
-            kw in l for kw in ["DONE", "SKIP", "FAIL", "ERROR", "precincts", "Run complete", "elapsed", "registered"]
-        )]
-        if step_lines:
-            with st.expander("📊 Pipeline steps summary", expanded=True):
-                st.code("\n".join(step_lines[-60:]))
-        with st.expander("📄 Full pipeline output"):
-            st.code(raw_out[-8000:])
+            if st.button("💾 Save & Register", type="primary", key="up_save_results",
+                         use_container_width=False):
+                _do_save_results(up, state, county, str(year), slug,
+                                 file_subtype, save_name.strip(), notes)
+    else:
+        if not county:
+            st.warning("Fill in County.")
+        if not slug:
+            st.warning("Fill in Contest Slug  (e.g. `nov2025_general`)")
 
 
+def _do_save_results(up, state: str, county: str, year: str, slug: str,
+                     file_subtype: str, save_name: str, notes: str) -> None:
+    raw_dir = CONTESTS_DIR / state / county / year / slug / "raw"
+    raw_dir.mkdir(parents=True, exist_ok=True)
+    dest = raw_dir / save_name
+
+    # Check for existing and warn
+    if dest.exists():
+        st.warning(f"⚠️ `{save_name}` already exists — it will be overwritten.")
+
+    dest.write_bytes(up.getvalue())
+    _write_manifest(dest, state, county, year, slug, file_subtype, notes)
+    _write_contest_metadata(CONTESTS_DIR / state / county / year / slug,
+                            state, county, year, slug)
+
+    st.success(f"✅ Saved → `{dest.relative_to(BASE_DIR)}`")
+    st.success("✅ Manifest written — pipeline can now find this file automatically.")
+    st.info(
+        f"**Next step:** Go to **▶️ Pipeline Runner** and run with:\n\n"
+        f"`--state {state} --county {county} --year {year} --contest-slug {slug}`"
+    )
+    st.balloons()
+    # Clear uploader state
+    st.session_state.pop("up_results_file", None)
+
+
+# ── GeoJSON flow ──────────────────────────────────────────────────────────────
+
+def _upload_geojson_flow():
+    """GeoJSON is county-level — saved to data/CA/counties/Sonoma/geography/precinct_shapes/."""
+    st.markdown("### Step 2 — Choose your GeoJSON file")
+    st.caption("GeoJSON precinct boundaries are **county-level** — they apply to all election years.")
+    up = st.file_uploader("Upload precinct boundary file (.geojson)", type=["geojson", "json"],
+                          key="up_geo_file")
+    if not up:
+        return
+
+    try:
+        gj = json.loads(up.getvalue())
+        st.info(f"ℹ️ {len(gj.get('features', []))} precinct features detected.")
+    except Exception as e:
+        st.error(f"Invalid GeoJSON: {e}"); return
+
+    st.divider()
+    st.markdown("### Step 3 — Tag this file")
+
+    ac = _load_active_campaign()
+    col1, col2 = st.columns(2)
+    with col1:
+        ac_state = ac.get("state", "CA")
+        default_state_idx = US_STATES.index(ac_state) if ac_state in US_STATES else 0
+        state = st.selectbox("State *", US_STATES, index=default_state_idx, key="up_geo_state")
+    with col2:
+        county = st.text_input("County *", value=ac.get("county", ""), key="up_geo_county",
+                               placeholder="e.g. Sonoma").strip()
+
+    fname = up.name if up.name.endswith(".geojson") else up.name.replace(".json", ".geojson")
+    save_name = st.text_input("Save as filename", value=fname, key="up_geo_name")
+
+    if county:
+        geo_dir = BASE_DIR / "data" / state / "counties" / county / "geography" / "precinct_shapes" / "MPREC_GeoJSON"
+        dest = geo_dir / save_name.strip()
+        st.markdown(
+            f"<div style='background:#0f172a;border-radius:8px;padding:10px 16px;margin:10px 0;"
+            f"font-size:0.85rem;color:#94a3b8'>📁 Will save to:<br>"
+            f"<b style='color:#38bdf8'>{dest.relative_to(BASE_DIR)}</b></div>",
+            unsafe_allow_html=True,
+        )
+        if st.button("💾 Save GeoJSON", type="primary", key="up_save_geo"):
+            geo_dir.mkdir(parents=True, exist_ok=True)
+            dest.write_bytes(up.getvalue())
+            st.success(f"✅ Saved → `{dest.relative_to(BASE_DIR)}`")
+            st.info("Geometry will be picked up automatically on next pipeline run.")
+            st.session_state.pop("up_geo_file", None)
+    else:
+        st.warning("Fill in County.")
+
+
+# ── CSV / Voter / Crosswalk flow ──────────────────────────────────────────────
+
+def _upload_csv_flow():
+    """CSV uploads: voter file (year-level) or crosswalk (county-level)."""
+    st.markdown("### Step 2 — What kind of CSV is this?")
+    purpose = st.selectbox(
+        "File purpose",
+        ["Voter File", "Crosswalk", "Supplemental"],
+        key="up_csv_purpose",
+        help="Voter files are year-level. Crosswalks are county-level.",
+    )
+
+    up = st.file_uploader("Upload CSV file", type=["csv"], key="up_csv_file")
+    if not up:
+        return
+
+    try:
+        import pandas as pd
+        df = pd.read_csv(io.BytesIO(up.getvalue()), nrows=5)
+        with st.expander("🔍 Preview", expanded=True):
+            st.caption(f"{len(df.columns)} columns: `{list(df.columns)[:10]}`")
+            st.dataframe(df, use_container_width=True, hide_index=True)
+    except Exception as e:
+        st.warning(f"Can't preview: {e}")
+
+    st.divider()
+    st.markdown("### Step 3 — Tag this file")
+
+    ac = _load_active_campaign()
+    col1, col2 = st.columns(2)
+    with col1:
+        ac_state = ac.get("state", "CA")
+        default_state_idx = US_STATES.index(ac_state) if ac_state in US_STATES else 0
+        state = st.selectbox("State *", US_STATES, index=default_state_idx, key="up_csv_state")
+    with col2:
+        county = st.text_input("County *", value=ac.get("county", ""), key="up_csv_county",
+                               placeholder="e.g. Sonoma").strip()
+
+    if purpose == "Voter File":
+        ac_year = int(ac.get("year", CURRENT_YEAR))
+        safe_year = ac_year if ac_year in YEAR_OPTIONS else CURRENT_YEAR
+        year = st.selectbox("Election Year *", YEAR_OPTIONS,
+                            index=YEAR_OPTIONS.index(safe_year), key="up_csv_year")
+        target = BASE_DIR / "data" / state / "counties" / county / "voters" / str(year) if county else None
+    elif purpose == "Crosswalk":
+        year = None
+        target = BASE_DIR / "data" / state / "counties" / county / "geography" / "crosswalks" if county else None
+    else:
+        year = None
+        target = BASE_DIR / "data" / state / "counties" / county / "supplemental" if county else None
+
+    save_name = st.text_input("Save as filename", value=up.name, key="up_csv_name")
+
+    if county and target:
+        dest = target / save_name.strip()
+        st.markdown(
+            f"<div style='background:#0f172a;border-radius:8px;padding:10px 16px;margin:10px 0;"
+            f"font-size:0.85rem;color:#94a3b8'>📁 Will save to:<br>"
+            f"<b style='color:#38bdf8'>{dest.relative_to(BASE_DIR)}</b></div>",
+            unsafe_allow_html=True,
+        )
+        if st.button("💾 Save", type="primary", key="up_save_csv"):
+            target.mkdir(parents=True, exist_ok=True)
+            dest.write_bytes(up.getvalue())
+            st.success(f"✅ Saved → `{dest.relative_to(BASE_DIR)}`")
+            st.session_state.pop("up_csv_file", None)
+    else:
+        if not county:
+            st.warning("Fill in County.")
