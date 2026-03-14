@@ -177,23 +177,33 @@ def apply_lifts(
 
     df = universe_df.copy()
 
-    # ── Column resolver with explicit warning on missing critical columns
-    def _c(*names, critical: bool = False):
+    # ── Column resolver (silent — callers must ensure required cols exist)
+    def _c(*names):
         for n in names:
             if n in df.columns:
                 return df[n].fillna(0)
-        if critical:
-            log.warning(
-                f"[LIFT_MODELS] Critical column(s) {names} not found in DataFrame. "
-                f"Defaulting to 0.0 — this will impact vote projections. "
-                f"Available columns: {list(df.columns)[:10]}"
-            )
         return pd.Series(0.0, index=df.index)
 
-    reg      = _c("registered", critical=True).clip(lower=0)
-    to_base  = _c("turnout_pct", "turnout_rate", critical=True).clip(0, 1)
-    sup_base = _c("support_pct", "yes_rate", critical=True).clip(0, 1)
+    reg      = _c("registered").clip(lower=0)
+    sup_base = _c("support_pct", "yes_rate").clip(0, 1)
     contacts = _c(contacts_col, "contacts_estimated").clip(lower=0)
+
+    # ── Resolve turnout_base — derive from data if column missing
+    if "turnout_pct" in df.columns:
+        to_base = df["turnout_pct"].fillna(0).clip(0, 1)
+    elif "turnout_rate" in df.columns:
+        to_base = df["turnout_rate"].fillna(0).clip(0, 1)
+    elif "ballots_cast" in df.columns:
+        # Derive from ballots_cast / registered (safe divide)
+        denom = reg.replace(0, np.nan)
+        to_base = (df["ballots_cast"].fillna(0) / denom).fillna(0).clip(0, 1)
+        log.debug("[LIFT_MODELS] turnout_pct derived from ballots_cast/registered")
+    else:
+        log.warning(
+            "[LIFT_MODELS] turnout_pct not found and cannot be derived — defaulting to 0.0. "
+            f"Available: {list(df.columns)}"
+        )
+        to_base = pd.Series(0.0, index=df.index)
 
     # ── Lift curves
     t_lift = turnout_lift_vec(contacts, max_to, k_to)
@@ -268,6 +278,18 @@ def apply_lifts_mc(
     max_to_base = curves.get("max_turnout_lift_pct",   0.08)
     max_pe_base = curves.get("max_persuasion_lift_pct", 0.06)
 
+    # Pre-compute turnout_pct ONCE so apply_lifts() never warns inside the loop
+    df_pre = universe_df.copy()
+    if "turnout_pct" not in df_pre.columns and "turnout_rate" not in df_pre.columns:
+        reg_pre = df_pre.get("registered", pd.Series(0.0, index=df_pre.index)).clip(lower=0)
+        if "ballots_cast" in df_pre.columns:
+            denom = reg_pre.replace(0, np.nan)
+            df_pre["turnout_pct"] = (df_pre["ballots_cast"].fillna(0) / denom).fillna(0).clip(0, 1)
+            log.debug("[LIFT_MODELS][MC] turnout_pct derived from ballots_cast/registered")
+        else:
+            df_pre["turnout_pct"] = 0.0
+            log.warning("[LIFT_MODELS][MC] turnout_pct unavailable — MC will use 0.0 baseline")
+
     for _ in range(n_iter):
         # Sample uncertain max_lift from prior
         sampled_max_to = float(rng.normal(max_to_base, to_mean * 3))
@@ -280,7 +302,7 @@ def apply_lifts_mc(
         cfg_i["curves"]["max_turnout_lift_pct"]   = sampled_max_to
         cfg_i["curves"]["max_persuasion_lift_pct"] = sampled_max_pe
 
-        lifted = apply_lifts(universe_df, contacts_col, cfg_i, persuasion_direction)
+        lifted = apply_lifts(df_pre, contacts_col, cfg_i, persuasion_direction)
         results.append(lifted["net_margin_gain"].sum())
 
     arr = np.array(results)
