@@ -664,7 +664,6 @@ def run_pipeline(
             global_all_universes[sname].append(udf)
 
     # Re-combine into expected schema for Step 17+
-    import pandas as pd
     all_scored_dfs = []
     for sname, dfs in global_all_scored_dfs.items():
         if dfs:
