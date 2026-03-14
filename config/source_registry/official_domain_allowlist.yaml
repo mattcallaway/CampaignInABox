@@ -27,6 +27,9 @@ gov_tier:
     # Sonoma County — official .gov domain
     - sonomacounty.gov
     - www.sonomacounty.gov
+    # Sonoma County — primary county website (ca.gov subdomain)
+    - sonomacounty.ca.gov
+    - www.sonomacounty.ca.gov
     # Sonoma County — official Registrar domain (redirects to sonomacounty.gov)
     - socovotes.com
     - www.socovotes.com

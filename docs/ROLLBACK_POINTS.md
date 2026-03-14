@@ -352,3 +352,40 @@ First post-confidence-enforcement snapshot. Registry is now policy-enforced.
 - `ui/dashboard/app.py` — use resolver for state bootstrap + cache invalidation on campaign switch
 - `docs/SYSTEM_TECHNICAL_MAP.md` — add campaign-scoped state + archive normalizer docs
 - `data/historical_elections/archive_registry.yaml` — add normalization provenance fields
+
+---
+
+### Entry 15 — Pre Prompt 25C: Election Directory Predictor
+
+| Field | Value |
+|-------|-------|
+| **Timestamp** | 2026-03-13T18:43:00-07:00 |
+| **Branch** | `rollback/prompt25C_pre_directory_predictor` |
+| **Tag** | `v_pre_prompt25C_directory_predictor` |
+| **Reason** | Adding deterministic election directory prediction engine |
+| **Note** | Motivated by Prompt 25B discovering 0 candidate files in offline runs. Predictor generates URL path hypotheses (10 patterns × 5 years = 50 candidates), HTTP-tests them, and feeds confirmed directories to the existing page_explorer crawler. |
+
+#### What Was Working at This Point
+- `link_extractor.py` — 7-source link extraction (P25B, 58/58 validated)
+- `viewer_resolver.py` — CivicEngage + ASP.NET viewer URL resolution (P25B)
+- `page_explorer.py` — depth-3 recursive crawler with visited URL set (P25B)
+- `page_discovery.py` — Prompt 25B scoring (SoV+0.30, Precinct+0.20, Detail+0.20, URL+0.30)
+- `file_discovery.py` — 5-factor scoring (MIN_CANDIDATE_SCORE=0.50)
+- `file_downloader.py` — SHA-256 dedup + page_depth + candidate_score in registry
+- `archive_builder.py` — full 10-step orchestrator
+- Source registry: 16 contest sources + 10 geometry sources, CA/Sonoma locked
+- Platform: multi-campaign state isolation, session manager, admin layer (P27 + P20.8)
+
+#### What This Rollback Protects Against
+- `election_directory_predictor.py` introducing broken HTTP logic or cross-jurisdiction crawl
+- `file_discovery.py` scoring change (0.50 → 0.60 threshold) blocking previously accepted files
+- `archive_builder.py` Step 2.5 integration breaking existing Steps 3–11
+- 4 new report files causing file write errors in the pipeline
+
+#### To Restore
+```bash
+git checkout rollback/prompt25C_pre_directory_predictor
+# or
+git checkout tags/v_pre_prompt25C_directory_predictor
+python scripts/tools/run_p25b_validation.py   # should still pass 58/58
+```

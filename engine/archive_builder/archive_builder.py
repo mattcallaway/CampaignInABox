@@ -1,5 +1,5 @@
 """
-engine/archive_builder/archive_builder.py — Prompt 25
+engine/archive_builder/archive_builder.py — Prompt 25 / 25B / 25C
 
 Main orchestrator for the Historical Election Archive Builder.
 Prompt 25 upgrade: pre-condition checks, jurisdiction lock, page_discovery,
@@ -44,15 +44,16 @@ ARCHIVE_CONFIDENCE_THRESHOLD = 0.80  # minimum to auto-ingest
 
 # ── Required systems ──────────────────────────────────────────────────────────
 REQUIRED_SYSTEMS = [
-    ("engine.archive_builder.source_scanner",       "scan_all_sources"),
-    ("engine.archive_builder.page_discovery",       "discover_election_pages"),
-    ("engine.archive_builder.file_discovery",       "discover_files_from_page"),
-    ("engine.archive_builder.file_downloader",      "download_batch"),
-    ("engine.archive_builder.archive_classifier",   "classify_candidate_file"),
-    ("engine.archive_builder.archive_ingestor",     "ingest_classified_file"),
-    ("engine.archive_builder.archive_registry",     "register_election"),
-    ("engine.archive_builder.archive_output_writer","write_archive_outputs"),
-    ("engine.state.campaign_state_resolver",        "get_active_campaign_id"),
+    ("engine.archive_builder.source_scanner",            "scan_all_sources"),
+    ("engine.archive_builder.page_discovery",            "discover_election_pages"),
+    ("engine.archive_builder.file_discovery",            "discover_files_from_page"),
+    ("engine.archive_builder.file_downloader",           "download_batch"),
+    ("engine.archive_builder.archive_classifier",        "classify_candidate_file"),
+    ("engine.archive_builder.archive_ingestor",          "ingest_classified_file"),
+    ("engine.archive_builder.archive_registry",          "register_election"),
+    ("engine.archive_builder.archive_output_writer",     "write_archive_outputs"),
+    ("engine.archive_builder.election_directory_predictor", "predict_election_result_paths"),  # P25C
+    ("engine.state.campaign_state_resolver",             "get_active_campaign_id"),
 ]
 
 
@@ -76,6 +77,12 @@ class ArchiveBuildResult:
     archive_outputs:     dict[str, str]
     errors:              list[str]
     preconditions_ok:    bool
+    # Prompt 25C additions
+    predicted_directories:  int = 0
+    directories_confirmed:  int = 0
+    directory_files_found:  int = 0
+    directory_predictions_report: Optional[str] = None
+    archive_discovery_report:     Optional[str] = None
 
 
 # ── Step 0: Pre-condition check ───────────────────────────────────────────────
@@ -124,7 +131,163 @@ def _election_id_from_source(source: dict) -> str:
     return f"{year}_{etype}"
 
 
-# ── Main orchestrator ─────────────────────────────────────────────────────────
+# ── Step 2.5: Directory prediction (Prompt 25C) ───────────────────────────────
+
+def _write_predictor_reports(run_id: str, prediction_result) -> tuple[str, str]:
+    """
+    Write directory_predictions.md and directory_predictions.json.
+    Returns (md_path, json_path) as strings.
+    """
+    from engine.archive_builder.election_directory_predictor import PredictionResult
+    r: PredictionResult = prediction_result
+
+    md_lines = [
+        f"# Directory Predictions — {run_id}",
+        f"",
+        f"**Domain:** {r.domain}  |  **Years:** {r.years}  |  **State:** {r.state}/{r.county}",
+        f"",
+        f"## Metrics",
+        f"",
+        f"| Metric | Value |",
+        f"|--------|-------|",
+    ]
+    for k, v in r.metrics.items():
+        md_lines.append(f"| {k} | {v} |")
+
+    md_lines += [
+        f"",
+        f"## Predicted URLs ({len(r.predicted_urls)} total)",
+        f"",
+    ]
+    for u in r.predicted_urls:
+        md_lines.append(f"- {u}")
+
+    if r.confirmed_dirs:
+        md_lines += [f"", f"## Confirmed Directories ({len(r.confirmed_dirs)})", f""]
+        for cd in r.confirmed_dirs:
+            md_lines.append(
+                f"- **[{cd.classified_as}]** `{cd.final_url}` "
+                f"(score={cd.page_score}, files={len(cd.file_candidates)}, "
+                f"html_status={cd.http_status})"
+            )
+
+    if r.file_candidates:
+        md_lines += [f"", f"## File Candidates ({len(r.file_candidates)})", f""]
+        for fc in r.file_candidates:
+            md_lines.append(f"- {fc}")
+
+    if r.errors:
+        md_lines += [f"", f"## Errors", f""]
+        for e in r.errors:
+            md_lines.append(f"- {e}")
+
+    md_path   = REPORTS_DIR / f"{run_id}__directory_predictions.md"
+    json_path = REPORTS_DIR / f"{run_id}__directory_predictions.json"
+
+    md_path.write_text("\n".join(md_lines), encoding="utf-8")
+    json_path.write_text(
+        json.dumps({
+            "run_id":          run_id,
+            "domain":          r.domain,
+            "years":           r.years,
+            "predicted_count": len(r.predicted_urls),
+            "confirmed_count": len(r.confirmed_dirs),
+            "file_candidates": r.file_candidates,
+            "metrics":         r.metrics,
+            "confirmed_dirs": [
+                {
+                    "url":             cd.url,
+                    "final_url":       cd.final_url,
+                    "classified_as":   cd.classified_as,
+                    "page_score":      cd.page_score,
+                    "year":            cd.year,
+                    "files_count":     len(cd.file_candidates),
+                    "resolved_count":  len(cd.resolved_files),
+                    "directory_priority": cd.directory_priority,
+                }
+                for cd in r.confirmed_dirs
+            ],
+            "errors": r.errors,
+        }, indent=2, default=str),
+        encoding="utf-8",
+    )
+    log.info(f"[BUILDER] Directory predictions report → {md_path.name}")
+    return str(md_path), str(json_path)
+
+
+def _write_discovery_report(
+    run_id: str,
+    result: "ArchiveBuildResult",
+    prediction_result,
+) -> tuple[str, str]:
+    """Write archive_discovery_report.md and .json."""
+    md_lines = [
+        f"# Archive Discovery Report — {run_id}",
+        f"",
+        f"**Jurisdiction:** {result.state} / {result.county}",
+        f"",
+        f"## Discovery Summary",
+        f"",
+        f"| Metric | Value |",
+        f"|--------|-------|",
+        f"| Predicted directories | {result.predicted_directories} |",
+        f"| Confirmed directories | {result.directories_confirmed} |",
+        f"| Files found (predictor) | {result.directory_files_found} |",
+        f"| Sources scanned | {result.sources_scanned} |",
+        f"| Pages found | {result.pages_found} |",
+        f"| Candidate files | {result.candidates_found} |",
+        f"| Classified | {result.classified} |",
+        f"| Ingested | {result.ingested} |",
+        f"| Archive ready | {result.archive_ready_count} |",
+        f"| Review required | {result.review_queue} |",
+        f"| Failed | {result.failed} |",
+    ]
+    if result.errors:
+        md_lines += [f"", f"## Errors ({len(result.errors)})", f""]
+        for e in result.errors[:20]:
+            md_lines.append(f"- {e}")
+
+    md_path   = REPORTS_DIR / f"{run_id}__archive_discovery_report.md"
+    json_path = REPORTS_DIR / f"{run_id}__archive_discovery_report.json"
+    md_path.write_text("\n".join(md_lines), encoding="utf-8")
+    json_path.write_text(
+        json.dumps({
+            "run_id":                run_id,
+            "state":                 result.state,
+            "county":                result.county,
+            "predicted_directories": result.predicted_directories,
+            "directories_confirmed": result.directories_confirmed,
+            "files_found":           result.candidates_found,
+            "files_ingested":        result.ingested,
+            "archive_ready":         result.archive_ready_count,
+            "review_required":       result.review_queue,
+            "errors_count":          len(result.errors),
+        }, indent=2, default=str),
+        encoding="utf-8",
+    )
+    log.info(f"[BUILDER] Discovery report → {md_path.name}")
+    return str(md_path), str(json_path)
+
+
+def _write_archive_summary_json(run_id: str, cid: str, result: "ArchiveBuildResult") -> None:
+    """Write archive_summary.json to campaign state dir."""
+    summary_dir = (
+        BASE_DIR / "derived" / "state" / "campaigns" / cid / "latest"
+    )
+    summary_dir.mkdir(parents=True, exist_ok=True)
+    summary_path = summary_dir / "archive_summary.json"
+    summary = {
+        "run_id":                run_id,
+        "last_run":              datetime.now().isoformat(),
+        "predicted_directories": result.predicted_directories,
+        "directories_confirmed": result.directories_confirmed,
+        "files_found":           result.candidates_found,
+        "files_ingested":        result.ingested,
+        "archive_ready":         result.archive_ready_count,
+        "review_required":       result.review_queue,
+    }
+    summary_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    log.info(f"[BUILDER] archive_summary.json → {summary_path}")
 
 def run_archive_build(
     state:      str = "CA",
@@ -186,6 +349,7 @@ def run_archive_build(
     from engine.archive_builder.archive_ingestor import ingest_classified_file
     from engine.archive_builder.archive_registry import register_election
     from engine.archive_builder.archive_output_writer import write_archive_outputs
+    from engine.archive_builder.election_directory_predictor import predict_election_result_paths  # P25C
 
     # ── Step 2: Scan source registry ─────────────────────────────────────────
     log.info(f"[BUILDER] [{run_id}] Scanning sources: {state}/{county} online={online}")
@@ -234,7 +398,52 @@ def run_archive_build(
     pages_found = len(all_pages)
     log.info(f"[BUILDER] [{run_id}] Found {pages_found} election pages from {sources_scanned} sources")
 
-    # ── Step 4: Discover candidate files ─────────────────────────────────────
+    # ── Step 2.5: Directory prediction (Prompt 25C) ────────────────────────────
+    log.info(f"[BUILDER] [{run_id}] Running directory predictor (online={online})...")
+    prediction_result = None
+    predicted_directories = 0
+    directories_confirmed = 0
+    directory_files_found = 0
+    try:
+        import yaml
+        registry_path2 = BASE_DIR / "config" / "source_registry" / "contest_sources.yaml"
+        raw2  = yaml.safe_load(registry_path2.read_text(encoding="utf-8")) or {}
+        # Pick primary domain from contest_sources.yaml or use default
+        primary_domain = "https://sonomacounty.ca.gov"
+        for src in raw2.get("sources", []):
+            pd = src.get("primary_domain") or src.get("base_url") or ""
+            if pd.startswith("http") and "sonoma" in pd.lower():
+                primary_domain = pd.rstrip("/")
+                break
+        prediction_result = predict_election_result_paths(
+            domain=primary_domain,
+            years=[2024, 2023, 2022, 2021, 2020],
+            online=online,
+            state=state,
+            county=county,
+        )
+        predicted_directories = len(prediction_result.predicted_urls)
+        directories_confirmed = len(prediction_result.confirmed_dirs)
+        directory_files_found = len(prediction_result.file_candidates)
+
+        # Prepend confirmed directory URLs to all_pages for page_explorer
+        if prediction_result.confirmed_dirs:
+            log.info(
+                f"[BUILDER] [{run_id}] Predictor found {directories_confirmed} confirmed dirs, "
+                f"{directory_files_found} file candidates, prepending to page_explorer start_urls"
+            )
+            dummy_src = {
+                "source_id": "predictor_p25c", "state": state, "county": county,
+                "year": None, "election_type": None,
+            }
+            for cd in prediction_result.confirmed_dirs:
+                all_pages.insert(0, (dummy_src, cd.final_url))
+    except Exception as e:
+        log.warning(f"[BUILDER] [{run_id}] Predictor step failed (non-fatal): {e}")
+        errors.append(f"Predictor error: {e}")
+
+    # ── Step 4: Discover candidate files ───────────────────────────────────────
+    pages_found = len(all_pages)  # updated after predictor dirs added
     all_candidates = []
     for src_dict, page_url in all_pages:
         eid         = _election_id_from_source(src_dict)
@@ -364,11 +573,13 @@ def run_archive_build(
             log.error(f"[BUILDER] Ingest failed {cf.local_path}: {e}")
 
     avg_conf       = round(total_conf / max(classified, 1), 4)
-    archive_ready  = sum(1 for cf in classified_files
-                        if getattr(cf, "archive_status", cf.archive_ready) == "ARCHIVE_READY"
-                        or cf.archive_ready)
+    archive_ready  = sum(
+        1 for cf in classified_files
+        if getattr(cf, "archive_status", "ARCHIVE_READY" if cf.archive_ready else "NO") == "ARCHIVE_READY"
+        or cf.archive_ready
+    )
 
-    # ── Step 8: Write archive outputs (4 CSVs) ─────────────────────────────
+    # ── Step 8: Write archive outputs (4 CSVs) ──────────────────────────────
     log.info(f"[BUILDER] [{run_id}] Writing archive outputs...")
     try:
         archive_outputs = write_archive_outputs(
@@ -378,7 +589,7 @@ def run_archive_build(
         log.error(f"[BUILDER] archive_output_writer failed: {e}")
         errors.append(f"Archive outputs error: {e}")
 
-    # ── Step 9: Campaign state post-build update ──────────────────────────────
+    # ── Step 9: Campaign state post-build update ─────────────────────────────
     try:
         _update_campaign_state(
             run_id=run_id,
@@ -390,7 +601,7 @@ def run_archive_build(
     except Exception as e:
         log.warning(f"[BUILDER] Campaign state update failed (non-fatal): {e}")
 
-    # ── Step 10: Write reports ─────────────────────────────────────────────────
+    # ── Step 10: Write reports (P25 + P25C) ──────────────────────────────────
     build_report = _write_build_report(
         run_id, state, county, sources_scanned, pages_found,
         candidates_found, classified, ingested_count, review_count,
@@ -399,12 +610,46 @@ def run_archive_build(
     )
     classification_report = _write_classification_report(run_id, classified_files)
 
+    # Prompt 25C: build partial result for P25C report writers
+    _partial = ArchiveBuildResult(
+        run_id=run_id, state=state, county=county,
+        sources_scanned=sources_scanned, pages_found=pages_found,
+        candidates_found=candidates_found, classified=classified,
+        ingested=ingested_count, review_queue=review_count,
+        failed=failed_count, archive_ready_count=archive_ready,
+        avg_overall_confidence=avg_conf,
+        build_report=None, classification_report=None,
+        archive_outputs=archive_outputs, errors=errors, preconditions_ok=pc_ok,
+        predicted_directories=predicted_directories,
+        directories_confirmed=directories_confirmed,
+        directory_files_found=directory_files_found,
+    )
+    dir_pred_report = None
+    disc_report = None
+    try:
+        if prediction_result is not None:
+            pred_md, _ = _write_predictor_reports(run_id, prediction_result)
+            dir_pred_report = pred_md
+        disc_md, _ = _write_discovery_report(run_id, _partial, prediction_result)
+        disc_report = disc_md
+    except Exception as e:
+        log.warning(f"[BUILDER] P25C report writing failed (non-fatal): {e}")
+        errors.append(f"P25C report error: {e}")
+
+    # Prompt 25C: write archive_summary.json to campaign state dir
+    try:
+        from engine.state.campaign_state_resolver import get_active_campaign_id
+        _write_archive_summary_json(run_id, get_active_campaign_id(), _partial)
+    except Exception as e:
+        log.warning(f"[BUILDER] archive_summary.json write failed (non-fatal): {e}")
+
     log.info(
         f"[BUILDER] [{run_id}] Complete: "
         f"sources={sources_scanned} pages={pages_found} candidates={candidates_found} "
         f"classified={classified} ingested={ingested_count} "
         f"review={review_count} failed={failed_count} "
-        f"archive_ready={archive_ready}"
+        f"archive_ready={archive_ready} predicted_dirs={predicted_directories} "
+        f"confirmed_dirs={directories_confirmed}"
     )
 
     return ArchiveBuildResult(
@@ -419,6 +664,11 @@ def run_archive_build(
         archive_outputs=archive_outputs,
         errors=errors,
         preconditions_ok=pc_ok,
+        predicted_directories=predicted_directories,
+        directories_confirmed=directories_confirmed,
+        directory_files_found=directory_files_found,
+        directory_predictions_report=dir_pred_report,
+        archive_discovery_report=disc_report,
     )
 
 

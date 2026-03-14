@@ -74,7 +74,8 @@ class CandidateFile:
     download_error: Optional[str]
 
 
-MIN_CANDIDATE_SCORE    = 0.5     # files below this are not returned
+MIN_CANDIDATE_SCORE    = 0.60    # Prompt 25C: raised from 0.50
+HIGH_PRIORITY_BONUS    = 0.10    # Prompt 25C: bonus for HIGH directory_priority files
 STRUCTURED_EXTS        = {".csv", ".xlsx", ".xls"}
 GOV_TIER_DOMAINS: set[str] = set()   # populated lazily from allowlist
 
@@ -117,33 +118,40 @@ def score_candidate_file(
     extension: str,
     source_url: str = "",
     file_size_bytes: int = 0,
+    directory_priority: str = "normal",
 ) -> float:
     """
-    5-factor candidate file scoring (Prompt 25).
+    6-factor candidate file scoring (Prompt 25C).
 
-    Returns score in [0.0, 1.0]. Score < 0.5 = ignored.
+    Returns score in [0.0, 1.0]. Score < 0.60 = ignored.
 
     Factors:
-      +0.3  structured extension (.csv / .xls / .xlsx)
-      +0.3  filename contains 'precinct'
-      +0.2  filename contains 'detail'
-      +0.1  file size > 50 KB
-      +0.1  page/source URL is a gov_tier domain
+      +0.35  structured extension (.csv / .xls / .xlsx)
+      +0.25  filename contains 'precinct'
+      +0.25  filename contains 'statement_of_vote' or 'statement of vote'
+      +0.20  filename contains 'detail'
+      +0.10  file size > 100 KB
+      +0.10  page/source URL is a gov_tier domain
+      +0.10  directory_priority == 'HIGH' (predictor bonus)
     """
     score = 0.0
     lower = filename.lower()
     ext   = extension.lower()
 
     if ext in STRUCTURED_EXTS:
-        score += 0.3
+        score += 0.35
     if "precinct" in lower:
-        score += 0.3
+        score += 0.25
+    if "statement_of_vote" in lower or "statement of vote" in lower or "statementofvote" in lower:
+        score += 0.25
     if "detail" in lower:
-        score += 0.2
-    if file_size_bytes > 50 * 1024:
-        score += 0.1
+        score += 0.20
+    if file_size_bytes > 100 * 1024:
+        score += 0.10
     if source_url and _is_gov_tier_source(source_url):
-        score += 0.1
+        score += 0.10
+    if directory_priority == "HIGH":
+        score += HIGH_PRIORITY_BONUS
 
     return round(min(score, 1.0), 3)
 
