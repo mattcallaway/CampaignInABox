@@ -58,10 +58,18 @@ class FileRegistryManager:
         self.registry_path = self.registry_dir_latest / "file_registry.json"
 
     def load_registry(self) -> list[dict]:
-        """Load the active file registry."""
+        """Load the active file registry. Always returns a list."""
         if self.registry_path.exists():
             try:
-                return json.loads(self.registry_path.read_text(encoding="utf-8"))
+                data = json.loads(self.registry_path.read_text(encoding="utf-8"))
+                if isinstance(data, list):
+                    return data
+                # File was written as a dict (e.g. empty init) — reset gracefully
+                log.warning(
+                    f"file_registry.json contains a {type(data).__name__}, expected list. "
+                    "Resetting to empty registry."
+                )
+                return []
             except Exception as e:
                 log.error(f"Failed to read file registry: {e}")
         return []
