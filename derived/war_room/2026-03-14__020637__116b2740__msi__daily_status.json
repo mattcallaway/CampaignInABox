@@ -1,0 +1,60 @@
+{
+  "generated_at": "2026-03-14T02:07:42.524372",
+  "run_date": "2026-03-14",
+  "contest_name": "Prop 50 Special Election 2025",
+  "election_date": "2025-06-03",
+  "days_to_election": -284,
+  "weeks_to_election": 0,
+  "win_probability": {
+    "value": 0.55,
+    "source_type": "ESTIMATED",
+    "display": "55.0%"
+  },
+  "vote_path": {
+    "win_number": 26000,
+    "base_votes": 17500,
+    "persuasion_needed": 6800,
+    "gotv_needed": 1699,
+    "coverage_rate": 0.9999615384615383,
+    "source_type": "SIMULATED"
+  },
+  "field_pace": {
+    "target_doors_per_week": 308999,
+    "actual_doors_total": 0,
+    "weekly_avg_doors": 0,
+    "pace_pct": null,
+    "source_type": "SIMULATED"
+  },
+  "volunteer_status": {
+    "target_per_week": 10,
+    "actual_avg": null,
+    "pace_pct": null,
+    "source_type": "ESTIMATED"
+  },
+  "budget_status": {
+    "total_budget": 150000,
+    "actual_spend": 0,
+    "burn_pct": 0.0,
+    "expected_burn_pct": 415.6,
+    "source_type": "ESTIMATED"
+  },
+  "top_risks": [
+    "Canvasser Staffing",
+    "Campaign Timeline",
+    "Field pace 0% of target \u2014 volunteer/canvasser gap",
+    "No real canvass data \u2014 forecasts rely entirely on model priors"
+  ],
+  "next_72h_priorities": [
+    "Begin field canvassing and log first week's results in War Room",
+    "Log volunteer shifts from last week",
+    "FINAL STRETCH: Shift to GOTV \u2014 VBM chase, election day ops"
+  ],
+  "data_completeness": {
+    "has_field_results": false,
+    "has_volunteer_log": false,
+    "has_budget_actuals": false,
+    "has_contact_results": false,
+    "data_requests_count": 4,
+    "critical_requests": 0
+  }
+}

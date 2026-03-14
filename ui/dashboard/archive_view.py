@@ -5,7 +5,7 @@ Dashboard view for Historical Archive & Trend Analysis.
 import streamlit as st
 import pandas as pd
 from pathlib import Path
-from ui.components.cards import metric_card
+from ui.components.metric_card import render_metric_card
 
 def render_archive_view(state: dict):
     st.markdown("<h2 class='page-header'>Historical Election Archive</h2>", unsafe_allow_html=True)
@@ -18,14 +18,14 @@ def render_archive_view(state: dict):
         
     cols = st.columns(4)
     with cols[0]:
-        metric_card("Total Elections", archive.get("total_elections", 0), "Contests")
+        render_metric_card(title="Total Elections", value=archive.get("total_elections", 0), subtitle="Contests")
     with cols[1]:
-        metric_card("Years Covered", f"{len(archive.get('years_covered', []))} Years", "-")
+        render_metric_card(title="Years Covered", value=f"{len(archive.get('years_covered', []))} Years", subtitle="-")
     with cols[2]:
-        metric_card("Precinct Records", archive.get("total_precinct_records", 0), "Data points")
+        render_metric_card(title="Precinct Records", value=archive.get("total_precinct_records", 0), subtitle="Data points")
     with cols[3]:
         model_status = "Active" if state.get("historical_models_active") else "Inactive"
-        metric_card("Models", model_status, "Support & Turnout")
+        render_metric_card(title="Models", value=model_status, subtitle="Support & Turnout")
         
     st.markdown("---")
     

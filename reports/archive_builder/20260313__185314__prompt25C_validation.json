@@ -1,0 +1,287 @@
+{
+  "run_id": "20260313__185314",
+  "summary": {
+    "total": 46,
+    "passed": 46,
+    "failed": 0,
+    "pass_rate": 100.0
+  },
+  "results": [
+    {
+      "phase": "Phase 1: Required systems",
+      "name": "election_directory_predictor importable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 1: Required systems",
+      "name": "link_extractor importable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 1: Required systems",
+      "name": "viewer_resolver importable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 1: Required systems",
+      "name": "page_explorer importable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 1: Required systems",
+      "name": "file_discovery importable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 1: Required systems",
+      "name": "file_downloader importable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 1: Required systems",
+      "name": "archive_builder importable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 1: Required systems",
+      "name": "campaign_state_resolver importable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 2: Predictor URL generation",
+      "name": "10 PATH_TEMPLATES defined",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 2: Predictor URL generation",
+      "name": "DEFAULT_YEARS = [2024..2020]",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 2: Predictor URL generation",
+      "name": "URL generation produces >=30 candidates",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 2: Predictor URL generation",
+      "name": "all generated URLs are absolute https://",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 2: Predictor URL generation",
+      "name": "year-parameterized templates include year",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 2: Predictor URL generation",
+      "name": "no duplicate URLs in generated set",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 2: Predictor URL generation",
+      "name": "{year}-general-election template present",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 2: Predictor URL generation",
+      "name": "registrar-of-voters template present",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 3: Offline mode / dataclasses / jurisdiction guard",
+      "name": "offline returns PredictionResult",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 3: Offline mode / dataclasses / jurisdiction guard",
+      "name": "offline has no confirmed_dirs",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 3: Offline mode / dataclasses / jurisdiction guard",
+      "name": "offline has predicted_urls",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 3: Offline mode / dataclasses / jurisdiction guard",
+      "name": "PredictionResult has all required fields",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 3: Offline mode / dataclasses / jurisdiction guard",
+      "name": "ConfirmedDirectory has all required fields",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 3: Offline mode / dataclasses / jurisdiction guard",
+      "name": "directory_priority default = HIGH",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 3: Offline mode / dataclasses / jurisdiction guard",
+      "name": "cross-jurisdiction domain blocked",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 3: Offline mode / dataclasses / jurisdiction guard",
+      "name": ">=5 ELECTION_PAGE_KEYWORDS defined",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 3: Offline mode / dataclasses / jurisdiction guard",
+      "name": "SoV keyword -> ELECTION_RESULTS_PAGE",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 3: Offline mode / dataclasses / jurisdiction guard",
+      "name": "unrelated page -> OTHER",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 4: file_discovery Prompt 25C scoring",
+      "name": "MIN_CANDIDATE_SCORE = 0.60",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 4: file_discovery Prompt 25C scoring",
+      "name": "HIGH_PRIORITY_BONUS = 0.10",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 4: file_discovery Prompt 25C scoring",
+      "name": "structured ext .xlsx scores exactly +0.35",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 4: file_discovery Prompt 25C scoring",
+      "name": "'precinct' in pdf scores +0.25",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 4: file_discovery Prompt 25C scoring",
+      "name": "'statement_of_vote' + xlsx >= 0.60",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 4: file_discovery Prompt 25C scoring",
+      "name": "HIGH priority adds +0.10 bonus",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 4: file_discovery Prompt 25C scoring",
+      "name": "full match xlsx+precinct+sov+HIGH >= 0.90",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 4: file_discovery Prompt 25C scoring",
+      "name": "plain pdf scores below threshold (no keywords)",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 4: file_discovery Prompt 25C scoring",
+      "name": "directory_priority param in score_candidate_file",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 5: archive_builder integration",
+      "name": "election_directory_predictor in REQUIRED_SYSTEMS",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 5: archive_builder integration",
+      "name": "REQUIRED_SYSTEMS has >=10 entries",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 5: archive_builder integration",
+      "name": "_write_predictor_reports is callable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 5: archive_builder integration",
+      "name": "_write_discovery_report is callable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 5: archive_builder integration",
+      "name": "_write_archive_summary_json is callable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 5: archive_builder integration",
+      "name": "ArchiveBuildResult has predictor fields",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 5: archive_builder integration",
+      "name": "check_preconditions() runs without error",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 6: Report generation (offline build)",
+      "name": "offline build returns ArchiveBuildResult",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 6: Report generation (offline build)",
+      "name": "directory_predictions.md written",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 6: Report generation (offline build)",
+      "name": "archive_discovery_report.md written",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 6: Report generation (offline build)",
+      "name": "predictor metrics dict has 'predicted' key",
+      "status": "PASS",
+      "error": null
+    }
+  ]
+}

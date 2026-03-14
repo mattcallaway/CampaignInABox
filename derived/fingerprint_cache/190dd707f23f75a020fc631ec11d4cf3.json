@@ -1,0 +1,24 @@
+{
+  "file_path": "C:\\Users\\MATHEW~1\\AppData\\Local\\Temp\\fingerprint_test_82p_0f0b\\ballot_measure_results_2024.xlsx",
+  "file_name": "ballot_measure_results_2024.xlsx",
+  "file_hash": "190dd707f23f75a020fc631ec11d4cf3",
+  "file_type": "ballot_measure_results",
+  "display_name": "Ballot Measure Results",
+  "confidence": 0.802,
+  "matching_headers": [
+    "yes",
+    "no"
+  ],
+  "optional_hits": [
+    "measure",
+    "total"
+  ],
+  "precinct_format": null,
+  "precinct_level": false,
+  "contest_level": true,
+  "sheet_name": "Sheet1",
+  "row_count": 2,
+  "col_count": 4,
+  "source_url": "https://sonomacounty.gov/test",
+  "classified_at": "2026-03-13T01:26:56.953986"
+}

@@ -1,0 +1,2119 @@
+{
+  "export_time": "2026-03-13T04:12:40Z",
+  "export_version": "1.0",
+  "system": "Campaign In A Box",
+  "repository_structure": {
+    "root_dirs": [
+      "Campaign In A Box Data",
+      "app",
+      "archive",
+      "config",
+      "data",
+      "deployment",
+      "derived",
+      "docs",
+      "engine",
+      "logs",
+      "needs",
+      "reports",
+      "scripts",
+      "staging",
+      "ui",
+      "voters",
+      "votes"
+    ],
+    "file_counts": {
+      "other": 273,
+      "yaml": 61,
+      "text": 2584,
+      "python": 208,
+      "json": 158,
+      "excel": 9,
+      "csv": 2682,
+      "geo": 18,
+      "pkl": 2
+    },
+    "key_files": [
+      "README.md",
+      "_git_init.ps1",
+      "_scaffold.ps1",
+      "environment.yml",
+      "requirements.txt",
+      "run_campaign_box.ps1",
+      "run_campaign_box.sh",
+      "test_city_registry.py",
+      "test_naming.py",
+      "test_registry.py",
+      "tmp_fix_pipeline.py",
+      "tmp_gen_ca.py",
+      "tmp_patch_app.py",
+      "tmp_patch_app_login.py",
+      "tmp_patch_app_v.py",
+      "tmp_patch_diag.py",
+      "tmp_patch_dm.py",
+      "tmp_patch_footer.py",
+      "tmp_patch_lift_models.py",
+      "tmp_patch_map.py",
+      "tmp_patch_nav.py",
+      "tmp_patch_readme.py",
+      "tmp_patch_strat.py",
+      "tmp_patch_strategy.py",
+      "tmp_patch_ui.py",
+      "tmp_patch_wr.py",
+      "tmp_refactor.py",
+      "tmp_update_collab.py",
+      "tmp_update_sim.py",
+      "tmp_update_state_builder.py"
+    ]
+  },
+  "engine_modules": {
+    "advanced_modeling": [
+      {
+        "module_name": "__init__",
+        "file_path": "engine\\advanced_modeling\\__init__.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": []
+      },
+      {
+        "module_name": "lift_models",
+        "file_path": "engine\\advanced_modeling\\lift_models.py",
+        "responsibility": "Applies turnout/persuasion lift curves to precincts",
+        "import_dependencies": [
+          "__future__",
+          "math",
+          "numpy",
+          "pandas",
+          "typing"
+        ]
+      },
+      {
+        "module_name": "model_card",
+        "file_path": "engine\\advanced_modeling\\model_card.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "datetime",
+          "pathlib"
+        ]
+      },
+      {
+        "module_name": "optimizer",
+        "file_path": "engine\\advanced_modeling\\optimizer.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "engine",
+          "logging",
+          "numpy",
+          "pandas",
+          "pathlib",
+          "typing"
+        ]
+      },
+      {
+        "module_name": "qa_checks",
+        "file_path": "engine\\advanced_modeling\\qa_checks.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "datetime",
+          "logging",
+          "pandas",
+          "pathlib",
+          "typing"
+        ]
+      },
+      {
+        "module_name": "scenarios",
+        "file_path": "engine\\advanced_modeling\\scenarios.py",
+        "responsibility": "Runs deterministic and Monte Carlo scenario projections",
+        "import_dependencies": [
+          "__future__",
+          "datetime",
+          "engine",
+          "logging",
+          "numpy",
+          "pandas",
+          "pathlib",
+          "typing"
+        ]
+      },
+      {
+        "module_name": "universe_allocation",
+        "file_path": "engine\\advanced_modeling\\universe_allocation.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "datetime",
+          "logging",
+          "pandas",
+          "pathlib"
+        ]
+      }
+    ],
+    "archive": [
+      {
+        "module_name": "archive_ingest",
+        "file_path": "engine\\archive\\archive_ingest.py",
+        "responsibility": "Ingests historical election data into normalized archive",
+        "import_dependencies": [
+          "json",
+          "logging",
+          "numpy",
+          "os",
+          "pandas",
+          "pathlib"
+        ]
+      },
+      {
+        "module_name": "election_similarity",
+        "file_path": "engine\\archive\\election_similarity.py",
+        "responsibility": "Identifies similar historical elections for calibration",
+        "import_dependencies": [
+          "numpy",
+          "pandas",
+          "pathlib",
+          "yaml"
+        ]
+      },
+      {
+        "module_name": "generate_archive_summary",
+        "file_path": "engine\\archive\\generate_archive_summary.py",
+        "responsibility": "Produces archive_summary.json for state integration",
+        "import_dependencies": [
+          "json",
+          "pandas",
+          "pathlib"
+        ]
+      },
+      {
+        "module_name": "precinct_profiles",
+        "file_path": "engine\\archive\\precinct_profiles.py",
+        "responsibility": "Builds precinct behavioral profiles from historical data",
+        "import_dependencies": [
+          "logging",
+          "numpy",
+          "pandas",
+          "pathlib"
+        ]
+      },
+      {
+        "module_name": "train_support_model",
+        "file_path": "engine\\archive\\train_support_model.py",
+        "responsibility": "Trains Gradient Boosting support/persuasion model",
+        "import_dependencies": [
+          "joblib",
+          "json",
+          "logging",
+          "numpy",
+          "pandas",
+          "pathlib",
+          "sklearn"
+        ]
+      },
+      {
+        "module_name": "train_turnout_model",
+        "file_path": "engine\\archive\\train_turnout_model.py",
+        "responsibility": "Trains Random Forest turnout prediction model",
+        "import_dependencies": [
+          "joblib",
+          "json",
+          "logging",
+          "numpy",
+          "pandas",
+          "pathlib",
+          "sklearn"
+        ]
+      },
+      {
+        "module_name": "trend_analysis",
+        "file_path": "engine\\archive\\trend_analysis.py",
+        "responsibility": "Computes long-term turnout/support trends per precinct",
+        "import_dependencies": [
+          "logging",
+          "numpy",
+          "pandas",
+          "pathlib"
+        ]
+      }
+    ],
+    "audit": [
+      {
+        "module_name": "__init__",
+        "file_path": "engine\\audit\\__init__.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": []
+      },
+      {
+        "module_name": "artifact_validator",
+        "file_path": "engine\\audit\\artifact_validator.py",
+        "responsibility": "Validates pipeline output artifacts for integrity",
+        "import_dependencies": [
+          "__future__",
+          "datetime",
+          "json",
+          "pathlib",
+          "typing"
+        ]
+      },
+      {
+        "module_name": "post_prompt86_audit",
+        "file_path": "engine\\audit\\post_prompt86_audit.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "datetime",
+          "json",
+          "pathlib",
+          "typing"
+        ]
+      }
+    ],
+    "auth": [
+      {
+        "module_name": "auth_manager",
+        "file_path": "engine\\auth\\auth_manager.py",
+        "responsibility": "Manages user authentication and role-based permissions",
+        "import_dependencies": [
+          "json",
+          "logging",
+          "pathlib",
+          "typing",
+          "yaml"
+        ]
+      }
+    ],
+    "calibration": [
+      {
+        "module_name": "__init__",
+        "file_path": "engine\\calibration\\__init__.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": []
+      },
+      {
+        "module_name": "calibration_engine",
+        "file_path": "engine\\calibration\\calibration_engine.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "datetime",
+          "engine",
+          "json",
+          "logging",
+          "pandas",
+          "pathlib",
+          "typing",
+          "yaml"
+        ]
+      },
+      {
+        "module_name": "election_downloader",
+        "file_path": "engine\\calibration\\election_downloader.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "json",
+          "logging",
+          "pathlib",
+          "typing",
+          "urllib"
+        ]
+      },
+      {
+        "module_name": "forecast_accuracy",
+        "file_path": "engine\\calibration\\forecast_accuracy.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "datetime",
+          "json",
+          "logging",
+          "pandas",
+          "pathlib",
+          "typing"
+        ]
+      },
+      {
+        "module_name": "historical_parser",
+        "file_path": "engine\\calibration\\historical_parser.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "logging",
+          "pandas",
+          "pathlib",
+          "scripts",
+          "sys",
+          "typing"
+        ]
+      },
+      {
+        "module_name": "model_calibrator",
+        "file_path": "engine\\calibration\\model_calibrator.py",
+        "responsibility": "Calibrates model outputs against observed results",
+        "import_dependencies": [
+          "__future__",
+          "json",
+          "logging",
+          "numpy",
+          "pandas",
+          "pathlib",
+          "sklearn",
+          "sys",
+          "typing",
+          "yaml"
+        ]
+      },
+      {
+        "module_name": "persuasion_calibrator",
+        "file_path": "engine\\calibration\\persuasion_calibrator.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "json",
+          "logging",
+          "numpy",
+          "pandas",
+          "pathlib",
+          "typing"
+        ]
+      },
+      {
+        "module_name": "turnout_calibrator",
+        "file_path": "engine\\calibration\\turnout_calibrator.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "json",
+          "logging",
+          "numpy",
+          "pandas",
+          "pathlib",
+          "sklearn",
+          "typing",
+          "yaml"
+        ]
+      },
+      {
+        "module_name": "turnout_lift_calibrator",
+        "file_path": "engine\\calibration\\turnout_lift_calibrator.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "json",
+          "logging",
+          "numpy",
+          "pandas",
+          "pathlib",
+          "typing"
+        ]
+      }
+    ],
+    "data_intake": [
+      {
+        "module_name": "__init__",
+        "file_path": "engine\\data_intake\\__init__.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": []
+      },
+      {
+        "module_name": "data_intake_manager",
+        "file_path": "engine\\data_intake\\data_intake_manager.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "datetime",
+          "json",
+          "logging",
+          "pandas",
+          "pathlib",
+          "re",
+          "shutil",
+          "typing",
+          "uuid"
+        ]
+      },
+      {
+        "module_name": "github_safety",
+        "file_path": "engine\\data_intake\\github_safety.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "logging",
+          "pandas",
+          "pathlib",
+          "sys"
+        ]
+      },
+      {
+        "module_name": "missing_data_assistant",
+        "file_path": "engine\\data_intake\\missing_data_assistant.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "engine",
+          "json",
+          "logging",
+          "pathlib",
+          "typing",
+          "yaml"
+        ]
+      },
+      {
+        "module_name": "source_finder",
+        "file_path": "engine\\data_intake\\source_finder.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "datetime",
+          "json",
+          "logging",
+          "pathlib",
+          "typing"
+        ]
+      }
+    ],
+    "geo": [
+      {
+        "module_name": "__init__",
+        "file_path": "engine\\geo\\__init__.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": []
+      },
+      {
+        "module_name": "geometry_validation",
+        "file_path": "engine\\geo\\geometry_validation.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "datetime",
+          "geopandas",
+          "json",
+          "pandas",
+          "pathlib",
+          "typing"
+        ]
+      },
+      {
+        "module_name": "master_index_builder",
+        "file_path": "engine\\geo\\master_index_builder.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "logging",
+          "pandas",
+          "pathlib",
+          "scripts"
+        ]
+      }
+    ],
+    "integrity": [
+      {
+        "module_name": "__init__",
+        "file_path": "engine\\integrity\\__init__.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": []
+      },
+      {
+        "module_name": "integrity_repairs",
+        "file_path": "engine\\integrity\\integrity_repairs.py",
+        "responsibility": "Auto-repairs common data integrity issues",
+        "import_dependencies": [
+          "__future__",
+          "csv",
+          "datetime",
+          "pandas",
+          "pathlib",
+          "typing"
+        ]
+      },
+      {
+        "module_name": "join_guard",
+        "file_path": "engine\\integrity\\join_guard.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "csv",
+          "datetime",
+          "json",
+          "pandas",
+          "pathlib",
+          "typing"
+        ]
+      }
+    ],
+    "intelligence": [
+      {
+        "module_name": "__init__",
+        "file_path": "engine\\intelligence\\__init__.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": []
+      },
+      {
+        "module_name": "ballot_returns",
+        "file_path": "engine\\intelligence\\ballot_returns.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "datetime",
+          "json",
+          "logging",
+          "numpy",
+          "pandas",
+          "pathlib"
+        ]
+      },
+      {
+        "module_name": "demographics",
+        "file_path": "engine\\intelligence\\demographics.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "json",
+          "logging",
+          "numpy",
+          "pandas",
+          "pathlib",
+          "typing"
+        ]
+      },
+      {
+        "module_name": "intelligence_fusion",
+        "file_path": "engine\\intelligence\\intelligence_fusion.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "datetime",
+          "engine",
+          "json",
+          "logging",
+          "pandas",
+          "pathlib",
+          "typing",
+          "yaml"
+        ]
+      },
+      {
+        "module_name": "macro_environment",
+        "file_path": "engine\\intelligence\\macro_environment.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "datetime",
+          "json",
+          "logging",
+          "pandas",
+          "pathlib",
+          "typing"
+        ]
+      },
+      {
+        "module_name": "poll_aggregation",
+        "file_path": "engine\\intelligence\\poll_aggregation.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "datetime",
+          "json",
+          "logging",
+          "math",
+          "numpy",
+          "pandas",
+          "pathlib",
+          "typing"
+        ]
+      },
+      {
+        "module_name": "polling_ingest",
+        "file_path": "engine\\intelligence\\polling_ingest.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "datetime",
+          "json",
+          "logging",
+          "pandas",
+          "pathlib",
+          "typing"
+        ]
+      },
+      {
+        "module_name": "registration_trends",
+        "file_path": "engine\\intelligence\\registration_trends.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "datetime",
+          "json",
+          "logging",
+          "numpy",
+          "pandas",
+          "pathlib",
+          "typing"
+        ]
+      }
+    ],
+    "jurisdictions": [
+      {
+        "module_name": "jurisdiction_resolver",
+        "file_path": "engine\\jurisdictions\\jurisdiction_resolver.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "json",
+          "logging",
+          "pandas",
+          "pathlib",
+          "typing"
+        ]
+      }
+    ],
+    "notifications": [
+      {
+        "module_name": "notification_engine",
+        "file_path": "engine\\notifications\\notification_engine.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "datetime",
+          "json",
+          "logging",
+          "pandas",
+          "pathlib",
+          "typing"
+        ]
+      }
+    ],
+    "performance": [
+      {
+        "module_name": "assumption_monitor",
+        "file_path": "engine\\performance\\assumption_monitor.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "json",
+          "logging",
+          "pandas",
+          "pathlib"
+        ]
+      },
+      {
+        "module_name": "campaign_scorecard",
+        "file_path": "engine\\performance\\campaign_scorecard.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "json",
+          "logging",
+          "pathlib"
+        ]
+      },
+      {
+        "module_name": "forecast_drift",
+        "file_path": "engine\\performance\\forecast_drift.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "json",
+          "logging",
+          "pandas",
+          "pathlib"
+        ]
+      },
+      {
+        "module_name": "leverage_analysis",
+        "file_path": "engine\\performance\\leverage_analysis.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "json",
+          "logging",
+          "pandas",
+          "pathlib"
+        ]
+      },
+      {
+        "module_name": "performance_ingest",
+        "file_path": "engine\\performance\\performance_ingest.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "logging",
+          "pandas",
+          "pathlib"
+        ]
+      }
+    ],
+    "provenance": [
+      {
+        "module_name": "__init__",
+        "file_path": "engine\\provenance\\__init__.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": []
+      },
+      {
+        "module_name": "data_provenance",
+        "file_path": "engine\\provenance\\data_provenance.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "dataclasses",
+          "json",
+          "logging",
+          "pathlib",
+          "typing"
+        ]
+      }
+    ],
+    "setup": [
+      {
+        "module_name": "setup_wizard",
+        "file_path": "engine\\setup\\setup_wizard.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "os",
+          "pathlib",
+          "yaml"
+        ]
+      }
+    ],
+    "state": [
+      {
+        "module_name": "__init__",
+        "file_path": "engine\\state\\__init__.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": []
+      },
+      {
+        "module_name": "state_builder",
+        "file_path": "engine\\state\\state_builder.py",
+        "responsibility": "Builds and persists the canonical campaign state store",
+        "import_dependencies": [
+          "__future__",
+          "csv",
+          "datetime",
+          "engine",
+          "json",
+          "logging",
+          "pandas",
+          "pathlib",
+          "shutil",
+          "typing",
+          "yaml"
+        ]
+      },
+      {
+        "module_name": "state_diff",
+        "file_path": "engine\\state\\state_diff.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "datetime",
+          "json",
+          "logging",
+          "pathlib",
+          "typing"
+        ]
+      },
+      {
+        "module_name": "state_schema",
+        "file_path": "engine\\state\\state_schema.py",
+        "responsibility": "Defines and validates campaign state schema",
+        "import_dependencies": [
+          "__future__",
+          "dataclasses",
+          "typing"
+        ]
+      },
+      {
+        "module_name": "state_validator",
+        "file_path": "engine\\state\\state_validator.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "datetime",
+          "engine",
+          "json",
+          "logging",
+          "pathlib",
+          "typing"
+        ]
+      }
+    ],
+    "strategy": [
+      {
+        "module_name": "__init__",
+        "file_path": "engine\\strategy\\__init__.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": []
+      },
+      {
+        "module_name": "campaign_strategy_ai",
+        "file_path": "engine\\strategy\\campaign_strategy_ai.py",
+        "responsibility": "Generates full strategy recommendations and targeting",
+        "import_dependencies": [
+          "__future__",
+          "datetime",
+          "json",
+          "logging",
+          "math",
+          "pandas",
+          "pathlib",
+          "typing",
+          "yaml"
+        ]
+      },
+      {
+        "module_name": "strategy_exporter",
+        "file_path": "engine\\strategy\\strategy_exporter.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "logging",
+          "pathlib",
+          "shutil",
+          "typing"
+        ]
+      },
+      {
+        "module_name": "strategy_report_writer",
+        "file_path": "engine\\strategy\\strategy_report_writer.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "datetime",
+          "pathlib",
+          "typing"
+        ]
+      }
+    ],
+    "voters": [
+      {
+        "module_name": "__init__",
+        "file_path": "engine\\voters\\__init__.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": []
+      },
+      {
+        "module_name": "persuasion_model",
+        "file_path": "engine\\voters\\persuasion_model.py",
+        "responsibility": "Scores voter persuadability using modeled features",
+        "import_dependencies": [
+          "__future__",
+          "logging",
+          "numpy",
+          "pandas",
+          "pathlib"
+        ]
+      },
+      {
+        "module_name": "precinct_voter_metrics",
+        "file_path": "engine\\voters\\precinct_voter_metrics.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "engine",
+          "logging",
+          "pandas",
+          "pathlib",
+          "typing"
+        ]
+      },
+      {
+        "module_name": "targeting_quadrants",
+        "file_path": "engine\\voters\\targeting_quadrants.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "logging",
+          "pandas",
+          "pathlib"
+        ]
+      },
+      {
+        "module_name": "turnout_propensity",
+        "file_path": "engine\\voters\\turnout_propensity.py",
+        "responsibility": "Scores voter likelihood to turn out",
+        "import_dependencies": [
+          "__future__",
+          "datetime",
+          "logging",
+          "numpy",
+          "pandas",
+          "pathlib",
+          "re",
+          "typing"
+        ]
+      },
+      {
+        "module_name": "universe_builder",
+        "file_path": "engine\\voters\\universe_builder.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "logging",
+          "pandas",
+          "pathlib",
+          "typing"
+        ]
+      },
+      {
+        "module_name": "voter_parser",
+        "file_path": "engine\\voters\\voter_parser.py",
+        "responsibility": "Parses and normalizes raw voter file data",
+        "import_dependencies": [
+          "__future__",
+          "logging",
+          "pandas",
+          "pathlib",
+          "sys",
+          "typing",
+          "yaml"
+        ]
+      }
+    ],
+    "war_room": [
+      {
+        "module_name": "__init__",
+        "file_path": "engine\\war_room\\__init__.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": []
+      },
+      {
+        "module_name": "data_requests",
+        "file_path": "engine\\war_room\\data_requests.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "datetime",
+          "json",
+          "logging",
+          "pandas",
+          "pathlib",
+          "typing"
+        ]
+      },
+      {
+        "module_name": "forecast_updater",
+        "file_path": "engine\\war_room\\forecast_updater.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "datetime",
+          "logging",
+          "math",
+          "pandas",
+          "pathlib",
+          "typing"
+        ]
+      },
+      {
+        "module_name": "runtime_loader",
+        "file_path": "engine\\war_room\\runtime_loader.py",
+        "responsibility": "Loads live field/volunteer runtime data for war room",
+        "import_dependencies": [
+          "__future__",
+          "logging",
+          "pandas",
+          "pathlib",
+          "typing"
+        ]
+      },
+      {
+        "module_name": "status_engine",
+        "file_path": "engine\\war_room\\status_engine.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "__future__",
+          "datetime",
+          "json",
+          "logging",
+          "math",
+          "pandas",
+          "pathlib",
+          "typing"
+        ]
+      }
+    ],
+    "workflow": [
+      {
+        "module_name": "strategy_approval",
+        "file_path": "engine\\workflow\\strategy_approval.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "datetime",
+          "json",
+          "logging",
+          "os",
+          "pandas",
+          "pathlib",
+          "typing"
+        ]
+      },
+      {
+        "module_name": "task_manager",
+        "file_path": "engine\\workflow\\task_manager.py",
+        "responsibility": "Campaign engine module",
+        "import_dependencies": [
+          "datetime",
+          "logging",
+          "pandas",
+          "pathlib",
+          "typing",
+          "uuid"
+        ]
+      }
+    ]
+  },
+  "ui_inventory": {
+    "pages": [
+      {
+        "page_name": "\ud83c\udfe0 Overview",
+        "label": "Overview",
+        "sidebar_section": "\ud83c\udfe0 Campaign Command",
+        "inferred_source": "ui/dashboard/overview_view.py"
+      },
+      {
+        "page_name": "\ud83e\ude96 War Room",
+        "label": "War Room",
+        "sidebar_section": "\ud83c\udfe0 Campaign Command",
+        "inferred_source": "ui/dashboard/war_room_view.py"
+      },
+      {
+        "page_name": "\ud83c\udf10 Jurisdiction Summary",
+        "label": "Jurisdiction Summary",
+        "sidebar_section": "\ud83c\udfe0 Campaign Command",
+        "inferred_source": "ui/dashboard/jurisdiction_summary_view.py"
+      },
+      {
+        "page_name": "\ud83d\udccb Team Activity",
+        "label": "Team Activity",
+        "sidebar_section": "\ud83c\udfe0 Campaign Command",
+        "inferred_source": "ui/dashboard/team_activity_view.py"
+      },
+      {
+        "page_name": "\ud83d\uddf3\ufe0f Campaign Setup",
+        "label": "Campaign Setup",
+        "sidebar_section": "\ud83d\uddf3\ufe0f Campaign Setup",
+        "inferred_source": "ui/dashboard/campaign_setup_view.py"
+      },
+      {
+        "page_name": "\ud83d\udcc2 Upload Contest Data",
+        "label": "Upload Contest Data",
+        "sidebar_section": "\ud83d\uddf3\ufe0f Campaign Setup",
+        "inferred_source": "ui/dashboard/upload_contest_data_view.py"
+      },
+      {
+        "page_name": "\ud83e\udded Political Intelligence",
+        "label": "Political Intelligence",
+        "sidebar_section": "\ud83d\udcca Intelligence",
+        "inferred_source": "ui/dashboard/political_intelligence_view.py"
+      },
+      {
+        "page_name": "\ud83e\udde0 Voter Intelligence",
+        "label": "Voter Intelligence",
+        "sidebar_section": "\ud83d\udcca Intelligence",
+        "inferred_source": "ui/dashboard/voter_intelligence_view.py"
+      },
+      {
+        "page_name": "\ud83d\udcc2 Data Manager",
+        "label": "Data Manager",
+        "sidebar_section": "\ud83d\udcc2 Data",
+        "inferred_source": "ui/dashboard/data_manager_view.py"
+      },
+      {
+        "page_name": "\ud83d\uddc4\ufe0f Data Explorer",
+        "label": "Data Explorer",
+        "sidebar_section": "\ud83d\udcc2 Data",
+        "inferred_source": "ui/dashboard/data_explorer_view.py"
+      },
+      {
+        "page_name": "\ud83d\uddfa\ufe0f Precinct Map",
+        "label": "Precinct Map",
+        "sidebar_section": "\ud83d\uddfa\ufe0f Geography",
+        "inferred_source": "ui/dashboard/precinct_map_view.py"
+      },
+      {
+        "page_name": "\ud83c\udfaf Targeting",
+        "label": "Targeting",
+        "sidebar_section": "\ud83d\uddfa\ufe0f Geography",
+        "inferred_source": "ui/dashboard/targeting_view.py"
+      },
+      {
+        "page_name": "\ud83d\udccb Strategy",
+        "label": "Strategy",
+        "sidebar_section": "\ud83d\udcc8 Strategy & Modeling",
+        "inferred_source": "ui/dashboard/strategy_view.py"
+      },
+      {
+        "page_name": "\ud83d\udd2c Simulations",
+        "label": "Simulations",
+        "sidebar_section": "\ud83d\udcc8 Strategy & Modeling",
+        "inferred_source": "ui/dashboard/simulations_view.py"
+      },
+      {
+        "page_name": "\ud83c\udfdb\ufe0f Historical Archive",
+        "label": "Historical Archive",
+        "sidebar_section": "\ud83d\udcc8 Strategy & Modeling",
+        "inferred_source": "ui/dashboard/historical_archive_view.py"
+      },
+      {
+        "page_name": "\u26a1 Advanced Modeling",
+        "label": "Advanced Modeling",
+        "sidebar_section": "\ud83d\udcc8 Strategy & Modeling",
+        "inferred_source": "ui/dashboard/advanced_modeling_view.py"
+      },
+      {
+        "page_name": "\ud83d\udcd0 Calibration",
+        "label": "Calibration",
+        "sidebar_section": "\ud83d\udcc8 Strategy & Modeling",
+        "inferred_source": "ui/dashboard/calibration_view.py"
+      },
+      {
+        "page_name": "\ud83e\ude7a Diagnostics",
+        "label": "Diagnostics",
+        "sidebar_section": "\ud83d\udee0 System",
+        "inferred_source": "ui/dashboard/diagnostics_view.py"
+      }
+    ],
+    "nav_structure": [
+      {
+        "section_key": "campaign_command",
+        "label": "\ud83c\udfe0 Campaign Command",
+        "display_order": 4,
+        "pages": [
+          {
+            "id": "\ud83c\udfe0 Overview",
+            "label": "Overview"
+          },
+          {
+            "id": "\ud83e\ude96 War Room",
+            "label": "War Room"
+          },
+          {
+            "id": "\ud83c\udf10 Jurisdiction Summary",
+            "label": "Jurisdiction Summary"
+          },
+          {
+            "id": "\ud83d\udccb Team Activity",
+            "label": "Team Activity"
+          }
+        ]
+      },
+      {
+        "section_key": "campaign_setup",
+        "label": "\ud83d\uddf3\ufe0f Campaign Setup",
+        "display_order": 6,
+        "pages": [
+          {
+            "id": "\ud83d\uddf3\ufe0f Campaign Setup",
+            "label": "Campaign Setup"
+          },
+          {
+            "id": "\ud83d\udcc2 Upload Contest Data",
+            "label": "Upload Contest Data"
+          }
+        ]
+      },
+      {
+        "section_key": "intelligence",
+        "label": "\ud83d\udcca Intelligence",
+        "display_order": 8,
+        "pages": [
+          {
+            "id": "\ud83e\udded Political Intelligence",
+            "label": "Political Intelligence"
+          },
+          {
+            "id": "\ud83e\udde0 Voter Intelligence",
+            "label": "Voter Intelligence"
+          }
+        ]
+      },
+      {
+        "section_key": "data",
+        "label": "\ud83d\udcc2 Data",
+        "display_order": 10,
+        "pages": [
+          {
+            "id": "\ud83d\udcc2 Data Manager",
+            "label": "Data Manager"
+          },
+          {
+            "id": "\ud83d\uddc4\ufe0f Data Explorer",
+            "label": "Data Explorer"
+          }
+        ]
+      },
+      {
+        "section_key": "geography",
+        "label": "\ud83d\uddfa\ufe0f Geography",
+        "display_order": 12,
+        "pages": [
+          {
+            "id": "\ud83d\uddfa\ufe0f Precinct Map",
+            "label": "Precinct Map"
+          },
+          {
+            "id": "\ud83c\udfaf Targeting",
+            "label": "Targeting"
+          }
+        ]
+      },
+      {
+        "section_key": "strategy_modeling",
+        "label": "\ud83d\udcc8 Strategy & Modeling",
+        "display_order": 17,
+        "pages": [
+          {
+            "id": "\ud83d\udccb Strategy",
+            "label": "Strategy"
+          },
+          {
+            "id": "\ud83d\udd2c Simulations",
+            "label": "Simulations"
+          },
+          {
+            "id": "\ud83c\udfdb\ufe0f Historical Archive",
+            "label": "Historical Archive"
+          },
+          {
+            "id": "\u26a1 Advanced Modeling",
+            "label": "Advanced Modeling"
+          },
+          {
+            "id": "\ud83d\udcd0 Calibration",
+            "label": "Calibration"
+          }
+        ]
+      },
+      {
+        "section_key": "system",
+        "label": "\ud83d\udee0 System",
+        "display_order": 18,
+        "pages": [
+          {
+            "id": "\ud83e\ude7a Diagnostics",
+            "label": "Diagnostics"
+          }
+        ]
+      }
+    ],
+    "dashboard_view_files": [
+      "ui\\dashboard\\advanced_view.py",
+      "ui\\dashboard\\archive_view.py",
+      "ui\\dashboard\\calibration_view.py",
+      "ui\\dashboard\\campaign_setup_view.py",
+      "ui\\dashboard\\data_manager_view.py",
+      "ui\\dashboard\\data_upload_view.py",
+      "ui\\dashboard\\diagnostics_view.py",
+      "ui\\dashboard\\jurisdiction_view.py",
+      "ui\\dashboard\\map_view.py",
+      "ui\\dashboard\\political_intelligence_view.py",
+      "ui\\dashboard\\simulation_view.py",
+      "ui\\dashboard\\strategy_view.py",
+      "ui\\dashboard\\targeting_view.py",
+      "ui\\dashboard\\team_view.py",
+      "ui\\dashboard\\voter_intelligence_view.py",
+      "ui\\dashboard\\war_room_view.py"
+    ]
+  },
+  "config_files": [
+    {
+      "filename": ".gitkeep",
+      "size_bytes": 0,
+      "keys_present": []
+    },
+    {
+      "filename": "advanced_modeling.yaml",
+      "size_bytes": 3090,
+      "keys_present": [
+        "effort",
+        "elasticity",
+        "curves",
+        "persuasion_direction",
+        "simulation",
+        "optimizer",
+        "scenarios"
+      ]
+    },
+    {
+      "filename": "allocation.yaml",
+      "size_bytes": 2262,
+      "keys_present": [
+        "allocation_method",
+        "fallback_chain",
+        "cardinality_max_multiplier",
+        "registration_discrepancy_threshold",
+        "auto_repair_violations",
+        "repair_log_level"
+      ]
+    },
+    {
+      "filename": "campaign_config.yaml",
+      "size_bytes": 1965,
+      "keys_present": [
+        "campaign",
+        "targets",
+        "budget",
+        "field_program",
+        "volunteers",
+        "strategy"
+      ]
+    },
+    {
+      "filename": "cities_by_county_ca.json",
+      "size_bytes": 2592,
+      "keys_present": [
+        "state",
+        "version",
+        "generated_at",
+        "counties"
+      ]
+    },
+    {
+      "filename": "counties_ca.json",
+      "size_bytes": 13537,
+      "keys_present": [
+        "state",
+        "version",
+        "generated_at",
+        "counties"
+      ]
+    },
+    {
+      "filename": "field_effects.yaml",
+      "size_bytes": 800,
+      "keys_present": [
+        "gotv",
+        "persuasion",
+        "targeting",
+        "notes"
+      ]
+    },
+    {
+      "filename": "field_ops.yaml",
+      "size_bytes": 547,
+      "keys_present": [
+        "doors_per_hour",
+        "hours_per_shift",
+        "contact_rate",
+        "persuasion_effect_per_contact",
+        "turnout_effect_per_contact",
+        "volunteers_per_turf_per_weekend",
+        "max_precincts_per_turf",
+        "min_registered_per_turf",
+        "target_shift_count_per_weekend",
+        "walkability_penalty"
+      ]
+    },
+    {
+      "filename": "forecast_scenarios.yaml",
+      "size_bytes": 1109,
+      "keys_present": [
+        "scenarios"
+      ]
+    },
+    {
+      "filename": "forecasting.yaml",
+      "size_bytes": 642,
+      "keys_present": [
+        "turnout_model",
+        "swing_model",
+        "confidence_intervals"
+      ]
+    },
+    {
+      "filename": "jurisdictions_registry.json",
+      "size_bytes": 339,
+      "keys_present": [
+        "CA"
+      ]
+    },
+    {
+      "filename": "model_parameters.yaml",
+      "size_bytes": 782,
+      "keys_present": [
+        "scoring",
+        "turnout",
+        "allocation",
+        "sanity",
+        "calibration"
+      ]
+    },
+    {
+      "filename": "model_weights.yaml",
+      "size_bytes": 514,
+      "keys_present": [
+        "scoring_weights",
+        "thresholds",
+        "parameters"
+      ]
+    },
+    {
+      "filename": "roles_permissions.yaml",
+      "size_bytes": 1750,
+      "keys_present": [
+        "campaign_manager",
+        "data_director",
+        "field_director",
+        "finance_director",
+        "communications_director",
+        "analyst",
+        "viewer"
+      ]
+    },
+    {
+      "filename": "schema_registry.yaml",
+      "size_bytes": 1434,
+      "keys_present": [
+        "mappings",
+        "rules"
+      ]
+    },
+    {
+      "filename": "ui_pages.yaml",
+      "size_bytes": 1477,
+      "keys_present": [
+        "campaign_command",
+        "campaign_setup",
+        "intelligence",
+        "data",
+        "geography",
+        "strategy_modeling",
+        "system"
+      ]
+    },
+    {
+      "filename": "universe_rules.yaml",
+      "size_bytes": 1149,
+      "keys_present": [
+        "universes"
+      ]
+    },
+    {
+      "filename": "users_registry.json",
+      "size_bytes": 764,
+      "keys_present": [
+        "users"
+      ]
+    },
+    {
+      "filename": "version.json",
+      "size_bytes": 57,
+      "keys_present": [
+        "version",
+        "release_date"
+      ]
+    },
+    {
+      "filename": "voter_schema.yaml",
+      "size_bytes": 3069,
+      "keys_present": [
+        "voter_id_aliases",
+        "precinct_aliases",
+        "party_aliases",
+        "party_map",
+        "vote_history_prefixes",
+        "age_aliases",
+        "gender_aliases",
+        "ethnicity_aliases",
+        "language_aliases",
+        "mail_ballot_aliases",
+        "address_columns_exclude"
+      ]
+    }
+  ],
+  "data_inventory": {
+    "data/elections": {
+      "exists": true,
+      "file_count": 2,
+      "sample_files": [
+        "data\\elections\\CA\\Sonoma\\.gitkeep",
+        "data\\elections\\CA\\Sonoma\\download_status.json"
+      ],
+      "expected_content": [
+        "SOV or election results CSVs"
+      ],
+      "missing": false
+    },
+    "data/election_archive": {
+      "exists": true,
+      "file_count": 0,
+      "sample_files": [],
+      "expected_content": [
+        "Historical election data folders per state/county/year"
+      ],
+      "missing": true
+    },
+    "data/voters": {
+      "exists": true,
+      "file_count": 2,
+      "sample_files": [
+        "data\\voters\\CA\\Sonoma\\.gitkeep",
+        "data\\voters\\CA\\Sonoma\\voter_file_synthetic.csv"
+      ],
+      "expected_content": [
+        "Voter file CSVs or exports"
+      ],
+      "missing": false
+    },
+    "data/intelligence": {
+      "exists": true,
+      "file_count": 5,
+      "sample_files": [
+        "data\\intelligence\\ballot_returns\\.gitkeep",
+        "data\\intelligence\\demographics\\.gitkeep",
+        "data\\intelligence\\macro\\.gitkeep",
+        "data\\intelligence\\polling\\.gitkeep",
+        "data\\intelligence\\registration\\.gitkeep"
+      ],
+      "expected_content": [
+        "Polling, demographics, registration, ballot return data"
+      ],
+      "missing": false
+    },
+    "data/campaign_runtime": {
+      "exists": true,
+      "file_count": 4,
+      "sample_files": [
+        "data\\campaign_runtime\\CA\\Sonoma\\nov2024_general\\field\\budget.csv",
+        "data\\campaign_runtime\\CA\\Sonoma\\nov2024_general\\field\\doors.csv",
+        "data\\campaign_runtime\\CA\\Sonoma\\nov2024_general\\volunteers\\shifts.csv",
+        "data\\campaign_runtime\\CA\\Sonoma\\prop_50_special\\.gitkeep"
+      ],
+      "expected_content": [
+        "Field activity, budget, volunteer schedule data"
+      ],
+      "missing": false
+    }
+  },
+  "derived_inventory": {
+    "models": {
+      "exists": true,
+      "file_count": 5,
+      "sample_files": [
+        "derived\\models\\support_feature_importance.csv",
+        "derived\\models\\support_model.pkl",
+        "derived\\models\\support_model_parameters.json",
+        "derived\\models\\turnout_model.pkl",
+        "derived\\models\\turnout_model_parameters.json"
+      ]
+    },
+    "state": {
+      "exists": true,
+      "file_count": 8,
+      "sample_files": [
+        "derived\\state\\history\\.gitkeep",
+        "derived\\state\\history\\2026-03-10__152246__e84498d7__msi__campaign_state.json",
+        "derived\\state\\history\\2026-03-10__152246__e84498d7__msi__state_diff.json",
+        "derived\\state\\latest\\.gitkeep",
+        "derived\\state\\latest\\campaign_metrics.csv",
+        "derived\\state\\latest\\campaign_state.json",
+        "derived\\state\\latest\\data_requests.json",
+        "derived\\state\\latest\\recommendations.json"
+      ]
+    },
+    "archive": {
+      "exists": true,
+      "file_count": 6,
+      "sample_files": [
+        "derived\\archive\\archive_summary.json",
+        "derived\\archive\\contest_classification.csv",
+        "derived\\archive\\normalized_elections.csv",
+        "derived\\archive\\precinct_profiles.csv",
+        "derived\\archive\\precinct_trends.csv",
+        "derived\\archive\\similar_elections.csv"
+      ]
+    },
+    "performance": {
+      "exists": true,
+      "file_count": 6,
+      "sample_files": [
+        "derived\\performance\\latest\\performance_metrics.csv",
+        "derived\\performance\\test_run__campaign_health.json",
+        "derived\\performance\\test_run__forecast_drift.csv",
+        "derived\\performance\\test_run__leverage_actions.json",
+        "derived\\performance\\test_run__performance_metrics.csv",
+        "derived\\performance\\test_run__recovery_scenarios.csv"
+      ]
+    },
+    "strategy": {
+      "exists": true,
+      "file_count": 10,
+      "sample_files": [
+        "derived\\strategy\\2026-03-10__145503__00b7b2b1__msi__budget_allocation.csv",
+        "derived\\strategy\\2026-03-10__145503__00b7b2b1__msi__field_strategy.csv",
+        "derived\\strategy\\2026-03-10__145503__00b7b2b1__msi__risk_analysis.csv",
+        "derived\\strategy\\2026-03-10__145503__00b7b2b1__msi__vote_path.csv",
+        "derived\\strategy\\2026-03-10__152246__e84498d7__msi__budget_allocation.csv",
+        "derived\\strategy\\2026-03-10__152246__e84498d7__msi__field_strategy.csv",
+        "derived\\strategy\\2026-03-10__152246__e84498d7__msi__risk_analysis.csv",
+        "derived\\strategy\\2026-03-10__152246__e84498d7__msi__STRATEGY_META.json"
+      ]
+    },
+    "strategies": {
+      "exists": false,
+      "file_count": 0,
+      "sample_files": []
+    },
+    "simulation": {
+      "exists": true,
+      "file_count": 12,
+      "sample_files": [
+        "derived\\simulation\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__022821__prompt8__deterministic_forecast.csv",
+        "derived\\simulation\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__022821__prompt8__scenario_summary.csv",
+        "derived\\simulation\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__022821__prompt8__simulation_results.csv",
+        "derived\\simulation\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__022847__prompt8__deterministic_forecast.csv",
+        "derived\\simulation\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__022847__prompt8__scenario_summary.csv",
+        "derived\\simulation\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__022847__prompt8__simulation_results.csv",
+        "derived\\simulation\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__023003__prompt8__deterministic_forecast.csv",
+        "derived\\simulation\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__023003__prompt8__scenario_summary.csv"
+      ]
+    },
+    "forecasts": {
+      "exists": true,
+      "file_count": 42,
+      "sample_files": [
+        "derived\\forecasts\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__010336__74fbdd60__msi__scenario_forecasts.csv",
+        "derived\\forecasts\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__010708__74fbdd60__msi__scenario_forecasts.csv",
+        "derived\\forecasts\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__025553__521cfe43__msi__scenario_forecasts.csv",
+        "derived\\forecasts\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__025745__521cfe43__msi__scenario_forecasts.csv",
+        "derived\\forecasts\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__025809__521cfe43__msi__scenario_forecasts.csv",
+        "derived\\forecasts\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__025856__521cfe43__msi__scenario_forecasts.csv",
+        "derived\\forecasts\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__030049__521cfe43__msi__scenario_forecasts.csv",
+        "derived\\forecasts\\CA\\Sonoma\\Sonoma_2024_nov2024_general\\2026-03-05__033937__f4a083ab__msi__scenario_forecasts.csv"
+      ]
+    },
+    "file_registry": {
+      "exists": true,
+      "file_count": 2,
+      "sample_files": [
+        "derived\\file_registry\\latest\\missing_data_requests.json",
+        "derived\\file_registry\\latest\\source_finder_recommendations.json"
+      ]
+    },
+    "advanced_modeling": {
+      "exists": true,
+      "file_count": 22,
+      "sample_files": [
+        "derived\\advanced_modeling\\2024_CA_sonoma_nov2024_general\\2026-03-05__042220__46073f09__msi__advanced_scenarios.csv",
+        "derived\\advanced_modeling\\2024_CA_sonoma_nov2024_general\\2026-03-05__042220__46073f09__msi__advanced_simulation_summary.csv",
+        "derived\\advanced_modeling\\2024_CA_sonoma_nov2024_general\\2026-03-05__042220__46073f09__msi__optimal_allocation.csv",
+        "derived\\advanced_modeling\\2024_CA_sonoma_nov2024_general\\2026-03-05__042220__46073f09__msi__precinct_universe_estimates.csv",
+        "derived\\advanced_modeling\\2024_CA_sonoma_nov2024_general\\2026-03-10__125215__84d9e3b2__msi__advanced_scenarios.csv",
+        "derived\\advanced_modeling\\2024_CA_sonoma_nov2024_general\\2026-03-10__125215__84d9e3b2__msi__advanced_simulation_summary.csv",
+        "derived\\advanced_modeling\\2024_CA_sonoma_nov2024_general\\2026-03-10__125215__84d9e3b2__msi__precinct_universe_estimates.csv",
+        "derived\\advanced_modeling\\2025_CA_sonoma_prop_50_special\\2026-03-09__150530__cc2e639f__msi__advanced_scenarios.csv"
+      ]
+    },
+    "calibration": {
+      "exists": true,
+      "file_count": 8,
+      "sample_files": [
+        "derived\\calibration\\.gitkeep",
+        "derived\\calibration\\2026-03-10__152246__e84498d7__msi__calibration_summary.json",
+        "derived\\calibration\\2026-03-10__152246__e84498d7__msi__forecast_comparison.csv",
+        "derived\\calibration\\calibration_summary.json",
+        "derived\\calibration\\model_parameters.json",
+        "derived\\calibration\\persuasion_parameters.json",
+        "derived\\calibration\\turnout_lift_parameters.json",
+        "derived\\calibration\\turnout_parameters.json"
+      ]
+    },
+    "war_room": {
+      "exists": true,
+      "file_count": 3,
+      "sample_files": [
+        "derived\\war_room\\2026-03-10__152246__e84498d7__msi__daily_status.json",
+        "derived\\war_room\\2026-03-10__152246__e84498d7__msi__data_requests.json",
+        "derived\\war_room\\2026-03-10__152246__e84498d7__msi__forecast_update_comparison.csv"
+      ]
+    }
+  },
+  "model_inventory": [
+    {
+      "model_name": "support_model",
+      "file_path": "derived\\models\\support_model.pkl",
+      "size_bytes": 140856,
+      "training_source": "derived/archive/normalized_elections.csv",
+      "training_date": "unknown",
+      "training_records": "unknown",
+      "feature_count": "unknown",
+      "model_type": "unknown",
+      "parameters_file": "derived\\models\\support_model_parameters.json"
+    },
+    {
+      "model_name": "turnout_model",
+      "file_path": "derived\\models\\turnout_model.pkl",
+      "size_bytes": 2174385,
+      "training_source": "derived/archive/normalized_elections.csv",
+      "training_date": "unknown",
+      "training_records": "unknown",
+      "feature_count": "unknown",
+      "model_type": "unknown",
+      "parameters_file": "derived\\models\\turnout_model_parameters.json"
+    },
+    {
+      "model_name": "support_feature_importance",
+      "file_path": "derived\\models\\support_feature_importance.csv",
+      "size_bytes": 226,
+      "model_type": "feature_importance_table"
+    }
+  ],
+  "strategy_engine": {
+    "strategy_modules": {
+      "strategy_generator": {
+        "file": "engine/strategy/campaign_strategy_ai.py",
+        "exists": true,
+        "size_bytes": 23252
+      },
+      "targeting_engine": {
+        "file": "engine/strategy/campaign_strategy_ai.py",
+        "exists": true,
+        "size_bytes": 23252
+      },
+      "scenario_simulator": {
+        "file": "engine/advanced_modeling/scenarios.py",
+        "exists": true,
+        "size_bytes": 7702
+      },
+      "monte_carlo": {
+        "file": "engine/advanced_modeling/scenarios.py",
+        "exists": true,
+        "size_bytes": 7702
+      },
+      "resource_allocator": {
+        "file": "engine/strategy/campaign_strategy_ai.py",
+        "exists": true,
+        "size_bytes": 23252
+      },
+      "lift_models": {
+        "file": "engine/advanced_modeling/lift_models.py",
+        "exists": true,
+        "size_bytes": 7409
+      },
+      "calibration": {
+        "file": "engine/calibration/model_calibrator.py",
+        "exists": true,
+        "size_bytes": 11190
+      }
+    },
+    "simulation_config": {
+      "scenarios": [
+        {
+          "id": "baseline",
+          "name": "Baseline (Observed)",
+          "turnout_multiplier": 1.0,
+          "support_lift": 0.0,
+          "description": "Current observed results projected forward."
+        },
+        {
+          "id": "optimistic_turnout",
+          "name": "Optimistic Turnout (+10%)",
+          "turnout_multiplier": 1.1,
+          "support_lift": 0.0,
+          "description": "Assumes 10% higher turnout overall across all precincts."
+        },
+        {
+          "id": "pessimistic_turnout",
+          "name": "Pessimistic Turnout (-15%)",
+          "turnout_multiplier": 0.85,
+          "support_lift": 0.0,
+          "description": "Assumes a 15% drop in turnout due to weather or suppression."
+        },
+        {
+          "id": "persuasion_lift_low",
+          "name": "Incremental Persuasion (+2%)",
+          "turnout_multiplier": 1.0,
+          "support_lift": 0.02,
+          "description": "Assumes field efforts yield a 2% lift in support among undecideds."
+        },
+        {
+          "id": "persuasion_lift_high",
+          "name": "Strong Field Success (+5%)",
+          "turnout_multiplier": 1.05,
+          "support_lift": 0.05,
+          "description": "Assumes highly effective mobilization and persuasion (+5% support, +5% turnout)."
+        }
+      ]
+    }
+  },
+  "state_snapshot": {
+    "available": true,
+    "all_keys": [
+      "run_id",
+      "contest_id",
+      "state",
+      "county",
+      "generated_at",
+      "campaign_setup",
+      "model_summary",
+      "strategy_summary",
+      "war_room_summary",
+      "voter_intelligence_summary",
+      "provenance_summary",
+      "data_requests",
+      "risks",
+      "recommendations",
+      "artifact_index",
+      "calibration_status",
+      "calibration_sources"
+    ],
+    "contest_id": "2026_CA_sonoma_prop_50_special",
+    "county": "",
+    "state": "",
+    "run_id": "2026-03-10__152246__e84498d7__msi"
+  },
+  "file_registry": {
+    "available": false,
+    "file_count": 0
+  },
+  "deployment": [
+    {
+      "component": "Dockerfile",
+      "path": "deployment/docker/Dockerfile",
+      "exists": true,
+      "size_bytes": 612
+    },
+    {
+      "component": "install_sh",
+      "path": "deployment/install/install_campaign_in_a_box.sh",
+      "exists": true,
+      "size_bytes": 1598
+    },
+    {
+      "component": "install_ps1",
+      "path": "deployment/install/install_campaign_in_a_box.ps1",
+      "exists": true,
+      "size_bytes": 2220
+    },
+    {
+      "component": "run_sh",
+      "path": "run_campaign_box.sh",
+      "exists": true,
+      "size_bytes": 581
+    },
+    {
+      "component": "run_ps1",
+      "path": "run_campaign_box.ps1",
+      "exists": true,
+      "size_bytes": 727
+    },
+    {
+      "component": "environment_yml",
+      "path": "environment.yml",
+      "exists": true,
+      "size_bytes": 206
+    },
+    {
+      "component": "requirements_txt",
+      "path": "requirements.txt",
+      "exists": true,
+      "size_bytes": 95
+    },
+    {
+      "component": "system_check",
+      "path": "deployment/scripts/system_check.py",
+      "exists": true,
+      "size_bytes": 2418
+    }
+  ],
+  "log_inventory": {
+    "available": true,
+    "categories": {
+      "archive": {
+        "file_count": 2,
+        "recent_files": [
+          {
+            "file": "logs\\archive\\archive_ingest.log",
+            "size_bytes": 632
+          },
+          {
+            "file": "logs\\archive\\model_training.log",
+            "size_bytes": 414
+          }
+        ]
+      },
+      "collaboration": {
+        "file_count": 0,
+        "recent_files": []
+      },
+      "latest": {
+        "file_count": 1,
+        "recent_files": [
+          {
+            "file": "logs\\latest\\run.log",
+            "size_bytes": 3556
+          }
+        ]
+      },
+      "runs": {
+        "file_count": 59,
+        "recent_files": [
+          {
+            "file": "logs\\runs\\2026-03-04__230416__6e40c8bc__msi__run.log",
+            "size_bytes": 5944
+          },
+          {
+            "file": "logs\\runs\\2026-03-04__230432__6e40c8bc__msi__run.log",
+            "size_bytes": 12585
+          },
+          {
+            "file": "logs\\runs\\2026-03-05__003601__b03e3511__msi__run.log",
+            "size_bytes": 8109
+          },
+          {
+            "file": "logs\\runs\\2026-03-05__003755__0d822f43__msi__run.log",
+            "size_bytes": 5529
+          },
+          {
+            "file": "logs\\runs\\2026-03-05__004004__0d822f43__msi__run.log",
+            "size_bytes": 5532
+          },
+          {
+            "file": "logs\\runs\\2026-03-05__004110__0d822f43__msi__run.log",
+            "size_bytes": 7313
+          },
+          {
+            "file": "logs\\runs\\2026-03-05__005517__74fbdd60__msi__run.log",
+            "size_bytes": 3215
+          },
+          {
+            "file": "logs\\runs\\2026-03-05__005540__74fbdd60__msi__run.log",
+            "size_bytes": 5214
+          },
+          {
+            "file": "logs\\runs\\2026-03-05__005630__74fbdd60__msi__run.log",
+            "size_bytes": 5429
+          },
+          {
+            "file": "logs\\runs\\2026-03-05__005936__74fbdd60__msi__run.log",
+            "size_bytes": 5426
+          },
+          {
+            "file": "logs\\runs\\2026-03-05__010102__74fbdd60__msi__run.log",
+            "size_bytes": 5551
+          },
+          {
+            "file": "logs\\runs\\2026-03-05__010146__74fbdd60__msi__run.log",
+            "size_bytes": 6017
+          },
+          {
+            "file": "logs\\runs\\2026-03-05__010336__74fbdd60__msi__run.log",
+            "size_bytes": 6717
+          },
+          {
+            "file": "logs\\runs\\2026-03-05__010708__74fbdd60__msi__run.log",
+            "size_bytes": 6716
+          },
+          {
+            "file": "logs\\runs\\2026-03-05__025309__521cfe43__msi__run.log",
+            "size_bytes": 4876
+          },
+          {
+            "file": "logs\\runs\\2026-03-05__025427__521cfe43__msi__run.log",
+            "size_bytes": 7642
+          },
+          {
+            "file": "logs\\runs\\2026-03-05__025553__521cfe43__msi__run.log",
+            "size_bytes": 8115
+          },
+          {
+            "file": "logs\\runs\\2026-03-05__025745__521cfe43__msi__run.log",
+            "size_bytes": 7982
+          },
+          {
+            "file": "logs\\runs\\2026-03-05__025809__521cfe43__msi__run.log",
+            "size_bytes": 7979
+          },
+          {
+            "file": "logs\\runs\\2026-03-05__025856__521cfe43__msi__run.log",
+            "size_bytes": 9118
+          }
+        ]
+      },
+      "ui": {
+        "file_count": 3,
+        "recent_files": [
+          {
+            "file": "logs\\ui\\dashboard.log",
+            "size_bytes": 20472
+          },
+          {
+            "file": "logs\\ui\\navigation.log",
+            "size_bytes": 7183
+          },
+          {
+            "file": "logs\\ui\\ui_theme.log",
+            "size_bytes": 6792
+          }
+        ]
+      }
+    }
+  },
+  "security": {
+    "gitignore_present": true,
+    "total_rules": 42,
+    "voter_file_rules": [
+      "data/voters/",
+      "data/voter_files/",
+      "derived/voter_models/",
+      "derived/voter_segments/",
+      "/data/voters/"
+    ],
+    "runtime_data_rules": [
+      "data/campaign_runtime/*",
+      "!data/campaign_runtime/**/.gitkeep",
+      "/data/campaign_runtime/"
+    ],
+    "donor_data_rules": [],
+    "archive_rules": [],
+    "all_rules_sample": [
+      "__pycache__/",
+      "*.py[cod]",
+      "*.pyo",
+      "*.pyd",
+      ".Python",
+      "*.egg-info/",
+      "dist/",
+      "build/",
+      ".eggs/",
+      "*.egg",
+      ".env",
+      ".venv",
+      "venv/",
+      "env/",
+      ".DS_Store",
+      "Thumbs.db",
+      "desktop.ini",
+      ".vscode/",
+      ".idea/",
+      "*.suo",
+      "*.user",
+      "data/voters/",
+      "data/voter_files/",
+      "derived/voter_models/",
+      "derived/voter_segments/",
+      "data/elections/CA/*/detail*.xls",
+      "data/elections/CA/*/detail*.xlsx",
+      "data/elections/CA/*/detail*.xls*",
+      "*.parquet",
+      "_scaffold.ps1"
+    ]
+  },
+  "provenance": {
+    "possible_values": [
+      "REAL",
+      "SIMULATED",
+      "ESTIMATED",
+      "EXTERNAL",
+      "MISSING"
+    ],
+    "datasets_by_provenance": {
+      "REAL": [],
+      "SIMULATED": [],
+      "ESTIMATED": [],
+      "EXTERNAL": [],
+      "MISSING": []
+    }
+  }
+}

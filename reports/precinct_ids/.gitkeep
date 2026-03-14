@@ -1,0 +1,3 @@
+# reports/precinct_ids/.gitkeep
+# Precinct ID audit and validation reports.
+# Files: <RUN_ID>__precinct_id_audit.md, <RUN_ID>__validation_tests.md

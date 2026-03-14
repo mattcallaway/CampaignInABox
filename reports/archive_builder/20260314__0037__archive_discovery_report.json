@@ -1,0 +1,12 @@
+{
+  "run_id": "20260314__0037",
+  "state": "CA",
+  "county": "Sonoma",
+  "predicted_directories": 34,
+  "directories_confirmed": 0,
+  "files_found": 2,
+  "files_ingested": 0,
+  "archive_ready": 0,
+  "review_required": 0,
+  "errors_count": 0
+}

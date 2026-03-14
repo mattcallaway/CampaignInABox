@@ -1,0 +1,228 @@
+{
+  "run_id": "20260313__prompt27_validation",
+  "timestamp": "2026-03-13T19:47:40.298604",
+  "total": 42,
+  "passed": 42,
+  "failed": 0,
+  "score": 1.0,
+  "answers": {
+    "single_active_enforcement": true,
+    "campaign_state_isolated": true,
+    "loaders_use_campaign_scoped_state": true,
+    "archive_normalizer_integrated": true,
+    "ambiguous_precincts_blocked": true,
+    "legacy_shared_state_path_remains": "COMPAT_ALIAS_ONLY"
+  },
+  "results": [
+    {
+      "check": "campaign_state_resolver imported successfully",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "get_active_campaign_id returns a non-empty string",
+      "result": "PASS",
+      "detail": "campaign_id='2026_CA_sonoma_prop_50_special'"
+    },
+    {
+      "check": "Campaign state dir created under derived/state/campaigns/",
+      "result": "PASS",
+      "detail": "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\state\\campaigns\\2026_CA_sonoma_prop_50_special"
+    },
+    {
+      "check": "Latest dir exists within campaigns/<cid>/latest",
+      "result": "PASS",
+      "detail": "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\state\\campaigns\\2026_CA_sonoma_prop_50_special\\latest"
+    },
+    {
+      "check": "History dir exists within campaigns/<cid>/history",
+      "result": "PASS",
+      "detail": "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\state\\campaigns\\2026_CA_sonoma_prop_50_special\\history"
+    },
+    {
+      "check": "Legacy latest dir returned at derived/state/latest",
+      "result": "PASS",
+      "detail": "C:\\Users\\Mathew C\\Campaign In A Box\\derived\\state\\latest"
+    },
+    {
+      "check": "validate_registry returns status dict",
+      "result": "PASS",
+      "detail": "status=ok active_count=1"
+    },
+    {
+      "check": "Single active campaign enforced (active_count <= 1)",
+      "result": "PASS",
+      "detail": "active_count=1"
+    },
+    {
+      "check": "Enforcement report written to reports/state/",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "state_builder imports campaign_state_resolver",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "state_builder sets state['campaign_id']",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "state_builder uses get_latest_state_dir",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "state_builder uses get_history_dir",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "state_builder calls seed_legacy_alias",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "state_builder raises RuntimeError if no campaign_id",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "state_builder calls validate_registry",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "derived/state/campaigns/<cid>/ exists",
+      "result": "PASS",
+      "detail": "path=C:\\Users\\Mathew C\\Campaign In A Box\\derived\\state\\campaigns\\2026_CA_sonoma_prop_50_special (created on first build_campaign_state call)"
+    },
+    {
+      "check": "ClassifiedFile has archive_status field",
+      "result": "PASS",
+      "detail": "fields=['archive_ready', 'archive_status', 'classified_at', 'county', 'election_type', 'fingerprint_confidence', 'fingerprint_display', 'fingerprint_requires_review', 'fingerprint_type', 'join_archive_ready_fraction', 'join_statuses', 'local_path', 'overall_confidence', 'precinct_boundary_type', 'precinct_schema', 'requires_user_review', 'review_reasons', 'schema_confidence', 'schema_is_mixed', 'source_id', 'source_url', 'state', 'validation', 'year']"
+    },
+    {
+      "check": "ClassifiedFile has archive_ready field (backward compat)",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "archive_classifier defines ARCHIVE_READY status",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "archive_classifier defines REVIEW_REQUIRED status",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "archive_classifier defines REJECTED status",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "archive_classifier has hard REJECTED gate for BLOCKED_CROSS_JURISDICTION",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "archive_ingestor imports id_schema_detector",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "archive_ingestor imports id_normalizer",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "archive_ingestor imports safe_join_engine",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "archive_ingestor has _run_normalizer_pipeline function",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "archive_ingestor has _determine_archive_status function",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "archive_ingestor has _write_join_metadata function",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "archive_ingestor writes join_summary.json",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "archive_ingestor writes ambiguous_ids.csv",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "archive_ingestor writes no_match_ids.csv",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "archive_ingestor writes normalization report MD",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "archive_ingestor embeds campaign_id in manifest",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "archive_ingestor gates modeling inputs to ARCHIVE_READY only",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "archive_ingestor defines FINGERPRINT_MIN_CONFIDENCE threshold",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "archive_ingestor defines JOIN_ARCHIVE_READY_MIN threshold",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "archive_ingestor defines AMBIGUOUS_BLOCK_THRESHOLD",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "Legacy path compat report written",
+      "result": "PASS",
+      "detail": "C:\\Users\\Mathew C\\Campaign In A Box\\reports\\state\\20260313__prompt27_validation__legacy_path_compatibility.md"
+    },
+    {
+      "check": "Campaign switch cache validation report written",
+      "result": "PASS",
+      "detail": "C:\\Users\\Mathew C\\Campaign In A Box\\reports\\ui\\20260313__prompt27_validation__campaign_switch_cache_validation.md"
+    },
+    {
+      "check": "derived/state/campaigns/ directory exists",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "derived/state/active_campaign_pointer.json exists (written on campaign switch)",
+      "result": "PASS",
+      "detail": "not yet \u2014 written on first campaign switch (expected)"
+    }
+  ]
+}

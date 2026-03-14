@@ -1,0 +1,39 @@
+{
+  "run_id": "20260313__platform_audit",
+  "timestamp": "2026-03-13T09:54:59.217324",
+  "total_campaigns": 2,
+  "active_count": 1,
+  "active_pointer_consistent": true,
+  "issues_total": 1,
+  "campaigns": [
+    {
+      "campaign_id": "2026_CA_sonoma_prop_50_special",
+      "campaign_name": "Prop 50 Special Election 2026",
+      "status": "active",
+      "stage": "field",
+      "is_active": true,
+      "config_file_exists": false,
+      "archive_data_present": true,
+      "model_outputs_present": true,
+      "issues": [
+        "NO_CAMPAIGN_CONFIG_FILE"
+      ]
+    },
+    {
+      "campaign_id": "2027_ca_sonoma_supervisorial_district_3_2027",
+      "campaign_name": "Supervisorial District 3 2027",
+      "status": "inactive",
+      "stage": "setup",
+      "is_active": false,
+      "config_file_exists": true,
+      "archive_data_present": true,
+      "model_outputs_present": true,
+      "issues": []
+    }
+  ],
+  "top_issues": [
+    "NO_CAMPAIGN_CONFIG_FILE"
+  ],
+  "score": 0.9,
+  "risk": "safe"
+}

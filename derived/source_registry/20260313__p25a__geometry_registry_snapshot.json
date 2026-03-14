@@ -1,0 +1,237 @@
+{
+  "run_id": "20260313__p25a",
+  "generated_at": "2026-03-12T23:53:50.857396",
+  "total_sources": 10,
+  "approved": 0,
+  "preferred": 5,
+  "by_boundary_type": {
+    "mprec": 2,
+    "srprec": 2,
+    "crosswalk": 3,
+    "city": 1,
+    "supervisorial": 1,
+    "school_district": 1
+  },
+  "sources": [
+    {
+      "source_id": "ca_statewide_mprec_statewidedatabase",
+      "state": "CA",
+      "jurisdiction_scope": "statewide",
+      "boundary_type": "mprec",
+      "source_kind": "state_sos",
+      "official_status": "official",
+      "confidence_default": 0.97,
+      "preferred": true,
+      "user_approved": false,
+      "base_url": "https://statewidedatabase.org",
+      "page_url": "https://statewidedatabase.org/gis.html",
+      "file_patterns": [
+        "*mprec*.geojson",
+        "*mprec*.shp",
+        "*mprec*.zip"
+      ],
+      "format": "geojson",
+      "id_field_name": "mprec",
+      "name_field_name": "mprec_label",
+      "normalization_rule": "mprec_standard",
+      "notes": "The UC Berkeley Statewide Database (SWDB) is the canonical source for California MPREC (Master Precinct) geometry. This is the authoritative source used for academic and official redistricting analysis. Geometry aligns with the CA SOS Statement of Vote precinct IDs.\n"
+    },
+    {
+      "source_id": "ca_sos_mprec_gis",
+      "state": "CA",
+      "jurisdiction_scope": "statewide",
+      "boundary_type": "mprec",
+      "source_kind": "state_sos",
+      "official_status": "official",
+      "confidence_default": 0.95,
+      "preferred": false,
+      "user_approved": false,
+      "base_url": "https://www.sos.ca.gov/elections/mapping-and-redistricting",
+      "notes": "CA Secretary of State may publish MPREC boundary files through their GIS resources. Check the mapping and redistricting section.\n"
+    },
+    {
+      "source_id": "ca_sonoma_srprec_registrar",
+      "state": "CA",
+      "county": "Sonoma",
+      "jurisdiction_scope": "county",
+      "boundary_type": "srprec",
+      "source_kind": "county_registrar",
+      "official_status": "official",
+      "confidence_default": 0.95,
+      "preferred": true,
+      "user_approved": false,
+      "base_url": "https://socoe.us/elections",
+      "page_url": "https://socoe.us/elections/maps-precincts",
+      "file_patterns": [
+        "*srprec*.geojson",
+        "*precinct_map*.shp",
+        "*precinct_boundaries*.zip"
+      ],
+      "format": "geojson",
+      "id_field_name": "srprec",
+      "name_field_name": "precinct_name",
+      "normalization_rule": "srprec_to_mprec",
+      "notes": "Sonoma County Registrar of Voters publishes precinct boundary maps. These use SRPREC (sub-reporting precinct) IDs which must be crosswalked to MPREC for use with statewide data.\n"
+    },
+    {
+      "source_id": "ca_statewide_srprec_statewidedatabase",
+      "state": "CA",
+      "jurisdiction_scope": "statewide",
+      "boundary_type": "srprec",
+      "source_kind": "state_sos",
+      "official_status": "official",
+      "confidence_default": 0.92,
+      "preferred": false,
+      "user_approved": false,
+      "base_url": "https://statewidedatabase.org",
+      "file_patterns": [
+        "*srprec*.geojson",
+        "*srprec*.shp"
+      ],
+      "format": "geojson",
+      "id_field_name": "srprec",
+      "normalization_rule": "srprec_to_mprec",
+      "notes": "SWDB also publishes SRPREC boundaries for validation and crosswalk building.\n"
+    },
+    {
+      "source_id": "ca_statewide_mprec_srprec_crosswalk",
+      "state": "CA",
+      "jurisdiction_scope": "statewide",
+      "boundary_type": "crosswalk",
+      "source_kind": "state_sos",
+      "official_status": "official",
+      "confidence_default": 0.95,
+      "preferred": true,
+      "user_approved": false,
+      "base_url": "https://statewidedatabase.org",
+      "file_patterns": [
+        "*mprec_srprec*crosswalk*.csv",
+        "*precinct_crosswalk*.csv"
+      ],
+      "format": "csv",
+      "id_field_name": "mprec",
+      "crosswalk_targets": [
+        "mprec",
+        "srprec"
+      ],
+      "normalization_rule": "mprec_standard",
+      "notes": "MPREC\u2194SRPREC crosswalk from the UC Berkeley Statewide Database. Essential for joining SOS statewide data (MPREC) with county registrar data (SRPREC). Must be refreshed after any redistricting cycle.\n",
+      "_match_score": 0.95
+    },
+    {
+      "source_id": "ca_sonoma_mprec_srprec_crosswalk_local",
+      "state": "CA",
+      "county": "Sonoma",
+      "jurisdiction_scope": "county",
+      "boundary_type": "crosswalk",
+      "source_kind": "county_registrar",
+      "official_status": "official",
+      "confidence_default": 0.97,
+      "preferred": true,
+      "user_approved": false,
+      "file_patterns": [
+        "*sonoma*crosswalk*.csv",
+        "*mprec_srprec*.csv"
+      ],
+      "format": "csv",
+      "id_field_name": "mprec",
+      "crosswalk_targets": [
+        "mprec",
+        "srprec"
+      ],
+      "normalization_rule": "mprec_standard",
+      "notes": "Local Sonoma County MPREC\u2194SRPREC crosswalk file. Should be placed in data/CA/counties/Sonoma/geography/crosswalks/. If already local, auto-ingest is safe.\n",
+      "_match_score": 0.97
+    },
+    {
+      "source_id": "ca_sonoma_srprec_city_crosswalk",
+      "state": "CA",
+      "county": "Sonoma",
+      "jurisdiction_scope": "county",
+      "boundary_type": "crosswalk",
+      "source_kind": "county_registrar",
+      "official_status": "official",
+      "confidence_default": 0.88,
+      "preferred": true,
+      "user_approved": false,
+      "file_patterns": [
+        "*srprec_city*.csv",
+        "*precinct_city*.csv"
+      ],
+      "format": "csv",
+      "id_field_name": "srprec",
+      "crosswalk_targets": [
+        "srprec",
+        "city"
+      ],
+      "notes": "Maps Sonoma County SRPRECs to incorporated city jurisdictions. Important for city-level contest analysis (Santa Rosa, Petaluma, etc.). May need manual construction if not available from registrar.\n",
+      "_match_score": 0.88
+    },
+    {
+      "source_id": "ca_sonoma_city_boundaries",
+      "state": "CA",
+      "county": "Sonoma",
+      "jurisdiction_scope": "county",
+      "boundary_type": "city",
+      "source_kind": "opendata",
+      "official_status": "official",
+      "confidence_default": 0.88,
+      "preferred": false,
+      "user_approved": false,
+      "base_url": "https://data.sonoma.opendata.arcgis.com",
+      "file_patterns": [
+        "*city_boundaries*.geojson",
+        "*sonoma_cities*.shp"
+      ],
+      "format": "geojson",
+      "id_field_name": "city_name",
+      "name_field_name": "city_name",
+      "normalization_rule": "passthrough",
+      "notes": "Sonoma County city boundary files from the county open data portal. Used for display on precinct maps and for SRPREC\u2194city crosswalk building.\n"
+    },
+    {
+      "source_id": "ca_sonoma_supervisorial_boundaries",
+      "state": "CA",
+      "county": "Sonoma",
+      "jurisdiction_scope": "county",
+      "boundary_type": "supervisorial",
+      "source_kind": "opendata",
+      "official_status": "official",
+      "confidence_default": 0.88,
+      "preferred": false,
+      "user_approved": false,
+      "base_url": "https://data.sonoma.opendata.arcgis.com",
+      "file_patterns": [
+        "*supervisorial*.geojson",
+        "*supervisor_district*.shp"
+      ],
+      "format": "geojson",
+      "id_field_name": "district_number",
+      "name_field_name": "supervisor_name",
+      "normalization_rule": "passthrough",
+      "notes": "Sonoma County Board of Supervisors district boundaries. Used for supervisorial district-level contest analysis.\n"
+    },
+    {
+      "source_id": "ca_sonoma_school_district_boundaries",
+      "state": "CA",
+      "county": "Sonoma",
+      "jurisdiction_scope": "county",
+      "boundary_type": "school_district",
+      "source_kind": "opendata",
+      "official_status": "official",
+      "confidence_default": 0.82,
+      "preferred": false,
+      "user_approved": false,
+      "base_url": "https://nces.ed.gov/programs/edge/Geographic/DistrictBoundaries",
+      "file_patterns": [
+        "*school_district*.geojson",
+        "*nces_district*.shp"
+      ],
+      "format": "geojson",
+      "id_field_name": "district_id",
+      "name_field_name": "district_name",
+      "normalization_rule": "passthrough",
+      "notes": "NCES school district boundary files. Used for school board election analysis. Census TIGER files are an alternative source.\n"
+    }
+  ]
+}

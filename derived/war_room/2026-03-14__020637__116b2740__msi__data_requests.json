@@ -1,0 +1,46 @@
+{
+  "run_id": "2026-03-14__020637__116b2740__msi",
+  "total_requests": 4,
+  "critical_count": 0,
+  "high_count": 2,
+  "medium_count": 2,
+  "low_count": 0,
+  "requests": [
+    {
+      "request_type": "field_results",
+      "priority": "high",
+      "icon": "\ud83d\udeaa",
+      "title": "No real canvass results uploaded",
+      "why_needed": "Current contact rate (22%) and turnout lift (6%) are configured estimates. No actual canvass data.",
+      "what_it_improves": "Turnout calibration, daily forecast accuracy, persuasion targeting",
+      "recommended_ui_action": "Enter Field Data in the War Room \u2192 Field tab."
+    },
+    {
+      "request_type": "volunteer_log",
+      "priority": "high",
+      "icon": "\ud83d\ude4b",
+      "title": "No volunteer shift logs entered",
+      "why_needed": "Volunteer capacity is estimated at 10/week from config. No actual shift data.",
+      "what_it_improves": "Field capacity forecast, GOTV achievability, weekly progress tracking.",
+      "recommended_ui_action": "Log volunteer shifts in War Room \u2192 Volunteers tab."
+    },
+    {
+      "request_type": "budget_actuals",
+      "priority": "medium",
+      "icon": "\ud83d\udcb3",
+      "title": "No budget actuals entered",
+      "why_needed": "Current budget display shows planned allocations only. No actual spend has been entered.",
+      "what_it_improves": "Cash burn analysis, budget reallocation recommendations, burn-rate vs. timeline alerts.",
+      "recommended_ui_action": "Enter budget actuals in War Room \u2192 Budget tab."
+    },
+    {
+      "request_type": "contact_results",
+      "priority": "medium",
+      "icon": "\ud83d\udccb",
+      "title": "No contact ID results uploaded",
+      "why_needed": "Persuasion rate is modeled from party strength / age (estimated). No field ID data.",
+      "what_it_improves": "Persuasion model accuracy, supporter ID tracking, opposition count.",
+      "recommended_ui_action": "Upload contact results in War Room \u2192 Contacts tab."
+    }
+  ]
+}

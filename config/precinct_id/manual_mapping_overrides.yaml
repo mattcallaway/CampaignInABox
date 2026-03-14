@@ -1,0 +1,47 @@
+# config/precinct_id/manual_mapping_overrides.yaml — Prompt 29
+#
+# Persist human-approved crosswalk column fixes and precinct value remaps.
+# These are loaded by the pipeline AFTER automatic detection, as a final
+# deterministic override layer.
+#
+# Safety rules:
+#   - Every entry MUST have a reason and timestamp
+#   - Entries are ALWAYS scoped to state/county
+#   - No global short-ID remaps without explicit county scope
+#
+# Format:
+#   overrides:
+#     <STATE>/<COUNTY>:
+#       crosswalk_column_fixes:
+#         - file: <filename>
+#           source_col: <column>
+#           target_col: <column>
+#           weight_col: <column | null>
+#           reason: <why this override is needed>
+#           timestamp: <ISO8601>
+#           approved_by: <initials or "AUTO">
+#       precinct_remaps:
+#         - raw: <raw precinct value>
+#           canonical: <correct canonical ID>
+#           boundary_type: <MPREC | SRPREC | etc>
+#           reason: <why>
+#           timestamp: <ISO8601>
+#           approved_by: <initials or "AUTO">
+
+overrides:
+  CA/Sonoma:
+    # Crosswalk column fixes are now handled by per_file_hints in
+    # config/precinct_id/crosswalk_column_hints.yaml (Prompt 29).
+    # Add entries here ONLY for precinct value remaps that cannot be
+    # resolved by the automatic detector.
+    crosswalk_column_fixes: []
+
+    # Precinct value remaps — add entries here for confirmed ID corrections.
+    # Example:
+    #   - raw: "0001"
+    #     canonical: "0000001"
+    #     boundary_type: MPREC
+    #     reason: "Leading zeros were stripped by Excel on import"
+    #     timestamp: "2026-03-14T03:21:00-07:00"
+    #     approved_by: "MC"
+    precinct_remaps: []

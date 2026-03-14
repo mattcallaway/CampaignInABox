@@ -1,0 +1,8 @@
+metric,type,planned,actual,delta,pct_deviation,status
+doors_knocked,ACTIVITY,120000.0,0.0,-120000.0,-1.0,BEHIND
+calls_made,ACTIVITY,200000.0,0.0,-200000.0,-1.0,BEHIND
+mail_sent,ACTIVITY,150000.0,0.0,-150000.0,-1.0,BEHIND
+digital_spend,BUDGET,50000.0,0.0,-50000.0,-1.0,BEHIND
+fundraising,BUDGET,800000.0,0.0,-800000.0,-1.0,BEHIND
+turnout_lift_pct,SUPPORT,0.04,0.0,-0.04,-1.0,BEHIND
+persuasion_lift_pct,SUPPORT,0.02,0.0,-0.02,-1.0,BEHIND

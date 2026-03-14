@@ -1,0 +1,6 @@
+precinct_id,year,join_status,geometry_match,crosswalk_used,missing_reason
+STUB_PREC_001,2024,NOT_ATTEMPTED,false,none,Precinct join never executed — normalized_elections.csv produced from synthetic voter data with no precinct IDs
+STUB_PREC_002,2024,NOT_ATTEMPTED,false,none,Precinct join never executed — normalized_elections.csv produced from synthetic voter data with no precinct IDs
+STUB_PREC_003,2024,NOT_ATTEMPTED,false,none,Precinct join never executed — normalized_elections.csv produced from synthetic voter data with no precinct IDs
+STUB_PREC_004,2024,NOT_ATTEMPTED,false,none,Precinct join never executed — normalized_elections.csv produced from synthetic voter data with no precinct IDs
+2020_ALL_PRECINCTS,2020,NOT_ATTEMPTED,false,none,2020 file not in pipeline votes/ tree — never reached normalization or join step

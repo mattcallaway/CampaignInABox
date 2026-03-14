@@ -1,0 +1,90 @@
+# engine/swing_modeling/swing_rules.yaml
+# Swing Precinct Detection Rules — Prompt 26
+# ---
+# Swing is defined by MULTIPLE components. No single metric determines swing.
+# All thresholds are applied within the same jurisdiction (state + county).
+# ---
+
+schema_version: "1.0"
+last_updated: "2026-03-13"
+
+# ── Minimum data requirements ─────────────────────────────────────────────────
+minimum_usable_elections: 2        # Below this → low confidence, no auto-classification
+preferred_min_elections:  4        # Below this → medium confidence
+high_confidence_min:      6        # At or above → high confidence eligible
+
+# ── Swing score formula weights ───────────────────────────────────────────────
+# Swing score = weighted sum of normalized component scores
+# Each component contributes a fractional weight (must sum to 1.0)
+weights:
+  support_volatility:    0.40    # SD of support_rate across elections
+  turnout_volatility:    0.20    # SD of turnout_rate across elections
+  recent_direction:      0.25    # Directional change over last 2 elections
+  contest_sensitivity:   0.15    # Variation by contest type (general vs special)
+
+# ── Support volatility thresholds ─────────────────────────────────────────────
+support_volatility:
+  # support_sd (standard deviation of support_rate across elections)
+  high_swing_min:    0.07     # SD >= 0.07 → high volatility
+  moderate_swing_min: 0.04   # SD >= 0.04 → moderate volatility
+  low_swing_max:     0.04    # SD <  0.04 → low volatility
+
+# ── Turnout volatility thresholds ─────────────────────────────────────────────
+turnout_volatility:
+  high_swing_min:    0.06
+  moderate_swing_min: 0.03
+  low_swing_max:     0.03
+
+# ── Swing class thresholds (applied to final swing_score 0.0–1.0) ─────────────
+swing_classes:
+  high_swing:    0.65    # swing_score >= 0.65
+  moderate_swing: 0.40   # swing_score >= 0.40
+  low_swing:     0.20    # swing_score >= 0.20
+  stable:        0.00    # swing_score <  0.20
+
+# ── Confidence degradation ────────────────────────────────────────────────────
+# If elections_counted < minimum_usable_elections → confidence = 0.20
+# If elections_counted < preferred_min_elections  → confidence capped at 0.55
+# If only one contest type is represented         → confidence * 0.80
+# If outlier anomaly detected                     → confidence * 0.85
+confidence:
+  sparse_data_cap:        0.50    # elections < preferred_min_elections
+  single_type_penalty:    0.80    # multiplier when only one contest type seen
+  anomaly_penalty:        0.85    # multiplier when IQR outlier detected
+  minimum_floor:          0.20
+
+# ── Actual swing definition for backtesting ───────────────────────────────────
+# A precinct is "actually swung" in a held-out election if:
+#   abs(support_rate_held_out - prior_avg_support) > absolute_swing_threshold
+#   AND it is in the top percentile_threshold percentile of movers within jurisdiction
+actual_swing_definition:
+  absolute_support_threshold: 0.05    # ≥5 percentage points shift
+  absolute_turnout_threshold: 0.05    # ≥5 percentage points shift
+  percentile_threshold:       75      # top 25% of movers in jurisdiction
+
+# ── Contest-type normalization ────────────────────────────────────────────────
+# Different contest types have systematically different turnout.
+# Comparisons are normalized across comparable types when possible.
+# Priority order for "comparable" matching:
+contest_type_priority:
+  - general
+  - primary
+  - ballot_measure
+  - local_special
+  - municipal
+  - school_board
+
+# ── Persuasion vs Turnout separation ─────────────────────────────────────────
+targeting:
+  # Persuasion primary: support near competitive AND support swing is key
+  persuasion_support_window:   [0.30, 0.65]   # avg_support within this range
+  persuasion_min_support_sd:   0.03            # meaningful support volatility
+  persuasion_max_turnout_dominance: 0.60       # turnout component < this fraction
+
+  # Turnout primary: support already favorable AND turnout is the variable
+  turnout_favorable_min:       0.52            # avg_support >= 52% → favorable
+  turnout_opportunity_max_rate: 0.55           # avg_turnout <= 55% → suppressed
+  turnout_min_volatility:      0.03            # sd >= 3pp to qualify
+
+  # MIXED: both signals present (persuasion + turnout both above their thresholds)
+  # LOW_PRIORITY: neither signal strong, stable precinct

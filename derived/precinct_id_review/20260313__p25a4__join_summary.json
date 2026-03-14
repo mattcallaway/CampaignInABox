@@ -1,0 +1,15 @@
+{
+  "run_id": "20260313__p25a4",
+  "state": "CA",
+  "county": "Sonoma",
+  "boundary_type": "MPREC",
+  "generated_at": "2026-03-13T01:39:15.605416",
+  "total": 6,
+  "exact_matches": 3,
+  "crosswalk_matches": 0,
+  "normalized_matches": 0,
+  "ambiguous": 0,
+  "no_matches": 3,
+  "blocked_cross_jurisdiction": 0,
+  "archive_ready_fraction": 0.5
+}

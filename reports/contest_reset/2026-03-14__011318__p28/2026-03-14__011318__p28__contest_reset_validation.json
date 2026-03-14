@@ -1,0 +1,17 @@
+{
+  "run_id": "2026-03-14__011318__p28",
+  "generated_at": "2026-03-14T08:28:24.850154",
+  "health_score": 10.0,
+  "criteria": {
+    "contest_result_files_removed": true,
+    "geo_crosswalk_preserved": true,
+    "one_canonical_contest_path": false,
+    "data_manager_uses_canonical_intake": true,
+    "pipeline_runner_uses_canonical_resolver": true,
+    "legacy_paths_no_longer_writable": true,
+    "system_ready_for_clean_reupload": false,
+    "geo_files_preserved_count": 36,
+    "crosswalk_files_preserved_count": 6
+  },
+  "all_passed": false
+}

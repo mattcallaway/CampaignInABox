@@ -1,0 +1,7 @@
+# reports/swing_modeling/.gitkeep
+# Swing modeling reports directory.
+# Files:
+#   <RUN_ID>__swing_model_report.md       — overall swing model summary
+#   <RUN_ID>__backtest_report.md          — held-out backtest results with narrative
+#   <RUN_ID>__targeting_validity_report.md — persuasion/turnout target validity
+#   <RUN_ID>__data_sufficiency_report.md  — data depth and years needed

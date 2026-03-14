@@ -1,19 +1,28 @@
 """
-engine/state/state_builder.py — Prompt 14.5
+engine/state/state_builder.py — Prompt 14.5 / Prompt 27
 
 Builds the canonical CampaignState from all latest derived outputs.
 
 Entry point:
     build_campaign_state(project_root, run_id=None, contest_id=None)
 
-Writes:
+Primary write targets (Prompt 27 — campaign-scoped):
+    derived/state/campaigns/<campaign_id>/latest/campaign_state.json
+    derived/state/campaigns/<campaign_id>/latest/campaign_metrics.csv
+    derived/state/campaigns/<campaign_id>/latest/data_requests.json
+    derived/state/campaigns/<campaign_id>/latest/recommendations.json
+    derived/state/campaigns/<campaign_id>/history/<RUN_ID>__campaign_state.json
+    derived/state/campaigns/<campaign_id>/history/<RUN_ID>__state_diff.json
+
+Legacy backward-compat alias (READ-ONLY — written via seed_legacy_alias):
+    derived/state/latest/campaign_state.json
+    derived/state/latest/campaign_metrics.csv
+    derived/state/latest/data_requests.json
+    derived/state/latest/recommendations.json
     derived/state/history/<RUN_ID>__campaign_state.json
-    derived/state/latest/campaign_state.json   (stable pointer)
-    derived/state/latest/campaign_metrics.csv  (one-row summary)
-    derived/state/latest/data_requests.json    (stable pointer)
-    derived/state/latest/recommendations.json  (top-5 feed)
 
 Never writes voter-level records.
+Raises RuntimeError if no active campaign is configured.
 """
 from __future__ import annotations
 
@@ -91,6 +100,9 @@ def build_campaign_state(
         contest_id:   override contest (default: infer from latest run)
 
     Returns: the complete state dict (also written to disk)
+
+    Raises:
+        RuntimeError: if no active campaign is set in config/active_campaign.yaml
     """
     from engine.state.state_schema import (
         make_empty_state, state_to_csv_row,
@@ -98,6 +110,31 @@ def build_campaign_state(
         empty_war_room_summary, empty_voter_intelligence_summary,
         empty_provenance_summary, empty_artifact_index,
     )
+    # Prompt 27 — Resolve and validate active campaign BEFORE building state
+    from engine.state.campaign_state_resolver import (
+        get_active_campaign_id, validate_registry, write_enforcement_report,
+    )
+    import yaml as _yaml
+
+    # Validate registry (auto-repairs >1 active)
+    validation = validate_registry()
+    enforcement_run_id = run_id or datetime.utcnow().strftime("%Y%m%d__%H%M%S")
+    write_enforcement_report(enforcement_run_id, validation)
+
+    # Resolve the authoritative active campaign_id
+    active_campaign_id = get_active_campaign_id()  # raises RuntimeError if unset
+
+    # Load active campaign details from registry for embedding in state
+    _ac_details: dict = {}
+    try:
+        reg_path = Path(project_root) / "config" / "campaign_registry.yaml"
+        reg = _yaml.safe_load(reg_path.read_text(encoding="utf-8")) or {}
+        _ac_details = next(
+            (c for c in reg.get("campaigns", []) if c.get("campaign_id") == active_campaign_id),
+            {}
+        )
+    except Exception:
+        pass
 
     root = Path(project_root)
     now  = datetime.utcnow().isoformat()
@@ -118,28 +155,32 @@ def build_campaign_state(
             pw_data = _read_json(pw_path)
             contest_id = pw_data.get("contest_id", "")
         if not contest_id:
-            contest_id = ""
+            contest_id = _ac_details.get("contest_name", "")
 
     # ── Load campaign config ──────────────────────────────────────────────────
     cfg: dict = {}
     try:
-        import yaml
         cfg_path = root / "config" / "campaign_config.yaml"
         if cfg_path.exists():
             with open(cfg_path, encoding="utf-8") as f:
-                cfg = yaml.safe_load(f) or {}
+                cfg = _yaml.safe_load(f) or {}
     except Exception as e:
         log.warning(f"Could not load campaign_config: {e}")
 
-    _state_val  = cfg.get("campaign", {}).get("state", "")
-    _county_val = cfg.get("campaign", {}).get("county", "")
+    _state_val  = cfg.get("campaign", {}).get("state",  _ac_details.get("state",  ""))
+    _county_val = cfg.get("campaign", {}).get("county", _ac_details.get("county", ""))
 
     state = make_empty_state()
-    state["run_id"]       = run_id
-    state["contest_id"]   = contest_id
-    state["state"]        = _state_val
-    state["county"]       = _county_val
-    state["generated_at"] = now
+    state["run_id"]         = run_id
+    state["contest_id"]     = contest_id
+    state["state"]          = _state_val
+    state["county"]         = _county_val
+    state["generated_at"]   = now
+    # Prompt 27: embed campaign identity fields in every state dict
+    state["campaign_id"]    = active_campaign_id
+    state["campaign_name"]  = _ac_details.get("campaign_name", "")
+    state["campaign_stage"] = _ac_details.get("stage", "")
+    state["campaign_status"] = _ac_details.get("status", "active")
 
     # ── Section A: campaign_setup ─────────────────────────────────────────────
     cs = empty_campaign_setup()
@@ -571,29 +612,48 @@ def _build_recommendations(
 # ── File writers ──────────────────────────────────────────────────────────────
 
 def _write_state(state: dict, root: Path, run_id: str, recommendations: list) -> None:
+    """
+    Write campaign state to campaign-scoped paths (Prompt 27).
+
+    Primary targets:
+      derived/state/campaigns/<campaign_id>/latest/
+      derived/state/campaigns/<campaign_id>/history/
+
+    Legacy backward-compat alias (READ-ONLY second copy):
+      derived/state/latest/  — written via seed_legacy_alias only
+      derived/state/history/ — written for backward compat tools
+    """
     from engine.state.state_schema import state_to_csv_row
+    from engine.state.campaign_state_resolver import (
+        get_latest_state_dir, get_history_dir, seed_legacy_alias
+    )
     import pandas as pd
 
-    # Directories
-    hist_dir   = root / "derived" / "state" / "history"
-    latest_dir = root / "derived" / "state" / "latest"
-    hist_dir.mkdir(parents=True, exist_ok=True)
-    latest_dir.mkdir(parents=True, exist_ok=True)
+    campaign_id = state.get("campaign_id", "")
+    if not campaign_id:
+        raise RuntimeError(
+            "[state_builder] Cannot write state: state dict missing campaign_id. "
+            "Ensure active campaign is set before calling build_campaign_state()."
+        )
+
+    # ── Campaign-scoped directories ──────────────────────────────────────────
+    scoped_latest  = get_latest_state_dir(campaign_id)
+    scoped_history = get_history_dir(campaign_id)
 
     state_json = json.dumps(state, indent=2, default=str)
 
-    # History copy
-    hist_path = hist_dir / f"{run_id}__campaign_state.json"
+    # History snapshot (campaign-scoped primary)
+    hist_path = scoped_history / f"{run_id}__campaign_state.json"
     hist_path.write_text(state_json, encoding="utf-8")
-    log.info(f"State written → {hist_path.name}")
+    log.info(f"[state_builder] State history → {hist_path}")
 
-    # Stable latest pointer
-    latest_state = latest_dir / "campaign_state.json"
-    latest_state.write_text(state_json, encoding="utf-8")
+    # Latest (campaign-scoped primary)
+    (scoped_latest / "campaign_state.json").write_text(state_json, encoding="utf-8")
+    log.info(f"[state_builder] State latest → {scoped_latest}")
 
-    # campaign_metrics.csv
+    # campaign_metrics.csv (campaign-scoped primary)
     csv_row = state_to_csv_row(state)
-    metrics_path = latest_dir / "campaign_metrics.csv"
+    metrics_path = scoped_latest / "campaign_metrics.csv"
     try:
         if metrics_path.exists():
             existing = pd.read_csv(metrics_path)
@@ -605,22 +665,53 @@ def _write_state(state: dict, root: Path, run_id: str, recommendations: list) ->
     except Exception as e:
         log.warning(f"Could not write campaign_metrics.csv: {e}")
 
-    # data_requests.json stable pointer
+    # data_requests.json (campaign-scoped primary)
     dr_payload = {
         "run_id":         state["run_id"],
+        "campaign_id":    campaign_id,
         "generated_at":   state["generated_at"],
         "total_requests": len(state["data_requests"]),
         "requests":       state["data_requests"],
     }
-    (latest_dir / "data_requests.json").write_text(
+    (scoped_latest / "data_requests.json").write_text(
         json.dumps(dr_payload, indent=2, default=str), encoding="utf-8")
 
-    # recommendations.json stable pointer
+    # recommendations.json (campaign-scoped primary)
     rec_payload = {
         "run_id":          state["run_id"],
+        "campaign_id":     campaign_id,
         "generated_at":    state["generated_at"],
         "top_recommendations": recommendations,
     }
-    (latest_dir / "recommendations.json").write_text(
+    (scoped_latest / "recommendations.json").write_text(
         json.dumps(rec_payload, indent=2, default=str), encoding="utf-8")
-    log.info(f"State latest pointers written to {latest_dir}")
+
+    # ── Legacy backward-compat alias (READ-ONLY copies) ───────────────────────
+    # These exist only so older pages that haven't been updated yet still work.
+    # No module may READ from these as their primary source.
+    legacy_hist = root / "derived" / "state" / "history"
+    legacy_hist.mkdir(parents=True, exist_ok=True)
+    (legacy_hist / f"{run_id}__campaign_state.json").write_text(state_json, encoding="utf-8")
+
+    seed_legacy_alias(campaign_id, state_json)   # writes derived/state/latest/campaign_state.json
+
+    # Also copy ancillary files to legacy latest/ for compat
+    legacy_latest = root / "derived" / "state" / "latest"
+    legacy_latest.mkdir(parents=True, exist_ok=True)
+    try:
+        (legacy_latest / "campaign_metrics.csv").write_text(
+            (scoped_latest / "campaign_metrics.csv").read_text(encoding="utf-8"),
+            encoding="utf-8"
+        )
+    except Exception:
+        pass
+    (legacy_latest / "data_requests.json").write_text(
+        json.dumps(dr_payload, indent=2, default=str), encoding="utf-8")
+    (legacy_latest / "recommendations.json").write_text(
+        json.dumps(rec_payload, indent=2, default=str), encoding="utf-8")
+
+    log.info(
+        f"[state_builder] All state outputs written. "
+        f"Campaign: {campaign_id} | Run: {run_id} | "
+        f"Primary: {scoped_latest} | Legacy alias: {legacy_latest}"
+    )

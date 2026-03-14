@@ -21,7 +21,9 @@ from typing import Any, Optional
 
 import pandas as pd
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+from engine.utils.helpers import g as _g, find_latest_csv, BASE_DIR, load_yaml, load_json
+from engine.utils.derived_data_reader import DerivedDataReader
+
 CONFIG_PATH = BASE_DIR / "config" / "campaign_config.yaml"
 STRATEGY_DIR = BASE_DIR / "derived" / "strategy"
 
@@ -31,66 +33,31 @@ log = logging.getLogger(__name__)
 
 def load_campaign_config() -> dict:
     """Load campaign_config.yaml. Returns empty dict if missing."""
-    try:
-        import yaml
-        if CONFIG_PATH.exists():
-            with open(CONFIG_PATH, encoding="utf-8") as f:
-                return yaml.safe_load(f) or {}
-    except Exception as e:
-        log.warning(f"[STRATEGY_AI] Could not load campaign config: {e}")
-    return {}
+    return load_yaml(CONFIG_PATH)
 
 
-def _g(cfg: dict, *keys, default=None) -> Any:
-    """Safe nested dict get."""
-    d = cfg
-    for k in keys:
-        if not isinstance(d, dict):
-            return default
-        d = d.get(k, default)
-    return d if d is not None else default
+# ── Input Loading (C02 fix: uses DerivedDataReader instead of broken path) ─────
 
-
-# ── Input Loading ─────────────────────────────────────────────────────────────
-
-def _find_latest(directory: Path, pattern: str) -> Optional[pd.DataFrame]:
-    """Find the most recently written CSV matching pattern."""
-    try:
-        matches = sorted(directory.glob(pattern), key=lambda p: p.stat().st_mtime, reverse=True)
-        if matches:
-            return pd.read_csv(matches[0])
-    except Exception:
-        pass
-    return None
-
-
-def load_campaign_inputs(run_id: str = "latest") -> dict:
+def load_campaign_inputs(
+    contest_id: Optional[str] = None,
+    run_id: Optional[str] = None,
+) -> dict:
     """
     Load all available pipeline derived outputs for strategy synthesis.
-    Returns a dict with keyed DataFrames and config.
+    Uses DerivedDataReader for run_id-aware, contest-aware resolution.
     """
-    inputs = {
-        "config": load_campaign_config(),
-        "precinct_model": _find_latest(BASE_DIR / "derived" / "precinct_models", "**/*.csv"),
-        "voter_universes": _find_latest(BASE_DIR / "derived" / "voter_universes", "*__universes.csv"),
-        "targeting_quadrants": _find_latest(BASE_DIR / "derived" / "voter_segments", "*__targeting_quadrants.csv"),
-        "tps_precinct": _find_latest(BASE_DIR / "derived" / "voter_models", "*__precinct_turnout_scores.csv"),
-        "ps_precinct": _find_latest(BASE_DIR / "derived" / "voter_models", "*__precinct_persuasion_scores.csv"),
-        "precinct_voter_metrics": _find_latest(BASE_DIR / "derived" / "voter_models", "*__precinct_voter_metrics.csv"),
-        "simulations": _find_latest(BASE_DIR / "derived" / "scenario_forecasts", "**/*.csv"),
-        "field_plan": _find_latest(BASE_DIR / "derived" / "field_plans", "**/*.csv"),
-        "calibration_params": _load_calibration_params(),
+    reader = DerivedDataReader(contest_id=contest_id, run_id=run_id)
+    return {
+        "config":                   load_campaign_config(),
+        "precinct_model":           reader.precinct_model(),
+        "voter_universes":           reader.voter_universes(),
+        "targeting_quadrants":       reader.targeting_quadrants(),
+        "tps_precinct":              reader.precinct_turnout_scores(),
+        "ps_precinct":               reader.precinct_persuasion_scores(),
+        "precinct_voter_metrics":    reader.precinct_voter_metrics(),
+        "simulations":               reader.simulations(),    # C02: now searches correct paths
+        "calibration_params":        reader.calibration_params(),
     }
-    return inputs
-
-
-def _load_calibration_params() -> dict:
-    import json
-    cal_path = BASE_DIR / "derived" / "calibration" / "model_parameters.json"
-    if cal_path.exists():
-        with open(cal_path, encoding="utf-8") as f:
-            return json.load(f)
-    return {}
 
 
 # ── Vote Path ─────────────────────────────────────────────────────────────────
@@ -160,8 +127,14 @@ def compute_vote_path(inputs: dict) -> dict:
 
     # How many votes to close
     gap = win_number - base_votes
-    persuasion_votes_needed = max(int(gap * 0.65), 0)   # 65% via persuasion
-    gotv_votes_needed       = max(int(gap * 0.35), 0)   # 35% via GOTV
+
+    # M-02 Fix: configurable persuasion/GOTV split (was hardcoded 0.65/0.35)
+    persuasion_share = float(_g(cfg, "strategy", "persuasion_gotv_split", default=0.65))
+    persuasion_share = max(0.0, min(1.0, persuasion_share))  # clamp to [0,1]
+    gotv_share = 1.0 - persuasion_share
+
+    persuasion_votes_needed = max(int(gap * persuasion_share), 0)
+    gotv_votes_needed       = max(int(gap * gotv_share), 0)
 
     cumulative_total = base_votes + persuasion_votes_needed + gotv_votes_needed
     coverage_rate = cumulative_total / win_number if win_number else 1.0

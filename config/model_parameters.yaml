@@ -27,4 +27,4 @@ calibration:
   persuasion_variance: 0.003
   baseline_turnout_probability: 0.45
   turnout_variance: 0.08
-  calibrated_at: '2026-03-10T23:27:50.967930'
+  calibrated_at: '2026-03-14T11:50:04.774964'

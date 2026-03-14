@@ -1,0 +1,47 @@
+{
+  "run_id": "20260313__platform_audit",
+  "timestamp": "2026-03-13T09:54:59.221000",
+  "safe": 4,
+  "warning": 1,
+  "unsafe": 1,
+  "score": 0.33,
+  "risk": "unsafe",
+  "findings": [
+    {
+      "check": "campaign_state_has_campaign_identifier",
+      "result": true,
+      "risk": "safe",
+      "detail": "campaign_state.json has campaign identifier"
+    },
+    {
+      "check": "session_does_not_cache_role",
+      "result": true,
+      "risk": "safe",
+      "detail": "Sessions contain no role data \u2014 role resolved fresh from registry on each request"
+    },
+    {
+      "check": "role_change_revokes_sessions",
+      "result": true,
+      "risk": "safe",
+      "detail": "update_user_role() calls revoke_all_sessions()"
+    },
+    {
+      "check": "single_active_campaign_enforced",
+      "result": false,
+      "risk": "unsafe",
+      "detail": "UNSAFE: No single-active enforcement found"
+    },
+    {
+      "check": "state_directory_isolation",
+      "result": true,
+      "risk": "warning",
+      "detail": "Derived state uses 'latest/' pattern \u2014 state is overwritten on campaign switch rather than partitioned per-campaign. Acceptable if campaign_state.json contains campaign_id (checked above), but switching without clearing derived/ may blend data. Recommend per-campaign state dirs in future."
+    },
+    {
+      "check": "active_campaign_pointer_has_timestamp",
+      "result": true,
+      "risk": "safe",
+      "detail": "active_campaign.yaml switched_at=2026-01-01T00:00:00"
+    }
+  ]
+}

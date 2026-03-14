@@ -1,0 +1,359 @@
+{
+  "run_id": "20260313__175604",
+  "summary": {
+    "total": 58,
+    "passed": 58,
+    "failed": 0,
+    "pass_rate": 100.0
+  },
+  "results": [
+    {
+      "phase": "Phase 1: Required systems",
+      "name": "link_extractor importable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 1: Required systems",
+      "name": "viewer_resolver importable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 1: Required systems",
+      "name": "page_explorer importable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 1: Required systems",
+      "name": "page_discovery importable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 1: Required systems",
+      "name": "file_discovery importable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 1: Required systems",
+      "name": "file_downloader importable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 1: Required systems",
+      "name": "archive_builder importable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 1: Required systems",
+      "name": "campaign_state_resolver importable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 2: link_extractor",
+      "name": "extract_links returns ExtractedLinks",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 2: link_extractor",
+      "name": "href links extracted",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 2: link_extractor",
+      "name": "file links categorized (.xlsx/.csv)",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 2: link_extractor",
+      "name": "DocumentCenter viewer links detected",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 2: link_extractor",
+      "name": "onclick JS links extracted",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 2: link_extractor",
+      "name": "data-document-url / data-url extracted",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 2: link_extractor",
+      "name": "window.open() links extracted",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 2: link_extractor",
+      "name": "all links normalized to absolute URLs",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 2: link_extractor",
+      "name": "filter_same_domain works correctly",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 2: link_extractor",
+      "name": ".pdf in link_extractor ACCEPTED_EXTENSIONS",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 3: viewer_resolver",
+      "name": "DocumentCenter/View detected as viewer",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 3: viewer_resolver",
+      "name": "download.aspx detected as viewer",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 3: viewer_resolver",
+      "name": "ViewFile.aspx detected as viewer",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 3: viewer_resolver",
+      "name": "direct .xlsx not flagged as viewer",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 3: viewer_resolver",
+      "name": "HTML page URL not flagged as viewer",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 3: viewer_resolver",
+      "name": "direct file passthrough resolves immediately",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 3: viewer_resolver",
+      "name": "resolve_batch returns list[ViewerResult]",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 3: viewer_resolver",
+      "name": "ViewerResult has all required fields",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 3: viewer_resolver",
+      "name": "CivicEngage /Download candidate generated",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 4: page_explorer",
+      "name": "ExplorationResult has all required fields",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 4: page_explorer",
+      "name": "ExploredPage has all required fields",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 4: page_explorer",
+      "name": "explore offline returns ExplorationResult",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 4: page_explorer",
+      "name": "visited URL set prevents duplicate visits",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 4: page_explorer",
+      "name": "MAX_PAGES_PER_DEPTH is 25",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 4: page_explorer",
+      "name": "MIN_PAGE_SCORE is 0.10",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 4: page_explorer",
+      "name": "offline: no false cross-jurisdiction errors",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 5: page_discovery scoring",
+      "name": "URL with 'results' scores 0.30",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 5: page_discovery scoring",
+      "name": "non-election URL scores 0.0",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 5: page_discovery scoring",
+      "name": "'Statement of Vote' keyword += 0.30",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 5: page_discovery scoring",
+      "name": "'Precinct Results' keyword += 0.20",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 5: page_discovery scoring",
+      "name": "'Detailed Results' keyword += 0.20",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 5: page_discovery scoring",
+      "name": "all 3 content factors combined >= 0.65",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 5: page_discovery scoring",
+      "name": "election URL + all content terms >= 0.50",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 5: page_discovery scoring",
+      "name": "MIN_PAGE_SCORE is 0.20",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 5: page_discovery scoring",
+      "name": "irrelevant page scores below MIN_PAGE_SCORE",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 6: file_discovery",
+      "name": ".pdf in ACCEPTED_EXTENSIONS",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 6: file_discovery",
+      "name": ".pdf not in REJECTED_EXTENSIONS",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 6: file_discovery",
+      "name": "CandidateFile has page_depth field",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 6: file_discovery",
+      "name": "CandidateFile has candidate_score field",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 6: file_discovery",
+      "name": "xlsx scores higher than pdf for same filename",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 6: file_discovery",
+      "name": ".jpeg remains in REJECTED_EXTENSIONS",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 7: file_downloader",
+      "name": "_compute_hash function exists",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 7: file_downloader",
+      "name": "_compute_hash produces correct SHA-256",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 7: file_downloader",
+      "name": "_register_file has page_depth param",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 7: file_downloader",
+      "name": "_register_file has candidate_score param",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 7: file_downloader",
+      "name": "_register_file has file_hash param",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 7: file_downloader",
+      "name": "download_candidate_file has page_depth",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 7: file_downloader",
+      "name": "download_candidate_file has candidate_score",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 7: file_downloader",
+      "name": ".pdf in file_downloader ACCEPTED_EXTENSIONS",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 7: file_downloader",
+      "name": "registry_summary() runs without error",
+      "status": "PASS",
+      "error": null
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "run_id": "20260313__p26val_tiny",
+  "state": "CA",
+  "county": "Sonoma",
+  "folds_run": 0,
+  "total_precincts": 0,
+  "avg_precision": 0.0,
+  "avg_recall": 0.0,
+  "avg_f1": 0.0,
+  "avg_support_mae": 0.0,
+  "avg_top10_rate": 0.0,
+  "overall_verdict": "insufficient_data",
+  "backtest_status": "DISABLED_INSUFFICIENT_BACKTEST",
+  "years_available": [
+    2024
+  ],
+  "years_needed_for_strong_validation": [
+    2026,
+    2028,
+    2030
+  ],
+  "data_sufficiency_note": "No backtest folds could run \u2014 need at least 3 election years. Currently have: [2024]. Need years: [2026, 2028, 2030]",
+  "folds": []
+}

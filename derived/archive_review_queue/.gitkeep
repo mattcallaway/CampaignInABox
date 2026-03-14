@@ -1,0 +1,7 @@
+# derived/archive_review_queue/.gitkeep
+# Archive Builder ambiguity review queue.
+# Files written here require user review before ingestion.
+# Contents:
+#   <RUN_ID>__ambiguous_files.csv       — files that failed archive_classifier checks
+#   <RUN_ID>__ambiguous_precinct_ids.csv — precinct IDs that could not be safely joined
+#   <RUN_ID>__low_confidence_fingerprints.csv — files with fingerprint_conf < 0.85

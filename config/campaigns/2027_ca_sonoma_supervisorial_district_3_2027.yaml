@@ -1,0 +1,15 @@
+budget:
+  total_budget: 0
+campaign:
+  campaign_id: 2027_ca_sonoma_supervisorial_district_3_2027
+  campaign_name: Supervisorial District 3 2027
+  contest_name: Supervisor District 3
+  contest_type: ballot_measure
+  county: Sonoma
+  election_date: '2027-11-02'
+  state: CA
+strategy:
+  persuasion_gotv_split: 0.65
+targets:
+  target_vote_share: 0.52
+  win_margin: 0.04

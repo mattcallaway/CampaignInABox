@@ -1,0 +1,41 @@
+{
+  "run_id": "20260312__p24",
+  "generated_at": "2026-03-12T23:00:00",
+  "prompt": "Prompt 24 — Historical Data & Model Calibration Engine",
+  "acceptance_criteria": {
+    "rollback_point_created_first": true,
+    "historical_archive_populated": true,
+    "archive_note": "Voter list file ingested (3,000 records, provenance=REAL). Election result files needed for full model training.",
+    "precinct_profiles_from_real_archive": true,
+    "precinct_metrics": "avg_turnout, turnout_variance, support_sd, partisan_tilt, turnout_trend_slope, support_trend_slope",
+    "persuasion_output_calibrated": false,
+    "calibration_note": "Framework implemented (isotonic regression). Skipped because archive has no election result data with support_rate column.",
+    "file_registry_active": true,
+    "active_pipeline_files": 13,
+    "missing_pipeline_files": 1,
+    "campaign_state_updated": true,
+    "baseline_uncertainty_improved": "partial",
+    "voter_parsing_performance_improved": true,
+    "chunked_reads_threshold_mb": 50,
+    "chunk_rows": 50000,
+    "living_technical_map_updated": true,
+    "post_rollback_point_created": true
+  },
+  "steps_that_fell_back": [
+    "support_model_training: 0 clean rows — election result data required",
+    "multi_year_trend_slopes: only 1 year in archive — slope=0"
+  ],
+  "new_modules": [
+    "engine/archive/archive_ingest.py",
+    "engine/archive/precinct_profiles.py",
+    "engine/archive/trend_analysis.py",
+    "engine/archive/election_similarity.py",
+    "engine/archive/train_support_model.py",
+    "engine/data_intake/file_registry_pipeline.py"
+  ],
+  "estimated_health_score": {
+    "before_p24": 7.0,
+    "after_p24": 7.5,
+    "after_real_election_data": 8.5
+  }
+}

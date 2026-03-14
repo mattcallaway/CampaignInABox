@@ -1,0 +1,5 @@
+# derived/fingerprint_cache/.gitkeep
+# This directory stores election file fingerprint cache entries.
+# Each file is named <md5_hash>.json and contains:
+#   file_name, file_type, confidence, headers, precinct_format, source_url
+# Do not commit actual cache files (they are in .gitignore).

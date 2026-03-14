@@ -1,0 +1,13 @@
+{
+  "files": [
+    {
+      "file_id": "C_4E40187D",
+      "canonical_filename": "StatementOfVotesCast-Webnov32020.xlsx",
+      "sha256": "28eb1f9b312c387f95ef7c02d187f58a341e342cceb6a4d60cf9825ffb678361",
+      "ingested_at": "2026-03-14T08:34:36.551014",
+      "fingerprint_type": "precinct_results",
+      "provenance": "REAL"
+    }
+  ],
+  "last_updated": "2026-03-14T08:34:36.552069"
+}

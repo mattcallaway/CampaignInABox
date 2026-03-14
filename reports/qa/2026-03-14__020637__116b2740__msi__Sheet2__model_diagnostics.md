@@ -1,0 +1,13 @@
+# Model Diagnostics & QA
+
+**Contest:** nov2025_special
+**Anomalies Found:** 3 (0 critical)
+
+## Anomaly Details
+
+| precinct_id   | type                  | detail                  | severity   |
+|:--------------|:----------------------|:------------------------|:-----------|
+| 0500274       | OVERVOTE              | Ballots(374.0) > Reg(0) | HIGH       |
+| Contest Total | OVERVOTE              | Ballots(374.0) > Reg(0) | HIGH       |
+| TURF_001      | LOW_REGISTRATION_TURF | Registered(0) < 100     | MEDIUM     |
+

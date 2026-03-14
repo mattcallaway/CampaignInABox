@@ -1,0 +1,28 @@
+{
+  "run_id": "p25c_val_20260313__185314",
+  "domain": "https://sonomacounty.gov",
+  "years": [
+    2024,
+    2023,
+    2022,
+    2021,
+    2020
+  ],
+  "predicted_count": 34,
+  "confirmed_count": 0,
+  "file_candidates": [],
+  "metrics": {
+    "predicted": 34,
+    "tested": 0,
+    "http_200": 0,
+    "http_redirect": 0,
+    "http_404_403": 0,
+    "http_error": 0,
+    "classified_results": 0,
+    "classified_other": 0,
+    "files_found": 0,
+    "viewers_resolved": 0
+  },
+  "confirmed_dirs": [],
+  "errors": []
+}

@@ -1,0 +1,249 @@
+# Source Registry Schema — Campaign In A Box
+# Defines field definitions and allowed values for both contest and geometry registry entries.
+# This file is documentation-only; not loaded at runtime.
+# ---
+
+schema_version: "1.0"
+last_updated: "2026-03-12"
+maintained_by: "Campaign In A Box data team"
+
+# ─── CONTEST SOURCE SCHEMA ───────────────────────────────────────────────────
+
+contest_source_fields:
+
+  source_id:
+    type: string
+    required: true
+    description: "Unique slug. Format: {state}_{county}_{year}_{contest_slug}_{source_kind}"
+    example: "ca_sonoma_2024_city_council_county_registrar"
+
+  jurisdiction_type:
+    type: string
+    required: true
+    allowed_values: [county, city, state, school_district, special_district, federal]
+
+  state:
+    type: string
+    required: true
+    description: "Two-letter state code (uppercase)"
+    example: "CA"
+
+  county:
+    type: string
+    required: false
+    description: "County name (title case). Leave blank for statewide sources."
+    example: "Sonoma"
+
+  city:
+    type: string
+    required: false
+    example: "Santa Rosa"
+
+  district_type:
+    type: string
+    required: false
+    allowed_values: [city_council, school_board, water_district, fire_district,
+                     supervisorial, congressional, state_assembly, state_senate,
+                     statewide, ballot_measure, other]
+
+  district_name:
+    type: string
+    required: false
+    description: "Human-readable district name"
+
+  year:
+    type: integer_or_list
+    required: false
+    description: "Election year(s). Use list for sources covering multiple years."
+    example: 2024
+
+  election_type:
+    type: string
+    required: false
+    allowed_values: [general, primary, special, runoff, recall, consolidated, presidential]
+
+  contest_scope:
+    type: string
+    required: false
+    allowed_values: [countywide, citywide, districtwide, statewide, federal]
+
+  contest_name:
+    type: string
+    required: false
+    description: "Canonical contest name"
+    example: "Measure A — Transportation"
+
+  contest_aliases:
+    type: list_of_strings
+    required: false
+    description: "Alternative names by which this contest may be referenced"
+
+  source_kind:
+    type: string
+    required: true
+    allowed_values:
+      - county_registrar          # Official county elections office
+      - state_sos                 # CA Secretary of State
+      - electionstats_database    # ElectionStats.org
+      - clarity_enr               # Clarity Elections ENR page
+      - document_archive          # PDF/Excel archive
+      - manual_upload             # User manually uploaded the file
+      - data_vendor               # Purchased from data vendor (VAN/TargetSmart)
+      - api_endpoint              # REST/JSON API
+
+  official_status:
+    type: string
+    required: true
+    allowed_values: [official, certified, preliminary, estimated, unofficial, unknown]
+
+  base_url:
+    type: string
+    required: false
+    description: "Base URL of the source (no specific year/contest)"
+
+  page_url:
+    type: string
+    required: false
+    description: "Direct URL to the result page or download"
+
+  file_patterns:
+    type: list_of_strings
+    required: false
+    description: "Filename patterns to look for"
+    example: ["*statement_of_vote*.xls", "SOV_*.xlsx"]
+
+  preferred_formats:
+    type: list_of_strings
+    required: false
+    allowed_values: [xlsx, xls, csv, tsv, pdf, json, xml, geojson, shp]
+
+  expected_columns:
+    type: list_of_strings
+    required: false
+    description: "Column names expected in the result file"
+
+  precinct_id_format:
+    type: string
+    required: false
+    allowed_values: [mprec, srprec, numeric, alpha_numeric, unknown]
+
+  normalization_rule:
+    type: string
+    required: false
+    description: "Which normalization rule to apply on ingest"
+    allowed_values: [mprec_standard, srprec_to_mprec, numeric_zero_pad, passthrough]
+
+  confidence_default:
+    type: float
+    required: true
+    description: "Default match confidence 0.0–1.0"
+    example: 0.9
+
+  auto_ingest_allowed:
+    type: boolean
+    required: true
+    description: "Whether the system may auto-download and ingest this source"
+
+  requires_confirmation:
+    type: boolean
+    required: true
+    description: "Whether user must confirm before file is written to derived/"
+
+  user_approved:
+    type: boolean
+    required: false
+    default: false
+    description: "Set to true when user has confirmed this source"
+
+  notes:
+    type: string
+    required: false
+
+# ─── GEOMETRY SOURCE SCHEMA ──────────────────────────────────────────────────
+
+geometry_source_fields:
+
+  source_id:
+    type: string
+    required: true
+    description: "Unique slug. Format: {state}_{county}_{boundary_type}_{source_kind}"
+
+  state:
+    type: string
+    required: true
+
+  county:
+    type: string
+    required: false
+
+  jurisdiction_scope:
+    type: string
+    required: true
+    allowed_values: [statewide, county, city, district]
+
+  boundary_type:
+    type: string
+    required: true
+    allowed_values: [mprec, srprec, city, supervisorial, school_district, crosswalk]
+
+  source_kind:
+    type: string
+    required: true
+    allowed_values: [state_sos, county_registrar, census, opendata, manual_upload, api_endpoint]
+
+  official_status:
+    type: string
+    required: true
+    allowed_values: [official, certified, preliminary, estimated, unofficial, unknown]
+
+  base_url:
+    type: string
+    required: false
+
+  page_url:
+    type: string
+    required: false
+
+  file_patterns:
+    type: list_of_strings
+    required: false
+
+  format:
+    type: string
+    required: false
+    allowed_values: [geojson, shp, csv, xlsx, zip]
+
+  id_field_name:
+    type: string
+    required: false
+    description: "Field name in the geometry file that holds the precinct/district ID"
+
+  name_field_name:
+    type: string
+    required: false
+    description: "Field name holding the human-readable name"
+
+  normalization_rule:
+    type: string
+    required: false
+    allowed_values: [mprec_standard, srprec_to_mprec, passthrough]
+
+  crosswalk_targets:
+    type: list_of_strings
+    required: false
+    description: "Which ID types this crosswalk maps between"
+    example: [srprec, mprec]
+
+  preferred:
+    type: boolean
+    required: false
+    default: false
+
+  user_approved:
+    type: boolean
+    required: false
+    default: false
+
+  notes:
+    type: string
+    required: false

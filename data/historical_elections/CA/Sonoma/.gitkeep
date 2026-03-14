@@ -1,0 +1,7 @@
+# data/historical_elections/CA/Sonoma/.gitkeep
+# Archive storage root for Sonoma County, CA elections.
+# Structure: <STATE>/<COUNTY>/<ELECTION_ID>/
+#   contest_metadata.json
+#   precinct_results.csv
+#   contest_results.csv
+#   file_manifest.json

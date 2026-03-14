@@ -1,0 +1,14 @@
+{
+  "run_id": "2026-03-14__020637__116b2740__msi",
+  "new_run_id": "2026-03-14__020637__116b2740__msi",
+  "old_run_id": null,
+  "generated_at": "2026-03-14T09:07:59.868990",
+  "prior_state_found": false,
+  "numeric_changes": [],
+  "text_changes": [],
+  "recommendations_changed": false,
+  "data_requests_delta": 0,
+  "risk_level_change": null,
+  "key_changes": [],
+  "summary": "No prior state found. This is the first state snapshot."
+}

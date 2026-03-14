@@ -1,0 +1,2 @@
+turf_id,precinct_ids,precinct_count,sum_registered,avg_target_score
+TURF_001,"001,002,003,004",4,0,0.0

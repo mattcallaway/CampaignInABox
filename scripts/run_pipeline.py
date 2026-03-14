@@ -354,7 +354,8 @@ def run_pipeline(
 
         # ── Step 4: Validate votes ────────────────────────────────────────────
         logger.step_start("VALIDATE_VOTES", expected=[
-            f"votes/{year}/CA/{loop_county}/{contest_slug}/detail.xlsx"
+            f"data/contests/{state}/{loop_county}/{year}/{contest_slug}/raw/<file>  (canonical, P28)",
+            f"votes/{year}/CA/{loop_county}/{contest_slug}/detail.xlsx              (legacy fallback)",
         ])
 
         if detail_path_override:
@@ -363,11 +364,33 @@ def run_pipeline(
                 detail_path = BASE_DIR / detail_path_override
             votes_valid = detail_path.exists()
             votes_need  = None
+            if votes_valid:
+                logger.info(f"  [VOTES] Using explicit --detail-path override: {detail_path}")
         else:
-            votes_result = validate_votes_present(votes_root, year, loop_county, contest_slug, log=logger)
-            votes_valid  = votes_result["valid"]
-            detail_path  = votes_result.get("path")
-            votes_need   = votes_result.get("needs_entry")
+            # ── P28: Try canonical ContestResolver first ───────────────────
+            detail_path  = None
+            votes_valid  = False
+            try:
+                from engine.contest_data.contest_resolver import ContestResolver
+                _resolver = ContestResolver(BASE_DIR)
+                _canonical = _resolver.resolve_primary_result_file(state, loop_county, year, contest_slug)
+                if _canonical and _canonical.exists():
+                    detail_path  = _canonical
+                    votes_valid  = True
+                    logger.info(f"  [VOTES] Found via ContestResolver (canonical P28): {_canonical.relative_to(BASE_DIR)}")
+            except Exception as _r_err:
+                logger.warn(f"  [VOTES] ContestResolver lookup failed (will try legacy path): {_r_err}")
+
+            # ── Legacy fallback ────────────────────────────────────────────
+            if not votes_valid:
+                votes_result = validate_votes_present(votes_root, year, loop_county, contest_slug, log=logger)
+                votes_valid  = votes_result["valid"]
+                detail_path  = votes_result.get("path")
+                votes_need   = votes_result.get("needs_entry")
+                if votes_valid:
+                    logger.info(f"  [VOTES] Found at legacy path: {detail_path}")
+            else:
+                votes_need = None
 
         if not votes_valid:
             if votes_need:
@@ -375,7 +398,7 @@ def run_pipeline(
                     votes_need["category"], votes_need["status"],
                     votes_need["blocks"], path=votes_need.get("expected_path"),
                 )
-            logger.step_skip("VALIDATE_VOTES", reason="blocked: missing votes — detail.xlsx not found")
+            logger.step_skip("VALIDATE_VOTES", reason="blocked: missing votes — no result file found in canonical or legacy paths")
             # Still run ingestion/validation; just skip modeling steps
             logger.finalize(state, loop_county, contest_slug, run_status="partial")
             if commit:
@@ -389,6 +412,7 @@ def run_pipeline(
         else:
             logger.register_input("detail.xlsx", detail_path)
             logger.step_done("VALIDATE_VOTES")
+
 
         # ── Step 5: Load geometry ─────────────────────────────────────────────
         logger.step_start("LOAD_GEOMETRY", expected=["MPREC preferred; SRPREC fallback"])
@@ -432,6 +456,44 @@ def run_pipeline(
         _n_xw_found = sum(1 for v in _xwalk_full.values() if v.get("status") in ("found", "fallback"))
         logger.info(f"  [CROSSWALKS] Discovered {_n_xw_found}/{len(_xwalk_full)} crosswalks")
 
+        # ── Prompt 29: Deep crosswalk introspection + review queue ────────────
+        try:
+            from engine.precinct_ids.crosswalk_introspector import (
+                introspect_crosswalk_directory, reports_to_trace_json
+            )
+            from engine.precinct_ids.review_queue import ReviewQueueWriter
+
+            _xwalk_dir = county_geo_dir / "crosswalks"
+            _introspect_reports = introspect_crosswalk_directory(state, loop_county, _xwalk_dir)
+            _ok_count   = sum(1 for r in _introspect_reports if r.detection_ok)
+            _fail_count = len(_introspect_reports) - _ok_count
+            logger.info(
+                f"  [P29-INTROSPECT] {len(_introspect_reports)} crosswalk files — "
+                f"{_ok_count} detection OK, {_fail_count} detection failed"
+            )
+
+            # Write review queue for any detection failures
+            _rq = ReviewQueueWriter(run_id, state, loop_county, contest_slug)
+            for _r in _introspect_reports:
+                if not _r.detection_ok:
+                    logger.warn(
+                        f"  [P29] ⚠️  IDENTITY_FALLBACK_RISK: {_r.filename} — "
+                        f"{_r.detection_failure_reason}"
+                    )
+                    _rq.add_crosswalk_issue(
+                        file=_r.filename, filepath=_r.filepath,
+                        detected_source_col=_r.source_col or "",
+                        detected_target_col=_r.target_col or "",
+                        candidate_sources=_r.candidate_sources,
+                        candidate_targets=_r.candidate_targets,
+                        ambiguity_reason=_r.detection_failure_reason or "unknown",
+                        detection_status="failed",
+                    )
+            _rq.write()
+
+        except Exception as _e:
+            logger.warn(f"  [P29-INTROSPECT] Introspection failed (non-fatal): {_e}")
+
         if not crosswalks:
             logger.step_skip("LOAD_CROSSWALKS", reason="No crosswalk files; using identity mapping")
         else:
@@ -441,7 +503,7 @@ def run_pipeline(
         if not (rebuild_maps_only or rebuild_memberships_only):
             logger.step_start("SCAFFOLD_CONTEST_JSON")
             contest_json_path = scaffold_contest_json(
-                votes_root, year=year, state=state, loop_county=loop_county, contest_slug=contest_slug,
+                votes_root, year=year, state=state, county=loop_county, contest_slug=contest_slug,
             )
             logger.step_done("SCAFFOLD_CONTEST_JSON", outputs=[contest_json_path])
             all_artifacts.append(contest_json_path)
@@ -498,17 +560,39 @@ def run_pipeline(
             xwalk = next(iter(crosswalks.values()), None) if crosswalks else None
             if xwalk and membership_method != "area_weighted":
                 try:
-                    allocated_df = safe_merge(
-                        totals_df, xwalk,
-                        on=next((c for c in ["PrecinctID", xwalk.columns[0]] if c in totals_df.columns), totals_df.columns[0]),
-                        how="left", expect="many_to_one",
-                        name=f"crosswalk_alloc/{sheet_name}",
-                        log_ctx=sheet_name,
-                        contest_id=_contest_id_for_diag if "_contest_id_for_diag" in dir() else "unknown",
-                        run_id=run_id, logger=logger,
-                    )
+                    import pandas as _pd
+                    if isinstance(xwalk, dict):
+                        _rows = [
+                            {"_xw_src": src_id, "_xw_tgt": tgt, "_xw_wt": wt}
+                            for src_id, entries in xwalk.items()
+                            for tgt, wt in (entries if entries else [])
+                        ]
+                        xwalk_df = _pd.DataFrame(_rows) if _rows else None
+                    else:
+                        xwalk_df = xwalk  # already a DataFrame
+                    if xwalk_df is not None and not xwalk_df.empty:
+                        _join_col = next(
+                            (c for c in ["PrecinctID", "srprec", "mprec", "precinct"]
+                             if c in totals_df.columns),
+                            totals_df.columns[0],
+                        )
+                        allocated_df = safe_merge(
+                            totals_df, xwalk_df,
+                            left_on=_join_col, right_on="_xw_src",
+                            how="left", expect="many_to_one",
+                            name=f"crosswalk_alloc/{sheet_name}",
+                            log_ctx=sheet_name,
+                            contest_id=_contest_id_for_diag if "_contest_id_for_diag" in dir() else "unknown",
+                            run_id=run_id, logger=logger,
+                        )
+                    else:
+                        logger.info(f"  [ALLOCATE] Empty crosswalk dict — area-weighted fallback")
+                        allocated_df = area_weighted_fallback(totals_df, src_id_col="PrecinctID")
                 except JoinExplosionError as _jex:
-                    logger.warn(f"  [JOIN_GUARD] Explosion in crosswalk alloc: {_jex}. Falling back to area-weighted.")
+                    logger.warn(f"  [JOIN_GUARD] Explosion in crosswalk alloc: {_jex}. Falling back.")
+                    allocated_df = area_weighted_fallback(totals_df, src_id_col="PrecinctID")
+                except Exception as _xe:
+                    logger.warn(f"  [ALLOCATE] Crosswalk error: {_xe}. Falling back to area-weighted.")
                     allocated_df = area_weighted_fallback(totals_df, src_id_col="PrecinctID")
                 method_used = "crosswalk"
             else:
@@ -664,7 +748,6 @@ def run_pipeline(
             global_all_universes[sname].append(udf)
 
     # Re-combine into expected schema for Step 17+
-    import pandas as pd
     all_scored_dfs = []
     for sname, dfs in global_all_scored_dfs.items():
         if dfs:
@@ -1545,6 +1628,15 @@ def _print_summary(run_id: str, artifacts: list, no_votes: bool = False):
     print(f"  Logs   : logs/latest/run.log")
     print(f"{'='*60}\n")
 
+    # ── Pipeline Observer (Prompt 31) — write run summary ─────────────────────
+    try:
+        from engine.diagnostics.pipeline_observer import write_run_summary as _obs_write
+        _log_dir = BASE_DIR / "logs" / "runs"
+        _run_logs = sorted(_log_dir.glob(f"*{run_id}*__run.log")) if _log_dir.exists() else []
+        if _run_logs:
+            _obs_write(_run_logs[-1], BASE_DIR, run_id=run_id)
+    except Exception:
+        pass  # Observer must never block pipeline completion
 
 # ── CLI ───────────────────────────────────────────────────────────────────────
 

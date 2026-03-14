@@ -9,6 +9,8 @@ campaign_manager:
   edit_field_plan: true
   manage_tasks: true
   view_finance: true
+  manage_users: true
+  manage_campaigns: true
 
 data_director:
   upload_data: true
@@ -21,6 +23,8 @@ data_director:
   edit_field_plan: true
   manage_tasks: true
   view_finance: false
+  manage_users: false
+  manage_campaigns: true
 
 field_director:
   upload_data: false
@@ -33,6 +37,8 @@ field_director:
   edit_field_plan: true
   manage_tasks: true
   view_finance: false
+  manage_users: false
+  manage_campaigns: false
 
 finance_director:
   upload_data: false
@@ -45,6 +51,8 @@ finance_director:
   edit_field_plan: false
   manage_tasks: true
   view_finance: true
+  manage_users: false
+  manage_campaigns: false
 
 communications_director:
   upload_data: false
@@ -57,6 +65,8 @@ communications_director:
   edit_field_plan: false
   manage_tasks: true
   view_finance: false
+  manage_users: false
+  manage_campaigns: false
 
 analyst:
   upload_data: false
@@ -69,6 +79,8 @@ analyst:
   edit_field_plan: false
   manage_tasks: false
   view_finance: false
+  manage_users: false
+  manage_campaigns: false
 
 viewer:
   upload_data: false
@@ -81,3 +93,5 @@ viewer:
   edit_field_plan: false
   manage_tasks: false
   view_finance: false
+  manage_users: false
+  manage_campaigns: false

@@ -1,0 +1,4 @@
+risk,level,description,mitigation
+Turnout Uncertainty,MEDIUM,"Baseline turnout variance ±6%. Low-turnout scenario reduces expected voters by ~3,000.",Increase GOTV investment; mail VBM chase list to high-propensity supporters.
+Canvasser Staffing,HIGH,"4497 paid canvassers needed beyond volunteer capacity (2,182 volunteer doors/week vs 901,439 needed).","Recruit more volunteers, hire canvassers, or reduce persuasion target threshold."
+Campaign Timeline,HIGH,-284 days (1.0 weeks) until election.,Very short timeline — prioritize mail and digital; limited field available.

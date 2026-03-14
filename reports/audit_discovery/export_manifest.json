@@ -1,0 +1,15 @@
+{
+  "export_time": "2026-03-13T04:12:40Z",
+  "export_version": "1.0",
+  "system": "Campaign In A Box",
+  "files_generated": [
+    "system_inventory.json",
+    "system_inventory.md",
+    "python_dependencies.txt",
+    "system_health.md"
+  ],
+  "output_directory": "reports/audit_discovery/",
+  "github_safe": true,
+  "contains_pii": false,
+  "notes": "Voter files, runtime data, and donor records are excluded per .gitignore rules."
+}

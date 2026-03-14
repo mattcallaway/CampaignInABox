@@ -1,0 +1,453 @@
+# Contest Source Registry — Campaign In A Box
+# Prompt 25A:   Initial seeding (16 entries)
+# Prompt 25A.1: source_origin field added
+# Prompt 25A.2: Canonical URL repair
+#   - Invalid socoe.us entries removed
+#   - electionstats.org entry replaced with electionstats.sonomacounty.ca.gov
+#   - New discovery-page sources added: sonoma_registrar_elections, sonoma_electionstats_database
+#   - Per-year entries updated to sonomacounty.gov domain
+#   - page_type, discovery_mode, discovery_patterns fields added to all entries
+#   - SOS URL fixed to correct statewide-election-results path
+#   - Clarity entry updated with page_type and discovery_mode
+#
+# page_type values: discovery_page | election_page | file_download | api_endpoint
+# discovery_mode values: direct | pattern_scan | manual_only | api
+# ---
+
+schema_version: "1.2"
+last_updated: "2026-03-13"
+
+sources:
+
+  ###########################################################################
+  # ─── SONOMA COUNTY — REGISTRAR OF VOTERS (sonomacounty.gov) ─────────
+  ###########################################################################
+
+  # PRIMARY DISCOVERY SOURCE for Sonoma County election results.
+  # The system loads this page, finds election year links via discovery_patterns,
+  # then follows those pages to find file downloads matching file_patterns.
+  - source_id: sonoma_registrar_elections
+    jurisdiction_type: county
+    state: CA
+    county: Sonoma
+    source_kind: county_registrar
+    official_status: verified
+    source_origin: seeded_official
+    confidence_default: 0.95
+    auto_ingest_allowed: true
+    requires_confirmation: true
+    user_approved: false
+    page_type: discovery_page
+    discovery_mode: pattern_scan
+    base_url: "https://sonomacounty.gov"
+    page_url: "https://sonomacounty.gov/administrative-support-and-fiscal-services/registrar-of-voters/elections"
+    discovery_patterns:
+      - "*general-election*"
+      - "*primary-election*"
+      - "*special-election*"
+      - "*election-results*"
+      - "*election-returns*"
+    file_patterns:
+      - "*statement_of_votes_cast*.xlsx"
+      - "*statement_of_votes_cast*.xls"
+      - "*precinct*.xlsx"
+      - "*contest*.xlsx"
+      - "*results*.xlsx"
+      - "*certified*.xlsx"
+    preferred_formats: [xlsx, xls, csv]
+    precinct_id_format: srprec
+    normalization_rule: srprec_to_mprec
+    notes: >
+      Primary discovery page for Sonoma County election results.
+      The system should load this page, follow election-specific links matching
+      discovery_patterns, then search for file_patterns on those sub-pages.
+      Results are certified by the Sonoma County Registrar of Voters.
+
+  # ─── SONOMA — PER-YEAR ELECTION RESULT PAGES ─────────────────────────
+  # These are the known election-specific result pages under sonomacounty.gov.
+  # page_type: election_page — these point to specific election result pages.
+  # If the URL pattern changes, update here and in the parent discovery source.
+
+  - source_id: sonoma_registrar_2024_general
+    jurisdiction_type: county
+    state: CA
+    county: Sonoma
+    year: 2024
+    election_type: general
+    contest_scope: countywide
+    source_kind: county_registrar
+    official_status: certified
+    source_origin: seeded_official
+    confidence_default: 0.95
+    auto_ingest_allowed: true
+    requires_confirmation: true
+    user_approved: false
+    page_type: election_page
+    discovery_mode: pattern_scan
+    base_url: "https://sonomacounty.gov"
+    page_url: "https://sonomacounty.gov/administrative-support-and-fiscal-services/registrar-of-voters/elections/november-5-2024-general-election"
+    file_patterns:
+      - "*statement_of_votes_cast*.xlsx"
+      - "*2024*general*.xlsx"
+      - "*precinct*.xlsx"
+    preferred_formats: [xlsx, xls]
+    precinct_id_format: srprec
+    normalization_rule: srprec_to_mprec
+    notes: "November 5, 2024 General Election — Sonoma County certified results. URL follows sonomacounty.gov election naming convention."
+
+  - source_id: sonoma_registrar_2022_general
+    jurisdiction_type: county
+    state: CA
+    county: Sonoma
+    year: 2022
+    election_type: general
+    contest_scope: countywide
+    source_kind: county_registrar
+    official_status: certified
+    source_origin: seeded_official
+    confidence_default: 0.95
+    auto_ingest_allowed: true
+    requires_confirmation: true
+    user_approved: false
+    page_type: election_page
+    discovery_mode: pattern_scan
+    base_url: "https://sonomacounty.gov"
+    page_url: "https://sonomacounty.gov/administrative-support-and-fiscal-services/registrar-of-voters/elections/november-8-2022-general-election"
+    file_patterns:
+      - "*statement_of_votes_cast*.xlsx"
+      - "*2022*general*.xlsx"
+      - "*precinct*.xlsx"
+    preferred_formats: [xlsx, xls]
+    precinct_id_format: srprec
+    normalization_rule: srprec_to_mprec
+    notes: "November 8, 2022 General Election — Sonoma County certified results."
+
+  - source_id: sonoma_registrar_2020_general
+    jurisdiction_type: county
+    state: CA
+    county: Sonoma
+    year: 2020
+    election_type: general
+    contest_scope: countywide
+    source_kind: county_registrar
+    official_status: certified
+    source_origin: seeded_official
+    confidence_default: 0.95
+    auto_ingest_allowed: true
+    requires_confirmation: true
+    user_approved: false
+    page_type: election_page
+    discovery_mode: pattern_scan
+    base_url: "https://sonomacounty.gov"
+    page_url: "https://sonomacounty.gov/administrative-support-and-fiscal-services/registrar-of-voters/elections/november-3-2020-general-election"
+    file_patterns:
+      - "*statement_of_votes_cast*.xlsx"
+      - "*2020*general*.xlsx"
+      - "*precinct*.xlsx"
+    preferred_formats: [xlsx, xls]
+    precinct_id_format: srprec
+    normalization_rule: srprec_to_mprec
+    notes: "November 3, 2020 General Election — Sonoma County certified results."
+
+  - source_id: sonoma_registrar_2018_general
+    jurisdiction_type: county
+    state: CA
+    county: Sonoma
+    year: 2018
+    election_type: general
+    contest_scope: countywide
+    source_kind: county_registrar
+    official_status: certified
+    source_origin: seeded_official
+    confidence_default: 0.90
+    auto_ingest_allowed: true
+    requires_confirmation: true
+    user_approved: false
+    page_type: election_page
+    discovery_mode: pattern_scan
+    base_url: "https://sonomacounty.gov"
+    page_url: "https://sonomacounty.gov/administrative-support-and-fiscal-services/registrar-of-voters/elections/november-6-2018-general-election"
+    file_patterns:
+      - "*statement_of_votes_cast*.xlsx"
+      - "*2018*general*.xlsx"
+      - "*precinct*.xlsx"
+    preferred_formats: [xlsx, xls]
+    precinct_id_format: srprec
+    normalization_rule: srprec_to_mprec
+    notes: "November 6, 2018 General Election — Sonoma County certified results."
+
+  - source_id: sonoma_registrar_2016_general
+    jurisdiction_type: county
+    state: CA
+    county: Sonoma
+    year: 2016
+    election_type: general
+    contest_scope: countywide
+    source_kind: county_registrar
+    official_status: certified
+    source_origin: seeded_official
+    confidence_default: 0.90
+    auto_ingest_allowed: true
+    requires_confirmation: true
+    user_approved: false
+    page_type: election_page
+    discovery_mode: pattern_scan
+    base_url: "https://sonomacounty.gov"
+    page_url: "https://sonomacounty.gov/administrative-support-and-fiscal-services/registrar-of-voters/elections/november-8-2016-general-election"
+    file_patterns:
+      - "*statement_of_votes_cast*.xlsx"
+      - "*2016*general*.xlsx"
+      - "*precinct*.xlsx"
+    preferred_formats: [xlsx, xls]
+    precinct_id_format: srprec
+    normalization_rule: srprec_to_mprec
+    notes: "November 8, 2016 General Election — Sonoma County certified results. Older archive — URL may need manual verification."
+
+  - source_id: sonoma_registrar_special_elections
+    jurisdiction_type: county
+    state: CA
+    county: Sonoma
+    election_type: special
+    contest_scope: countywide
+    source_kind: county_registrar
+    official_status: certified
+    source_origin: seeded_official
+    confidence_default: 0.75
+    auto_ingest_allowed: false
+    requires_confirmation: true
+    user_approved: false
+    page_type: discovery_page
+    discovery_mode: manual_only
+    base_url: "https://sonomacounty.gov"
+    page_url: "https://sonomacounty.gov/administrative-support-and-fiscal-services/registrar-of-voters/elections"
+    file_patterns:
+      - "*statement_of_votes_cast*.xlsx"
+      - "*special*.xlsx"
+    notes: >
+      Sonoma County special elections vary by district and year.
+      discovery_mode: manual_only — requires manual URL lookup per election.
+      Use the parent discovery page to find the specific election.
+
+  ###########################################################################
+  # ─── SONOMA COUNTY — ELECTIONSTATS DATABASE ─────────────────────────
+  ###########################################################################
+
+  # Official Sonoma County historical election results database.
+  # Covers 2009–2024. Launched by the Registrar of Voters.
+  # URL: electionstats.sonomacounty.ca.gov (ca.gov subdomain = gov tier)
+  - source_id: sonoma_electionstats_database
+    jurisdiction_type: county
+    state: CA
+    county: Sonoma
+    source_kind: electionstats_database
+    official_status: verified
+    source_origin: seeded_official
+    confidence_default: 0.92
+    auto_ingest_allowed: true
+    requires_confirmation: true
+    user_approved: false
+    page_type: discovery_page
+    discovery_mode: direct
+    base_url: "https://electionstats.sonomacounty.ca.gov"
+    page_url: "https://electionstats.sonomacounty.ca.gov/"
+    notes: >
+      Sonoma County official historical election database (2009–2024).
+      Launched by the Registrar of Voters for public access to election returns.
+      domain: electionstats.sonomacounty.ca.gov (ca.gov subdomain, gov_tier).
+
+  ###########################################################################
+  # ─── SONOMA COUNTY — CLARITY ENR ────────────────────────────────────
+  ###########################################################################
+
+  - source_id: clarity_sonoma
+    jurisdiction_type: county
+    state: CA
+    county: Sonoma
+    source_kind: clarity_enr
+    official_status: preliminary
+    source_origin: seeded_official
+    confidence_default: 0.70
+    auto_ingest_allowed: false
+    requires_confirmation: true
+    user_approved: false
+    page_type: discovery_page
+    discovery_mode: pattern_scan
+    base_url: "https://results.enr.clarityelections.com"
+    page_url: "https://results.enr.clarityelections.com/CA/Sonoma"
+    discovery_patterns:
+      - "*General*"
+      - "*Primary*"
+      - "*Special*"
+    notes: >
+      Clarity Elections ENR for Sonoma County — shows preliminary results.
+      Requires election-ID discovery (Clarity uses numeric IDs per election).
+      Use for election-night monitoring only; prefer registrar certified for modeling.
+      Ingestion must be assisted (manual_only or pattern_scan with ID lookup).
+
+  ###########################################################################
+  # ─── CALIFORNIA SOS — STATEWIDE ─────────────────────────────────────
+  ###########################################################################
+
+  # Primary SOS discovery page for statewide election results.
+  - source_id: ca_sos_elections
+    jurisdiction_type: state
+    state: CA
+    source_kind: state_sos
+    official_status: certified
+    source_origin: seeded_official
+    confidence_default: 0.92
+    auto_ingest_allowed: true
+    requires_confirmation: true
+    user_approved: false
+    page_type: discovery_page
+    discovery_mode: pattern_scan
+    base_url: "https://www.sos.ca.gov"
+    page_url: "https://www.sos.ca.gov/elections/prior-elections/statewide-election-results"
+    discovery_patterns:
+      - "*general-election*"
+      - "*statement-vote*"
+      - "*ballot-measure*"
+      - "*statewide*"
+    file_patterns:
+      - "*sov*.zip"
+      - "*statement_of_vote*.xls*"
+      - "*statewide_results*.zip"
+    preferred_formats: [xlsx, xls, zip]
+    precinct_id_format: mprec
+    normalization_rule: mprec_standard
+    notes: >
+      California SOS statewide election results discovery page.
+      The system traverses election-year links found via discovery_patterns,
+      then downloads Statement of Vote files. Results use MPREC precinct IDs.
+
+  - source_id: ca_sos_2024_general
+    jurisdiction_type: state
+    state: CA
+    year: 2024
+    election_type: general
+    contest_scope: statewide
+    source_kind: state_sos
+    official_status: certified
+    source_origin: seeded_official
+    confidence_default: 0.92
+    auto_ingest_allowed: true
+    requires_confirmation: true
+    user_approved: false
+    page_type: election_page
+    discovery_mode: pattern_scan
+    base_url: "https://www.sos.ca.gov"
+    page_url: "https://www.sos.ca.gov/elections/prior-elections/statewide-election-results/2024-general"
+    file_patterns:
+      - "*2024*nov*sov*.zip"
+      - "*2024*general*statewide*.zip"
+    preferred_formats: [xlsx, zip]
+    precinct_id_format: mprec
+    normalization_rule: mprec_standard
+    notes: "November 2024 Statewide General — CA SOS certified Statement of Vote."
+
+  - source_id: ca_sos_2022_general
+    jurisdiction_type: state
+    state: CA
+    year: 2022
+    election_type: general
+    contest_scope: statewide
+    source_kind: state_sos
+    official_status: certified
+    source_origin: seeded_official
+    confidence_default: 0.92
+    auto_ingest_allowed: true
+    requires_confirmation: true
+    user_approved: false
+    page_type: election_page
+    discovery_mode: pattern_scan
+    base_url: "https://www.sos.ca.gov"
+    page_url: "https://www.sos.ca.gov/elections/prior-elections/statewide-election-results/2022-general"
+    preferred_formats: [xlsx, zip]
+    precinct_id_format: mprec
+    normalization_rule: mprec_standard
+
+  - source_id: ca_sos_2020_general
+    jurisdiction_type: state
+    state: CA
+    year: 2020
+    election_type: general
+    contest_scope: statewide
+    source_kind: state_sos
+    official_status: certified
+    source_origin: seeded_official
+    confidence_default: 0.92
+    auto_ingest_allowed: true
+    requires_confirmation: true
+    user_approved: false
+    page_type: election_page
+    discovery_mode: pattern_scan
+    base_url: "https://www.sos.ca.gov"
+    page_url: "https://www.sos.ca.gov/elections/prior-elections/statewide-election-results/2020-general"
+    preferred_formats: [xlsx, zip]
+    precinct_id_format: mprec
+    normalization_rule: mprec_standard
+
+  - source_id: ca_sos_cdn_precinct_data
+    jurisdiction_type: state
+    state: CA
+    source_kind: state_sos
+    official_status: certified
+    source_origin: seeded_official
+    confidence_default: 0.93
+    auto_ingest_allowed: true
+    requires_confirmation: true
+    user_approved: false
+    page_type: file_download
+    discovery_mode: direct
+    base_url: "https://elections.cdn.sos.ca.gov/"
+    file_patterns:
+      - "*precinct*.zip"
+      - "*sov*.zip"
+    notes: >
+      CA SOS CDN hosts downloadable precinct-level election data files.
+      Files follow consistent naming convention with year and election type.
+      Preferred source for bulk historical data. Direct file download (no page traversal).
+
+  - source_id: ca_sos_ballot_measures
+    jurisdiction_type: state
+    state: CA
+    district_type: ballot_measure
+    contest_scope: statewide
+    source_kind: state_sos
+    official_status: certified
+    source_origin: seeded_official
+    confidence_default: 0.90
+    auto_ingest_allowed: true
+    requires_confirmation: true
+    user_approved: false
+    page_type: discovery_page
+    discovery_mode: pattern_scan
+    base_url: "https://vig.cdn.sos.ca.gov/"
+    discovery_patterns:
+      - "*ballot-measure*"
+      - "*proposition*"
+    notes: >
+      Statewide ballot measure results from CA SOS voter information guide CDN.
+      Useful as analog contests for local ballot measures.
+
+  ###########################################################################
+  # ─── MANUAL UPLOAD PLACEHOLDER ──────────────────────────────────────
+  ###########################################################################
+
+  - source_id: sonoma_manual_upload
+    jurisdiction_type: county
+    state: CA
+    county: Sonoma
+    source_kind: manual_upload
+    official_status: unknown
+    source_origin: manual_upload
+    confidence_default: 0.70
+    auto_ingest_allowed: false
+    requires_confirmation: true
+    user_approved: false
+    page_type: file_download
+    discovery_mode: manual_only
+    notes: >
+      Placeholder for user-uploaded election result files.
+      When a user uploads a file via the Data Manager, the system should
+      register it here with appropriate metadata.

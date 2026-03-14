@@ -1,0 +1,5 @@
+canonical_precinct_id,registered,ballots_cast,support_pct,persuasion_universe_size,turnout_universe_size,swing_factor
+001,0,750,0.5,0.0,0,1.0
+002,0,1050,0.5,0.0,0,1.0
+003,0,1350,0.5,0.0,0,1.0
+004,0,1650,0.5,0.0,0,1.0

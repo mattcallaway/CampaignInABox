@@ -44,6 +44,9 @@ _DESTINATION_RULES = {
 class FileRegistryManager:
     """Manages the lifecycle of Campaign In A Box data files."""
 
+    # Expose the module-level rules as a class attribute so callers can access via manager._DESTINATION_RULES
+    _DESTINATION_RULES = _DESTINATION_RULES
+
     def __init__(self, project_root: str | Path):
         self.root = Path(project_root)
         self.registry_dir_latest  = self.root / "derived" / "file_registry" / "latest"
@@ -55,10 +58,18 @@ class FileRegistryManager:
         self.registry_path = self.registry_dir_latest / "file_registry.json"
 
     def load_registry(self) -> list[dict]:
-        """Load the active file registry."""
+        """Load the active file registry. Always returns a list."""
         if self.registry_path.exists():
             try:
-                return json.loads(self.registry_path.read_text(encoding="utf-8"))
+                data = json.loads(self.registry_path.read_text(encoding="utf-8"))
+                if isinstance(data, list):
+                    return data
+                # File was written as a dict (e.g. empty init) — reset gracefully
+                log.warning(
+                    f"file_registry.json contains a {type(data).__name__}, expected list. "
+                    "Resetting to empty registry."
+                )
+                return []
             except Exception as e:
                 log.error(f"Failed to read file registry: {e}")
         return []
@@ -153,9 +164,12 @@ class FileRegistryManager:
         contest_id: str = "",
         notes: str = "",
         proposed_name: str = "",
+        raw_bytes: bytes | None = None,
     ) -> dict:
         """
         Move a source file to canonical location and add to registry.
+        raw_bytes: if provided, use these bytes instead of reading source_file
+                   (avoids WinError 32 when openpyxl holds the file lock on Windows).
         """
         orig_name = source_file.name
         new_name  = proposed_name if proposed_name else orig_name
@@ -163,9 +177,19 @@ class FileRegistryManager:
         dest_abs  = self.root / dest_rel
 
         dest_abs.parent.mkdir(parents=True, exist_ok=True)
-        
-        # If standard temp upload path, we can move. Otherwise copy.
-        shutil.copy2(source_file, dest_abs)
+
+        if raw_bytes is not None:
+            # Write from in-memory bytes — no file lock issue
+            dest_abs.write_bytes(raw_bytes)
+        else:
+            # Fall back to reading from disk
+            try:
+                dest_abs.write_bytes(source_file.read_bytes())
+            except (PermissionError, OSError) as e:
+                raise OSError(
+                    f"Cannot read source file (likely held by another process): {source_file}\n"
+                    f"Original error: {e}"
+                ) from e
 
         record = {
             "file_id": f"F_{uuid.uuid4().hex[:8].upper()}",
@@ -186,6 +210,9 @@ class FileRegistryManager:
         }
 
         registry = self.load_registry()
+        if not isinstance(registry, list):
+            log.warning("register_new_file: registry was not a list, resetting.")
+            registry = []
         registry.append(record)
         self._save_registry(registry)
 

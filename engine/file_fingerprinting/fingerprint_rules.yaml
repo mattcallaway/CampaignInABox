@@ -1,0 +1,194 @@
+# Election File Fingerprint Rule Registry — Campaign In A Box
+# Prompt 25A.3
+#
+# Rules define how the fingerprint classifier identifies election spreadsheet types.
+# Each rule contains:
+#   required_headers:  columns that MUST be present (case-insensitive, normalized)
+#   optional_headers:  bonus columns that increase match score
+#   numeric_patterns:  column-content patterns (all-numeric, percent, etc.)
+#   row_patterns:      structural patterns in first N rows
+#   precinct_patterns: regex patterns for precinct IDs in first column
+#   confidence_weight: base confidence when all required headers match
+#   min_required_match: number of required_headers that must match (default: all)
+# ---
+
+schema_version: "1.0"
+last_updated: "2026-03-13"
+
+file_types:
+
+  # ─── Statement of Vote (SOV) ──────────────────────────────────────────────
+  # The master Sonoma/CA SOS precinct-level results file.
+  # Contains one row per precinct with vote totals for ALL contests.
+  statement_of_vote:
+    display_name: "Statement of Vote"
+    description: "Master precinct-level results file. One row per precinct, all contests."
+    required_headers:
+      - "precinct"
+      - "registered voters"
+      - "ballots cast"
+    optional_headers:
+      - "vote by mail"
+      - "election day"
+      - "turnout"
+      - "percent turnout"
+      - "total votes"
+      - "undervotes"
+      - "overvotes"
+    numeric_patterns:
+      - vote_totals
+      - turnout_columns
+    precinct_patterns:
+      - "^\\d{4,7}$"        # 4-7 digit numeric SRPREC IDs
+      - "^\\d{4}[A-Z]\\d*$" # alphanumeric SRPREC
+      - "^[A-Z]{2}\\d{3,}$" # state-prefix format
+    confidence_weight: 0.95
+    min_required_match: 2
+    precinct_level: true
+    contest_level: false
+
+  # ─── Precinct Contest Results ─────────────────────────────────────────────
+  # Per-precinct results for a specific contest. Often exported separately.
+  precinct_results:
+    display_name: "Precinct Contest Results"
+    description: "Per-precinct vote totals for a specific contest or candidate race."
+    required_headers:
+      - "precinct"
+      - "votes"
+    optional_headers:
+      - "candidate"
+      - "contest"
+      - "party"
+      - "total votes"
+      - "percent"
+      - "vote by mail"
+      - "election day"
+    numeric_patterns:
+      - vote_totals
+    precinct_patterns:
+      - "^\\d{4,7}$"
+    confidence_weight: 0.90
+    min_required_match: 2
+    precinct_level: true
+    contest_level: true
+
+  # ─── Ballot Measure Results ───────────────────────────────────────────────
+  ballot_measure_results:
+    display_name: "Ballot Measure Results"
+    description: "Yes/No vote totals for ballot measures. May be precinct or summary level."
+    required_headers:
+      - "yes"
+      - "no"
+    optional_headers:
+      - "measure"
+      - "proposition"
+      - "precinct"
+      - "total"
+      - "jurisdiction"
+    numeric_patterns:
+      - yes_no_totals
+    confidence_weight: 0.92
+    min_required_match: 2
+    precinct_level: false
+    contest_level: true
+
+  # ─── Turnout Report ───────────────────────────────────────────────────────
+  turnout_report:
+    display_name: "Turnout Report"
+    description: "Voter turnout summary. Registered voters, ballots cast, turnout percent."
+    required_headers:
+      - "registered"
+      - "ballots cast"
+    optional_headers:
+      - "turnout"
+      - "percent"
+      - "vote by mail"
+      - "in person"
+      - "election day"
+      - "precinct"
+    numeric_patterns:
+      - turnout_columns
+    confidence_weight: 0.88
+    min_required_match: 2
+    precinct_level: false
+    contest_level: false
+
+  # ─── Voter Registration Report ───────────────────────────────────────────
+  registration_report:
+    display_name: "Voter Registration Report"
+    description: "Voter registration breakdown by party affiliation."
+    required_headers:
+      - "democratic"
+      - "republican"
+    optional_headers:
+      - "no party preference"
+      - "other"
+      - "total"
+      - "green"
+      - "libertarian"
+      - "independence"
+      - "precinct"
+      - "district"
+    numeric_patterns:
+      - vote_totals
+    confidence_weight: 0.90
+    min_required_match: 2
+    precinct_level: false
+    contest_level: false
+
+  # ─── Contest Summary ──────────────────────────────────────────────────────
+  # Summary-level (not precinct): total votes per contest/candidate at jurisdiction level
+  contest_summary:
+    display_name: "Contest Summary"
+    description: "Jurisdiction-level vote totals per contest. Not precinct-level."
+    required_headers:
+      - "contest"
+      - "total votes"
+    optional_headers:
+      - "candidate"
+      - "votes"
+      - "percent"
+      - "winner"
+      - "party"
+    numeric_patterns:
+      - vote_totals
+    confidence_weight: 0.85
+    min_required_match: 2
+    precinct_level: false
+    contest_level: true
+
+  # ─── Crosswalk / Lookup ───────────────────────────────────────────────────
+  crosswalk_file:
+    display_name: "Precinct Crosswalk"
+    description: "Maps one precinct ID format to another (SRPREC <-> MPREC)."
+    required_headers:
+      - "srprec"
+      - "mprec"
+    optional_headers:
+      - "county"
+      - "fips"
+      - "district"
+      - "geometry_match_pct"
+    confidence_weight: 0.95
+    min_required_match: 2
+    precinct_level: true
+    contest_level: false
+
+# ─── Numeric Pattern Definitions ─────────────────────────────────────────────
+# Used to detect numeric column types by content characteristics
+numeric_pattern_definitions:
+  vote_totals:
+    description: "Integer columns containing vote counts (non-negative integers)"
+    dtype: integer
+    min_value: 0
+    max_value: 500000
+  turnout_columns:
+    description: "Float/percent columns (0.0–1.0 or 0–100)"
+    dtype: float_or_percent
+    min_value: 0
+    max_value: 100
+  yes_no_totals:
+    description: "Paired integer columns representing Yes/No votes"
+    dtype: integer
+    min_value: 0
+    max_value: 500000

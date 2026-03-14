@@ -1,3 +1,9 @@
+mission_control:
+  label: "🎯 Mission Control"
+  pages:
+    - id: "🎯 Mission Control"
+      label: "Campaign Mission Control"
+
 campaign_command:
   label: "🏠 Campaign Command"
   pages:
@@ -33,6 +39,8 @@ data:
       label: "Data Manager"
     - id: "🗄️ Data Explorer"
       label: "Data Explorer"
+    - id: "🗂️ Source Registry"
+      label: "Source Registry"
 
 geography:
   label: "🗺️ Geography"
@@ -59,5 +67,17 @@ strategy_modeling:
 system:
   label: "🛠 System"
   pages:
+    - id: "▶️ Pipeline Runner"
+      label: "Pipeline Runner"
     - id: "🩺 Diagnostics"
       label: "Diagnostics"
+
+admin:
+  label: "⚙️ Administration"
+  pages:
+    - id: "👤 Users & Roles"
+      label: "Users & Roles"
+    - id: "🏛️ Campaign Admin"
+      label: "Campaign Admin"
+    - id: "📊 Swing Modeling"
+      label: "Swing Modeling"

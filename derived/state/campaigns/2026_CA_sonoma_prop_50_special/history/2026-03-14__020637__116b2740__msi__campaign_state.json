@@ -1,0 +1,341 @@
+{
+  "run_id": "2026-03-14__020637__116b2740__msi",
+  "contest_id": "2025_CA_sonoma_nov2025_special",
+  "state": "CA",
+  "county": "Sonoma",
+  "generated_at": "2026-03-14T09:07:59.727225",
+  "campaign_setup": {
+    "contest_name": "Prop 50 Special Election 2025",
+    "contest_type": "ballot_measure",
+    "election_date": "2025-06-03",
+    "target_vote_share": 0.52,
+    "total_budget": 150000,
+    "field_budget": 60000,
+    "mail_budget": 40000,
+    "digital_budget": 30000,
+    "volunteers_per_week": 10,
+    "contact_rate": null,
+    "turnout_lift": null,
+    "strategy_priorities": []
+  },
+  "model_summary": {
+    "precinct_count": 0,
+    "turf_count": null,
+    "region_count": null,
+    "scenario_count": null,
+    "baseline_support": null,
+    "baseline_turnout": null,
+    "win_probability": null,
+    "expected_margin": null,
+    "advanced_modeling_used": false
+  },
+  "strategy_summary": {
+    "recommended_strategy": null,
+    "win_number": null,
+    "base_votes": null,
+    "persuasion_votes_needed": null,
+    "gotv_votes_needed": null,
+    "vote_path_coverage": null,
+    "top_target_precinct_count": null,
+    "top_turf_count": null,
+    "field_pace_doors_per_week": null,
+    "total_budget": null
+  },
+  "war_room_summary": {
+    "war_room_ready": false,
+    "real_metrics_count": 0,
+    "simulated_metrics_count": 3,
+    "estimated_metrics_count": 6,
+    "missing_metrics_count": 1,
+    "current_risk_level": "MEDIUM",
+    "daily_status_available": true,
+    "data_requests_count": 4,
+    "critical_requests": 0,
+    "high_priority_requests": 2,
+    "actual_field_doors": 0,
+    "actual_volunteer_count": 0,
+    "actual_spend": 0
+  },
+  "voter_intelligence_summary": {
+    "voter_file_loaded": false,
+    "precinct_match_rate": 0.0,
+    "gotv_universe_size": null,
+    "persuasion_universe_size": null,
+    "turnout_propensity_coverage": null,
+    "persuasion_score_coverage": null
+  },
+  "provenance_summary": {
+    "REAL": 0,
+    "SIMULATED": 3,
+    "ESTIMATED": 6,
+    "MISSING": 1,
+    "total": 10,
+    "war_room_ready": false
+  },
+  "data_requests": [
+    {
+      "request_type": "field_results",
+      "priority": "high",
+      "icon": "\ud83d\udeaa",
+      "title": "No real canvass results uploaded",
+      "why_needed": "Current contact rate (22%) and turnout lift (6%) are configured estimates. No actual canvass data.",
+      "what_it_improves": "Turnout calibration, daily forecast accuracy, persuasion targeting",
+      "recommended_ui_action": "Enter Field Data in the War Room \u2192 Field tab."
+    },
+    {
+      "request_type": "volunteer_log",
+      "priority": "high",
+      "icon": "\ud83d\ude4b",
+      "title": "No volunteer shift logs entered",
+      "why_needed": "Volunteer capacity is estimated at 10/week from config. No actual shift data.",
+      "what_it_improves": "Field capacity forecast, GOTV achievability, weekly progress tracking.",
+      "recommended_ui_action": "Log volunteer shifts in War Room \u2192 Volunteers tab."
+    },
+    {
+      "request_type": "budget_actuals",
+      "priority": "medium",
+      "icon": "\ud83d\udcb3",
+      "title": "No budget actuals entered",
+      "why_needed": "Current budget display shows planned allocations only. No actual spend has been entered.",
+      "what_it_improves": "Cash burn analysis, budget reallocation recommendations, burn-rate vs. timeline alerts.",
+      "recommended_ui_action": "Enter budget actuals in War Room \u2192 Budget tab."
+    },
+    {
+      "request_type": "contact_results",
+      "priority": "medium",
+      "icon": "\ud83d\udccb",
+      "title": "No contact ID results uploaded",
+      "why_needed": "Persuasion rate is modeled from party strength / age (estimated). No field ID data.",
+      "what_it_improves": "Persuasion model accuracy, supporter ID tracking, opposition count.",
+      "recommended_ui_action": "Upload contact results in War Room \u2192 Contacts tab."
+    }
+  ],
+  "risks": [
+    {
+      "risk_id": "RISK_01",
+      "severity": "MEDIUM",
+      "description": "Turnout Uncertainty",
+      "source": "strategy_generator",
+      "mitigation": "Increase GOTV investment; mail VBM chase list to high-propensity supporters."
+    },
+    {
+      "risk_id": "RISK_02",
+      "severity": "HIGH",
+      "description": "Canvasser Staffing",
+      "source": "strategy_generator",
+      "mitigation": "Recruit more volunteers, hire canvassers, or reduce persuasion target threshold."
+    },
+    {
+      "risk_id": "RISK_03",
+      "severity": "HIGH",
+      "description": "Campaign Timeline",
+      "source": "strategy_generator",
+      "mitigation": "Very short timeline \u2014 prioritize mail and digital; limited field available."
+    },
+    {
+      "risk_id": "WR_01",
+      "severity": "MEDIUM",
+      "description": "Canvasser Staffing",
+      "source": "war_room_status_engine",
+      "mitigation": "Enter real data in War Room to update forecasts."
+    },
+    {
+      "risk_id": "WR_02",
+      "severity": "MEDIUM",
+      "description": "Campaign Timeline",
+      "source": "war_room_status_engine",
+      "mitigation": "Enter real data in War Room to update forecasts."
+    },
+    {
+      "risk_id": "WR_03",
+      "severity": "HIGH",
+      "description": "Field pace 0% of target \u2014 volunteer/canvasser gap",
+      "source": "war_room_status_engine",
+      "mitigation": "Enter real data in War Room to update forecasts."
+    },
+    {
+      "risk_id": "WR_04",
+      "severity": "HIGH",
+      "description": "No real canvass data \u2014 forecasts rely entirely on model priors",
+      "source": "war_room_status_engine",
+      "mitigation": "Enter real data in War Room to update forecasts."
+    }
+  ],
+  "recommendations": [
+    {
+      "type": "DATA_INPUT",
+      "priority": "HIGH",
+      "description": "No real canvass results uploaded",
+      "action": "Enter Field Data in the War Room \u2192 Field tab.",
+      "provenance_basis": "MISSING",
+      "source": "data_request_engine"
+    },
+    {
+      "type": "DATA_INPUT",
+      "priority": "HIGH",
+      "description": "No volunteer shift logs entered",
+      "action": "Log volunteer shifts in War Room \u2192 Volunteers tab.",
+      "provenance_basis": "MISSING",
+      "source": "data_request_engine"
+    },
+    {
+      "type": "DATA_INPUT",
+      "priority": "MEDIUM",
+      "description": "No budget actuals entered",
+      "action": "Enter budget actuals in War Room \u2192 Budget tab.",
+      "provenance_basis": "MISSING",
+      "source": "data_request_engine"
+    },
+    {
+      "type": "OPERATIONAL",
+      "priority": "HIGH",
+      "description": "Begin field canvassing and log first week's results in War Room",
+      "action": "Execute immediately",
+      "provenance_basis": "SIMULATED",
+      "source": "war_room_status_engine"
+    },
+    {
+      "type": "OPERATIONAL",
+      "priority": "HIGH",
+      "description": "Log volunteer shifts from last week",
+      "action": "Execute immediately",
+      "provenance_basis": "SIMULATED",
+      "source": "war_room_status_engine"
+    }
+  ],
+  "artifact_index": {
+    "strategy_meta": "derived\\strategy\\2026-03-10__152246__e84498d7__msi__STRATEGY_META.json",
+    "strategy_summary": null,
+    "precinct_model": null,
+    "targeting_list": null,
+    "simulation_results": null,
+    "field_plan": "derived\\strategy\\2026-03-14__020637__116b2740__msi__field_strategy.csv",
+    "voter_universes": null,
+    "audit_report": "reports\\audit\\2026-03-14__020637__116b2740__msi__post_prompt86_audit.json",
+    "daily_status": "derived\\war_room\\2026-03-14__020637__116b2740__msi__daily_status.json",
+    "metric_provenance": "derived\\provenance\\2026-03-14__020637__116b2740__msi__metric_provenance.json",
+    "forecast_comparison": "derived\\war_room\\2026-03-14__020637__116b2740__msi__forecast_update_comparison.csv",
+    "campaign_state": null
+  },
+  "jurisdictions": [],
+  "contests": [],
+  "multi_jurisdiction_forecast": {},
+  "active_users": 7,
+  "pending_approvals": 0,
+  "open_tasks": 0,
+  "last_strategy_approval": null,
+  "campaign_id": "2026_CA_sonoma_prop_50_special",
+  "campaign_name": "Prop 50 Special Election 2026",
+  "campaign_stage": "field",
+  "campaign_status": "active",
+  "intelligence_summary": {
+    "poll_average": null,
+    "n_polls": 0,
+    "poll_ci_low": null,
+    "poll_ci_high": null,
+    "registration_growth": null,
+    "net_partisan_score": null,
+    "ballot_return_rate": null,
+    "dem_return_advantage": null,
+    "projected_turnout": null,
+    "macro_environment_score": 0.0195,
+    "intelligence_adjustment": 0.00098,
+    "adjusted_support": 0.501,
+    "intelligence_impact": "NEUTRAL",
+    "intelligence_source_type": "SIMULATED",
+    "has_real_signals": false
+  },
+  "file_inventory_summary": {
+    "active_files": 0,
+    "archived_files": 0,
+    "missing_critical_files": 3,
+    "missing_optional_files": 4
+  },
+  "missing_data_requests_intake": [
+    {
+      "data_type": "election_results",
+      "priority": "high",
+      "why_needed": "Essential for establishing baseline precinct model turning and calibrating assumptions.",
+      "recommended_destination": "data/elections/CA/Sonoma/prop_50_special_election_2025/",
+      "example_filename": "county_sov_detail.csv"
+    },
+    {
+      "data_type": "voter_file",
+      "priority": "critical",
+      "why_needed": "Required for building the initial targeting universe and simulating specific voter turnout scores.",
+      "recommended_destination": "data/voters/CA/Sonoma/",
+      "example_filename": "county_voter_file_extract_2026.csv"
+    },
+    {
+      "data_type": "precinct_geometry",
+      "priority": "medium",
+      "why_needed": "Necessary for generating the interactive map dashboard and cutting field canvassing turfs.",
+      "recommended_destination": "data/geography/CA/Sonoma/",
+      "example_filename": "county_precincts.geojson"
+    },
+    {
+      "data_type": "crosswalk",
+      "priority": "medium",
+      "why_needed": "Provides block-to-precinct mapping so geographic allocation is more accurate.",
+      "recommended_destination": "data/crosswalks/CA/Sonoma/",
+      "example_filename": "block_to_precinct_xwalk.csv"
+    },
+    {
+      "data_type": "polling",
+      "priority": "high",
+      "why_needed": "Crucial external signal for the Intelligence Fusion layer. Without it, the model relies on baselines only.",
+      "recommended_destination": "data/intelligence/polling/",
+      "example_filename": "latest_benchmark_poll.xlsx"
+    },
+    {
+      "data_type": "ballot_returns",
+      "priority": "medium",
+      "why_needed": "Allows the war room to project early voting pace and adjust GOTV targets daily.",
+      "recommended_destination": "data/intelligence/ballot_returns/",
+      "example_filename": "daily_return_report_aggregate.csv"
+    },
+    {
+      "data_type": "demographics",
+      "priority": "low",
+      "why_needed": "Can adjust support models (via education/income indexes) if polling is sparse.",
+      "recommended_destination": "data/intelligence/demographics/",
+      "example_filename": "census_acs_precincts.csv"
+    }
+  ],
+  "source_recommendations_available": true,
+  "performance_summary": {
+    "chi_score": -0.76,
+    "health_status": "WARNING",
+    "doors_health": "BEHIND",
+    "calls_health": "BEHIND"
+  },
+  "archive_summary": {
+    "run_id": "20260312__p24",
+    "generated_at": "2026-03-12T23:05:24.121887",
+    "has_real_data": true,
+    "coverage": {
+      "total_records": 3000,
+      "real_records": 3000,
+      "synthetic_records": 0,
+      "years_ingested": [
+        2024
+      ],
+      "counties": [
+        "Sonoma"
+      ],
+      "states": [
+        "CA"
+      ],
+      "contests": 1,
+      "contest_types": [
+        "local_general"
+      ],
+      "precincts": 55,
+      "has_real_data": true,
+      "turnout_null_pct": 100.0,
+      "support_null_pct": 100.0
+    },
+    "archive_dir": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\election_archive"
+  },
+  "historical_models_active": true
+}

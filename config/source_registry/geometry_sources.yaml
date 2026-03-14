@@ -1,0 +1,307 @@
+# Geometry Source Registry — Campaign In A Box
+# Prompt 25A:   Initial seeding (10 entries)
+# Prompt 25A.1: source_origin field added
+# Prompt 25A.2: Canonical URL repair
+#   - socoe.us geometry entry removed (replaced with sonomacounty.gov reference)
+#   - Local preferred geometry source added (manual_upload)
+#   - page_type, discovery_mode fields added to all entries
+# ---
+
+schema_version: "1.2"
+last_updated: "2026-03-13"
+
+sources:
+
+  ###########################################################################
+  # ─── CALIFORNIA — MPREC (MASTER PRECINCT) ────────────────────────────
+  ###########################################################################
+
+  - source_id: ca_statewide_mprec_statewidedatabase
+    state: CA
+    jurisdiction_scope: statewide
+    boundary_type: mprec
+    source_kind: statewide_database
+    official_status: official
+    source_origin: seeded_official
+    confidence_default: 0.97
+    preferred: false
+    user_approved: false
+    page_type: discovery_page
+    discovery_mode: direct
+    base_url: "https://statewidedatabase.org"
+    page_url: "https://statewidedatabase.org/gis.html"
+    file_patterns:
+      - "*mprec*.geojson"
+      - "*mprec*.shp"
+      - "*mprec*.zip"
+    format: geojson
+    id_field_name: "mprec"
+    name_field_name: "mprec_label"
+    normalization_rule: mprec_standard
+    notes: >
+      UC Berkeley Statewide Database — canonical MPREC geometry and crosswalks.
+      Academic tier (confidence capped at 0.85 by policy).
+      Geometry aligns with the CA SOS Statement of Vote precinct IDs.
+
+  - source_id: ca_sos_mprec_gis
+    state: CA
+    jurisdiction_scope: statewide
+    boundary_type: mprec
+    source_kind: state_sos
+    official_status: official
+    source_origin: seeded_official
+    confidence_default: 0.95
+    preferred: false
+    user_approved: false
+    page_type: discovery_page
+    discovery_mode: pattern_scan
+    base_url: "https://www.sos.ca.gov/elections/mapping-and-redistricting"
+    notes: >
+      CA Secretary of State may publish MPREC boundary files through their
+      GIS / mapping and redistricting page. Check for updated shapefiles.
+
+  ###########################################################################
+  # ─── SONOMA COUNTY — SRPREC (SUB-PRECINCT / REPORTING UNIT) ─────────
+  ###########################################################################
+
+  # LOCAL FILE SOURCE — Preferred Sonoma SRPREC geometry.
+  # These files are already downloaded and should be in:
+  #   Campaign In A Box Data/  (per Prompt 25A.2 instructions)
+  # When located, place in: data/CA/counties/Sonoma/geography/precincts/
+  - source_id: ca_sonoma_srprec_local
+    state: CA
+    county: Sonoma
+    jurisdiction_scope: county
+    boundary_type: srprec
+    source_kind: county_registrar
+    official_status: verified
+    source_origin: manual_upload
+    confidence_default: 0.97
+    preferred: true
+    user_approved: false
+    page_type: file_download
+    discovery_mode: manual_only
+    file_patterns:
+      - "*srprec*.geojson"
+      - "*precinct_boundaries*.geojson"
+      - "*precinct_map*.shp"
+      - "*precinct_boundaries*.zip"
+    format: geojson
+    id_field_name: "srprec"
+    name_field_name: "precinct_name"
+    normalization_rule: srprec_to_mprec
+    notes: >
+      Preferred local SRPREC geometry file for Sonoma County.
+      This file should already be in 'Campaign In A Box Data/'.
+      Place it at: data/CA/counties/Sonoma/geography/precincts/
+      Source: Sonoma County Registrar of Voters (sonomacounty.gov).
+      discovery_mode: manual_only — no URL; file requires manual placement.
+
+  # ONLINE REFERENCE SOURCE — sonomacounty.gov precinct maps page.
+  - source_id: ca_sonoma_srprec_registrar
+    state: CA
+    county: Sonoma
+    jurisdiction_scope: county
+    boundary_type: srprec
+    source_kind: county_registrar
+    official_status: official
+    source_origin: seeded_official
+    confidence_default: 0.88
+    preferred: false
+    user_approved: false
+    page_type: discovery_page
+    discovery_mode: manual_only
+    base_url: "https://sonomacounty.gov"
+    page_url: "https://sonomacounty.gov/administrative-support-and-fiscal-services/registrar-of-voters/maps"
+    file_patterns:
+      - "*srprec*.geojson"
+      - "*precinct_map*.shp"
+      - "*precinct_boundaries*.zip"
+    format: geojson
+    id_field_name: "srprec"
+    name_field_name: "precinct_name"
+    normalization_rule: srprec_to_mprec
+    notes: >
+      Sonoma County Registrar of Voters precinct maps page.
+      discovery_mode: manual_only — GIS files may require request or contact.
+      Use this as reference URL when locally stored geometry needs refresh.
+      Preferred source is ca_sonoma_srprec_local (already downloaded).
+
+  - source_id: ca_statewide_srprec_statewidedatabase
+    state: CA
+    jurisdiction_scope: statewide
+    boundary_type: srprec
+    source_kind: statewide_database
+    official_status: official
+    source_origin: seeded_official
+    confidence_default: 0.92
+    preferred: false
+    user_approved: false
+    page_type: discovery_page
+    discovery_mode: direct
+    base_url: "https://statewidedatabase.org"
+    file_patterns:
+      - "*srprec*.geojson"
+      - "*srprec*.shp"
+    format: geojson
+    id_field_name: "srprec"
+    normalization_rule: srprec_to_mprec
+    notes: >
+      SWDB also publishes SRPREC boundaries for validation and crosswalk building.
+      Academic tier — confidence capped at 0.85.
+
+  ###########################################################################
+  # ─── CROSSWALKS: MPREC ↔ SRPREC ─────────────────────────────────────
+  ###########################################################################
+
+  - source_id: ca_statewide_mprec_srprec_crosswalk
+    state: CA
+    jurisdiction_scope: statewide
+    boundary_type: crosswalk
+    source_kind: statewide_database
+    official_status: official
+    source_origin: seeded_official
+    confidence_default: 0.95
+    preferred: false
+    user_approved: false
+    page_type: file_download
+    discovery_mode: direct
+    base_url: "https://statewidedatabase.org"
+    file_patterns:
+      - "*mprec_srprec*crosswalk*.csv"
+      - "*precinct_crosswalk*.csv"
+    format: csv
+    id_field_name: "mprec"
+    crosswalk_targets: [mprec, srprec]
+    normalization_rule: mprec_standard
+    notes: >
+      MPREC<->SRPREC crosswalk from the UC Berkeley Statewide Database.
+      Essential for joining SOS statewide data (MPREC) with county registrar
+      data (SRPREC). Must be refreshed after any redistricting cycle.
+      Academic tier — confidence capped at 0.85.
+
+  - source_id: ca_sonoma_mprec_srprec_crosswalk_local
+    state: CA
+    county: Sonoma
+    jurisdiction_scope: county
+    boundary_type: crosswalk
+    source_kind: county_registrar
+    official_status: verified
+    source_origin: manual_upload
+    confidence_default: 0.97
+    preferred: true
+    user_approved: false
+    page_type: file_download
+    discovery_mode: manual_only
+    file_patterns:
+      - "*sonoma*crosswalk*.csv"
+      - "*mprec_srprec*.csv"
+    format: csv
+    id_field_name: "mprec"
+    crosswalk_targets: [mprec, srprec]
+    normalization_rule: mprec_standard
+    notes: >
+      Local Sonoma County MPREC<->SRPREC crosswalk file.
+      Place at: data/CA/counties/Sonoma/geography/crosswalks/
+      No URL — local file only.
+
+  ###########################################################################
+  # ─── CROSSWALKS: SRPREC ↔ CITY ──────────────────────────────────────
+  ###########################################################################
+
+  - source_id: ca_sonoma_srprec_city_crosswalk
+    state: CA
+    county: Sonoma
+    jurisdiction_scope: county
+    boundary_type: crosswalk
+    source_kind: county_registrar
+    official_status: verified
+    source_origin: manual_upload
+    confidence_default: 0.88
+    preferred: true
+    user_approved: false
+    page_type: file_download
+    discovery_mode: manual_only
+    file_patterns:
+      - "*srprec_city*.csv"
+      - "*precinct_city*.csv"
+    format: csv
+    id_field_name: "srprec"
+    crosswalk_targets: [srprec, city]
+    notes: >
+      Maps Sonoma County SRPRECs to incorporated city jurisdictions.
+      Required for city-level contest analysis (Santa Rosa, Petaluma, etc.).
+      May need manual construction if not available from registrar.
+
+  ###########################################################################
+  # ─── CITY / SUPERVISORIAL / SCHOOL BOUNDARIES ────────────────────────
+  ###########################################################################
+
+  - source_id: ca_sonoma_city_boundaries
+    state: CA
+    county: Sonoma
+    jurisdiction_scope: county
+    boundary_type: city
+    source_kind: opendata
+    official_status: official
+    source_origin: seeded_official
+    confidence_default: 0.88
+    preferred: false
+    user_approved: false
+    page_type: file_download
+    discovery_mode: direct
+    base_url: "https://data.sonoma.opendata.arcgis.com"
+    file_patterns:
+      - "*city_boundaries*.geojson"
+      - "*sonoma_cities*.shp"
+    format: geojson
+    id_field_name: "city_name"
+    name_field_name: "city_name"
+    normalization_rule: passthrough
+    notes: "Sonoma County city boundaries from county open data portal. Official tier."
+
+  - source_id: ca_sonoma_supervisorial_boundaries
+    state: CA
+    county: Sonoma
+    jurisdiction_scope: county
+    boundary_type: supervisorial
+    source_kind: opendata
+    official_status: official
+    source_origin: seeded_official
+    confidence_default: 0.88
+    preferred: false
+    user_approved: false
+    page_type: file_download
+    discovery_mode: direct
+    base_url: "https://data.sonoma.opendata.arcgis.com"
+    file_patterns:
+      - "*supervisorial*.geojson"
+      - "*supervisor_district*.shp"
+    format: geojson
+    id_field_name: "district_number"
+    name_field_name: "supervisor_name"
+    normalization_rule: passthrough
+    notes: "Sonoma County Board of Supervisors district boundaries. Official tier."
+
+  - source_id: ca_sonoma_school_district_boundaries
+    state: CA
+    county: Sonoma
+    jurisdiction_scope: county
+    boundary_type: school_district
+    source_kind: opendata
+    official_status: official
+    source_origin: seeded_official
+    confidence_default: 0.82
+    preferred: false
+    user_approved: false
+    page_type: file_download
+    discovery_mode: direct
+    base_url: "https://nces.ed.gov/programs/edge/Geographic/DistrictBoundaries"
+    file_patterns:
+      - "*school_district*.geojson"
+      - "*nces_district*.shp"
+    format: geojson
+    id_field_name: "district_id"
+    name_field_name: "district_name"
+    normalization_rule: passthrough
+    notes: "NCES school district boundaries. Academic tier — confidence capped at 0.85."

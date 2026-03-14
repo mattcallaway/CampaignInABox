@@ -1,0 +1,7 @@
+# reports/archive_builder/.gitkeep
+# Archive Builder run reports.
+# Files:
+#   <RUN_ID>__archive_build.md           — full build summary
+#   <RUN_ID>__file_classification.md     — per-file classification details
+#   <RUN_ID>__precinct_id_join.md        — precinct normalization stats
+#   <RUN_ID>__validation_tests.md        — validation test results

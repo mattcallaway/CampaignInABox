@@ -1,0 +1,11 @@
+---
+# config/active_campaign.yaml — Prompt 20.8
+# Single pointer to the currently active campaign.
+# Updated by engine/admin/campaign_manager.py when switching campaigns.
+
+campaign_id: "2026_CA_sonoma_prop_50_special"
+campaign_name: "Prop 50 Special Election 2026"
+stage: "field"
+status: "active"
+switched_at: "2026-01-01T00:00:00"
+switched_by: "mcallaway"

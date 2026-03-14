@@ -75,9 +75,11 @@ def render_data_manager(data: dict):
     registry = manager.load_registry()
     root_path = Path(PROJECT_ROOT)
 
-    tab_upload, tab_registry, tab_missing = st.tabs([
-        "📤 Upload New File", 
-        "🗂️ File Registry", 
+    tab_upload, tab_registry, tab_precinct, tab_archive, tab_missing = st.tabs([
+        "📤 Upload New File",
+        "🗂️ File Registry",
+        "🔎 Precinct ID Review",
+        "🗃️ Election Archive",
         "🔍 Missing Data Assistant"
     ])
 
@@ -92,9 +94,60 @@ def render_data_manager(data: dict):
             temp_dir.mkdir(parents=True, exist_ok=True)
             temp_path = temp_dir / uploaded_file.name
             temp_path.write_bytes(uploaded_file.getbuffer())
+            # Capture raw bytes NOW before any preview/fingerprint opens the file.
+            # On Windows, openpyxl holds an exclusive lock, so we cannot
+            # re-read from temp_path later. Store bytes in session_state.
+            st.session_state["_upload_raw_bytes"] = uploaded_file.getvalue()
 
             st.markdown("#### File Preview")
             _preview_file(temp_path)
+
+            # ── Election File Fingerprint Analysis (Prompt 25A.3) ─────────────
+            st.markdown("#### 🔬 Election File Fingerprint")
+            try:
+                from engine.file_fingerprinting.fingerprint_engine import classify as fp_classify
+                fp_result = fp_classify(temp_path, use_cache=False)
+
+                if fp_result.file_type not in ("parse_error", "file_not_found", "unknown"):
+                    conf_pct = int(fp_result.confidence * 100)
+                    tier_color = "green" if conf_pct >= 85 else ("orange" if conf_pct >= 65 else "red")
+                    st.success(
+                        f"**{fp_result.display_name}** — "
+                        f":{tier_color}[**{conf_pct}% confidence**]"
+                    )
+                    fp_c1, fp_c2, fp_c3, fp_c4 = st.columns(4)
+                    fp_c1.metric("File Type", fp_result.display_name)
+                    fp_c2.metric("Confidence", f"{conf_pct}%")
+                    fp_c3.metric("Precinct Level", "✅ Yes" if fp_result.precinct_level else "❌ No")
+                    fp_c4.metric("Contest Level", "✅ Yes" if fp_result.contest_level else "❌ No")
+
+                    if fp_result.matching_headers:
+                        st.caption(f"**Matched headers:** {', '.join(fp_result.matching_headers[:8])}")
+                    if fp_result.precinct_format:
+                        st.caption(f"**Precinct ID format:** `{fp_result.precinct_format}`")
+                    if fp_result.optional_hits:
+                        st.caption(f"**Optional matches:** {', '.join(fp_result.optional_hits[:6])}")
+
+                    # Show all rule scores in expandable section
+                    with st.expander("📊 All Rule Scores", expanded=False):
+                        if fp_result.all_scores:
+                            for rule_key, score in sorted(fp_result.all_scores.items(), key=lambda x: x[1], reverse=True):
+                                bar = "█" * int(score * 20)
+                                st.text(f"{rule_key:<30} {score:.3f}  {bar}")
+                        else:
+                            st.caption("No scores available (cached result).")
+                elif fp_result.file_type == "unknown":
+                    st.warning(
+                        "⚠️ **Unknown file type** — could not match any election file fingerprint. "
+                        "Check headers and format, or add a new rule to fingerprint_rules.yaml."
+                    )
+                    if fp_result.all_scores:
+                        best = max(fp_result.all_scores.items(), key=lambda x: x[1])
+                        st.caption(f"Closest match: `{best[0]}` at {best[1]:.2f}")
+                else:
+                    st.error(f"Fingerprint error: {fp_result.file_type}")
+            except Exception as fp_err:
+                st.caption(f"Fingerprint analysis unavailable: {fp_err}")
 
             classification = manager.classify_file(temp_path)
             cat  = classification["campaign_data_type"]
@@ -104,76 +157,445 @@ def render_data_manager(data: dict):
             col1, col2 = st.columns(2)
             with col1:
                 form_cat  = st.selectbox("Campaign Data Type", list(manager._DESTINATION_RULES.keys()), index=list(manager._DESTINATION_RULES.keys()).index(cat) if cat in manager._DESTINATION_RULES else 0)
-                form_name = st.text_input("Filename", uploaded_file.name)
-            
+                form_name = st.text_input("Filename", uploaded_file.name, key="upload_filename")
+
             with col2:
                 opts = ["REAL", "EXTERNAL", "ESTIMATED", "SIMULATED"]
-                form_prov = st.selectbox("Provenance", opts, index=opts.index(prov) if prov in opts else 1)
-                form_state = st.text_input("State Code (e.g. CA)", "CA")
-                form_county = st.text_input("County", "Sonoma")
-                form_contest = st.text_input("Contest ID", "2025_prop50_special")
+                form_prov   = st.selectbox("Provenance", opts, index=opts.index(prov) if prov in opts else 1)
+                form_state  = st.text_input("State Code (e.g. CA)", "CA", key="upload_state")
+                form_county = st.text_input("County", "Sonoma", key="upload_county")
+                form_contest = st.text_input("Contest Slug (e.g. nov2020_general)", "nov2020_general", key="upload_contest")
+                form_year   = st.text_input("Year", "2020", key="upload_year")
 
-            proposed_dest = manager.propose_destination(form_name, form_cat, form_state, form_county, form_contest)
-            render_alert("info", f"**Proposed Destination:** `{proposed_dest}`")
+            is_election_result = form_cat == "election_results"
+            if is_election_result:
+                canonical_dest = f"data/contests/{form_state}/{form_county}/{form_year}/{form_contest}/raw/{form_name}"
+                render_alert("info", f"**Canonical Destination (P28):** `{canonical_dest}`")
+                st.caption("Election result files are stored in the canonical contest structure and registered through ContestIntake.")
+            else:
+                proposed_dest = manager.propose_destination(form_name, form_cat, form_state, form_county, form_contest)
+                render_alert("info", f"**Proposed Destination:** `{proposed_dest}`")
 
             form_notes = st.text_area("Notes (Optional)")
 
             if st.button("Confirm & Save File", type="primary"):
                 try:
-                    record = manager.register_new_file(
-                        source_file=temp_path, category=form_cat, provenance=form_prov,
-                        state=form_state, county=form_county, contest_id=form_contest,
-                        notes=form_notes, proposed_name=form_name
-                    )
-                    if temp_path.exists(): temp_path.unlink()
-                    st.success(f"File saved to `{record['current_path']}` and registered!")
+                    raw = st.session_state.get("_upload_raw_bytes")
+                    if is_election_result:
+                        # ── Canonical contest intake (P28) ──────────────────
+                        from engine.contest_data.contest_intake import ContestIntake
+                        intake = ContestIntake(PROJECT_ROOT)
+                        record = intake.ingest(
+                            source_file=temp_path,
+                            state=form_state,
+                            county=form_county,
+                            year=form_year,
+                            contest_slug=form_contest,
+                            provenance=form_prov,
+                            notes=form_notes,
+                            raw_bytes=raw,
+                            uploaded_by="ui_upload",
+                            ingest_source="data_manager_ui",
+                        )
+                        dest_display = record.get("canonical_path", "")
+                    else:
+                        # ── Non-contest files: use legacy FileRegistryManager ─
+                        record = manager.register_new_file(
+                            source_file=temp_path, category=form_cat, provenance=form_prov,
+                            state=form_state, county=form_county, contest_id=form_contest,
+                            notes=form_notes, proposed_name=form_name,
+                            raw_bytes=raw,
+                        )
+                        dest_display = record.get("current_path", "")
+                    try:
+                        if temp_path.exists():
+                            temp_path.unlink()
+                    except PermissionError:
+                        pass
+                    st.success(f"File saved to `{dest_display}` and registered!")
                     st.rerun()
                 except Exception as e:
                     render_alert("critical", f"Error saving file: {e}")
 
+
+    with tab_precinct:
+        st.subheader("Precinct ID Review")
+        st.markdown(
+            "Inspect and validate precinct ID formats before archive ingestion. "
+            "Ambiguous IDs are queued for review — they are **never auto-joined**."
+        )
+
+        pc1, pc2, pc3 = st.columns(3)
+        p_state    = pc1.text_input("State", "CA", key="prec_state")
+        p_county   = pc2.text_input("County", "Sonoma", key="prec_county")
+        p_boundary = pc3.selectbox("Boundary Type", ["MPREC", "SRPREC", "CITY_PRECINCT", "UNKNOWN_LOCAL"])
+
+        precinct_input = st.text_area(
+            "Precinct IDs to validate (one per line or comma-separated)",
+            placeholder="0400127\n400153\n127\nPCT-42\nSR 99",
+            height=150,
+        )
+
+        if st.button("Run Precinct ID Check", type="primary") and precinct_input.strip():
+            raw_ids = [
+                v.strip() for line in precinct_input.splitlines()
+                for v in line.split(",") if v.strip()
+            ]
+            try:
+                from datetime import datetime as _dt
+                from engine.precinct_ids.safe_join_engine import join_batch
+                run_id = _dt.now().strftime("%Y%m%d__%H%M")
+                batch = join_batch(raw_ids, p_state, p_county, p_boundary, run_id=run_id)
+
+                st.markdown("#### Results")
+                m1, m2, m3, m4, m5, m6 = st.columns(6)
+                m1.metric("Total", batch.total)
+                m2.metric("Exact", batch.exact_matches, delta=None)
+                m3.metric("Crosswalk", batch.crosswalk_matches)
+                m4.metric("Normalized", batch.normalized_matches)
+                m5.metric("Ambiguous", batch.ambiguous,
+                           delta=f"-{batch.ambiguous}" if batch.ambiguous else None,
+                           delta_color="inverse" if batch.ambiguous else "off")
+                m6.metric("Blocked", batch.blocked_cross_jurisdiction,
+                           delta=f"-{batch.blocked_cross_jurisdiction}" if batch.blocked_cross_jurisdiction else None,
+                           delta_color="inverse" if batch.blocked_cross_jurisdiction else "off")
+
+                ready_pct = int(batch.archive_ready_fraction * 100)
+                if ready_pct >= 90:
+                    st.success(f"**Archive-ready: {ready_pct}%** — IDs are safe to join.")
+                elif ready_pct >= 60:
+                    st.warning(f"**Archive-ready: {ready_pct}%** — Some IDs need review.")
+                else:
+                    render_alert("critical", f"**Archive-ready: {ready_pct}%** — Too many ambiguous/unresolved IDs.")
+
+                # Sample mapping table
+                import pandas as _pd
+                rows_df = _pd.DataFrame([{
+                    "Raw ID":       r.raw_precinct,
+                    "Schema":       r.detected_schema,
+                    "Status":       r.join_status,
+                    "Confidence":   f"{r.confidence:.2f}",
+                    "Scoped Key":   r.resolved_scoped_key or "—",
+                    "Reason":       r.reason[:80],
+                } for r in batch.join_results])
+                st.dataframe(rows_df, use_container_width=True, hide_index=True)
+
+                # Review queue links
+                if batch.ambiguous_csv:
+                    from pathlib import Path as _P
+                    render_alert("warning",
+                        f"**{batch.ambiguous + batch.blocked_cross_jurisdiction} rows** written to review queue: "
+                        f"`{_P(batch.ambiguous_csv).name}`"
+                    )
+                if batch.audit_report:
+                    st.caption(f"Full audit: `{batch.audit_report}`")
+
+            except Exception as e:
+                render_alert("critical", f"Precinct ID check error: {e}")
+        else:
+            st.info("Enter precinct IDs above and click **Run Precinct ID Check** to validate.")
+
+    with tab_archive:
+        st.subheader("Election Archive")
+        st.markdown(
+            "Discover, classify, and ingest historical election datasets. "
+            "Uses Source Registry to find official election pages, then fingerprints and validates files before archiving."
+        )
+
+        try:
+            from engine.archive_builder.archive_registry import registry_summary, list_elections
+            from engine.archive_builder.archive_builder import run_archive_build
+
+            summary = registry_summary()
+            a1, a2, a3, a4 = st.columns(4)
+            a1.metric("Archived Elections", summary.get("total", 0))
+            a2.metric("States", len(summary.get("states", [])))
+            a3.metric("Counties", len(summary.get("counties", [])))
+            a4.metric("Avg Confidence", f"{summary.get('avg_confidence', 0):.1%}")
+
+            elections = list_elections()
+            if elections:
+                import pandas as _pd
+                df_arc = _pd.DataFrame(elections)[[
+                    "election_id", "state", "county", "year", "election_type",
+                    "confidence_score", "fingerprint_type", "ingestion_date",
+                ]]
+                st.dataframe(df_arc, use_container_width=True, hide_index=True)
+            else:
+                st.info("No elections archived yet. Run a scan below to discover and ingest election data.")
+
+            st.markdown("---")
+            st.markdown("#### Run Archive Scan")
+            arc1, arc2 = st.columns(2)
+            scan_state  = arc1.text_input("State", "CA", key="arc_state")
+            scan_county = arc2.text_input("County", "Sonoma", key="arc_county")
+            st.caption("Offline scan uses Source Registry metadata without making HTTP requests. Online scan discovers files from live election pages.")
+
+            col_offline, col_online = st.columns(2)
+            run_offline = col_offline.button("Run Offline Scan", type="primary")
+            run_online  = col_online.button("Run Online Scan (HTTP)")
+
+            if run_offline or run_online:
+                with st.spinner("Running archive scan..."):
+                    build = run_archive_build(
+                        state=scan_state, county=scan_county,
+                        online=run_online, download=False,
+                    )
+                st.markdown("#### Scan Results")
+                s1, s2, s3, s4 = st.columns(4)
+                s1.metric("Sources Scanned", build.sources_scanned)
+                s2.metric("Pages Found",     build.pages_found)
+                s3.metric("Candidates",      build.candidates_found)
+                s4.metric("Ingested",        build.ingested)
+
+                if build.review_queue > 0:
+                    render_alert("warning", f"**{build.review_queue} files** sent to review queue — check `derived/archive_review_queue/`")
+                if build.errors:
+                    render_alert("critical", f"**{len(build.errors)} errors** during build: {build.errors[0][:80]}")
+                else:
+                    st.success("Scan complete — no errors.")
+                if build.build_report:
+                    st.caption(f"Build report: `{build.build_report}`")
+                if build.classification_report:
+                    st.caption(f"Classification report: `{build.classification_report}`")
+
+        except Exception as _arc_e:
+            render_alert("critical", f"Election Archive error: {_arc_e}")
+
     with tab_registry:
+
+
         st.subheader("Active File Registry")
         if not registry:
             render_empty_state("No Files Uploaded", "The file registry is empty.", "🗂️", "Upload a file in the first tab.")
         else:
             df_reg = pd.DataFrame(registry)
+
+            # ── Defensive column normalization ────────────────────────────────
+            # Different writers (register_new_file, file_registry_pipeline, etc.)
+            # may not include all fields. Fill missing columns with sensible defaults.
+            _DEFAULT_COLS = {
+                "status":             "ACTIVE",
+                "last_modified":      "",
+                "uploaded_at":        "",
+                "file_id":            "",
+                "current_filename":   "",
+                "campaign_data_type": "unknown",
+                "state":              "",
+                "county":             "",
+                "contest_id":         "",
+                "provenance":         "UNKNOWN",
+            }
+            for col, default in _DEFAULT_COLS.items():
+                if col not in df_reg.columns:
+                    df_reg[col] = default
+            # ── End defensive normalization ───────────────────────────────────
+
             view_status = st.radio("View", ["ACTIVE", "ARCHIVED", "ALL"], horizontal=True)
+            # ── Normalise records for display (handles both old and new schemas) ──
+            def _norm(r: dict) -> dict:
+                """Return a display-friendly dict that works for both registry schemas."""
+                is_canonical = bool(r.get("contest_slug") or r.get("canonical_path"))
+                return {
+                    "file_id":            r.get("file_id", "?"),
+                    "filename":           r.get("current_filename") or r.get("canonical_filename") or r.get("original_filename", "?"),
+                    "campaign_data_type": r.get("campaign_data_type") or ("election_results" if is_canonical else "unknown"),
+                    "state":              r.get("state", ""),
+                    "county":             r.get("county", ""),
+                    "contest":            r.get("contest_id") or r.get("contest_slug", ""),
+                    "year":               r.get("year", ""),
+                    "provenance":         r.get("provenance", ""),
+                    "status":             r.get("status") or r.get("archive_status", "ACTIVE"),
+                    "last_modified":      r.get("last_modified", ""),
+                    "is_canonical":       is_canonical,
+                }
+
+            norm_rows = [_norm(r) for r in registry]
+
             if view_status != "ALL":
                 if view_status == "ACTIVE":
-                    df_reg = df_reg[df_reg["status"].isin(["ACTIVE", "REGISTERED"])]
+                    norm_rows = [r for r in norm_rows if r["status"] in ("ACTIVE", "REGISTERED")]
                 else:
-                    df_reg = df_reg[df_reg["status"] == view_status]
+                    norm_rows = [r for r in norm_rows if r["status"] == view_status]
 
-            if df_reg.empty:
+            if not norm_rows:
                 render_empty_state("No Files Found", f"No {view_status.lower()} files currently exist.")
             else:
-                disp_df = df_reg[["file_id", "current_filename", "campaign_data_type", "state", "county", "contest_id", "provenance", "status", "last_modified"]]
-                st.dataframe(disp_df, use_container_width=True, hide_index=True)
+                import pandas as _pd
+                disp_df = _pd.DataFrame(norm_rows)
+                _display_cols = ["file_id", "filename", "campaign_data_type", "state",
+                                  "county", "contest", "year", "provenance", "status", "is_canonical"]
+                disp_cols = [c for c in _display_cols if c in disp_df.columns]
+                st.dataframe(disp_df[disp_cols], use_container_width=True, hide_index=True)
 
                 st.markdown("#### Manage Existing Files")
                 edit_id = st.selectbox("Select File ID to Edit/Archive", disp_df["file_id"].tolist())
                 if edit_id:
-                    rec = next(r for r in registry if r["file_id"] == edit_id)
-                    st.write(f"**Selected:** `{rec['current_filename']}` ({rec['campaign_data_type']})")
+                    rec      = next(r for r in registry if r.get("file_id") == edit_id)
+                    norm_rec = _norm(rec)
+                    is_canonical = norm_rec["is_canonical"]
+
+                    st.write(f"**Selected:** `{norm_rec['filename']}` ({norm_rec['campaign_data_type']})")
+                    if is_canonical:
+                        st.caption("ℹ️ This is a **canonical contest** record. Category/rename are locked, but year, contest slug, and provenance can be re-tagged below.")
 
                     ecol1, ecol2 = st.columns(2)
                     with ecol1:
-                        new_cat = st.selectbox("Change Category", list(manager._DESTINATION_RULES.keys()), index=list(manager._DESTINATION_RULES.keys()).index(rec["campaign_data_type"]))
-                        new_name = st.text_input("Rename File", rec["current_filename"])
-                        if st.button("Update Metadata"):
-                            manager.update_file(file_id=edit_id, new_name=new_name, new_category=new_cat)
-                            st.success("File updated successfully.")
-                            st.rerun()
+                        _cat_keys = list(manager._DESTINATION_RULES.keys())
+                        _cur_cat  = norm_rec["campaign_data_type"]
+                        _cat_idx  = _cat_keys.index(_cur_cat) if _cur_cat in _cat_keys else 0
+                        new_cat   = st.selectbox("Change Category", _cat_keys, index=_cat_idx,
+                                                  disabled=is_canonical)
+                        new_name  = st.text_input("Rename File", norm_rec["filename"],
+                                                   key=f"rename_{edit_id}", disabled=is_canonical)
 
                     with ecol2:
-                        st.markdown("<br><br>", unsafe_allow_html=True)
-                        if rec["status"] != "ARCHIVED":
-                            if st.button("🚨 Archive File", type="primary"):
-                                manager.archive_file(edit_id)
-                                st.success("File archived safely.")
+                        # ── Re-tag fields (available for ALL record types) ────
+                        _cur_year    = str(norm_rec.get("year", "") or rec.get("year", ""))
+                        _cur_contest = str(norm_rec.get("contest", "") or rec.get("contest_slug", "") or rec.get("contest_id", ""))
+                        _cur_prov    = norm_rec.get("provenance", "REAL")
+                        _prov_opts   = ["REAL", "EXTERNAL", "ESTIMATED", "SIMULATED"]
+
+                        new_year    = st.text_input("Year", _cur_year, key=f"retag_year_{edit_id}",
+                                                    help="e.g. 2020, 2024, 2025")
+                        new_contest = st.text_input("Contest Slug", _cur_contest,
+                                                    key=f"retag_contest_{edit_id}",
+                                                    help="e.g. nov2020_general, nov2025_special")
+                        new_prov    = st.selectbox("Provenance", _prov_opts,
+                                                   index=_prov_opts.index(_cur_prov) if _cur_prov in _prov_opts else 0,
+                                                   key=f"retag_prov_{edit_id}")
+
+                    with ecol1:
+                        if st.button("💾 Save Changes", key=f"update_{edit_id}"):
+                            try:
+                                if is_canonical:
+                                    # Canonical records: patch metadata AND move file if year/slug changed
+                                    import shutil as _shutil
+                                    from engine.contest_data.contest_intake import ContestIntake
+                                    ci = ContestIntake(root_path)
+
+                                    patch: dict = {}
+                                    if new_year    and new_year    != _cur_year:    patch["year"]         = new_year
+                                    if new_contest and new_contest != _cur_contest: patch["contest_slug"] = new_contest
+                                    if new_prov    != _cur_prov:                    patch["provenance"]   = new_prov
+
+                                    if patch and ("year" in patch or "contest_slug" in patch):
+                                        # Need to physically move the file to the new canonical path
+                                        _st   = rec.get("state",  norm_rec.get("state",  "CA"))
+                                        _co   = rec.get("county", norm_rec.get("county", "Sonoma"))
+                                        _yr   = patch.get("year", _cur_year)
+                                        _slug = patch.get("contest_slug", _cur_contest)
+                                        _fname = norm_rec["filename"]
+
+                                        _old_path = (
+                                            root_path / rec.get("canonical_path", "")
+                                            if rec.get("canonical_path")
+                                            else root_path / "data" / "contests" / _st / _co / _cur_year / _cur_contest / "raw" / _fname
+                                        )
+                                        _new_dir  = root_path / "data" / "contests" / _st / _co / _yr / _slug / "raw"
+                                        _new_path = _new_dir / _fname
+                                        _new_dir.mkdir(parents=True, exist_ok=True)
+
+                                        if _old_path.exists() and _old_path != _new_path:
+                                            _shutil.move(str(_old_path), str(_new_path))
+                                            patch["canonical_path"] = str(
+                                                _new_path.relative_to(root_path)
+                                            ).replace("\\", "/")
+                                            st.info(f"📁 File moved to `{patch['canonical_path']}`")
+
+                                    if patch:
+                                        ci._update_registry_record(edit_id, patch)
+                                        st.success(f"✅ Re-tagged successfully: {list(patch.keys())}")
+                                    else:
+                                        st.info("No changes detected.")
+                                else:
+                                    # Non-canonical records
+                                    manager.update_file(file_id=edit_id, new_name=new_name, new_category=new_cat)
+                                    # Also patch year/contest/provenance directly in registry
+                                    patch = {}
+                                    if new_year    and new_year    != _cur_year:    patch["year"]       = new_year
+                                    if new_contest and new_contest != _cur_contest: patch["contest_id"] = new_contest
+                                    if new_prov    != _cur_prov:                    patch["provenance"] = new_prov
+                                    if patch:
+                                        reg = manager.load_registry()
+                                        for r in reg:
+                                            if r.get("file_id") == edit_id:
+                                                r.update(patch)
+                                        manager._save_registry(reg)
+                                    st.success("File updated successfully.")
+                                st.rerun()
+                            except Exception as _ue:
+                                st.error(f"Error updating file: {_ue}")
+                        if is_canonical:
+                            st.caption("Rename/category locked — managed in `data/contests/` manifests.")
+
+                    with ecol2:
+                        st.markdown("<br>", unsafe_allow_html=True)
+                        _status = norm_rec["status"]
+
+                        # ── Archive / Unarchive ───────────────────────────────
+                        if _status not in ("ARCHIVED",):
+                            if st.button("🗃️ Archive File", key=f"archive_{edit_id}"):
+                                if is_canonical:
+                                    from engine.contest_data.contest_intake import ContestIntake
+                                    ContestIntake(root_path)._update_registry_record(
+                                        edit_id, {"archive_status": "ARCHIVED", "status": "ARCHIVED"})
+                                else:
+                                    manager.archive_file(edit_id)
+                                st.success("File archived.")
                                 st.rerun()
                         else:
-                            render_alert("warning", "File is already archived.")
+                            if st.button("♻️ Unarchive File", key=f"unarchive_{edit_id}"):
+                                if is_canonical:
+                                    from engine.contest_data.contest_intake import ContestIntake
+                                    ContestIntake(root_path)._update_registry_record(
+                                        edit_id, {"archive_status": "ACTIVE", "status": "REGISTERED"})
+                                else:
+                                    _reg = manager.load_registry()
+                                    for _r in _reg:
+                                        if _r.get("file_id") == edit_id:
+                                            _r["status"] = "ACTIVE"
+                                    manager._save_registry(_reg)
+                                st.success("File restored to active.")
+                                st.rerun()
+
+                        st.markdown("---")
+
+                        # ── Delete ────────────────────────────────────────────
+                        _confirm_del = st.checkbox("⚠️ Confirm delete", key=f"confirm_del_{edit_id}",
+                                                    help="Check this box first, then click Delete")
+                        _also_disk = st.checkbox("Also delete file from disk", key=f"del_disk_{edit_id}",
+                                                  help="Permanently removes the file — cannot be undone")
+                        if st.button("🗑️ Delete Record", key=f"delete_{edit_id}",
+                                     disabled=not _confirm_del):
+                            try:
+                                if _also_disk:
+                                    _fpath = (
+                                        root_path / rec.get("canonical_path", "")
+                                        if rec.get("canonical_path")
+                                        else root_path / rec.get("current_path", "")
+                                        if rec.get("current_path")
+                                        else None
+                                    )
+                                    if _fpath and _fpath.exists():
+                                        _fpath.unlink()
+                                        st.info(f"Deleted from disk: `{_fpath.name}`")
+                                # Remove from registry
+                                if is_canonical:
+                                    from engine.contest_data.contest_intake import ContestIntake
+                                    _ci = ContestIntake(root_path)
+                                    _creg = _ci._load_registry()
+                                    _creg = [_r for _r in _creg if _r.get("file_id") != edit_id]
+                                    _ci._save_registry(_creg)
+                                else:
+                                    _reg2 = manager.load_registry()
+                                    _reg2 = [_r for _r in _reg2 if _r.get("file_id") != edit_id]
+                                    manager._save_registry(_reg2)
+                                st.success("Record deleted.")
+                                st.rerun()
+                            except Exception as _de:
+                                st.error(f"Delete failed: {_de}")
+
 
     with tab_missing:
         st.subheader("Missing Data & Source Finder")

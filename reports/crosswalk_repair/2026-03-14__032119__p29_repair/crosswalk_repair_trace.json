@@ -1,0 +1,520 @@
+{
+  "run_id": "2026-03-14__032119__p29_repair",
+  "state": "CA",
+  "county": "Sonoma",
+  "contest_slug": "nov2020_general",
+  "contest_file": "(smoke test only - no pipeline run yet)",
+  "generated": "2026-03-14 03:37",
+  "crosswalk_files": [
+    {
+      "filename": "blk_mprec_097_g24_v01.csv",
+      "filepath": "data\\CA\\counties\\Sonoma\\geography\\crosswalks\\blk_mprec_097_g24_v01.csv",
+      "filetype": "csv",
+      "row_count": 13752,
+      "col_names": [
+        "block",
+        "mprec",
+        "pct_block"
+      ],
+      "candidate_sources": [
+        "block",
+        "mprec"
+      ],
+      "candidate_targets": [
+        "mprec",
+        "pct_block"
+      ],
+      "source_col": "block",
+      "target_col": "mprec",
+      "weight_col": "pct_block",
+      "detection_ok": true,
+      "detection_method": "config_override",
+      "detection_failure_reason": null,
+      "sample_values": {
+        "block": [
+          "60971530066000",
+          "60971530066004",
+          "60971530066002",
+          "60971530066005",
+          "60971530065004"
+        ],
+        "mprec": [
+          "0510015",
+          "0510015",
+          "0510015",
+          "0510015",
+          "0510015"
+        ],
+        "pct_block": [
+          "0.984756",
+          "1.0",
+          "1.0",
+          "1.0",
+          "1.0"
+        ]
+      },
+      "null_pcts": {
+        "block": 0.0,
+        "mprec": 0.0,
+        "pct_block": 0.0
+      },
+      "unique_counts": {
+        "block": 7563,
+        "mprec": 1405,
+        "pct_block": 3911
+      },
+      "identity_fallback_risk": false
+    },
+    {
+      "filename": "c097_g24_rg_blk_map.csv",
+      "filepath": "data\\CA\\counties\\Sonoma\\geography\\crosswalks\\c097_g24_rg_blk_map.csv",
+      "filetype": "csv",
+      "row_count": 8536,
+      "col_names": [
+        "rgprec",
+        "tract",
+        "block",
+        "blkreg",
+        "rgtotreg",
+        "pctrgprec",
+        "blktotreg",
+        "pctblk"
+      ],
+      "candidate_sources": [
+        "rgprec",
+        "block",
+        "rgtotreg",
+        "blktotreg"
+      ],
+      "candidate_targets": [
+        "block",
+        "rgtotreg",
+        "pctrgprec",
+        "blktotreg"
+      ],
+      "source_col": "rgprec",
+      "target_col": "block",
+      "weight_col": "pctrgprec",
+      "detection_ok": true,
+      "detection_method": "config_override",
+      "detection_failure_reason": null,
+      "sample_values": {
+        "rgprec": [
+          "0002510-A",
+          "0003131",
+          "0100001",
+          "0100001",
+          "0100001"
+        ],
+        "tract": [
+          "153003",
+          "150701",
+          "152401",
+          "152401",
+          "152401"
+        ],
+        "block": [
+          "2000",
+          "1016",
+          "3001",
+          "3002",
+          "3004"
+        ],
+        "blkreg": [
+          "1",
+          "1",
+          "105",
+          "3",
+          "21"
+        ],
+        "rgtotreg": [
+          "1",
+          "1",
+          "132",
+          "132",
+          "132"
+        ],
+        "pctrgprec": [
+          "100.0",
+          "100.0",
+          "79.545454545",
+          "2.272727272",
+          "15.909090909"
+        ],
+        "blktotreg": [
+          "21",
+          "6",
+          "200",
+          "14",
+          "21"
+        ],
+        "pctblk": [
+          "4.761904761",
+          "16.666666666",
+          "52.5",
+          "21.428571428",
+          "100.0"
+        ]
+      },
+      "null_pcts": {
+        "rgprec": 0.0,
+        "tract": 0.0,
+        "block": 0.0,
+        "blkreg": 0.0,
+        "rgtotreg": 0.0,
+        "pctrgprec": 0.0,
+        "blktotreg": 0.0,
+        "pctblk": 0.0
+      },
+      "unique_counts": {
+        "rgprec": 1218,
+        "tract": 121,
+        "block": 358,
+        "blkreg": 322,
+        "rgtotreg": 509,
+        "pctrgprec": 5252,
+        "blktotreg": 355,
+        "pctblk": 1916
+      },
+      "identity_fallback_risk": false
+    },
+    {
+      "filename": "c097_g24_sr_blk_map.csv",
+      "filepath": "data\\CA\\counties\\Sonoma\\geography\\crosswalks\\c097_g24_sr_blk_map.csv",
+      "filetype": "csv",
+      "row_count": 7611,
+      "col_names": [
+        "srprec",
+        "tract",
+        "block",
+        "blkreg",
+        "srtotreg",
+        "pctsrprec",
+        "blktotreg",
+        "pctblk"
+      ],
+      "candidate_sources": [
+        "srprec",
+        "block",
+        "srtotreg",
+        "blktotreg"
+      ],
+      "candidate_targets": [
+        "block",
+        "srtotreg",
+        "pctsrprec",
+        "blktotreg"
+      ],
+      "source_col": "srprec",
+      "target_col": "block",
+      "weight_col": "pctsrprec",
+      "detection_ok": true,
+      "detection_method": "config_override",
+      "detection_failure_reason": null,
+      "sample_values": {
+        "srprec": [
+          "100002",
+          "100002",
+          "100003",
+          "100003",
+          "100003"
+        ],
+        "tract": [
+          "152401",
+          "152401",
+          "152401",
+          "152401",
+          "152401"
+        ],
+        "block": [
+          "3002",
+          "3003",
+          "1003",
+          "1004",
+          "1028"
+        ],
+        "blkreg": [
+          "10",
+          "2",
+          "1",
+          "12",
+          "3"
+        ],
+        "srtotreg": [
+          "12",
+          "12",
+          "47",
+          "47",
+          "47"
+        ],
+        "pctsrprec": [
+          "83.333333333",
+          "16.666666666",
+          "2.127659574",
+          "25.531914893",
+          "6.382978723"
+        ],
+        "blktotreg": [
+          "14",
+          "10",
+          "135",
+          "12",
+          "128"
+        ],
+        "pctblk": [
+          "71.428571428",
+          "20.0",
+          "0.74074074",
+          "100.0",
+          "2.34375"
+        ]
+      },
+      "null_pcts": {
+        "srprec": 0.0,
+        "tract": 0.0,
+        "block": 0.0,
+        "blkreg": 0.0,
+        "srtotreg": 0.0,
+        "pctsrprec": 0.0,
+        "blktotreg": 0.0,
+        "pctblk": 0.0
+      },
+      "unique_counts": {
+        "srprec": 471,
+        "tract": 121,
+        "block": 358,
+        "blkreg": 335,
+        "srtotreg": 349,
+        "pctsrprec": 5182,
+        "blktotreg": 355,
+        "pctblk": 1428
+      },
+      "identity_fallback_risk": false
+    },
+    {
+      "filename": "c097_g24_srprec_to_city.csv",
+      "filepath": "data\\CA\\counties\\Sonoma\\geography\\crosswalks\\c097_g24_srprec_to_city.csv",
+      "filetype": "csv",
+      "row_count": 471,
+      "col_names": [
+        "county",
+        "srprec",
+        "city",
+        "n_in_city",
+        "n"
+      ],
+      "candidate_sources": [
+        "srprec"
+      ],
+      "candidate_targets": [],
+      "source_col": "srprec",
+      "target_col": "city",
+      "weight_col": null,
+      "detection_ok": true,
+      "detection_method": "config_override",
+      "detection_failure_reason": null,
+      "sample_values": {
+        "county": [
+          "49",
+          "49",
+          "49",
+          "49",
+          "49"
+        ],
+        "srprec": [
+          "710004",
+          "100002",
+          "100003",
+          "710008",
+          "100006"
+        ],
+        "city": [
+          "SANTA ROSA",
+          "SANTA ROSA",
+          "SANTA ROSA",
+          "SANTA ROSA",
+          "SANTA ROSA"
+        ],
+        "n_in_city": [
+          "621",
+          "12",
+          "47",
+          "44",
+          "3"
+        ],
+        "n": [
+          "621",
+          "12",
+          "47",
+          "44",
+          "3"
+        ]
+      },
+      "null_pcts": {
+        "county": 0.0,
+        "srprec": 0.0,
+        "city": 0.0,
+        "n_in_city": 0.0,
+        "n": 0.0
+      },
+      "unique_counts": {
+        "county": 1,
+        "srprec": 471,
+        "city": 28,
+        "n_in_city": 347,
+        "n": 349
+      },
+      "identity_fallback_risk": false
+    },
+    {
+      "filename": "c097_rg_rr_sr_svprec_g24.csv",
+      "filepath": "data\\CA\\counties\\Sonoma\\geography\\crosswalks\\c097_rg_rr_sr_svprec_g24.csv",
+      "filetype": "csv",
+      "row_count": 2812,
+      "col_names": [
+        "rgprec",
+        "rrprec",
+        "srprec",
+        "svprec"
+      ],
+      "candidate_sources": [
+        "rgprec",
+        "rrprec",
+        "srprec",
+        "svprec"
+      ],
+      "candidate_targets": [
+        "rrprec",
+        "srprec",
+        "svprec"
+      ],
+      "source_col": "rgprec",
+      "target_col": "svprec",
+      "weight_col": null,
+      "detection_ok": true,
+      "detection_method": "config_override",
+      "detection_failure_reason": null,
+      "sample_values": {
+        "rgprec": [
+          "0002510-A",
+          "0002510-A",
+          "0003131",
+          "0003131",
+          "0100001"
+        ],
+        "rrprec": [
+          "310027",
+          "310027",
+          "250061",
+          "250061",
+          "100001"
+        ],
+        "srprec": [
+          "731008",
+          "731008",
+          "725015",
+          "725015",
+          "710004"
+        ],
+        "svprec": [
+          "0731008",
+          "0731008A",
+          "0725015",
+          "0725015A",
+          "0710004"
+        ]
+      },
+      "null_pcts": {
+        "rgprec": 0.0,
+        "rrprec": 0.0,
+        "srprec": 0.0,
+        "svprec": 0.0
+      },
+      "unique_counts": {
+        "rgprec": 1406,
+        "rrprec": 1403,
+        "srprec": 504,
+        "svprec": 1008
+      },
+      "identity_fallback_risk": false
+    },
+    {
+      "filename": "mprec_srprec_097_g24.csv",
+      "filepath": "data\\CA\\counties\\Sonoma\\geography\\crosswalks\\mprec_srprec_097_g24.csv",
+      "filetype": "csv",
+      "row_count": 1403,
+      "col_names": [
+        "mprec",
+        "srprec"
+      ],
+      "candidate_sources": [
+        "mprec",
+        "srprec"
+      ],
+      "candidate_targets": [
+        "srprec"
+      ],
+      "source_col": "mprec",
+      "target_col": "srprec",
+      "weight_col": null,
+      "detection_ok": true,
+      "detection_method": "config_override",
+      "detection_failure_reason": null,
+      "sample_values": {
+        "mprec": [
+          "100001",
+          "100002",
+          "100003",
+          "100004",
+          "100005"
+        ],
+        "srprec": [
+          "710004",
+          "100002",
+          "100003",
+          "710008",
+          "710004"
+        ]
+      },
+      "null_pcts": {
+        "mprec": 0.0,
+        "srprec": 0.0
+      },
+      "unique_counts": {
+        "mprec": 1403,
+        "srprec": 504
+      },
+      "identity_fallback_risk": false
+    }
+  ],
+  "join_quality": {
+    "run_id": "2026-03-14__032119__p29_repair",
+    "state": "CA",
+    "county": "Sonoma",
+    "contest_slug": "nov2020_general",
+    "contest_file": "(pre-run smoke test)",
+    "total_contest_rows": 0,
+    "unique_raw_ids": 0,
+    "exact_geometry_matches": 0,
+    "exact_crosswalk_matches": 0,
+    "normalized_matches": 0,
+    "multi_step_matches": 0,
+    "identity_fallbacks": 0,
+    "ambiguous_ids": 0,
+    "no_match_count": 0,
+    "blocked_count": 0,
+    "geometry_key_missing": 0,
+    "total_joined": 0,
+    "total_unjoined": 0,
+    "pct_joined": 0.0,
+    "pct_rendered": 0.0,
+    "pct_blocked": 0.0,
+    "crosswalks_loaded": 6,
+    "crosswalk_detection_failures": 0,
+    "quality_verdict": "FAILED",
+    "quality_notes": [
+      "0% join rate \u2014 no precinct IDs matched geometry. Check contest schema and crosswalks."
+    ]
+  },
+  "sampled_trace_rows": []
+}

@@ -1,0 +1,4 @@
+raw_precinct,detected_schema,reason,state,county
+127,short_precinct,No crosswalk found for schema 'short_precinct': No crosswalk match found for '127' in CA|Sonoma,CA,Sonoma
+PCT-42,prefixed_precinct,No crosswalk found for schema 'prefixed_precinct': No crosswalk match found for 'PCT-42' in CA|Sonoma,CA,Sonoma
+SR 99,srprec,No crosswalk found for schema 'srprec': No crosswalk match found for 'SR 99' in CA|Sonoma,CA,Sonoma

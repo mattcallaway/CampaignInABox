@@ -1,0 +1,92 @@
+{
+  "run_id": "2026-03-14__044900__9b7d76d6__msi",
+  "summary": {
+    "REAL": 0,
+    "SIMULATED": 3,
+    "ESTIMATED": 6,
+    "MISSING": 1
+  },
+  "war_room_ready": false,
+  "metrics": [
+    {
+      "metric_name": "baseline_turnout",
+      "value": "from model_parameters.json",
+      "source_type": "SIMULATED",
+      "source_file": "derived/calibration/model_parameters.json",
+      "confidence": "medium",
+      "notes": "OLS regression on historical election data. Confidence increases with more election history."
+    },
+    {
+      "metric_name": "contact_rate",
+      "value": 0.22,
+      "source_type": "ESTIMATED",
+      "source_file": "config/campaign_config.yaml",
+      "confidence": "low",
+      "notes": "Configured estimate (22%). Upload field results to replace with real rate."
+    },
+    {
+      "metric_name": "persuasion_rate",
+      "value": "from voter PS/TPS scores",
+      "source_type": "SIMULATED",
+      "source_file": "derived/voter_models/*__precinct_persuasion_scores.csv",
+      "confidence": "medium",
+      "notes": "Derived from Persuasion Score model (party strength + age + TPS)."
+    },
+    {
+      "metric_name": "turnout_lift_per_contact",
+      "value": 0.06,
+      "source_type": "ESTIMATED",
+      "source_file": "config/campaign_config.yaml",
+      "confidence": "low",
+      "notes": "Configured prior (6%). No real canvass data to calibrate against."
+    },
+    {
+      "metric_name": "win_probability",
+      "value": null,
+      "source_type": "MISSING",
+      "source_file": "",
+      "confidence": "none",
+      "notes": "Run simulation engine to generate win probability estimate."
+    },
+    {
+      "metric_name": "vote_path",
+      "value": "from derived/strategy/",
+      "source_type": "ESTIMATED",
+      "source_file": "derived\\strategy\\2026-03-14__044900__9b7d76d6__msi__vote_path.csv",
+      "confidence": "medium",
+      "notes": "Vote path from campaign_strategy_ai.py. Voter file present \u2014 universe sizes are real."
+    },
+    {
+      "metric_name": "budget_spend",
+      "value": 150000,
+      "source_type": "ESTIMATED",
+      "source_file": "config/campaign_config.yaml",
+      "confidence": "low",
+      "notes": "Budget plan from campaign config \u2014 no actuals entered yet."
+    },
+    {
+      "metric_name": "volunteer_capacity",
+      "value": 10,
+      "source_type": "ESTIMATED",
+      "source_file": "config/campaign_config.yaml",
+      "confidence": "low",
+      "notes": "Configured estimate (10 volunteers/week). Enter volunteer logs to replace."
+    },
+    {
+      "metric_name": "persuadable_voter_universe",
+      "value": "from voter PS scores",
+      "source_type": "ESTIMATED",
+      "source_file": "derived/voter_models/*__precinct_persuasion_scores.csv",
+      "confidence": "medium",
+      "notes": "Estimated from Persuasion Score model. Score thresholds are modeled, not field-validated."
+    },
+    {
+      "metric_name": "field_pace_doors_per_week",
+      "value": "from field_strategy.csv",
+      "source_type": "SIMULATED",
+      "source_file": "derived/strategy/*__field_strategy.csv",
+      "confidence": "medium",
+      "notes": "Modeled weekly door target from campaign_strategy_ai. No actual results to compare."
+    }
+  ]
+}

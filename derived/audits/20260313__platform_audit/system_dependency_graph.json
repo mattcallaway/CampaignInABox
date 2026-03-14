@@ -1,0 +1,193 @@
+{
+  "run_id": "20260313__platform_audit",
+  "timestamp": "2026-03-13T09:55:16.888331",
+  "nodes": [
+    {
+      "id": "source_registry",
+      "type": "config",
+      "layer": "input"
+    },
+    {
+      "id": "archive_builder",
+      "type": "engine",
+      "layer": "ingest"
+    },
+    {
+      "id": "file_fingerprinting",
+      "type": "engine",
+      "layer": "ingest"
+    },
+    {
+      "id": "precinct_ids",
+      "type": "engine",
+      "layer": "normalize"
+    },
+    {
+      "id": "election_archive",
+      "type": "data",
+      "layer": "store"
+    },
+    {
+      "id": "calibration",
+      "type": "engine",
+      "layer": "model"
+    },
+    {
+      "id": "swing_modeling",
+      "type": "engine",
+      "layer": "model"
+    },
+    {
+      "id": "strategy",
+      "type": "engine",
+      "layer": "synthesis"
+    },
+    {
+      "id": "forecast_engine",
+      "type": "engine",
+      "layer": "synthesis"
+    },
+    {
+      "id": "campaign_manager",
+      "type": "engine",
+      "layer": "admin"
+    },
+    {
+      "id": "auth / session_manager",
+      "type": "engine",
+      "layer": "admin"
+    },
+    {
+      "id": "users_registry",
+      "type": "config",
+      "layer": "admin"
+    },
+    {
+      "id": "campaign_registry",
+      "type": "config",
+      "layer": "admin"
+    },
+    {
+      "id": "ui_dashboard",
+      "type": "ui",
+      "layer": "ui"
+    },
+    {
+      "id": "user_admin_view",
+      "type": "ui",
+      "layer": "ui"
+    },
+    {
+      "id": "campaign_admin_view",
+      "type": "ui",
+      "layer": "ui"
+    },
+    {
+      "id": "data_manager_view",
+      "type": "ui",
+      "layer": "ui"
+    },
+    {
+      "id": "state_store",
+      "type": "data",
+      "layer": "store"
+    }
+  ],
+  "edges": [
+    {
+      "from": "source_registry",
+      "to": "archive_builder",
+      "relationship": "discovers"
+    },
+    {
+      "from": "archive_builder",
+      "to": "file_fingerprinting",
+      "relationship": "classifies"
+    },
+    {
+      "from": "archive_builder",
+      "to": "precinct_ids",
+      "relationship": "normalizes"
+    },
+    {
+      "from": "file_fingerprinting",
+      "to": "election_archive",
+      "relationship": "stores"
+    },
+    {
+      "from": "precinct_ids",
+      "to": "election_archive",
+      "relationship": "stores"
+    },
+    {
+      "from": "election_archive",
+      "to": "calibration",
+      "relationship": "feeds"
+    },
+    {
+      "from": "election_archive",
+      "to": "swing_modeling",
+      "relationship": "feeds"
+    },
+    {
+      "from": "calibration",
+      "to": "strategy",
+      "relationship": "calibrates"
+    },
+    {
+      "from": "swing_modeling",
+      "to": "strategy",
+      "relationship": "inputs"
+    },
+    {
+      "from": "strategy",
+      "to": "forecast_engine",
+      "relationship": "uses"
+    },
+    {
+      "from": "forecast_engine",
+      "to": "state_store",
+      "relationship": "outputs"
+    },
+    {
+      "from": "campaign_registry",
+      "to": "campaign_manager",
+      "relationship": "managed-by"
+    },
+    {
+      "from": "users_registry",
+      "to": "auth / session_manager",
+      "relationship": "managed-by"
+    },
+    {
+      "from": "auth / session_manager",
+      "to": "ui_dashboard",
+      "relationship": "authenticates"
+    },
+    {
+      "from": "campaign_manager",
+      "to": "ui_dashboard",
+      "relationship": "informs"
+    },
+    {
+      "from": "state_store",
+      "to": "ui_dashboard",
+      "relationship": "displayed-in"
+    },
+    {
+      "from": "ui_dashboard",
+      "to": "user_admin_view",
+      "relationship": "routes-to"
+    },
+    {
+      "from": "ui_dashboard",
+      "to": "campaign_admin_view",
+      "relationship": "routes-to"
+    },
+    {
+      "from": "ui_dashboard",
+      "to": "data_manager_view",
+      "relationship": "routes-to"
+    }
+  ]
+}

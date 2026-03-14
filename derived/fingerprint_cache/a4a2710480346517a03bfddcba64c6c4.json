@@ -1,0 +1,25 @@
+{
+  "file_path": "C:\\Users\\MATHEW~1\\AppData\\Local\\Temp\\fingerprint_test_82p_0f0b\\registration_report_2024.xlsx",
+  "file_name": "registration_report_2024.xlsx",
+  "file_hash": "a4a2710480346517a03bfddcba64c6c4",
+  "file_type": "registration_report",
+  "display_name": "Voter Registration Report",
+  "confidence": 0.84,
+  "matching_headers": [
+    "democratic",
+    "republican"
+  ],
+  "optional_hits": [
+    "no party preference",
+    "other",
+    "precinct"
+  ],
+  "precinct_format": null,
+  "precinct_level": false,
+  "contest_level": false,
+  "sheet_name": "Sheet1",
+  "row_count": 2,
+  "col_count": 5,
+  "source_url": "https://sonomacounty.gov/test",
+  "classified_at": "2026-03-13T01:26:56.984977"
+}

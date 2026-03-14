@@ -67,46 +67,95 @@ def get_data() -> dict:
 
 # ── Authentication Check ──────────────────────────────────────────────────────
 from engine.auth.auth_manager import AuthManager
+from engine.auth.session_manager import (
+    validate_session, create_session, revoke_session, update_last_login
+)
 import json
 
 if "auth_manager" not in st.session_state:
     st.session_state["auth_manager"] = AuthManager(BASE_DIR)
 
 auth_mgr = st.session_state["auth_manager"]
-all_users = auth_mgr.get_all_users()
 
 if "current_user_id" not in st.session_state:
     st.session_state["current_user_id"] = None
+if "session_token" not in st.session_state:
+    st.session_state["session_token"] = None
 
-def login(user_id):
+# ── Session Bootstrap: auto-login if remembered session exists ─────────────────
+if not st.session_state["current_user_id"]:
+    # Check query param for session token (set on login with Remember Me)
+    params = st.query_params
+    token = params.get("session", "")
+    if token:
+        uid = validate_session(token)
+        if uid and auth_mgr.get_user(uid):
+            st.session_state["current_user_id"] = uid
+            st.session_state["session_token"] = token
+            update_last_login(uid)
+
+
+def do_login(user_id: str, remember: bool = False):
     st.session_state["current_user_id"] = user_id
+    update_last_login(user_id)
+    if remember:
+        token = create_session(user_id)
+        if token:
+            st.session_state["session_token"] = token
+            st.query_params["session"] = token
+    else:
+        # Clear any stale token
+        st.session_state["session_token"] = None
+        st.query_params.clear()
+
 
 if not st.session_state["current_user_id"]:
     st.title("🔒 Campaign In A Box Login")
-    st.markdown("Please select a user to continue:")
-    if all_users:
-        user_names = [u["name"] for u in all_users]
-        user_ids = [u["user_id"] for u in all_users]
+
+    # Only show active users at login
+    active_users = auth_mgr.get_active_users()
+    if active_users:
+        user_names = [u.get("full_name", u["name"]) for u in active_users]
+        user_ids   = [u["user_id"] for u in active_users]
         selected_name = st.selectbox("Select User", user_names)
-        if st.button("Login"):
+        remember_me   = st.checkbox("🔒 Remember me on this device", value=True,
+                                    help="Keeps you logged in for 7 days. Uncheck on shared devices.")
+        if st.button("Login", type="primary"):
             idx = user_names.index(selected_name)
-            login(user_ids[idx])
+            do_login(user_ids[idx], remember=remember_me)
             st.rerun()
     else:
-        st.warning("No users found in config/users_registry.json")
+        st.warning("No active users found in config/users_registry.json")
     st.stop()
 
 current_user = auth_mgr.get_user(st.session_state["current_user_id"])
 current_role = current_user.get("role") if current_user else "Unknown"
 can_edit_strategy = auth_mgr.has_permission(st.session_state["current_user_id"], "edit_strategy")
 can_upload = auth_mgr.has_permission(st.session_state["current_user_id"], "upload_data")
+can_admin = auth_mgr.can_manage_users(st.session_state["current_user_id"]) or \
+            auth_mgr.can_manage_campaigns(st.session_state["current_user_id"])
+
+# ── Load active campaign pointer ──────────────────────────────────────────────
+try:
+    import yaml as _yaml
+    _ac_path = BASE_DIR / "config" / "active_campaign.yaml"
+    _active_campaign = _yaml.safe_load(_ac_path.read_text(encoding="utf-8")) if _ac_path.exists() else {}
+except Exception:
+    _active_campaign = {}
 
 # ── Sidebar navigation ────────────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("## 🗳️ Campaign Intelligence")
-    st.markdown(f"**User**: {current_user.get('name')}  \\n**Role**: `{current_role}`")
+    _user_display = current_user.get('full_name', current_user.get('name', '')) if current_user else 'Unknown'
+    st.markdown(f"**User**: {_user_display}  \\n**Role**: `{current_role}`")
     if st.button("🚪 Logout"):
+        # Revoke remembered session on logout
+        _token = st.session_state.get("session_token")
+        if _token:
+            revoke_session(_token)
         st.session_state["current_user_id"] = None
+        st.session_state["session_token"] = None
+        st.query_params.clear()
         st.rerun()
     st.divider()
 
@@ -126,6 +175,8 @@ with st.sidebar:
             if not can_upload and p_id in ["📂 Data Manager", "📂 Upload Contest Data"]:
                 continue
             if not can_edit_strategy and p_id in ["📋 Strategy", "🗳️ Campaign Setup"]:
+                continue
+            if not can_admin and p_id in ["👤 Users & Roles", "🏛️ Campaign Admin"]:
                 continue
             nav_options.append(p_id)
 
@@ -262,21 +313,37 @@ except Exception as e:
 try:
     from ui.dashboard.state_loader import load_state_snapshot_meta
     snap = load_state_snapshot_meta()
-    
+
+    _user_display_bar = current_user.get('full_name', current_user.get('name', '')) if current_user else 'Unknown'
+    _ac_name  = _active_campaign.get('campaign_name', '—')
+    _ac_stage = _active_campaign.get('stage', '—')
+    _ac_status = _active_campaign.get('status', '—')
+
     if snap.get("available"):
         g_contest = snap.get('contest_id', '—')
-        g_county = snap.get('county', '—')
-        g_health = snap.get('risk_level', 'UNKNOWN')
+        g_county  = snap.get('county', '—')
+        g_health  = snap.get('risk_level', 'UNKNOWN')
         g_h_color = "#2E8B57" if g_health == "LOW" else ("#D9A441" if g_health == "MEDIUM" else "#C94C4C")
-        
-        bar_html = f"""
-        <div class="command-bar">
-            <span><b>Contest:</b> {g_contest} | <b>Jurisdiction:</b> {g_county}</span>
-            <span><b>Run:</b> <span style="font-family:monospace">{run_id[:8]}...</span></span>
-            <span><b>Health:</b> <span style="color:{g_h_color}; font-weight:700">{g_health}</span></span>
-        </div>
-        """
-        st.markdown(bar_html, unsafe_allow_html=True)
+    else:
+        g_contest = _ac_name
+        g_county  = _active_campaign.get('state', '—')
+        g_health  = '—'
+        g_h_color = '#888'
+
+    try:
+        run_id_bar = get_data().get("run_id", "—")
+    except Exception:
+        run_id_bar = "—"
+
+    bar_html = f"""
+    <div class="command-bar">
+        <span>👤 <b>{_user_display_bar}</b> &nbsp; <code>{current_role}</code></span>
+        <span>🏛️ <b>{_ac_name}</b> · {_ac_stage} · {_ac_status}</span>
+        <span><b>Contest:</b> {g_contest} | <b>Area:</b> {g_county}</span>
+        <span><b>Health:</b> <span style="color:{g_h_color};font-weight:700">{g_health}</span></span>
+    </div>
+    """
+    st.markdown(bar_html, unsafe_allow_html=True)
 except Exception:
     pass
 
@@ -294,7 +361,11 @@ except:
     pass
 
 # ── Page routing ─────────────────────────────────────────────────────────────
-if page == "🏠 Overview":
+if page == "🎯 Mission Control":
+    from ui.dashboard.mission_control_view import render_mission_control
+    render_mission_control({**data, "base_dir": str(BASE_DIR)})
+
+elif page == "🏠 Overview":
     from ui.dashboard.layout import render_overview
     render_overview(data)
 
@@ -358,6 +429,10 @@ elif page == "🧠 Voter Intelligence":
     from ui.dashboard.voter_intelligence_view import render_voter_intelligence
     render_voter_intelligence(data)
 
+elif page == "▶️ Pipeline Runner":
+    from ui.dashboard.pipeline_runner_view import render_pipeline_runner
+    render_pipeline_runner(data)
+
 elif page == "🩺 Diagnostics":
     from ui.dashboard.diagnostics_view import render_diagnostics
     render_diagnostics(data)
@@ -365,3 +440,19 @@ elif page == "🩺 Diagnostics":
 elif page == "🗄️ Data Explorer":
     from ui.dashboard.data_explorer import render_explorer
     render_explorer(data)
+
+elif page == "🗂️ Source Registry":
+    from ui.dashboard.source_registry_view import render_source_registry
+    render_source_registry(data)
+
+elif page == "👤 Users & Roles":
+    from ui.dashboard.user_admin_view import render_user_admin_view
+    render_user_admin_view(auth_mgr, st.session_state["current_user_id"])
+
+elif page == "🏛️ Campaign Admin":
+    from ui.dashboard.campaign_admin_view import render_campaign_admin_view
+    render_campaign_admin_view(auth_mgr, st.session_state["current_user_id"])
+
+elif page == "📊 Swing Modeling":
+    from ui.dashboard.swing_model_view import render_swing_model_view
+    render_swing_model_view()

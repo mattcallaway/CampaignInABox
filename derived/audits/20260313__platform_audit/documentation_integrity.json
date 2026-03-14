@@ -1,0 +1,19 @@
+{
+  "run_id": "20260313__platform_audit",
+  "timestamp": "2026-03-13T09:55:16.883424",
+  "engine_subsystems": 26,
+  "documented_subsystems": 21,
+  "undocumented_subsystems": [
+    "admin",
+    "archive_builder",
+    "file_fingerprinting",
+    "precinct_ids",
+    "swing_modeling"
+  ],
+  "doc_coverage_pct": 80.8,
+  "rollback_prompts_referenced": 11,
+  "mentioned_but_missing_modules": [],
+  "tech_map_size_bytes": 28642,
+  "score": 0.87,
+  "risk": "safe"
+}

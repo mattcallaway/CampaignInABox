@@ -1,0 +1,10 @@
+{
+  "campaign_registry": 0.9,
+  "campaign_switching": 0.3333333333333333,
+  "user_admin": 1.0,
+  "sessions": 1.0,
+  "archive": 0.8571428571428571,
+  "source_registry": 0.0,
+  "fingerprinting": 0.7662857142857142,
+  "precinct_norm": 1.0
+}

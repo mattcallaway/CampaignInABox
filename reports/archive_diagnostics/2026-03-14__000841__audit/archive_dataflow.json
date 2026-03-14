@@ -1,0 +1,151 @@
+{
+  "audit_id": "2026-03-14__000841__audit",
+  "generated_at": "2026-03-14T07:48:41",
+  "scope": { "state": "CA", "county": "Sonoma", "years": [2020, 2024] },
+  "active_campaign": "2026_CA_sonoma_prop_50_special",
+
+  "uploaded_files": [
+    {
+      "file_id": "F_A7301251",
+      "filename": "StatementOfVotesCast-Webnov32020.xlsx",
+      "path": "data/elections/CA/Sonoma/2020_general/StatementOfVotesCast-Webnov32020.xlsx",
+      "size_bytes": 4049704,
+      "sha256_prefix": "28eb1f9b312c387f",
+      "uploaded_at": "2026-03-14T07:23:57",
+      "provenance": "REAL",
+      "year": 2020,
+      "contest_id": "2020_general",
+      "source": "manual_ui_upload"
+    },
+    {
+      "note": "4 additional duplicate registry entries exist for the same physical file",
+      "duplicate_count": 4,
+      "file_ids": ["F_89408B43", "F_77BB6B6C", "F_A591D80B", "F_0F119CF9"]
+    },
+    {
+      "filename": "detail.xlsx (stub)",
+      "path": "data/CA/counties/Sonoma/votes/2024/nov2024_general/detail.xlsx",
+      "size_bytes": 5687,
+      "year": 2024,
+      "contest_id": "nov2024_general",
+      "note": "5.7 KB stub file — not real election data. Real file at 2024_general/ is 13.5 MB."
+    }
+  ],
+
+  "classification_status": {
+    "data_manager_registry": {
+      "path": "derived/file_registry/latest/file_registry.json",
+      "total_entries": 5,
+      "entries_for_2020": 5,
+      "entries_for_2024": 0,
+      "archive_status_field_present": false,
+      "fingerprint_run": false
+    },
+    "archive_pipeline_registry": {
+      "path": "data/election_archive/normalized/normalized_elections.csv",
+      "shape": [0, 18],
+      "note": "Empty — archive pipeline has never processed the 2020 upload"
+    }
+  },
+
+  "normalization_status": {
+    "path": "derived/archive/normalized_elections.csv",
+    "shape": [3000, 18],
+    "years_present": [2024],
+    "counties_present": ["Sonoma"],
+    "data_source": "voter_file_synthetic.csv",
+    "real_election_results": false,
+    "turnout_null_pct": 100.0,
+    "support_null_pct": 100.0,
+    "note": "3000 rows of duplicated synthetic voter file data, not precinct-level election results"
+  },
+
+  "precinct_join_status": {
+    "precinct_profiles": {
+      "path": "derived/archive/precinct_profiles.csv",
+      "shape": [0, 8],
+      "status": "EMPTY"
+    },
+    "precinct_trends": {
+      "path": "derived/archive/precinct_trends.csv",
+      "shape": [0, 11],
+      "status": "EMPTY"
+    },
+    "similar_elections": {
+      "path": "derived/archive/similar_elections.csv",
+      "shape": [0, 14],
+      "status": "EMPTY"
+    },
+    "join_ever_executed": false,
+    "crosswalk_used": null,
+    "mprec_join": "NOT_ATTEMPTED",
+    "srprec_join": "NOT_ATTEMPTED"
+  },
+
+  "model_usage": {
+    "last_pipeline_run": "2026-03-14T07:06:20",
+    "contest_used": "nov2024_general",
+    "vote_file_used": "votes/2024/CA/Sonoma/nov2024_general/detail.xlsx",
+    "vote_file_size_bytes": 5687,
+    "precinct_rows_in_model": 4,
+    "year_2020_in_model": false,
+    "year_2024_real_data_in_model": false,
+    "turnout_pct_derivable": false,
+    "registered_voters_in_data": 0,
+    "calibration_data_available": false
+  },
+
+  "ui_visibility": {
+    "data_manager": { "year_2020": true, "year_2024": true, "note": "Visible in file registry" },
+    "pipeline_runner_contest_dropdown": { "year_2020": true, "year_2024": true, "note": "Extended to scan data/elections/ tree" },
+    "precinct_map": { "year_2020": false, "year_2024": "stub_only" },
+    "strategy": { "year_2020": false, "year_2024": false },
+    "simulations": { "year_2020": false, "year_2024": "stub_only_turnout_zero" },
+    "diagnostics": { "year_2020": false, "year_2024": "stub_pipeline_log_only" }
+  },
+
+  "failure_points": [
+    {
+      "id": "FP-01",
+      "severity": "CRITICAL",
+      "description": "2020 file not in pipeline votes/ tree. Pipeline reads from data/CA/counties/{county}/votes/{year}/{slug}/detail.xlsx, not from data/elections/",
+      "remediation": "Copy to votes/2020/CA/Sonoma/nov2020_general/detail.xlsx"
+    },
+    {
+      "id": "FP-02",
+      "severity": "HIGH",
+      "description": "5 duplicate file_registry.json entries for same physical file",
+      "remediation": "Deduplicate file_registry.json, keep only F_A7301251"
+    },
+    {
+      "id": "FP-03",
+      "severity": "CRITICAL",
+      "description": "Archive normalization produced 3000 rows of synthetic voter data, not election results",
+      "remediation": "Re-run archive normalization after real election data is placed in correct path"
+    },
+    {
+      "id": "FP-04",
+      "severity": "CRITICAL",
+      "description": "Precinct join never executed — profiles, trends, similar_elections all empty",
+      "remediation": "Run archive normalization with real data, then re-run precinct join step"
+    },
+    {
+      "id": "FP-05",
+      "severity": "CRITICAL",
+      "description": "Archive builder found 2 files but ingested 0 (files_ingested: 0)",
+      "remediation": "Investigate archive_builder ingestion step failures"
+    },
+    {
+      "id": "FP-06",
+      "severity": "HIGH",
+      "description": "Pipeline running on 5.7 KB stub for nov2024_general instead of real 13.5 MB file",
+      "remediation": "Replace votes/2024/CA/Sonoma/nov2024_general/detail.xlsx with real data from data/CA/counties/Sonoma/votes/2024/2024_general/detail.xlsx (copy and rename to detail.xlsx in nov2024_general/)"
+    },
+    {
+      "id": "FP-07",
+      "severity": "HIGH",
+      "description": "registered=0 in all precinct rows from stub — produces zero turnout_pct in modeling",
+      "remediation": "Resolved once real vote data with registered_voters column is used"
+    }
+  ]
+}

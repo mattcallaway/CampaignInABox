@@ -48,25 +48,122 @@ def load_crosswalk_table(path: str | Path) -> list[dict]:
     raise ValueError(f"Unsupported crosswalk format: {suffix}")
 
 
-def detect_crosswalk_columns(headers: list[str]) -> tuple[str | None, str | None, str | None]:
-    """
-    Auto-detect source ID, target ID, and weight columns.
-    Returns (source_col, target_col, weight_col); None if not found.
-    """
-    headers_upper = {h.upper(): h for h in headers}
-    source_candidates = ["SOURCE", "SRPREC_ID", "MPREC_ID", "FROM_ID", "SRC"]
-    target_candidates = ["TARGET", "MPREC_ID", "SRPREC_ID", "TO_ID", "DST", "DEST"]
-    weight_candidates = ["WEIGHT", "PCT", "FRACTION", "AREA_PCT", "PROPORTION"]
 
-    def _find(candidates):
-        for c in candidates:
-            if c in headers_upper:
-                return headers_upper[c]
+_HINTS_CACHE: dict | None = None
+
+
+def _load_column_hints() -> dict:
+    """Load crosswalk column hints from config (cached)."""
+    global _HINTS_CACHE
+    if _HINTS_CACHE is not None:
+        return _HINTS_CACHE
+    hints_path = Path(__file__).resolve().parent.parent.parent / "config" / "precinct_id" / "crosswalk_column_hints.yaml"
+    try:
+        import yaml
+        with open(hints_path, encoding="utf-8") as f:
+            _HINTS_CACHE = yaml.safe_load(f) or {}
+    except Exception:
+        _HINTS_CACHE = {}
+    return _HINTS_CACHE
+
+
+def detect_crosswalk_columns(
+    headers: list[str],
+    filename: str = "",
+) -> tuple[str | None, str | None, str | None]:
+    """
+    Auto-detect source ID, target ID, and weight columns from crosswalk headers.
+
+    Resolution order (P29 repair):
+      1. Per-file explicit override from config/precinct_id/crosswalk_column_hints.yaml
+      2. Expanded lowercase + uppercase alias table (covers actual Sonoma column names)
+      3. Filename-based heuristic tiebreaker
+
+    Returns (source_col, target_col, weight_col); None if column not found.
+    Never silently falls back when a config override is available — logs clearly.
+    """
+    import logging
+    log = logging.getLogger(__name__)
+
+    hints    = _load_column_hints()
+    headers_lower = {h.lower(): h for h in headers}  # lowercase → original name
+
+    # ── Tier 1: Per-file config override ──────────────────────────────────────
+    per_file = hints.get("per_file_hints", {})
+    fname    = Path(filename).name if filename else ""
+    if fname and fname in per_file:
+        override = per_file[fname]
+        src_hint = override.get("source_col", "")
+        tgt_hint = override.get("target_col", "")
+        wt_hint  = override.get("weight_col") or ""
+        # Resolve against actual header names (case-insensitive)
+        src = headers_lower.get(src_hint.lower()) if src_hint else None
+        tgt = headers_lower.get(tgt_hint.lower()) if tgt_hint else None
+        wt  = headers_lower.get(wt_hint.lower())  if wt_hint  else None
+        if src and tgt:
+            log.debug(f"[CROSSWALK] Config override for {fname}: src={src}, tgt={tgt}, wt={wt}")
+            return src, tgt, wt
+        log.warning(
+            f"[CROSSWALK] Config override for {fname} specified src='{src_hint}', tgt='{tgt_hint}' "
+            f"but those columns weren't found in file. Actual headers: {headers}"
+        )
+
+    # ── Tier 2: Filename heuristics (narrow candidate list) ───────────────────
+    fn_hints_cfg = hints.get("filename_heuristics", {})
+    prefer_src: list[str] = []
+    prefer_tgt: list[str] = []
+    fname_lower = fname.lower()
+    for key, fh in fn_hints_cfg.items():
+        if key in fname_lower:
+            prefer_src = [c.lower() for c in fh.get("prefer_source", [])]
+            prefer_tgt = [c.lower() for c in fh.get("prefer_target", [])]
+            break
+
+    # ── Tier 3: Alias table (expanded, lowercase + uppercase) ─────────────────
+    alias_cfg       = hints.get("column_aliases", {})
+    src_candidates  = [c.lower() for c in alias_cfg.get("source_candidates", [])]
+    tgt_candidates  = [c.lower() for c in alias_cfg.get("target_candidates", [])]
+    wt_candidates   = [c.lower() for c in alias_cfg.get("weight_candidates", [])]
+
+    # If no config loaded at all, use hard-coded defaults (covers both old and new column styles)
+    if not src_candidates:
+        src_candidates = [
+            "block", "mprec", "srprec", "rgprec", "svprec", "rrprec",
+            "block20", "mprec_id", "srprec_id", "rgprec_id", "svprec_id",
+            "source", "from_id", "src", "source_id",
+        ]
+    if not tgt_candidates:
+        tgt_candidates = [
+            "mprec", "srprec", "svprec", "city", "block",
+            "mprec_id", "srprec_id", "svprec_id", "block20",
+            "target", "to_id", "dst", "dest", "target_id",
+        ]
+    if not wt_candidates:
+        wt_candidates = [
+            "pct_block", "pctsrprec", "pctrgprec", "pct_blk", "weight",
+            "pct", "fraction", "area_pct", "proportion",
+        ]
+
+    def _pick(candidates: list[str], prefer: list[str], exclude: str | None = None) -> str | None:
+        """Return first candidate found in headers, trying preferred ones first."""
+        prioritised = prefer + [c for c in candidates if c not in prefer]
+        for c in prioritised:
+            actual = headers_lower.get(c)
+            if actual and actual != exclude:
+                return actual
         return None
 
-    src = _find(source_candidates)
-    tgt = _find(target_candidates)
-    wt  = _find(weight_candidates)
+    src = _pick(src_candidates, prefer_src)
+    tgt = _pick(tgt_candidates, prefer_tgt, exclude=src)
+    wt  = _pick(wt_candidates, [])
+
+    if not src or not tgt:
+        log.warning(
+            f"[CROSSWALK] Could not detect source/target columns in {fname or '?'}: "
+            f"{headers}  (src={src}, tgt={tgt}). "
+            f"Add a per_file_hints entry to config/precinct_id/crosswalk_column_hints.yaml to fix this."
+        )
+
     return src, tgt, wt
 
 
@@ -178,9 +275,17 @@ def load_crosswalk_from_category(
             return {}, False
 
         headers = list(rows[0].keys())
-        src_col, tgt_col, wt_col = detect_crosswalk_columns(headers)
+        src_col, tgt_col, wt_col = detect_crosswalk_columns(headers, filename=str(path))
         if not src_col or not tgt_col:
-            _log(f"Cannot detect source/target columns in {path.name}: {headers}", "WARN")
+            _log(
+                f"[CROSSWALK] ⚠️  IDENTITY_FALLBACK_USED: Cannot detect source/target columns "
+                f"in {path.name}: {headers}\n"
+                f"  src_col={src_col!r}, tgt_col={tgt_col!r}\n"
+                f"  This means contest precincts will NOT be correctly joined to geometry.\n"
+                f"  Fix: add entry under per_file_hints in "
+                f"config/precinct_id/crosswalk_column_hints.yaml",
+                "WARN",
+            )
             return {}, False
 
         valid, warnings = validate_crosswalk(rows, src_col, wt_col)
