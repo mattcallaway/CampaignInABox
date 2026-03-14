@@ -417,13 +417,20 @@ def render_mission_control(data: dict):
                 if st.button("▶️ Run Pipeline", key="mc_s2_pipeline", use_container_width=True):
                     _nav_to("▶️ Pipeline Runner")
 
-        # ─────────────────────────────────────────────────────────────────────
-        # STAGE 3 — Historical Analysis
-        # ─────────────────────────────────────────────────────────────────────
-        archive_present = readiness and any(
-            c.name == "Archive" and c.status not in ("NOT BUILT", "MISSING", "UNKNOWN")
-            for c in readiness.checks
-        ) if readiness else False
+        archive_present = False
+        # Check 1: system readiness checks (from system_readiness.py)
+        if readiness:
+            archive_present = any(
+                c.name == "Archive" and c.status not in ("NOT BUILT", "MISSING", "UNKNOWN", "NOT_READY")
+                for c in readiness.checks
+            )
+        # Check 2: latest pipeline run reported archive_built=True
+        if not archive_present and latest_run:
+            archive_present = bool(latest_run.get("archive_built"))
+        # Check 3: disk check — derived/archive/ has content
+        if not archive_present:
+            _arch = base_dir / "derived" / "archive"
+            archive_present = _arch.exists() and any(_arch.iterdir())
 
         s3_status = "✅ Archive Built" if archive_present else "⏳ Not Built"
         with st.expander(f"3️⃣  Historical Analysis — {s3_status}", expanded=not archive_present):
@@ -434,7 +441,8 @@ def render_mission_control(data: dict):
                 else:
                     st.warning(
                         "Archive not yet built.\n\n"
-                        "**Reason:** Pipeline has not completed the ARCHIVE_INGEST step for this contest.\n\n"
+                        "**Reason:** The pipeline's historical data download step has not "
+                        "completed for this contest, or the archive directory is empty.\n\n"
                         "**Next step:** Run the pipeline in Stage 2, then return here."
                     )
                 if readiness:
