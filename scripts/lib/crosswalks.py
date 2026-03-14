@@ -17,38 +17,38 @@ CROSSWALK_REGISTRY = {
     "SRPREC_TO_2020_BLK": {
         "description": "SRPREC → 2020 Census Block mapping",
         "blocks": ["block_weighted_allocation"],
-        "required_cols": ["SRPREC_ID", "BLOCK20"],
-        "alt_patterns": ["*SRPREC*BLK*", "*srprec*blk*", "*srprec*block*"],
+        "required_cols": ["srprec", "block"],   # actual: c097_g24_sr_blk_map.csv
+        "alt_patterns": ["*sr_blk_map*", "*SRPREC*BLK*", "*srprec*blk*", "*srprec*block*"],
     },
     "RGPREC_TO_2020_BLK": {
         "description": "RGPREC → 2020 Census Block mapping",
         "blocks": ["rgprec_weighted_allocation"],
-        "required_cols": ["RGPREC_ID", "BLOCK20"],
-        "alt_patterns": ["*RGPREC*BLK*", "*rgprec*blk*"],
+        "required_cols": ["rgprec", "block"],   # actual: c097_g24_rg_blk_map.csv
+        "alt_patterns": ["*rg_blk_map*", "*RGPREC*BLK*", "*rgprec*blk*"],
     },
     "2020_BLK_TO_MPREC": {
         "description": "2020 Census Block → MPREC mapping",
         "blocks": ["block_to_mprec_join"],
-        "required_cols": ["BLOCK20", "MPREC_ID"],
-        "alt_patterns": ["*BLK*MPREC*", "*block*mprec*"],
+        "required_cols": ["block", "mprec"],    # actual: blk_mprec_097_g24_v01.csv
+        "alt_patterns": ["*blk_mprec*", "*BLK*MPREC*", "*block*mprec*"],
     },
     "MPREC_to_SRPREC": {
         "description": "MPREC → SRPREC reverse mapping",
         "blocks": ["mprec_to_srprec_join"],
-        "required_cols": ["MPREC_ID", "SRPREC_ID"],
-        "alt_patterns": ["*MPREC*SRPREC*", "*mprec*srprec*"],
+        "required_cols": ["mprec", "srprec"],   # actual: mprec_srprec_097_g24.csv
+        "alt_patterns": ["*mprec_srprec*", "*MPREC*SRPREC*", "*mprec*srprec*"],
     },
     "SRPREC_to_CITY": {
         "description": "SRPREC → City/Jurisdiction mapping",
         "blocks": ["city_aggregation"],
-        "required_cols": ["SRPREC_ID", "City"],
-        "alt_patterns": ["*SRPREC*CITY*", "*srprec*city*", "*city*srprec*", "*cities_by*"],
+        "required_cols": ["srprec", "city"],    # actual: c097_g24_srprec_to_city.csv
+        "alt_patterns": ["*srprec_to_city*", "*SRPREC*CITY*", "*srprec*city*", "*city*srprec*", "*cities_by*"],
     },
     "RG_to_RR_to_SR_to_SVPREC": {
         "description": "RG → RR → SR → SVPREC chain mapping",
         "blocks": ["rg_to_svprec_join"],
-        "required_cols": ["RGPREC_ID", "SVPREC_ID"],
-        "alt_patterns": ["*RG*SR*SVPREC*", "*rg*to*svprec*", "*rgprec*svprec*"],
+        "required_cols": ["rgprec", "svprec"],  # actual: c097_rg_rr_sr_svprec_g24.csv
+        "alt_patterns": ["*rg_rr_sr_svprec*", "*RG*SR*SVPREC*", "*rg*to*svprec*", "*rgprec*svprec*"],
     },
 }
 

@@ -1,7 +1,14 @@
 {
-  "run_id": "2026-03-14__003909__b9fa0fa3__msi",
-  "missing_count": 6,
+  "run_id": "2026-03-14__021518__116b2740__msi",
+  "missing_count": 7,
   "requests": [
+    {
+      "data_type": "election_results",
+      "priority": "high",
+      "why_needed": "Essential for establishing baseline precinct model turning and calibrating assumptions.",
+      "recommended_destination": "data/elections/CA/Sonoma/prop_50_special_election_2025/",
+      "example_filename": "county_sov_detail.csv"
+    },
     {
       "data_type": "voter_file",
       "priority": "critical",

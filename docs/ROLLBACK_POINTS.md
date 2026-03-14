@@ -422,3 +422,13 @@ git checkout rollback/prompt28_pre_contest_reset
 # or
 git checkout tags/v_pre_prompt28_contest_reset
 ```
+
+## 2026-03-14T03:21 — pre-Prompt-29 Crosswalk Repair
+
+- **Branch:** `rollback/prompt29_pre_crosswalk_repair`
+- **Tag:** `v_pre_prompt29_crosswalk_repair`
+- **Reason:** Precinct normalization and crosswalk repair (Prompt 29).
+  `detect_crosswalk_columns()` was using uppercase aliases (BLOCK20, MPREC_ID)
+  but all Sonoma crosswalk files use lowercase short names (block, mprec, srprec).
+  Every crosswalk join was silently falling back to identity mapping.
+- **Note:** This point precedes a verification audit (P29 validation run).

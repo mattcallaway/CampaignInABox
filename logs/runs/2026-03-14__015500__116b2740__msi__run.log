@@ -1,0 +1,1412 @@
+[2026-03-14T08:55:00.693Z] [INFO] ========================================================================
+  Campaign In A Box — Pipeline Run
+  RUN_ID  : 2026-03-14__015500__116b2740__msi
+  Started : 2026-03-14T08:55:00.692511+00:00
+========================================================================
+[2026-03-14T08:55:00.693Z] [INFO ] Pipeline v2 starting
+[2026-03-14T08:55:00.693Z] [INFO ]   state=CA  county=Sonoma  year=2020  contest_slug=nov2020_general
+[2026-03-14T08:55:00.693Z] [INFO ]   membership_method=auto  log_level=verbose
+[2026-03-14T08:55:00.752Z] [STEP ] START  -> DATA_INTAKE_ANALYSIS
+[2026-03-14T08:55:00.760Z] [STEP ] DONE   [OK] DATA_INTAKE_ANALYSIS (0.068s)
+[2026-03-14T08:55:00.760Z] [STEP ] SKIP   [SKIP] INGEST_STAGING -- No --staging-dir provided; skipping ingestion
+[2026-03-14T08:55:00.761Z] [INFO ] === Processing County: Sonoma ===
+[2026-03-14T08:55:00.761Z] [STEP ] START  -> SCAFFOLD_BOUNDARY_INDEX_Sonoma
+[2026-03-14T08:55:00.761Z] [INFO ]   Boundary index exists: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\boundary_index\boundaries_index.csv
+[2026-03-14T08:55:00.762Z] [WARN ]   Boundary index scaffolded (no boundary files found yet)
+[2026-03-14T08:55:00.762Z] [INFO ]   output: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\boundary_index\boundaries_index.csv  [sha256:b4dff0e71c42...]
+[2026-03-14T08:55:00.762Z] [STEP ] DONE   [OK] SCAFFOLD_BOUNDARY_INDEX_Sonoma (0.07s)
+[2026-03-14T08:55:00.762Z] [STEP ] START  -> VALIDATE_GEOGRAPHY
+[2026-03-14T08:55:00.762Z] [INFO ]   expected: data/CA/counties/Sonoma/geography/precinct_shapes/
+[2026-03-14T08:55:00.762Z] [INFO ]   expected: data/CA/counties/Sonoma/geography/crosswalks/
+[2026-03-14T08:55:00.763Z] [INFO ]   [present] MPREC GeoJSON
+[2026-03-14T08:55:00.763Z] [INFO ]   [present] MPREC GeoPackage
+[2026-03-14T08:55:00.764Z] [INFO ]   [present] MPREC Shapefile
+[2026-03-14T08:55:00.764Z] [INFO ]   [present] SRPREC GeoJSON
+[2026-03-14T08:55:00.764Z] [INFO ]   [present] SRPREC GeoPackage
+[2026-03-14T08:55:00.765Z] [INFO ]   [present] SRPREC Shapefile
+[2026-03-14T08:55:00.765Z] [INFO ]   [present] 2020 BLK TO MPREC
+[2026-03-14T08:55:00.765Z] [INFO ]   [present] RGPREC TO 2020 BLK
+[2026-03-14T08:55:00.765Z] [INFO ]   [present] SRPREC TO 2020 BLK
+[2026-03-14T08:55:00.766Z] [INFO ]   [present] RG to RR to SR to SVPREC
+[2026-03-14T08:55:00.766Z] [INFO ]   [present] MPREC to SRPREC
+[2026-03-14T08:55:00.766Z] [INFO ]   [present] SRPREC to CITY
+[2026-03-14T08:55:00.766Z] [INFO ] Geography validation: 12/12 present, canonical=MPREC
+[2026-03-14T08:55:00.767Z] [STEP ] DONE   [OK] VALIDATE_GEOGRAPHY (0.075s)
+[2026-03-14T08:55:00.767Z] [STEP ] START  -> VALIDATE_VOTES
+[2026-03-14T08:55:00.767Z] [INFO ]   expected: data/contests/CA/Sonoma/2020/nov2020_general/raw/<file>  (canonical, P28)
+[2026-03-14T08:55:00.767Z] [INFO ]   expected: votes/2020/CA/Sonoma/nov2020_general/detail.xlsx              (legacy fallback)
+[2026-03-14T08:55:00.770Z] [INFO ]   [VOTES] Found via ContestResolver (canonical P28): data\contests\CA\Sonoma\2020\nov2020_general\raw\StatementOfVotesCast-Webnov32020.xlsx
+[2026-03-14T08:55:00.784Z] [INFO ]   input: detail.xlsx -> C:\Users\Mathew C\Campaign In A Box\data\contests\CA\Sonoma\2020\nov2020_general\raw\StatementOfVotesCast-Webnov32020.xlsx  [sha256:28eb1f9b312c...]
+[2026-03-14T08:55:00.784Z] [STEP ] DONE   [OK] VALIDATE_VOTES (0.092s)
+[2026-03-14T08:55:00.784Z] [STEP ] START  -> LOAD_GEOMETRY
+[2026-03-14T08:55:00.784Z] [INFO ]   expected: MPREC preferred; SRPREC fallback
+[2026-03-14T08:55:00.785Z] [INFO ] Loading MPREC geometry from: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\MPREC_GeoJSON\mprec_097_g24_v01.geojson
+[2026-03-14T08:55:04.055Z] [INFO ] Loaded 1405 features from mprec_097_g24_v01.geojson
+[2026-03-14T08:55:04.055Z] [STEP ] DONE   [OK] LOAD_GEOMETRY (3.363s)
+[2026-03-14T08:55:04.055Z] [STEP ] START  -> LOAD_CROSSWALKS
+[2026-03-14T08:55:04.088Z] [WARN ] Cannot detect source/target columns in blk_mprec_097_g24_v01.csv: ['block', 'mprec', 'pct_block']
+[2026-03-14T08:55:04.114Z] [WARN ] Cannot detect source/target columns in blk_mprec_097_g24_v01.csv: ['block', 'mprec', 'pct_block']
+[2026-03-14T08:55:04.380Z] [INFO ]   [CROSSWALKS] Discovered 4/6 crosswalks
+[2026-03-14T08:55:04.380Z] [STEP ] SKIP   [SKIP] LOAD_CROSSWALKS -- No crosswalk files; using identity mapping
+[2026-03-14T08:55:04.380Z] [STEP ] START  -> SCAFFOLD_CONTEST_JSON
+[2026-03-14T08:55:04.385Z] [INFO ]   output: C:\Users\Mathew C\Campaign In A Box\votes\2020\CA\Sonoma\nov2020_general\contest.json  [sha256:1f4ac558f014...]
+[2026-03-14T08:55:04.385Z] [STEP ] DONE   [OK] SCAFFOLD_CONTEST_JSON (3.693s)
+[2026-03-14T08:55:04.385Z] [STEP ] START  -> PARSE_CONTEST
+[2026-03-14T08:55:04.385Z] [INFO ]   expected: Detect sheet types; aggregate vote methods
+[2026-03-14T08:55:12.158Z] [INFO ] Parsing sheet: 'President'
+[2026-03-14T08:55:12.167Z] [INFO ]   parse_contest_sheet: title='President and Vice President' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'JOSEPH R. BIDEN\n(DEM)', 'DONALD J. TRUMP\n(REP)', 'GLORIA LA RIVA\n(PF)', 'ROQUE "ROCKY" DE LA FUENTE GUERRA\n(AI)', 'HOWIE HAWKINS\n(GRN)', 'JO JORGENSEN\n(LIB)', 'QUALIFIED WRITE IN CANDIDATES:', 'BRIAN CARROLL', 'MARK CHARLES', 'JOSEPH KISHORE', 'BROCK PIERCE', 'JESSE VENTURA'] rows=3341
+[2026-03-14T08:55:12.187Z] [INFO ]   -> 2673 precincts, type=candidate_race
+[2026-03-14T08:55:12.187Z] [INFO ] Parsing sheet: 'US Rep-2nd Dist'
+[2026-03-14T08:55:12.189Z] [INFO ]   parse_contest_sheet: title='U S Representative 2nd District' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'JARED HUFFMAN\n(DEM)', 'DALE K. MENSING\n(REP)'] rows=1276
+[2026-03-14T08:55:12.195Z] [INFO ]   -> 1021 precincts, type=candidate_race
+[2026-03-14T08:55:12.195Z] [INFO ] Parsing sheet: 'US Rep-5th Dist'
+[2026-03-14T08:55:12.198Z] [INFO ]   parse_contest_sheet: title='U S Representative 5th District' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'MIKE THOMPSON\n(DEM)', 'SCOTT GIBLIN\n(REP)'] rows=2066
+[2026-03-14T08:55:12.204Z] [INFO ]   -> 1653 precincts, type=candidate_race
+[2026-03-14T08:55:12.204Z] [INFO ] Parsing sheet: 'State Sen-3rd Dist'
+[2026-03-14T08:55:12.206Z] [INFO ]   parse_contest_sheet: title='State Senator 3rd District' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'BILL DODD\n(DEM)', 'CARLOS SANTAMARIA\n(REP)'] rows=811
+[2026-03-14T08:55:12.212Z] [INFO ]   -> 649 precincts, type=candidate_race
+[2026-03-14T08:55:12.212Z] [INFO ] Parsing sheet: '2nd Assembly Dist'
+[2026-03-14T08:55:12.214Z] [INFO ]   parse_contest_sheet: title='Member of Assembly 2nd District' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'JIM WOOD\n(DEM)', 'CHARLOTTE SVOLOS\n(REP)'] rows=1561
+[2026-03-14T08:55:12.220Z] [INFO ]   -> 1249 precincts, type=candidate_race
+[2026-03-14T08:55:12.220Z] [INFO ] Parsing sheet: '4th Assembly Dist'
+[2026-03-14T08:55:12.221Z] [INFO ]   parse_contest_sheet: title='Member of Assembly 4th District' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'MATTHEW L. NELSON\n(REP)', 'CECILIA AGUIAR-CURRY\n(DEM)'] rows=661
+[2026-03-14T08:55:12.226Z] [INFO ]   -> 529 precincts, type=candidate_race
+[2026-03-14T08:55:12.226Z] [INFO ] Parsing sheet: '10th Assembly Dist'
+[2026-03-14T08:55:12.228Z] [INFO ]   parse_contest_sheet: title='Member of Assembly 10th District' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'VERONICA "RONI" JACOBI\n(DEM)', 'MARC LEVINE\n(DEM)'] rows=1121
+[2026-03-14T08:55:12.235Z] [INFO ]   -> 897 precincts, type=candidate_race
+[2026-03-14T08:55:12.235Z] [INFO ] Parsing sheet: 'SoCo BOE-Area 1'
+[2026-03-14T08:55:12.237Z] [INFO ]   parse_contest_sheet: title='Sonoma County Board of Education Area 1' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'DIANNA MACDONALD', 'GINA CUCLIS'] rows=826
+[2026-03-14T08:55:12.247Z] [INFO ]   -> 661 precincts, type=candidate_race
+[2026-03-14T08:55:12.247Z] [INFO ] Parsing sheet: 'SRJC - SR Area'
+[2026-03-14T08:55:12.253Z] [INFO ]   parse_contest_sheet: title='So Co Jr College Dist Santa Rosa Area (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'CAROLINE BAÑUELOS', 'DON EDGAR', 'SARICHON REX TOEUNG', 'MARIANA MARTINEZ', 'KERRY REGO'] rows=1299
+[2026-03-14T08:55:12.266Z] [INFO ]   -> 1039 precincts, type=candidate_race
+[2026-03-14T08:55:12.266Z] [INFO ] Parsing sheet: 'Calistoga Jt USD'
+[2026-03-14T08:55:12.268Z] [INFO ]   parse_contest_sheet: title='Calistoga Joint Unified School District (Vote for  3)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'JULIANNE PAULA ELKESHEN', 'MARK L. GALINDO', 'RUDY GONZALEZ', 'MATTHEW REID', 'STEPHANIE ROTHBERG-ALLAN'] rows=36
+[2026-03-14T08:55:12.276Z] [INFO ]   -> 29 precincts, type=candidate_race
+[2026-03-14T08:55:12.276Z] [INFO ] Parsing sheet: 'Cloverdale USD'
+[2026-03-14T08:55:12.278Z] [INFO ]   parse_contest_sheet: title='Cloverdale Unified School District (Vote for  3)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'PRESTON W. ADDISON', 'BRANDON AXELL', 'JOHANNES J. HOEVERTSZ', 'GABRIELA MENDOZA-TORRES', 'ASHLEY WHITE'] rows=36
+[2026-03-14T08:55:12.285Z] [INFO ]   -> 29 precincts, type=candidate_race
+[2026-03-14T08:55:12.286Z] [INFO ] Parsing sheet: 'Cotati-RP USD Area 5'
+[2026-03-14T08:55:12.287Z] [INFO ]   parse_contest_sheet: title='Cotati-Rohnert Park Unif Trustee Area 5' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'TIM NONN', 'MICHELLE WING'] rows=81
+[2026-03-14T08:55:12.298Z] [INFO ]   -> 65 precincts, type=candidate_race
+[2026-03-14T08:55:12.298Z] [INFO ] Parsing sheet: 'Sonoma Valley USD Area 4'
+[2026-03-14T08:55:12.299Z] [INFO ]   parse_contest_sheet: title='Sonoma Vly Unif Sch Dist Trustee Area 4' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'ADAM LOBSINGER', 'TROY KNOX'] rows=61
+[2026-03-14T08:55:12.308Z] [INFO ]   -> 49 precincts, type=candidate_race
+[2026-03-14T08:55:12.308Z] [INFO ] Parsing sheet: 'Sonoma Valley USD Area 5'
+[2026-03-14T08:55:12.310Z] [INFO ]   parse_contest_sheet: title='Sonoma Vly Unif Sch Dist Trustee Area 5' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'ANNE CHING', 'BRITTA JOHNSON'] rows=116
+[2026-03-14T08:55:12.318Z] [INFO ]   -> 93 precincts, type=candidate_race
+[2026-03-14T08:55:12.318Z] [INFO ] Parsing sheet: 'Petaluma Jt UHSD'
+[2026-03-14T08:55:12.319Z] [INFO ]   parse_contest_sheet: title='Petaluma Jt Union High School District (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'SHELDON GEN', 'CAROL ANN STREET', 'ELLEN WEBSTER', 'LINDA JUDAH'] rows=316
+[2026-03-14T08:55:12.332Z] [INFO ]   -> 253 precincts, type=candidate_race
+[2026-03-14T08:55:12.332Z] [INFO ] Parsing sheet: 'Pt Arena Jt-Arena UHSD'
+[2026-03-14T08:55:12.334Z] [INFO ]   parse_contest_sheet: title='Pt Arena Jt Un High/ Arena Union Dist (Vote for  3)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'MIQUETTE THOMPSON', 'BOB GARDINER', 'SIGRID A. HILLSCAN', 'RON MILES', 'JIM DEWILDER'] rows=16
+[2026-03-14T08:55:12.345Z] [INFO ]   -> 13 precincts, type=candidate_race
+[2026-03-14T08:55:12.345Z] [INFO ] Parsing sheet: 'City of SR HSD Area 1'
+[2026-03-14T08:55:12.346Z] [INFO ]   parse_contest_sheet: title='City of Santa Rosa High School District Trustee Area 1' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'EVER FLORES', 'JENNI KLOSE'] rows=121
+[2026-03-14T08:55:12.352Z] [INFO ]   -> 97 precincts, type=candidate_race
+[2026-03-14T08:55:12.352Z] [INFO ] Parsing sheet: 'West SoCo UHSD'
+[2026-03-14T08:55:12.354Z] [INFO ]   parse_contest_sheet: title='West Sonoma County Union High School Dist (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'JULIE AIELLO', 'LYNN SCHALLEBAUM GLEESON', "KYLE O'CONNOR", 'LAURIE ANN FADAVE'] rows=486
+[2026-03-14T08:55:12.361Z] [INFO ]   -> 389 precincts, type=candidate_race
+[2026-03-14T08:55:12.361Z] [INFO ] Parsing sheet: 'Harmony USD'
+[2026-03-14T08:55:12.362Z] [INFO ]   parse_contest_sheet: title='Harmony Union School District (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'MARIAH LANDER', 'AMANDA SOLTER', 'YURI SPRINGSTORM KOSLEN'] rows=36
+[2026-03-14T08:55:12.388Z] [INFO ]   -> 29 precincts, type=candidate_race
+[2026-03-14T08:55:12.388Z] [INFO ] Parsing sheet: 'Oak Grove USD-FT'
+[2026-03-14T08:55:12.390Z] [INFO ]   parse_contest_sheet: title='Oak Grove Union School District F/T (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'ERIN LAGOURGUE', 'ROBBIE WOOSLEY', 'BRIAN P. JACOBS', 'LESLEY JONES'] rows=36
+[2026-03-14T08:55:12.399Z] [INFO ]   -> 29 precincts, type=candidate_race
+[2026-03-14T08:55:12.399Z] [INFO ] Parsing sheet: 'Oak Grove USD-ST'
+[2026-03-14T08:55:12.400Z] [INFO ]   parse_contest_sheet: title='Oak Grove Union School District  S/T' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'RAHINE PATEL', 'HANNAH KALLOK'] rows=36
+[2026-03-14T08:55:12.405Z] [INFO ]   -> 29 precincts, type=candidate_race
+[2026-03-14T08:55:12.405Z] [INFO ] Parsing sheet: 'Rincon Valley USD'
+[2026-03-14T08:55:12.406Z] [INFO ]   parse_contest_sheet: title='Rincon Valley Union School District (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'JANELLE TAYLOR', 'ERIC C. HEINS', 'MIKE COOK'] rows=336
+[2026-03-14T08:55:12.411Z] [INFO ]   -> 269 precincts, type=candidate_race
+[2026-03-14T08:55:12.411Z] [INFO ] Parsing sheet: 'Roseland SD-FT'
+[2026-03-14T08:55:12.412Z] [INFO ]   parse_contest_sheet: title='Roseland School District  F/T (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'SONDRA BEAM', 'TIFFANY KAMPMANN', 'PATRICIA S. KRUEGER'] rows=31
+[2026-03-14T08:55:12.417Z] [INFO ]   -> 25 precincts, type=candidate_race
+[2026-03-14T08:55:12.417Z] [INFO ] Parsing sheet: 'SR City Council-Dist 1'
+[2026-03-14T08:55:12.418Z] [INFO ]   parse_contest_sheet: title='Member, City Council Santa Rosa District 1' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'EDDIE ALVAREZ', 'DUANE DE WITT', 'JORGE INOCENCIO', 'ELIZABETH VALENTE'] rows=66
+[2026-03-14T08:55:12.423Z] [INFO ]   -> 53 precincts, type=candidate_race
+[2026-03-14T08:55:12.423Z] [INFO ] Parsing sheet: 'SR City Council-Dist 3'
+[2026-03-14T08:55:12.424Z] [INFO ]   parse_contest_sheet: title='Member, City Council Santa Rosa District 3' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'HARRISON "JACK" TIBBETTS', 'QUALIFIED WRITE IN CANDIDATES:', 'KEITH RHINEHART'] rows=126
+[2026-03-14T08:55:12.430Z] [INFO ]   -> 101 precincts, type=candidate_race
+[2026-03-14T08:55:12.430Z] [INFO ] Parsing sheet: 'SR City Council-Dist 5'
+[2026-03-14T08:55:12.430Z] [INFO ]   parse_contest_sheet: title='Member, City Council Santa Rosa District 5' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'AZMINA R. HANNA', 'CHRIS ROGERS'] rows=76
+[2026-03-14T08:55:12.435Z] [INFO ]   -> 61 precincts, type=candidate_race
+[2026-03-14T08:55:12.435Z] [INFO ] Parsing sheet: 'SR City Council-Dist 7'
+[2026-03-14T08:55:12.436Z] [INFO ]   parse_contest_sheet: title='Member, City Council Santa Rosa District 7' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'DANIELA PAVONE', 'ERIC CHRISTENSEN', 'NATALIE ROGERS'] rows=106
+[2026-03-14T08:55:12.441Z] [INFO ]   -> 85 precincts, type=candidate_race
+[2026-03-14T08:55:12.441Z] [INFO ] Parsing sheet: 'Cloverdale City Council'
+[2026-03-14T08:55:12.442Z] [INFO ]   parse_contest_sheet: title='Member, City Council Cloverdale (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'MELANIE BAGBY', 'MARY ANN BRIGHAM', 'TODD LANDS', 'NICOLE GARCIA-HINCHLIFFE', 'JENNY CANDELARIA-ORR'] rows=16
+[2026-03-14T08:55:12.453Z] [INFO ]   -> 13 precincts, type=candidate_race
+[2026-03-14T08:55:12.453Z] [INFO ] Parsing sheet: 'Cotati City Council'
+[2026-03-14T08:55:12.455Z] [INFO ]   parse_contest_sheet: title='Member, City Council Cotati (Vote for  3)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'SUSAN HARVEY', 'LAURA SPARKS', 'BRITTANY MURPHY', 'BEN FORD'] rows=61
+[2026-03-14T08:55:12.464Z] [INFO ]   -> 49 precincts, type=candidate_race
+[2026-03-14T08:55:12.464Z] [INFO ] Parsing sheet: 'Healdsburg City Council'
+[2026-03-14T08:55:12.466Z] [INFO ]   parse_contest_sheet: title='Member, City Council Healdsburg (Vote for  3)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'DAVID HAGELE', 'DORALICE HANDAL', 'SKYLAER PALACIOS', 'CHARLES A. DUFFY', 'ARIEL KELLEY', 'DAVID R. JONES'] rows=26
+[2026-03-14T08:55:12.476Z] [INFO ]   -> 21 precincts, type=candidate_race
+[2026-03-14T08:55:12.476Z] [INFO ] Parsing sheet: 'Petaluma City Council'
+[2026-03-14T08:55:12.478Z] [INFO ]   parse_contest_sheet: title='Member, City Council Petaluma (Vote for  3)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'BRIAN BARNACLE', 'MIKE HEALY', 'DENNIS POCEKAY', 'KATHY MILLER', 'ROBERT CONKLIN', 'GABE KEARNEY', 'SUSAN KIRKS', 'LIZZIE WALLACK'] rows=126
+[2026-03-14T08:55:12.486Z] [INFO ]   -> 101 precincts, type=candidate_race
+[2026-03-14T08:55:12.486Z] [INFO ] Parsing sheet: 'RP City Council-Dist 1'
+[2026-03-14T08:55:12.487Z] [INFO ]   parse_contest_sheet: title='Member, City Council Rohnert Park District 1' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'WALTER "WILLY" LINARES', 'DAVE SOLDAVINI'] rows=31
+[2026-03-14T08:55:12.492Z] [INFO ]   -> 25 precincts, type=candidate_race
+[2026-03-14T08:55:12.493Z] [INFO ] Parsing sheet: 'RP City Council-Dist 3'
+[2026-03-14T08:55:12.494Z] [INFO ]   parse_contest_sheet: title='Member, City Council Rohnert Park District 3' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'GERARD GIUDICE', 'JOSEPH T. CALLINAN'] rows=66
+[2026-03-14T08:55:12.500Z] [INFO ]   -> 53 precincts, type=candidate_race
+[2026-03-14T08:55:12.500Z] [INFO ] Parsing sheet: 'RP City Council-Dist 4'
+[2026-03-14T08:55:12.501Z] [INFO ]   parse_contest_sheet: title='Member, City Council Rohnert Park District 4' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'JACKIE ELWARD', 'JAKE MACKENZIE'] rows=41
+[2026-03-14T08:55:12.507Z] [INFO ]   -> 33 precincts, type=candidate_race
+[2026-03-14T08:55:12.507Z] [INFO ] Parsing sheet: 'Sebastopol City Council'
+[2026-03-14T08:55:12.508Z] [INFO ]   parse_contest_sheet: title='Member, City Council Sebastopol (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'VAUGHN RICHARD HIGGINBOTHAM', 'NEYSA HINTON', 'EVARISTO "EVERT" FERNANDEZ', 'MICHAEL CARNACCHI', 'DIANA RICH'] rows=26
+[2026-03-14T08:55:12.516Z] [INFO ]   -> 21 precincts, type=candidate_race
+[2026-03-14T08:55:12.516Z] [INFO ] Parsing sheet: 'Sonoma City Council'
+[2026-03-14T08:55:12.518Z] [INFO ]   parse_contest_sheet: title='Member, City Council Sonoma (Vote for  2)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'AMY HARRINGTON', 'JACK DING'] rows=91
+[2026-03-14T08:55:12.524Z] [INFO ]   -> 73 precincts, type=candidate_race
+[2026-03-14T08:55:12.524Z] [INFO ] Parsing sheet: 'Town of Windsor-Mayor'
+[2026-03-14T08:55:12.525Z] [INFO ]   parse_contest_sheet: title='Mayor, Town of Windsor (Vote for  1)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'TANYA POTTER', 'SAM SALMON', 'DOMINIC FOPPOLI', 'ROSA REYNOZA'] rows=176
+[2026-03-14T08:55:12.532Z] [INFO ]   -> 141 precincts, type=candidate_race
+[2026-03-14T08:55:12.532Z] [INFO ] Parsing sheet: 'Windsor Town Council-Dist 3'
+[2026-03-14T08:55:12.533Z] [INFO ]   parse_contest_sheet: title='Member, Town Council Windsor District 3' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'JEFFREY  LEASURE', 'DEBORA FUDGE'] rows=26
+[2026-03-14T08:55:12.537Z] [INFO ]   -> 21 precincts, type=candidate_race
+[2026-03-14T08:55:12.537Z] [INFO ] Parsing sheet: 'Graton Fire Protection Dist'
+[2026-03-14T08:55:12.538Z] [INFO ]   parse_contest_sheet: title='Graton Fire Protection Dist (Vote for  3)' type=candidate_race prec_col='Precinct' choice_cols=['Times Cast', 'Registered \nVoters', 'LINDA TRIPOLI', 'ZANE W. GRAY', 'JASON NUNES', 'TORREY FARMER'] rows=71
+[2026-03-14T08:55:12.545Z] [INFO ]   -> 57 precincts, type=candidate_race
+[2026-03-14T08:55:12.546Z] [INFO ] Parsing sheet: 'Prop 14'
+[2026-03-14T08:55:12.549Z] [INFO ]   parse_contest_sheet: title='Prop 14 - Continue Funding Stem Cell and Medical Research' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T08:55:12.557Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:12.557Z] [INFO ] Parsing sheet: 'Prop 15'
+[2026-03-14T08:55:12.560Z] [INFO ]   parse_contest_sheet: title='Prop 15 - Increases Funding for Public Schools' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T08:55:12.569Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:12.569Z] [INFO ] Parsing sheet: 'Prop 16'
+[2026-03-14T08:55:12.572Z] [INFO ]   parse_contest_sheet: title='Prop 16 - Government Preferences' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T08:55:12.580Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:12.580Z] [INFO ] Parsing sheet: 'Prop 17'
+[2026-03-14T08:55:12.583Z] [INFO ]   parse_contest_sheet: title='Prop 17 - Disqualification Of Electors' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T08:55:12.590Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:12.590Z] [INFO ] Parsing sheet: 'Prop 18'
+[2026-03-14T08:55:12.594Z] [INFO ]   parse_contest_sheet: title='Prop 18 - Voting Age' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T08:55:12.601Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:12.601Z] [INFO ] Parsing sheet: 'Prop 19'
+[2026-03-14T08:55:12.605Z] [INFO ]   parse_contest_sheet: title='Prop 19 - Home Protection' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T08:55:12.614Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:12.614Z] [INFO ] Parsing sheet: 'Prop 20'
+[2026-03-14T08:55:12.618Z] [INFO ]   parse_contest_sheet: title='Prop 20 - Restricts Parole For Non-Violent Offenders' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T08:55:12.625Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:12.625Z] [INFO ] Parsing sheet: 'Prop 21'
+[2026-03-14T08:55:12.630Z] [INFO ]   parse_contest_sheet: title="Prop 21 - Expands Local Governments' Authority To Enact Rent Control" type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T08:55:12.638Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:12.638Z] [INFO ] Parsing sheet: 'Prop 22'
+[2026-03-14T08:55:12.642Z] [INFO ]   parse_contest_sheet: title='Prop 22 - Changes Classification for App-Based Delivery Drivers' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T08:55:12.653Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:12.653Z] [INFO ] Parsing sheet: 'Prop 23'
+[2026-03-14T08:55:12.657Z] [INFO ]   parse_contest_sheet: title='Prop 23 - Authorizes State Regulation of Kidney Dialysis Clinics' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T08:55:12.666Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:12.666Z] [INFO ] Parsing sheet: 'Prop 24'
+[2026-03-14T08:55:12.670Z] [INFO ]   parse_contest_sheet: title='Prop 24 - Amends Consumer Privacy Laws' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T08:55:12.682Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:12.682Z] [INFO ] Parsing sheet: 'Prop 25'
+[2026-03-14T08:55:12.688Z] [INFO ]   parse_contest_sheet: title='Prop 25 - Referendum To Overturn A 2018 Law That Replaced Money Bail System' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T08:55:12.700Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:12.700Z] [INFO ] Parsing sheet: 'Measure L'
+[2026-03-14T08:55:12.702Z] [INFO ]   parse_contest_sheet: title='Measure L - Shoreline Unified School District Parcel Tax' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=61
+[2026-03-14T08:55:12.708Z] [INFO ]   -> 49 precincts, type=ballot_measure
+[2026-03-14T08:55:12.708Z] [INFO ] Parsing sheet: 'Measure M'
+[2026-03-14T08:55:12.709Z] [INFO ]   parse_contest_sheet: title='Measure M - Fort Ross School District Parcel Tax' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=31
+[2026-03-14T08:55:12.714Z] [INFO ]   -> 25 precincts, type=ballot_measure
+[2026-03-14T08:55:12.715Z] [INFO ] Parsing sheet: 'Measure N'
+[2026-03-14T08:55:12.715Z] [INFO ]   parse_contest_sheet: title='Measure N - Sebastopol Union School District Parcel Tax' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=91
+[2026-03-14T08:55:12.720Z] [INFO ]   -> 73 precincts, type=ballot_measure
+[2026-03-14T08:55:12.721Z] [INFO ] Parsing sheet: 'Measure O'
+[2026-03-14T08:55:12.725Z] [INFO ]   parse_contest_sheet: title='Measure O - County of Sonoma Mental Health, Addiction & Homeless Services Transaction & Use Tax' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T08:55:12.736Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:12.736Z] [INFO ] Parsing sheet: 'Measure P'
+[2026-03-14T08:55:12.739Z] [INFO ]   parse_contest_sheet: title='Measure P - County of Sonoma Evelyn Cheatham Effective IOLERO' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T08:55:12.748Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:12.748Z] [INFO ] Parsing sheet: 'Measure Q'
+[2026-03-14T08:55:12.750Z] [INFO ]   parse_contest_sheet: title='Measure Q - City of Santa Rosa Transactions and Use Tax' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=786
+[2026-03-14T08:55:12.755Z] [INFO ]   -> 629 precincts, type=ballot_measure
+[2026-03-14T08:55:12.755Z] [INFO ] Parsing sheet: 'Measure R'
+[2026-03-14T08:55:12.756Z] [INFO ]   parse_contest_sheet: title="Measure R - City of Cloverdale Utility Users' Tax Extension" type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=16
+[2026-03-14T08:55:12.761Z] [INFO ]   -> 13 precincts, type=ballot_measure
+[2026-03-14T08:55:12.761Z] [INFO ] Parsing sheet: 'Measure S'
+[2026-03-14T08:55:12.762Z] [INFO ]   parse_contest_sheet: title='Measure S - City of Cotati Transactions and Use Tax Extension' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=61
+[2026-03-14T08:55:12.767Z] [INFO ]   -> 49 precincts, type=ballot_measure
+[2026-03-14T08:55:12.767Z] [INFO ] Parsing sheet: 'Measure T'
+[2026-03-14T08:55:12.767Z] [INFO ]   parse_contest_sheet: title='Measure T - City of Healdsburg Sales Tax Extension' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=26
+[2026-03-14T08:55:12.771Z] [INFO ]   -> 21 precincts, type=ballot_measure
+[2026-03-14T08:55:12.771Z] [INFO ] Parsing sheet: 'Measure U'
+[2026-03-14T08:55:12.772Z] [INFO ]   parse_contest_sheet: title='Measure U - City of Petaluma Transactions and Use Tax' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=126
+[2026-03-14T08:55:12.776Z] [INFO ]   -> 101 precincts, type=ballot_measure
+[2026-03-14T08:55:12.776Z] [INFO ] Parsing sheet: 'Measure V'
+[2026-03-14T08:55:12.777Z] [INFO ]   parse_contest_sheet: title='Measure V - City of Sonoma Sales Tax Extension' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=91
+[2026-03-14T08:55:12.781Z] [INFO ]   -> 73 precincts, type=ballot_measure
+[2026-03-14T08:55:12.781Z] [INFO ] Parsing sheet: 'Measure W'
+[2026-03-14T08:55:12.782Z] [INFO ]   parse_contest_sheet: title='Measure W - City of Sonoma Growth Boundary' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=91
+[2026-03-14T08:55:12.786Z] [INFO ]   -> 73 precincts, type=ballot_measure
+[2026-03-14T08:55:12.786Z] [INFO ] Parsing sheet: 'Measure X'
+[2026-03-14T08:55:12.787Z] [INFO ]   parse_contest_sheet: title='Measure X - City of Sonoma Cannabis Business Tax' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=91
+[2026-03-14T08:55:12.791Z] [INFO ]   -> 73 precincts, type=ballot_measure
+[2026-03-14T08:55:12.791Z] [INFO ] Parsing sheet: 'Measure Y'
+[2026-03-14T08:55:12.792Z] [INFO ]   parse_contest_sheet: title='Measure Y - City of Sonoma Cannabis Cultivation and Business' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=91
+[2026-03-14T08:55:12.796Z] [INFO ]   -> 73 precincts, type=ballot_measure
+[2026-03-14T08:55:12.796Z] [INFO ] Parsing sheet: 'Measure Z'
+[2026-03-14T08:55:12.797Z] [INFO ]   parse_contest_sheet: title='Measure Z - Kenwood Fire Protection Ratify Appropriations Limit' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=41
+[2026-03-14T08:55:12.801Z] [INFO ]   -> 33 precincts, type=ballot_measure
+[2026-03-14T08:55:12.801Z] [INFO ] Parsing sheet: 'Measure AA'
+[2026-03-14T08:55:12.801Z] [INFO ]   parse_contest_sheet: title='Measure AA - Timber Cove Fire Protection Parcel Tax' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=16
+[2026-03-14T08:55:12.805Z] [INFO ]   -> 13 precincts, type=ballot_measure
+[2026-03-14T08:55:12.806Z] [INFO ] Parsing sheet: 'Measure BB'
+[2026-03-14T08:55:12.807Z] [INFO ]   parse_contest_sheet: title='Measure BB - North Sonoma County Healthcare Hospital Purchase Agreement' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=396
+[2026-03-14T08:55:12.812Z] [INFO ]   -> 317 precincts, type=ballot_measure
+[2026-03-14T08:55:12.812Z] [INFO ] Parsing sheet: 'Measure CC'
+[2026-03-14T08:55:12.813Z] [INFO ]   parse_contest_sheet: title='Measure CC - Petaluma Health Care Hospital Purchase Agreement' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=346
+[2026-03-14T08:55:12.817Z] [INFO ]   -> 277 precincts, type=ballot_measure
+[2026-03-14T08:55:12.818Z] [INFO ] Parsing sheet: 'Measure DD'
+[2026-03-14T08:55:12.821Z] [INFO ]   parse_contest_sheet: title='Measure DD - Sonoma County Transportation Authority Sales Tax' type=ballot_measure prec_col='Precinct' choice_cols=['YES', 'NO'] rows=3341
+[2026-03-14T08:55:12.832Z] [INFO ]   -> 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:12.832Z] [INFO ] Parsing sheet: 'PrecinctOverview'
+[2026-03-14T08:55:12.835Z] [INFO ]   parse_contest_sheet: title='1002 MB' type=candidate_race prec_col='Precinct' choice_cols=['Registered\nVoters', 'Voters Cast', '% Turnout'] rows=3344
+[2026-03-14T08:55:12.843Z] [INFO ]   -> 2676 precincts, type=candidate_race
+[2026-03-14T08:55:12.850Z] [STEP ] DONE   [OK] PARSE_CONTEST (12.158s)
+[2026-03-14T08:55:12.850Z] [INFO ] Contest Mode: MEASURE (Explicit override: MEASURE)
+[2026-03-14T08:55:12.850Z] [INFO ] [PATHWAY] contest_mode=measure  contest_mode_reason=Explicit override: MEASURE
+[2026-03-14T08:55:12.850Z] [STEP ] START  -> ALLOCATE_VOTES
+[2026-03-14T08:55:12.850Z] [INFO ]   Sheet 'President': 2673 precincts, type=candidate_race
+[2026-03-14T08:55:12.851Z] [INFO ]     Allocation: area_weighted_fallback, 2673 target precincts
+[2026-03-14T08:55:12.851Z] [STEP ] START  -> NORMALIZE_SCHEMA/President
+[2026-03-14T08:55:12.852Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:12.852Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:12.852Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:12.856Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/President (12.164s)
+[2026-03-14T08:55:12.856Z] [STEP ] START  -> SANITY/President
+[2026-03-14T08:55:12.856Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T08:55:12.856Z] [STEP ] DONE   [OK] SANITY/President (12.164s)
+[2026-03-14T08:55:12.856Z] [STEP ] START  -> BUILD_MODEL/President
+[2026-03-14T08:55:12.883Z] [STEP ] DONE   [OK] BUILD_MODEL/President (12.191s)
+[2026-03-14T08:55:12.883Z] [INFO ]   Sheet 'US Rep-2nd Dist': 1021 precincts, type=candidate_race
+[2026-03-14T08:55:12.884Z] [INFO ]     Allocation: area_weighted_fallback, 1021 target precincts
+[2026-03-14T08:55:12.884Z] [STEP ] START  -> NORMALIZE_SCHEMA/US Rep-2nd Dist
+[2026-03-14T08:55:12.884Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:12.885Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:12.885Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:12.890Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/US Rep-2nd Dist (12.198s)
+[2026-03-14T08:55:12.890Z] [STEP ] START  -> SANITY/US Rep-2nd Dist
+[2026-03-14T08:55:12.890Z] [INFO ]   SANITY [OK] Non-empty model: 1021 rows
+[2026-03-14T08:55:12.890Z] [STEP ] DONE   [OK] SANITY/US Rep-2nd Dist (12.198s)
+[2026-03-14T08:55:12.890Z] [STEP ] START  -> BUILD_MODEL/US Rep-2nd Dist
+[2026-03-14T08:55:12.908Z] [STEP ] DONE   [OK] BUILD_MODEL/US Rep-2nd Dist (12.216s)
+[2026-03-14T08:55:12.908Z] [INFO ]   Sheet 'US Rep-5th Dist': 1653 precincts, type=candidate_race
+[2026-03-14T08:55:12.908Z] [INFO ]     Allocation: area_weighted_fallback, 1653 target precincts
+[2026-03-14T08:55:12.908Z] [STEP ] START  -> NORMALIZE_SCHEMA/US Rep-5th Dist
+[2026-03-14T08:55:12.909Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:12.909Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:12.909Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:12.913Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/US Rep-5th Dist (12.221s)
+[2026-03-14T08:55:12.913Z] [STEP ] START  -> SANITY/US Rep-5th Dist
+[2026-03-14T08:55:12.913Z] [INFO ]   SANITY [OK] Non-empty model: 1653 rows
+[2026-03-14T08:55:12.913Z] [STEP ] DONE   [OK] SANITY/US Rep-5th Dist (12.221s)
+[2026-03-14T08:55:12.913Z] [STEP ] START  -> BUILD_MODEL/US Rep-5th Dist
+[2026-03-14T08:55:12.930Z] [STEP ] DONE   [OK] BUILD_MODEL/US Rep-5th Dist (12.238s)
+[2026-03-14T08:55:12.930Z] [INFO ]   Sheet 'State Sen-3rd Dist': 649 precincts, type=candidate_race
+[2026-03-14T08:55:12.930Z] [INFO ]     Allocation: area_weighted_fallback, 649 target precincts
+[2026-03-14T08:55:12.930Z] [STEP ] START  -> NORMALIZE_SCHEMA/State Sen-3rd Dist
+[2026-03-14T08:55:12.931Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:12.931Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:12.931Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:12.935Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/State Sen-3rd Dist (12.243s)
+[2026-03-14T08:55:12.935Z] [STEP ] START  -> SANITY/State Sen-3rd Dist
+[2026-03-14T08:55:12.935Z] [INFO ]   SANITY [OK] Non-empty model: 649 rows
+[2026-03-14T08:55:12.935Z] [STEP ] DONE   [OK] SANITY/State Sen-3rd Dist (12.243s)
+[2026-03-14T08:55:12.935Z] [STEP ] START  -> BUILD_MODEL/State Sen-3rd Dist
+[2026-03-14T08:55:12.945Z] [STEP ] DONE   [OK] BUILD_MODEL/State Sen-3rd Dist (12.253s)
+[2026-03-14T08:55:12.945Z] [INFO ]   Sheet '2nd Assembly Dist': 1249 precincts, type=candidate_race
+[2026-03-14T08:55:12.945Z] [INFO ]     Allocation: area_weighted_fallback, 1249 target precincts
+[2026-03-14T08:55:12.945Z] [STEP ] START  -> NORMALIZE_SCHEMA/2nd Assembly Dist
+[2026-03-14T08:55:12.946Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:12.946Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:12.946Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:12.949Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/2nd Assembly Dist (12.257s)
+[2026-03-14T08:55:12.949Z] [STEP ] START  -> SANITY/2nd Assembly Dist
+[2026-03-14T08:55:12.950Z] [INFO ]   SANITY [OK] Non-empty model: 1249 rows
+[2026-03-14T08:55:12.950Z] [STEP ] DONE   [OK] SANITY/2nd Assembly Dist (12.258s)
+[2026-03-14T08:55:12.950Z] [STEP ] START  -> BUILD_MODEL/2nd Assembly Dist
+[2026-03-14T08:55:12.961Z] [STEP ] DONE   [OK] BUILD_MODEL/2nd Assembly Dist (12.269s)
+[2026-03-14T08:55:12.961Z] [INFO ]   Sheet '4th Assembly Dist': 529 precincts, type=candidate_race
+[2026-03-14T08:55:12.961Z] [INFO ]     Allocation: area_weighted_fallback, 529 target precincts
+[2026-03-14T08:55:12.961Z] [STEP ] START  -> NORMALIZE_SCHEMA/4th Assembly Dist
+[2026-03-14T08:55:12.962Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:12.962Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:12.962Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:12.965Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/4th Assembly Dist (12.273s)
+[2026-03-14T08:55:12.965Z] [STEP ] START  -> SANITY/4th Assembly Dist
+[2026-03-14T08:55:12.965Z] [INFO ]   SANITY [OK] Non-empty model: 529 rows
+[2026-03-14T08:55:12.965Z] [STEP ] DONE   [OK] SANITY/4th Assembly Dist (12.273s)
+[2026-03-14T08:55:12.965Z] [STEP ] START  -> BUILD_MODEL/4th Assembly Dist
+[2026-03-14T08:55:12.975Z] [STEP ] DONE   [OK] BUILD_MODEL/4th Assembly Dist (12.283s)
+[2026-03-14T08:55:12.975Z] [INFO ]   Sheet '10th Assembly Dist': 897 precincts, type=candidate_race
+[2026-03-14T08:55:12.975Z] [INFO ]     Allocation: area_weighted_fallback, 897 target precincts
+[2026-03-14T08:55:12.975Z] [STEP ] START  -> NORMALIZE_SCHEMA/10th Assembly Dist
+[2026-03-14T08:55:12.975Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:12.976Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:12.976Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:12.979Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/10th Assembly Dist (12.287s)
+[2026-03-14T08:55:12.980Z] [STEP ] START  -> SANITY/10th Assembly Dist
+[2026-03-14T08:55:12.980Z] [INFO ]   SANITY [OK] Non-empty model: 897 rows
+[2026-03-14T08:55:12.980Z] [STEP ] DONE   [OK] SANITY/10th Assembly Dist (12.288s)
+[2026-03-14T08:55:12.980Z] [STEP ] START  -> BUILD_MODEL/10th Assembly Dist
+[2026-03-14T08:55:12.990Z] [STEP ] DONE   [OK] BUILD_MODEL/10th Assembly Dist (12.298s)
+[2026-03-14T08:55:12.990Z] [INFO ]   Sheet 'SoCo BOE-Area 1': 661 precincts, type=candidate_race
+[2026-03-14T08:55:12.991Z] [INFO ]     Allocation: area_weighted_fallback, 661 target precincts
+[2026-03-14T08:55:12.991Z] [STEP ] START  -> NORMALIZE_SCHEMA/SoCo BOE-Area 1
+[2026-03-14T08:55:12.991Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:12.991Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:12.991Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:12.994Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/SoCo BOE-Area 1 (12.302s)
+[2026-03-14T08:55:12.994Z] [STEP ] START  -> SANITY/SoCo BOE-Area 1
+[2026-03-14T08:55:12.995Z] [INFO ]   SANITY [OK] Non-empty model: 661 rows
+[2026-03-14T08:55:12.995Z] [STEP ] DONE   [OK] SANITY/SoCo BOE-Area 1 (12.303s)
+[2026-03-14T08:55:12.995Z] [STEP ] START  -> BUILD_MODEL/SoCo BOE-Area 1
+[2026-03-14T08:55:13.004Z] [STEP ] DONE   [OK] BUILD_MODEL/SoCo BOE-Area 1 (12.312s)
+[2026-03-14T08:55:13.004Z] [INFO ]   Sheet 'SRJC - SR Area': 1039 precincts, type=candidate_race
+[2026-03-14T08:55:13.004Z] [INFO ]     Allocation: area_weighted_fallback, 1039 target precincts
+[2026-03-14T08:55:13.004Z] [STEP ] START  -> NORMALIZE_SCHEMA/SRJC - SR Area
+[2026-03-14T08:55:13.005Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.005Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.006Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.009Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/SRJC - SR Area (12.317s)
+[2026-03-14T08:55:13.009Z] [STEP ] START  -> SANITY/SRJC - SR Area
+[2026-03-14T08:55:13.009Z] [INFO ]   SANITY [OK] Non-empty model: 1039 rows
+[2026-03-14T08:55:13.009Z] [STEP ] DONE   [OK] SANITY/SRJC - SR Area (12.317s)
+[2026-03-14T08:55:13.009Z] [STEP ] START  -> BUILD_MODEL/SRJC - SR Area
+[2026-03-14T08:55:13.025Z] [STEP ] DONE   [OK] BUILD_MODEL/SRJC - SR Area (12.333s)
+[2026-03-14T08:55:13.025Z] [INFO ]   Sheet 'Calistoga Jt USD': 29 precincts, type=candidate_race
+[2026-03-14T08:55:13.025Z] [INFO ]     Allocation: area_weighted_fallback, 29 target precincts
+[2026-03-14T08:55:13.025Z] [STEP ] START  -> NORMALIZE_SCHEMA/Calistoga Jt USD
+[2026-03-14T08:55:13.026Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.026Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.027Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.031Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Calistoga Jt USD (12.339s)
+[2026-03-14T08:55:13.031Z] [STEP ] START  -> SANITY/Calistoga Jt USD
+[2026-03-14T08:55:13.032Z] [INFO ]   SANITY [OK] Non-empty model: 29 rows
+[2026-03-14T08:55:13.032Z] [STEP ] DONE   [OK] SANITY/Calistoga Jt USD (12.34s)
+[2026-03-14T08:55:13.032Z] [STEP ] START  -> BUILD_MODEL/Calistoga Jt USD
+[2026-03-14T08:55:13.046Z] [STEP ] DONE   [OK] BUILD_MODEL/Calistoga Jt USD (12.354s)
+[2026-03-14T08:55:13.047Z] [INFO ]   Sheet 'Cloverdale USD': 29 precincts, type=candidate_race
+[2026-03-14T08:55:13.047Z] [INFO ]     Allocation: area_weighted_fallback, 29 target precincts
+[2026-03-14T08:55:13.047Z] [STEP ] START  -> NORMALIZE_SCHEMA/Cloverdale USD
+[2026-03-14T08:55:13.048Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.048Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.049Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.054Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Cloverdale USD (12.362s)
+[2026-03-14T08:55:13.054Z] [STEP ] START  -> SANITY/Cloverdale USD
+[2026-03-14T08:55:13.054Z] [INFO ]   SANITY [OK] Non-empty model: 29 rows
+[2026-03-14T08:55:13.054Z] [STEP ] DONE   [OK] SANITY/Cloverdale USD (12.362s)
+[2026-03-14T08:55:13.055Z] [STEP ] START  -> BUILD_MODEL/Cloverdale USD
+[2026-03-14T08:55:13.068Z] [STEP ] DONE   [OK] BUILD_MODEL/Cloverdale USD (12.376s)
+[2026-03-14T08:55:13.069Z] [INFO ]   Sheet 'Cotati-RP USD Area 5': 65 precincts, type=candidate_race
+[2026-03-14T08:55:13.069Z] [INFO ]     Allocation: area_weighted_fallback, 65 target precincts
+[2026-03-14T08:55:13.069Z] [STEP ] START  -> NORMALIZE_SCHEMA/Cotati-RP USD Area 5
+[2026-03-14T08:55:13.070Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.070Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.070Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.075Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Cotati-RP USD Area 5 (12.383s)
+[2026-03-14T08:55:13.075Z] [STEP ] START  -> SANITY/Cotati-RP USD Area 5
+[2026-03-14T08:55:13.075Z] [INFO ]   SANITY [OK] Non-empty model: 65 rows
+[2026-03-14T08:55:13.075Z] [STEP ] DONE   [OK] SANITY/Cotati-RP USD Area 5 (12.383s)
+[2026-03-14T08:55:13.075Z] [STEP ] START  -> BUILD_MODEL/Cotati-RP USD Area 5
+[2026-03-14T08:55:13.089Z] [STEP ] DONE   [OK] BUILD_MODEL/Cotati-RP USD Area 5 (12.397s)
+[2026-03-14T08:55:13.089Z] [INFO ]   Sheet 'Sonoma Valley USD Area 4': 49 precincts, type=candidate_race
+[2026-03-14T08:55:13.089Z] [INFO ]     Allocation: area_weighted_fallback, 49 target precincts
+[2026-03-14T08:55:13.089Z] [STEP ] START  -> NORMALIZE_SCHEMA/Sonoma Valley USD Area 4
+[2026-03-14T08:55:13.090Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.090Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.091Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.096Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Sonoma Valley USD Area 4 (12.404s)
+[2026-03-14T08:55:13.096Z] [STEP ] START  -> SANITY/Sonoma Valley USD Area 4
+[2026-03-14T08:55:13.096Z] [INFO ]   SANITY [OK] Non-empty model: 49 rows
+[2026-03-14T08:55:13.096Z] [STEP ] DONE   [OK] SANITY/Sonoma Valley USD Area 4 (12.404s)
+[2026-03-14T08:55:13.096Z] [STEP ] START  -> BUILD_MODEL/Sonoma Valley USD Area 4
+[2026-03-14T08:55:13.107Z] [STEP ] DONE   [OK] BUILD_MODEL/Sonoma Valley USD Area 4 (12.415s)
+[2026-03-14T08:55:13.107Z] [INFO ]   Sheet 'Sonoma Valley USD Area 5': 93 precincts, type=candidate_race
+[2026-03-14T08:55:13.108Z] [INFO ]     Allocation: area_weighted_fallback, 93 target precincts
+[2026-03-14T08:55:13.108Z] [STEP ] START  -> NORMALIZE_SCHEMA/Sonoma Valley USD Area 5
+[2026-03-14T08:55:13.108Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.108Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.109Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.114Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Sonoma Valley USD Area 5 (12.422s)
+[2026-03-14T08:55:13.114Z] [STEP ] START  -> SANITY/Sonoma Valley USD Area 5
+[2026-03-14T08:55:13.114Z] [INFO ]   SANITY [OK] Non-empty model: 93 rows
+[2026-03-14T08:55:13.114Z] [STEP ] DONE   [OK] SANITY/Sonoma Valley USD Area 5 (12.422s)
+[2026-03-14T08:55:13.114Z] [STEP ] START  -> BUILD_MODEL/Sonoma Valley USD Area 5
+[2026-03-14T08:55:13.121Z] [STEP ] DONE   [OK] BUILD_MODEL/Sonoma Valley USD Area 5 (12.429s)
+[2026-03-14T08:55:13.121Z] [INFO ]   Sheet 'Petaluma Jt UHSD': 253 precincts, type=candidate_race
+[2026-03-14T08:55:13.121Z] [INFO ]     Allocation: area_weighted_fallback, 253 target precincts
+[2026-03-14T08:55:13.121Z] [STEP ] START  -> NORMALIZE_SCHEMA/Petaluma Jt UHSD
+[2026-03-14T08:55:13.122Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.122Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.122Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.125Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Petaluma Jt UHSD (12.433s)
+[2026-03-14T08:55:13.125Z] [STEP ] START  -> SANITY/Petaluma Jt UHSD
+[2026-03-14T08:55:13.126Z] [INFO ]   SANITY [OK] Non-empty model: 253 rows
+[2026-03-14T08:55:13.126Z] [STEP ] DONE   [OK] SANITY/Petaluma Jt UHSD (12.434s)
+[2026-03-14T08:55:13.126Z] [STEP ] START  -> BUILD_MODEL/Petaluma Jt UHSD
+[2026-03-14T08:55:13.134Z] [STEP ] DONE   [OK] BUILD_MODEL/Petaluma Jt UHSD (12.442s)
+[2026-03-14T08:55:13.134Z] [INFO ]   Sheet 'Pt Arena Jt-Arena UHSD': 13 precincts, type=candidate_race
+[2026-03-14T08:55:13.134Z] [INFO ]     Allocation: area_weighted_fallback, 13 target precincts
+[2026-03-14T08:55:13.134Z] [STEP ] START  -> NORMALIZE_SCHEMA/Pt Arena Jt-Arena UHSD
+[2026-03-14T08:55:13.135Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.135Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.135Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.138Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Pt Arena Jt-Arena UHSD (12.446s)
+[2026-03-14T08:55:13.138Z] [STEP ] START  -> SANITY/Pt Arena Jt-Arena UHSD
+[2026-03-14T08:55:13.138Z] [INFO ]   SANITY [OK] Non-empty model: 13 rows
+[2026-03-14T08:55:13.138Z] [STEP ] DONE   [OK] SANITY/Pt Arena Jt-Arena UHSD (12.446s)
+[2026-03-14T08:55:13.139Z] [STEP ] START  -> BUILD_MODEL/Pt Arena Jt-Arena UHSD
+[2026-03-14T08:55:13.150Z] [STEP ] DONE   [OK] BUILD_MODEL/Pt Arena Jt-Arena UHSD (12.458s)
+[2026-03-14T08:55:13.150Z] [INFO ]   Sheet 'City of SR HSD Area 1': 97 precincts, type=candidate_race
+[2026-03-14T08:55:13.150Z] [INFO ]     Allocation: area_weighted_fallback, 97 target precincts
+[2026-03-14T08:55:13.150Z] [STEP ] START  -> NORMALIZE_SCHEMA/City of SR HSD Area 1
+[2026-03-14T08:55:13.150Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.151Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.151Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.155Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/City of SR HSD Area 1 (12.463s)
+[2026-03-14T08:55:13.155Z] [STEP ] START  -> SANITY/City of SR HSD Area 1
+[2026-03-14T08:55:13.155Z] [INFO ]   SANITY [OK] Non-empty model: 97 rows
+[2026-03-14T08:55:13.155Z] [STEP ] DONE   [OK] SANITY/City of SR HSD Area 1 (12.463s)
+[2026-03-14T08:55:13.155Z] [STEP ] START  -> BUILD_MODEL/City of SR HSD Area 1
+[2026-03-14T08:55:13.163Z] [STEP ] DONE   [OK] BUILD_MODEL/City of SR HSD Area 1 (12.471s)
+[2026-03-14T08:55:13.163Z] [INFO ]   Sheet 'West SoCo UHSD': 389 precincts, type=candidate_race
+[2026-03-14T08:55:13.164Z] [INFO ]     Allocation: area_weighted_fallback, 389 target precincts
+[2026-03-14T08:55:13.164Z] [STEP ] START  -> NORMALIZE_SCHEMA/West SoCo UHSD
+[2026-03-14T08:55:13.164Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.165Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.165Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.170Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/West SoCo UHSD (12.478s)
+[2026-03-14T08:55:13.171Z] [STEP ] START  -> SANITY/West SoCo UHSD
+[2026-03-14T08:55:13.171Z] [INFO ]   SANITY [OK] Non-empty model: 389 rows
+[2026-03-14T08:55:13.171Z] [STEP ] DONE   [OK] SANITY/West SoCo UHSD (12.479s)
+[2026-03-14T08:55:13.171Z] [STEP ] START  -> BUILD_MODEL/West SoCo UHSD
+[2026-03-14T08:55:13.186Z] [STEP ] DONE   [OK] BUILD_MODEL/West SoCo UHSD (12.494s)
+[2026-03-14T08:55:13.186Z] [INFO ]   Sheet 'Harmony USD': 29 precincts, type=candidate_race
+[2026-03-14T08:55:13.186Z] [INFO ]     Allocation: area_weighted_fallback, 29 target precincts
+[2026-03-14T08:55:13.187Z] [STEP ] START  -> NORMALIZE_SCHEMA/Harmony USD
+[2026-03-14T08:55:13.187Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.187Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.188Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.192Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Harmony USD (12.5s)
+[2026-03-14T08:55:13.192Z] [STEP ] START  -> SANITY/Harmony USD
+[2026-03-14T08:55:13.192Z] [INFO ]   SANITY [OK] Non-empty model: 29 rows
+[2026-03-14T08:55:13.192Z] [STEP ] DONE   [OK] SANITY/Harmony USD (12.5s)
+[2026-03-14T08:55:13.192Z] [STEP ] START  -> BUILD_MODEL/Harmony USD
+[2026-03-14T08:55:13.201Z] [STEP ] DONE   [OK] BUILD_MODEL/Harmony USD (12.509s)
+[2026-03-14T08:55:13.201Z] [INFO ]   Sheet 'Oak Grove USD-FT': 29 precincts, type=candidate_race
+[2026-03-14T08:55:13.201Z] [INFO ]     Allocation: area_weighted_fallback, 29 target precincts
+[2026-03-14T08:55:13.201Z] [STEP ] START  -> NORMALIZE_SCHEMA/Oak Grove USD-FT
+[2026-03-14T08:55:13.202Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.202Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.202Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.205Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Oak Grove USD-FT (12.513s)
+[2026-03-14T08:55:13.205Z] [STEP ] START  -> SANITY/Oak Grove USD-FT
+[2026-03-14T08:55:13.205Z] [INFO ]   SANITY [OK] Non-empty model: 29 rows
+[2026-03-14T08:55:13.205Z] [STEP ] DONE   [OK] SANITY/Oak Grove USD-FT (12.513s)
+[2026-03-14T08:55:13.205Z] [STEP ] START  -> BUILD_MODEL/Oak Grove USD-FT
+[2026-03-14T08:55:13.213Z] [STEP ] DONE   [OK] BUILD_MODEL/Oak Grove USD-FT (12.521s)
+[2026-03-14T08:55:13.213Z] [INFO ]   Sheet 'Oak Grove USD-ST': 29 precincts, type=candidate_race
+[2026-03-14T08:55:13.213Z] [INFO ]     Allocation: area_weighted_fallback, 29 target precincts
+[2026-03-14T08:55:13.213Z] [STEP ] START  -> NORMALIZE_SCHEMA/Oak Grove USD-ST
+[2026-03-14T08:55:13.214Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.214Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.214Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.217Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Oak Grove USD-ST (12.525s)
+[2026-03-14T08:55:13.217Z] [STEP ] START  -> SANITY/Oak Grove USD-ST
+[2026-03-14T08:55:13.217Z] [INFO ]   SANITY [OK] Non-empty model: 29 rows
+[2026-03-14T08:55:13.217Z] [STEP ] DONE   [OK] SANITY/Oak Grove USD-ST (12.525s)
+[2026-03-14T08:55:13.217Z] [STEP ] START  -> BUILD_MODEL/Oak Grove USD-ST
+[2026-03-14T08:55:13.225Z] [STEP ] DONE   [OK] BUILD_MODEL/Oak Grove USD-ST (12.533s)
+[2026-03-14T08:55:13.225Z] [INFO ]   Sheet 'Rincon Valley USD': 269 precincts, type=candidate_race
+[2026-03-14T08:55:13.225Z] [INFO ]     Allocation: area_weighted_fallback, 269 target precincts
+[2026-03-14T08:55:13.225Z] [STEP ] START  -> NORMALIZE_SCHEMA/Rincon Valley USD
+[2026-03-14T08:55:13.226Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.226Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.226Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.230Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Rincon Valley USD (12.538s)
+[2026-03-14T08:55:13.230Z] [STEP ] START  -> SANITY/Rincon Valley USD
+[2026-03-14T08:55:13.230Z] [INFO ]   SANITY [OK] Non-empty model: 269 rows
+[2026-03-14T08:55:13.230Z] [STEP ] DONE   [OK] SANITY/Rincon Valley USD (12.538s)
+[2026-03-14T08:55:13.230Z] [STEP ] START  -> BUILD_MODEL/Rincon Valley USD
+[2026-03-14T08:55:13.239Z] [STEP ] DONE   [OK] BUILD_MODEL/Rincon Valley USD (12.547s)
+[2026-03-14T08:55:13.239Z] [INFO ]   Sheet 'Roseland SD-FT': 25 precincts, type=candidate_race
+[2026-03-14T08:55:13.239Z] [INFO ]     Allocation: area_weighted_fallback, 25 target precincts
+[2026-03-14T08:55:13.239Z] [STEP ] START  -> NORMALIZE_SCHEMA/Roseland SD-FT
+[2026-03-14T08:55:13.240Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.240Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.240Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.244Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Roseland SD-FT (12.552s)
+[2026-03-14T08:55:13.244Z] [STEP ] START  -> SANITY/Roseland SD-FT
+[2026-03-14T08:55:13.244Z] [INFO ]   SANITY [OK] Non-empty model: 25 rows
+[2026-03-14T08:55:13.244Z] [STEP ] DONE   [OK] SANITY/Roseland SD-FT (12.552s)
+[2026-03-14T08:55:13.244Z] [STEP ] START  -> BUILD_MODEL/Roseland SD-FT
+[2026-03-14T08:55:13.251Z] [STEP ] DONE   [OK] BUILD_MODEL/Roseland SD-FT (12.559s)
+[2026-03-14T08:55:13.251Z] [INFO ]   Sheet 'SR City Council-Dist 1': 53 precincts, type=candidate_race
+[2026-03-14T08:55:13.251Z] [INFO ]     Allocation: area_weighted_fallback, 53 target precincts
+[2026-03-14T08:55:13.251Z] [STEP ] START  -> NORMALIZE_SCHEMA/SR City Council-Dist 1
+[2026-03-14T08:55:13.252Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.252Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.252Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.255Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/SR City Council-Dist 1 (12.563s)
+[2026-03-14T08:55:13.255Z] [STEP ] START  -> SANITY/SR City Council-Dist 1
+[2026-03-14T08:55:13.255Z] [INFO ]   SANITY [OK] Non-empty model: 53 rows
+[2026-03-14T08:55:13.255Z] [STEP ] DONE   [OK] SANITY/SR City Council-Dist 1 (12.563s)
+[2026-03-14T08:55:13.255Z] [STEP ] START  -> BUILD_MODEL/SR City Council-Dist 1
+[2026-03-14T08:55:13.263Z] [STEP ] DONE   [OK] BUILD_MODEL/SR City Council-Dist 1 (12.571s)
+[2026-03-14T08:55:13.263Z] [INFO ]   Sheet 'SR City Council-Dist 3': 101 precincts, type=candidate_race
+[2026-03-14T08:55:13.263Z] [INFO ]     Allocation: area_weighted_fallback, 101 target precincts
+[2026-03-14T08:55:13.263Z] [STEP ] START  -> NORMALIZE_SCHEMA/SR City Council-Dist 3
+[2026-03-14T08:55:13.264Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.264Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.264Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.269Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/SR City Council-Dist 3 (12.577s)
+[2026-03-14T08:55:13.269Z] [STEP ] START  -> SANITY/SR City Council-Dist 3
+[2026-03-14T08:55:13.269Z] [INFO ]   SANITY [OK] Non-empty model: 101 rows
+[2026-03-14T08:55:13.269Z] [STEP ] DONE   [OK] SANITY/SR City Council-Dist 3 (12.577s)
+[2026-03-14T08:55:13.269Z] [STEP ] START  -> BUILD_MODEL/SR City Council-Dist 3
+[2026-03-14T08:55:13.277Z] [STEP ] DONE   [OK] BUILD_MODEL/SR City Council-Dist 3 (12.585s)
+[2026-03-14T08:55:13.277Z] [INFO ]   Sheet 'SR City Council-Dist 5': 61 precincts, type=candidate_race
+[2026-03-14T08:55:13.277Z] [INFO ]     Allocation: area_weighted_fallback, 61 target precincts
+[2026-03-14T08:55:13.277Z] [STEP ] START  -> NORMALIZE_SCHEMA/SR City Council-Dist 5
+[2026-03-14T08:55:13.278Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.278Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.279Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.286Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/SR City Council-Dist 5 (12.594s)
+[2026-03-14T08:55:13.286Z] [STEP ] START  -> SANITY/SR City Council-Dist 5
+[2026-03-14T08:55:13.286Z] [INFO ]   SANITY [OK] Non-empty model: 61 rows
+[2026-03-14T08:55:13.286Z] [STEP ] DONE   [OK] SANITY/SR City Council-Dist 5 (12.594s)
+[2026-03-14T08:55:13.286Z] [STEP ] START  -> BUILD_MODEL/SR City Council-Dist 5
+[2026-03-14T08:55:13.297Z] [STEP ] DONE   [OK] BUILD_MODEL/SR City Council-Dist 5 (12.605s)
+[2026-03-14T08:55:13.298Z] [INFO ]   Sheet 'SR City Council-Dist 7': 85 precincts, type=candidate_race
+[2026-03-14T08:55:13.298Z] [INFO ]     Allocation: area_weighted_fallback, 85 target precincts
+[2026-03-14T08:55:13.298Z] [STEP ] START  -> NORMALIZE_SCHEMA/SR City Council-Dist 7
+[2026-03-14T08:55:13.299Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.299Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.299Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.304Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/SR City Council-Dist 7 (12.612s)
+[2026-03-14T08:55:13.304Z] [STEP ] START  -> SANITY/SR City Council-Dist 7
+[2026-03-14T08:55:13.304Z] [INFO ]   SANITY [OK] Non-empty model: 85 rows
+[2026-03-14T08:55:13.304Z] [STEP ] DONE   [OK] SANITY/SR City Council-Dist 7 (12.612s)
+[2026-03-14T08:55:13.304Z] [STEP ] START  -> BUILD_MODEL/SR City Council-Dist 7
+[2026-03-14T08:55:13.316Z] [STEP ] DONE   [OK] BUILD_MODEL/SR City Council-Dist 7 (12.624s)
+[2026-03-14T08:55:13.316Z] [INFO ]   Sheet 'Cloverdale City Council': 13 precincts, type=candidate_race
+[2026-03-14T08:55:13.316Z] [INFO ]     Allocation: area_weighted_fallback, 13 target precincts
+[2026-03-14T08:55:13.317Z] [STEP ] START  -> NORMALIZE_SCHEMA/Cloverdale City Council
+[2026-03-14T08:55:13.317Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.317Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.318Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.322Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Cloverdale City Council (12.63s)
+[2026-03-14T08:55:13.322Z] [STEP ] START  -> SANITY/Cloverdale City Council
+[2026-03-14T08:55:13.322Z] [INFO ]   SANITY [OK] Non-empty model: 13 rows
+[2026-03-14T08:55:13.322Z] [STEP ] DONE   [OK] SANITY/Cloverdale City Council (12.63s)
+[2026-03-14T08:55:13.322Z] [STEP ] START  -> BUILD_MODEL/Cloverdale City Council
+[2026-03-14T08:55:13.335Z] [STEP ] DONE   [OK] BUILD_MODEL/Cloverdale City Council (12.643s)
+[2026-03-14T08:55:13.335Z] [INFO ]   Sheet 'Cotati City Council': 49 precincts, type=candidate_race
+[2026-03-14T08:55:13.335Z] [INFO ]     Allocation: area_weighted_fallback, 49 target precincts
+[2026-03-14T08:55:13.336Z] [STEP ] START  -> NORMALIZE_SCHEMA/Cotati City Council
+[2026-03-14T08:55:13.336Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.336Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.336Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.340Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Cotati City Council (12.648s)
+[2026-03-14T08:55:13.340Z] [STEP ] START  -> SANITY/Cotati City Council
+[2026-03-14T08:55:13.340Z] [INFO ]   SANITY [OK] Non-empty model: 49 rows
+[2026-03-14T08:55:13.340Z] [STEP ] DONE   [OK] SANITY/Cotati City Council (12.648s)
+[2026-03-14T08:55:13.340Z] [STEP ] START  -> BUILD_MODEL/Cotati City Council
+[2026-03-14T08:55:13.349Z] [STEP ] DONE   [OK] BUILD_MODEL/Cotati City Council (12.657s)
+[2026-03-14T08:55:13.349Z] [INFO ]   Sheet 'Healdsburg City Council': 21 precincts, type=candidate_race
+[2026-03-14T08:55:13.350Z] [INFO ]     Allocation: area_weighted_fallback, 21 target precincts
+[2026-03-14T08:55:13.350Z] [STEP ] START  -> NORMALIZE_SCHEMA/Healdsburg City Council
+[2026-03-14T08:55:13.350Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.350Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.350Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.354Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Healdsburg City Council (12.662s)
+[2026-03-14T08:55:13.354Z] [STEP ] START  -> SANITY/Healdsburg City Council
+[2026-03-14T08:55:13.354Z] [INFO ]   SANITY [OK] Non-empty model: 21 rows
+[2026-03-14T08:55:13.354Z] [STEP ] DONE   [OK] SANITY/Healdsburg City Council (12.662s)
+[2026-03-14T08:55:13.354Z] [STEP ] START  -> BUILD_MODEL/Healdsburg City Council
+[2026-03-14T08:55:13.363Z] [STEP ] DONE   [OK] BUILD_MODEL/Healdsburg City Council (12.671s)
+[2026-03-14T08:55:13.363Z] [INFO ]   Sheet 'Petaluma City Council': 101 precincts, type=candidate_race
+[2026-03-14T08:55:13.364Z] [INFO ]     Allocation: area_weighted_fallback, 101 target precincts
+[2026-03-14T08:55:13.364Z] [STEP ] START  -> NORMALIZE_SCHEMA/Petaluma City Council
+[2026-03-14T08:55:13.364Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.364Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.364Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.368Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Petaluma City Council (12.676s)
+[2026-03-14T08:55:13.368Z] [STEP ] START  -> SANITY/Petaluma City Council
+[2026-03-14T08:55:13.368Z] [INFO ]   SANITY [OK] Non-empty model: 101 rows
+[2026-03-14T08:55:13.368Z] [STEP ] DONE   [OK] SANITY/Petaluma City Council (12.676s)
+[2026-03-14T08:55:13.368Z] [STEP ] START  -> BUILD_MODEL/Petaluma City Council
+[2026-03-14T08:55:13.377Z] [STEP ] DONE   [OK] BUILD_MODEL/Petaluma City Council (12.685s)
+[2026-03-14T08:55:13.377Z] [INFO ]   Sheet 'RP City Council-Dist 1': 25 precincts, type=candidate_race
+[2026-03-14T08:55:13.378Z] [INFO ]     Allocation: area_weighted_fallback, 25 target precincts
+[2026-03-14T08:55:13.378Z] [STEP ] START  -> NORMALIZE_SCHEMA/RP City Council-Dist 1
+[2026-03-14T08:55:13.378Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.378Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.378Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.381Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/RP City Council-Dist 1 (12.689s)
+[2026-03-14T08:55:13.381Z] [STEP ] START  -> SANITY/RP City Council-Dist 1
+[2026-03-14T08:55:13.381Z] [INFO ]   SANITY [OK] Non-empty model: 25 rows
+[2026-03-14T08:55:13.381Z] [STEP ] DONE   [OK] SANITY/RP City Council-Dist 1 (12.689s)
+[2026-03-14T08:55:13.382Z] [STEP ] START  -> BUILD_MODEL/RP City Council-Dist 1
+[2026-03-14T08:55:13.389Z] [STEP ] DONE   [OK] BUILD_MODEL/RP City Council-Dist 1 (12.697s)
+[2026-03-14T08:55:13.389Z] [INFO ]   Sheet 'RP City Council-Dist 3': 53 precincts, type=candidate_race
+[2026-03-14T08:55:13.389Z] [INFO ]     Allocation: area_weighted_fallback, 53 target precincts
+[2026-03-14T08:55:13.389Z] [STEP ] START  -> NORMALIZE_SCHEMA/RP City Council-Dist 3
+[2026-03-14T08:55:13.390Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.390Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.391Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.394Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/RP City Council-Dist 3 (12.702s)
+[2026-03-14T08:55:13.394Z] [STEP ] START  -> SANITY/RP City Council-Dist 3
+[2026-03-14T08:55:13.394Z] [INFO ]   SANITY [OK] Non-empty model: 53 rows
+[2026-03-14T08:55:13.394Z] [STEP ] DONE   [OK] SANITY/RP City Council-Dist 3 (12.702s)
+[2026-03-14T08:55:13.394Z] [STEP ] START  -> BUILD_MODEL/RP City Council-Dist 3
+[2026-03-14T08:55:13.401Z] [STEP ] DONE   [OK] BUILD_MODEL/RP City Council-Dist 3 (12.709s)
+[2026-03-14T08:55:13.401Z] [INFO ]   Sheet 'RP City Council-Dist 4': 33 precincts, type=candidate_race
+[2026-03-14T08:55:13.401Z] [INFO ]     Allocation: area_weighted_fallback, 33 target precincts
+[2026-03-14T08:55:13.401Z] [STEP ] START  -> NORMALIZE_SCHEMA/RP City Council-Dist 4
+[2026-03-14T08:55:13.402Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.402Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.403Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.406Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/RP City Council-Dist 4 (12.714s)
+[2026-03-14T08:55:13.407Z] [STEP ] START  -> SANITY/RP City Council-Dist 4
+[2026-03-14T08:55:13.407Z] [INFO ]   SANITY [OK] Non-empty model: 33 rows
+[2026-03-14T08:55:13.407Z] [STEP ] DONE   [OK] SANITY/RP City Council-Dist 4 (12.715s)
+[2026-03-14T08:55:13.407Z] [STEP ] START  -> BUILD_MODEL/RP City Council-Dist 4
+[2026-03-14T08:55:13.416Z] [STEP ] DONE   [OK] BUILD_MODEL/RP City Council-Dist 4 (12.724s)
+[2026-03-14T08:55:13.416Z] [INFO ]   Sheet 'Sebastopol City Council': 21 precincts, type=candidate_race
+[2026-03-14T08:55:13.416Z] [INFO ]     Allocation: area_weighted_fallback, 21 target precincts
+[2026-03-14T08:55:13.416Z] [STEP ] START  -> NORMALIZE_SCHEMA/Sebastopol City Council
+[2026-03-14T08:55:13.417Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.417Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.417Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.420Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Sebastopol City Council (12.728s)
+[2026-03-14T08:55:13.420Z] [STEP ] START  -> SANITY/Sebastopol City Council
+[2026-03-14T08:55:13.420Z] [INFO ]   SANITY [OK] Non-empty model: 21 rows
+[2026-03-14T08:55:13.420Z] [STEP ] DONE   [OK] SANITY/Sebastopol City Council (12.728s)
+[2026-03-14T08:55:13.420Z] [STEP ] START  -> BUILD_MODEL/Sebastopol City Council
+[2026-03-14T08:55:13.429Z] [STEP ] DONE   [OK] BUILD_MODEL/Sebastopol City Council (12.737s)
+[2026-03-14T08:55:13.429Z] [INFO ]   Sheet 'Sonoma City Council': 73 precincts, type=candidate_race
+[2026-03-14T08:55:13.430Z] [INFO ]     Allocation: area_weighted_fallback, 73 target precincts
+[2026-03-14T08:55:13.430Z] [STEP ] START  -> NORMALIZE_SCHEMA/Sonoma City Council
+[2026-03-14T08:55:13.430Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.431Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.431Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.434Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Sonoma City Council (12.742s)
+[2026-03-14T08:55:13.435Z] [STEP ] START  -> SANITY/Sonoma City Council
+[2026-03-14T08:55:13.435Z] [INFO ]   SANITY [OK] Non-empty model: 73 rows
+[2026-03-14T08:55:13.435Z] [STEP ] DONE   [OK] SANITY/Sonoma City Council (12.743s)
+[2026-03-14T08:55:13.435Z] [STEP ] START  -> BUILD_MODEL/Sonoma City Council
+[2026-03-14T08:55:13.446Z] [STEP ] DONE   [OK] BUILD_MODEL/Sonoma City Council (12.754s)
+[2026-03-14T08:55:13.446Z] [INFO ]   Sheet 'Town of Windsor-Mayor': 141 precincts, type=candidate_race
+[2026-03-14T08:55:13.446Z] [INFO ]     Allocation: area_weighted_fallback, 141 target precincts
+[2026-03-14T08:55:13.446Z] [STEP ] START  -> NORMALIZE_SCHEMA/Town of Windsor-Mayor
+[2026-03-14T08:55:13.447Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.447Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.447Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.451Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Town of Windsor-Mayor (12.759s)
+[2026-03-14T08:55:13.451Z] [STEP ] START  -> SANITY/Town of Windsor-Mayor
+[2026-03-14T08:55:13.451Z] [INFO ]   SANITY [OK] Non-empty model: 141 rows
+[2026-03-14T08:55:13.451Z] [STEP ] DONE   [OK] SANITY/Town of Windsor-Mayor (12.759s)
+[2026-03-14T08:55:13.451Z] [STEP ] START  -> BUILD_MODEL/Town of Windsor-Mayor
+[2026-03-14T08:55:13.460Z] [STEP ] DONE   [OK] BUILD_MODEL/Town of Windsor-Mayor (12.768s)
+[2026-03-14T08:55:13.460Z] [INFO ]   Sheet 'Windsor Town Council-Dist 3': 21 precincts, type=candidate_race
+[2026-03-14T08:55:13.460Z] [INFO ]     Allocation: area_weighted_fallback, 21 target precincts
+[2026-03-14T08:55:13.460Z] [STEP ] START  -> NORMALIZE_SCHEMA/Windsor Town Council-Dist 3
+[2026-03-14T08:55:13.460Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.461Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.461Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.464Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Windsor Town Council-Dist 3 (12.772s)
+[2026-03-14T08:55:13.464Z] [STEP ] START  -> SANITY/Windsor Town Council-Dist 3
+[2026-03-14T08:55:13.464Z] [INFO ]   SANITY [OK] Non-empty model: 21 rows
+[2026-03-14T08:55:13.464Z] [STEP ] DONE   [OK] SANITY/Windsor Town Council-Dist 3 (12.772s)
+[2026-03-14T08:55:13.464Z] [STEP ] START  -> BUILD_MODEL/Windsor Town Council-Dist 3
+[2026-03-14T08:55:13.473Z] [STEP ] DONE   [OK] BUILD_MODEL/Windsor Town Council-Dist 3 (12.781s)
+[2026-03-14T08:55:13.473Z] [INFO ]   Sheet 'Graton Fire Protection Dist': 57 precincts, type=candidate_race
+[2026-03-14T08:55:13.473Z] [INFO ]     Allocation: area_weighted_fallback, 57 target precincts
+[2026-03-14T08:55:13.473Z] [STEP ] START  -> NORMALIZE_SCHEMA/Graton Fire Protection Dist
+[2026-03-14T08:55:13.473Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.474Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.474Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.478Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Graton Fire Protection Dist (12.786s)
+[2026-03-14T08:55:13.479Z] [STEP ] START  -> SANITY/Graton Fire Protection Dist
+[2026-03-14T08:55:13.479Z] [INFO ]   SANITY [OK] Non-empty model: 57 rows
+[2026-03-14T08:55:13.479Z] [STEP ] DONE   [OK] SANITY/Graton Fire Protection Dist (12.787s)
+[2026-03-14T08:55:13.479Z] [STEP ] START  -> BUILD_MODEL/Graton Fire Protection Dist
+[2026-03-14T08:55:13.487Z] [STEP ] DONE   [OK] BUILD_MODEL/Graton Fire Protection Dist (12.795s)
+[2026-03-14T08:55:13.487Z] [INFO ]   Sheet 'Prop 14': 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:13.487Z] [INFO ]     Allocation: area_weighted_fallback, 2673 target precincts
+[2026-03-14T08:55:13.487Z] [STEP ] START  -> NORMALIZE_SCHEMA/Prop 14
+[2026-03-14T08:55:13.488Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.488Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.489Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.489Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:13.489Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:13.494Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Prop 14 (12.802s)
+[2026-03-14T08:55:13.494Z] [STEP ] START  -> SANITY/Prop 14
+[2026-03-14T08:55:13.494Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T08:55:13.494Z] [STEP ] DONE   [OK] SANITY/Prop 14 (12.802s)
+[2026-03-14T08:55:13.494Z] [STEP ] START  -> BUILD_MODEL/Prop 14
+[2026-03-14T08:55:13.516Z] [STEP ] DONE   [OK] BUILD_MODEL/Prop 14 (12.824s)
+[2026-03-14T08:55:13.516Z] [INFO ]   Sheet 'Prop 15': 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:13.516Z] [INFO ]     Allocation: area_weighted_fallback, 2673 target precincts
+[2026-03-14T08:55:13.516Z] [STEP ] START  -> NORMALIZE_SCHEMA/Prop 15
+[2026-03-14T08:55:13.516Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.517Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.517Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.517Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:13.518Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:13.524Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Prop 15 (12.832s)
+[2026-03-14T08:55:13.524Z] [STEP ] START  -> SANITY/Prop 15
+[2026-03-14T08:55:13.524Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T08:55:13.524Z] [STEP ] DONE   [OK] SANITY/Prop 15 (12.832s)
+[2026-03-14T08:55:13.524Z] [STEP ] START  -> BUILD_MODEL/Prop 15
+[2026-03-14T08:55:13.543Z] [STEP ] DONE   [OK] BUILD_MODEL/Prop 15 (12.851s)
+[2026-03-14T08:55:13.543Z] [INFO ]   Sheet 'Prop 16': 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:13.543Z] [INFO ]     Allocation: area_weighted_fallback, 2673 target precincts
+[2026-03-14T08:55:13.543Z] [STEP ] START  -> NORMALIZE_SCHEMA/Prop 16
+[2026-03-14T08:55:13.544Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.545Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.545Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.546Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:13.546Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:13.553Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Prop 16 (12.861s)
+[2026-03-14T08:55:13.553Z] [STEP ] START  -> SANITY/Prop 16
+[2026-03-14T08:55:13.553Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T08:55:13.554Z] [STEP ] DONE   [OK] SANITY/Prop 16 (12.862s)
+[2026-03-14T08:55:13.554Z] [STEP ] START  -> BUILD_MODEL/Prop 16
+[2026-03-14T08:55:13.573Z] [STEP ] DONE   [OK] BUILD_MODEL/Prop 16 (12.881s)
+[2026-03-14T08:55:13.573Z] [INFO ]   Sheet 'Prop 17': 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:13.573Z] [INFO ]     Allocation: area_weighted_fallback, 2673 target precincts
+[2026-03-14T08:55:13.573Z] [STEP ] START  -> NORMALIZE_SCHEMA/Prop 17
+[2026-03-14T08:55:13.573Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.574Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.574Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.574Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:13.575Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:13.580Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Prop 17 (12.888s)
+[2026-03-14T08:55:13.581Z] [STEP ] START  -> SANITY/Prop 17
+[2026-03-14T08:55:13.581Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T08:55:13.581Z] [STEP ] DONE   [OK] SANITY/Prop 17 (12.889s)
+[2026-03-14T08:55:13.581Z] [STEP ] START  -> BUILD_MODEL/Prop 17
+[2026-03-14T08:55:13.600Z] [STEP ] DONE   [OK] BUILD_MODEL/Prop 17 (12.908s)
+[2026-03-14T08:55:13.600Z] [INFO ]   Sheet 'Prop 18': 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:13.601Z] [INFO ]     Allocation: area_weighted_fallback, 2673 target precincts
+[2026-03-14T08:55:13.601Z] [STEP ] START  -> NORMALIZE_SCHEMA/Prop 18
+[2026-03-14T08:55:13.601Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.601Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.602Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.602Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:13.602Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:13.607Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Prop 18 (12.914s)
+[2026-03-14T08:55:13.607Z] [STEP ] START  -> SANITY/Prop 18
+[2026-03-14T08:55:13.607Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T08:55:13.607Z] [STEP ] DONE   [OK] SANITY/Prop 18 (12.915s)
+[2026-03-14T08:55:13.607Z] [STEP ] START  -> BUILD_MODEL/Prop 18
+[2026-03-14T08:55:13.626Z] [STEP ] DONE   [OK] BUILD_MODEL/Prop 18 (12.934s)
+[2026-03-14T08:55:13.627Z] [INFO ]   Sheet 'Prop 19': 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:13.627Z] [INFO ]     Allocation: area_weighted_fallback, 2673 target precincts
+[2026-03-14T08:55:13.627Z] [STEP ] START  -> NORMALIZE_SCHEMA/Prop 19
+[2026-03-14T08:55:13.627Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.628Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.628Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.628Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:13.629Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:13.634Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Prop 19 (12.942s)
+[2026-03-14T08:55:13.634Z] [STEP ] START  -> SANITY/Prop 19
+[2026-03-14T08:55:13.634Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T08:55:13.634Z] [STEP ] DONE   [OK] SANITY/Prop 19 (12.942s)
+[2026-03-14T08:55:13.634Z] [STEP ] START  -> BUILD_MODEL/Prop 19
+[2026-03-14T08:55:13.675Z] [STEP ] DONE   [OK] BUILD_MODEL/Prop 19 (12.983s)
+[2026-03-14T08:55:13.675Z] [INFO ]   Sheet 'Prop 20': 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:13.677Z] [INFO ]     Allocation: area_weighted_fallback, 2673 target precincts
+[2026-03-14T08:55:13.677Z] [STEP ] START  -> NORMALIZE_SCHEMA/Prop 20
+[2026-03-14T08:55:13.678Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.678Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.678Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.679Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:13.679Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:13.686Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Prop 20 (12.993s)
+[2026-03-14T08:55:13.686Z] [STEP ] START  -> SANITY/Prop 20
+[2026-03-14T08:55:13.686Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T08:55:13.686Z] [STEP ] DONE   [OK] SANITY/Prop 20 (12.994s)
+[2026-03-14T08:55:13.686Z] [STEP ] START  -> BUILD_MODEL/Prop 20
+[2026-03-14T08:55:13.703Z] [STEP ] DONE   [OK] BUILD_MODEL/Prop 20 (13.011s)
+[2026-03-14T08:55:13.703Z] [INFO ]   Sheet 'Prop 21': 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:13.704Z] [INFO ]     Allocation: area_weighted_fallback, 2673 target precincts
+[2026-03-14T08:55:13.704Z] [STEP ] START  -> NORMALIZE_SCHEMA/Prop 21
+[2026-03-14T08:55:13.704Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.704Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.705Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.705Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:13.705Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:13.711Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Prop 21 (13.019s)
+[2026-03-14T08:55:13.711Z] [STEP ] START  -> SANITY/Prop 21
+[2026-03-14T08:55:13.711Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T08:55:13.711Z] [STEP ] DONE   [OK] SANITY/Prop 21 (13.019s)
+[2026-03-14T08:55:13.711Z] [STEP ] START  -> BUILD_MODEL/Prop 21
+[2026-03-14T08:55:13.727Z] [STEP ] DONE   [OK] BUILD_MODEL/Prop 21 (13.035s)
+[2026-03-14T08:55:13.727Z] [INFO ]   Sheet 'Prop 22': 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:13.727Z] [INFO ]     Allocation: area_weighted_fallback, 2673 target precincts
+[2026-03-14T08:55:13.727Z] [STEP ] START  -> NORMALIZE_SCHEMA/Prop 22
+[2026-03-14T08:55:13.728Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.728Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.728Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.728Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:13.729Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:13.733Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Prop 22 (13.04s)
+[2026-03-14T08:55:13.733Z] [STEP ] START  -> SANITY/Prop 22
+[2026-03-14T08:55:13.733Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T08:55:13.733Z] [STEP ] DONE   [OK] SANITY/Prop 22 (13.041s)
+[2026-03-14T08:55:13.733Z] [STEP ] START  -> BUILD_MODEL/Prop 22
+[2026-03-14T08:55:13.747Z] [STEP ] DONE   [OK] BUILD_MODEL/Prop 22 (13.055s)
+[2026-03-14T08:55:13.747Z] [INFO ]   Sheet 'Prop 23': 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:13.748Z] [INFO ]     Allocation: area_weighted_fallback, 2673 target precincts
+[2026-03-14T08:55:13.748Z] [STEP ] START  -> NORMALIZE_SCHEMA/Prop 23
+[2026-03-14T08:55:13.748Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.748Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.748Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.749Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:13.749Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:13.753Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Prop 23 (13.061s)
+[2026-03-14T08:55:13.753Z] [STEP ] START  -> SANITY/Prop 23
+[2026-03-14T08:55:13.753Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T08:55:13.753Z] [STEP ] DONE   [OK] SANITY/Prop 23 (13.061s)
+[2026-03-14T08:55:13.753Z] [STEP ] START  -> BUILD_MODEL/Prop 23
+[2026-03-14T08:55:13.773Z] [STEP ] DONE   [OK] BUILD_MODEL/Prop 23 (13.081s)
+[2026-03-14T08:55:13.773Z] [INFO ]   Sheet 'Prop 24': 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:13.773Z] [INFO ]     Allocation: area_weighted_fallback, 2673 target precincts
+[2026-03-14T08:55:13.773Z] [STEP ] START  -> NORMALIZE_SCHEMA/Prop 24
+[2026-03-14T08:55:13.774Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.774Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.774Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.775Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:13.775Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:13.780Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Prop 24 (13.088s)
+[2026-03-14T08:55:13.780Z] [STEP ] START  -> SANITY/Prop 24
+[2026-03-14T08:55:13.780Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T08:55:13.780Z] [STEP ] DONE   [OK] SANITY/Prop 24 (13.088s)
+[2026-03-14T08:55:13.780Z] [STEP ] START  -> BUILD_MODEL/Prop 24
+[2026-03-14T08:55:13.804Z] [STEP ] DONE   [OK] BUILD_MODEL/Prop 24 (13.112s)
+[2026-03-14T08:55:13.804Z] [INFO ]   Sheet 'Prop 25': 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:13.805Z] [INFO ]     Allocation: area_weighted_fallback, 2673 target precincts
+[2026-03-14T08:55:13.805Z] [STEP ] START  -> NORMALIZE_SCHEMA/Prop 25
+[2026-03-14T08:55:13.805Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.806Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.806Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.806Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:13.807Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:13.812Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Prop 25 (13.12s)
+[2026-03-14T08:55:13.812Z] [STEP ] START  -> SANITY/Prop 25
+[2026-03-14T08:55:13.812Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T08:55:13.812Z] [STEP ] DONE   [OK] SANITY/Prop 25 (13.12s)
+[2026-03-14T08:55:13.812Z] [STEP ] START  -> BUILD_MODEL/Prop 25
+[2026-03-14T08:55:13.832Z] [STEP ] DONE   [OK] BUILD_MODEL/Prop 25 (13.14s)
+[2026-03-14T08:55:13.832Z] [INFO ]   Sheet 'Measure L': 49 precincts, type=ballot_measure
+[2026-03-14T08:55:13.832Z] [INFO ]     Allocation: area_weighted_fallback, 49 target precincts
+[2026-03-14T08:55:13.832Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure L
+[2026-03-14T08:55:13.833Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.833Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.833Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.833Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:13.834Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:13.838Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure L (13.146s)
+[2026-03-14T08:55:13.838Z] [STEP ] START  -> SANITY/Measure L
+[2026-03-14T08:55:13.838Z] [INFO ]   SANITY [OK] Non-empty model: 49 rows
+[2026-03-14T08:55:13.838Z] [STEP ] DONE   [OK] SANITY/Measure L (13.146s)
+[2026-03-14T08:55:13.838Z] [STEP ] START  -> BUILD_MODEL/Measure L
+[2026-03-14T08:55:13.851Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure L (13.159s)
+[2026-03-14T08:55:13.851Z] [INFO ]   Sheet 'Measure M': 25 precincts, type=ballot_measure
+[2026-03-14T08:55:13.851Z] [INFO ]     Allocation: area_weighted_fallback, 25 target precincts
+[2026-03-14T08:55:13.851Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure M
+[2026-03-14T08:55:13.852Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.852Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.852Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.853Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:13.853Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:13.857Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure M (13.165s)
+[2026-03-14T08:55:13.857Z] [STEP ] START  -> SANITY/Measure M
+[2026-03-14T08:55:13.857Z] [INFO ]   SANITY [OK] Non-empty model: 25 rows
+[2026-03-14T08:55:13.857Z] [STEP ] DONE   [OK] SANITY/Measure M (13.165s)
+[2026-03-14T08:55:13.857Z] [STEP ] START  -> BUILD_MODEL/Measure M
+[2026-03-14T08:55:13.866Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure M (13.174s)
+[2026-03-14T08:55:13.866Z] [INFO ]   Sheet 'Measure N': 73 precincts, type=ballot_measure
+[2026-03-14T08:55:13.867Z] [INFO ]     Allocation: area_weighted_fallback, 73 target precincts
+[2026-03-14T08:55:13.867Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure N
+[2026-03-14T08:55:13.867Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.867Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.868Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.868Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:13.868Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:13.872Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure N (13.18s)
+[2026-03-14T08:55:13.872Z] [STEP ] START  -> SANITY/Measure N
+[2026-03-14T08:55:13.872Z] [INFO ]   SANITY [OK] Non-empty model: 73 rows
+[2026-03-14T08:55:13.872Z] [STEP ] DONE   [OK] SANITY/Measure N (13.18s)
+[2026-03-14T08:55:13.872Z] [STEP ] START  -> BUILD_MODEL/Measure N
+[2026-03-14T08:55:13.881Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure N (13.189s)
+[2026-03-14T08:55:13.881Z] [INFO ]   Sheet 'Measure O': 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:13.881Z] [INFO ]     Allocation: area_weighted_fallback, 2673 target precincts
+[2026-03-14T08:55:13.881Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure O
+[2026-03-14T08:55:13.882Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.882Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.882Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.883Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:13.883Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:13.888Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure O (13.196s)
+[2026-03-14T08:55:13.888Z] [STEP ] START  -> SANITY/Measure O
+[2026-03-14T08:55:13.888Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T08:55:13.888Z] [STEP ] DONE   [OK] SANITY/Measure O (13.196s)
+[2026-03-14T08:55:13.888Z] [STEP ] START  -> BUILD_MODEL/Measure O
+[2026-03-14T08:55:13.911Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure O (13.219s)
+[2026-03-14T08:55:13.911Z] [INFO ]   Sheet 'Measure P': 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:13.911Z] [INFO ]     Allocation: area_weighted_fallback, 2673 target precincts
+[2026-03-14T08:55:13.912Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure P
+[2026-03-14T08:55:13.912Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.912Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.913Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.913Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:13.913Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:13.918Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure P (13.226s)
+[2026-03-14T08:55:13.918Z] [STEP ] START  -> SANITY/Measure P
+[2026-03-14T08:55:13.918Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T08:55:13.918Z] [STEP ] DONE   [OK] SANITY/Measure P (13.226s)
+[2026-03-14T08:55:13.918Z] [STEP ] START  -> BUILD_MODEL/Measure P
+[2026-03-14T08:55:13.944Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure P (13.252s)
+[2026-03-14T08:55:13.944Z] [INFO ]   Sheet 'Measure Q': 629 precincts, type=ballot_measure
+[2026-03-14T08:55:13.945Z] [INFO ]     Allocation: area_weighted_fallback, 629 target precincts
+[2026-03-14T08:55:13.945Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure Q
+[2026-03-14T08:55:13.945Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.946Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.946Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.946Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:13.947Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:13.952Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure Q (13.26s)
+[2026-03-14T08:55:13.952Z] [STEP ] START  -> SANITY/Measure Q
+[2026-03-14T08:55:13.952Z] [INFO ]   SANITY [OK] Non-empty model: 629 rows
+[2026-03-14T08:55:13.952Z] [STEP ] DONE   [OK] SANITY/Measure Q (13.26s)
+[2026-03-14T08:55:13.952Z] [STEP ] START  -> BUILD_MODEL/Measure Q
+[2026-03-14T08:55:13.970Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure Q (13.278s)
+[2026-03-14T08:55:13.970Z] [INFO ]   Sheet 'Measure R': 13 precincts, type=ballot_measure
+[2026-03-14T08:55:13.971Z] [INFO ]     Allocation: area_weighted_fallback, 13 target precincts
+[2026-03-14T08:55:13.971Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure R
+[2026-03-14T08:55:13.971Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:13.972Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:13.972Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:13.973Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:13.973Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:13.981Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure R (13.289s)
+[2026-03-14T08:55:13.981Z] [STEP ] START  -> SANITY/Measure R
+[2026-03-14T08:55:13.982Z] [INFO ]   SANITY [OK] Non-empty model: 13 rows
+[2026-03-14T08:55:13.982Z] [STEP ] DONE   [OK] SANITY/Measure R (13.29s)
+[2026-03-14T08:55:13.982Z] [STEP ] START  -> BUILD_MODEL/Measure R
+[2026-03-14T08:55:14.001Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure R (13.309s)
+[2026-03-14T08:55:14.001Z] [INFO ]   Sheet 'Measure S': 49 precincts, type=ballot_measure
+[2026-03-14T08:55:14.002Z] [INFO ]     Allocation: area_weighted_fallback, 49 target precincts
+[2026-03-14T08:55:14.002Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure S
+[2026-03-14T08:55:14.003Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:14.003Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:14.004Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:14.004Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:14.005Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:14.013Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure S (13.321s)
+[2026-03-14T08:55:14.013Z] [STEP ] START  -> SANITY/Measure S
+[2026-03-14T08:55:14.013Z] [INFO ]   SANITY [OK] Non-empty model: 49 rows
+[2026-03-14T08:55:14.013Z] [STEP ] DONE   [OK] SANITY/Measure S (13.321s)
+[2026-03-14T08:55:14.013Z] [STEP ] START  -> BUILD_MODEL/Measure S
+[2026-03-14T08:55:14.028Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure S (13.336s)
+[2026-03-14T08:55:14.029Z] [INFO ]   Sheet 'Measure T': 21 precincts, type=ballot_measure
+[2026-03-14T08:55:14.029Z] [INFO ]     Allocation: area_weighted_fallback, 21 target precincts
+[2026-03-14T08:55:14.029Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure T
+[2026-03-14T08:55:14.030Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:14.030Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:14.031Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:14.031Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:14.031Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:14.039Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure T (13.347s)
+[2026-03-14T08:55:14.039Z] [STEP ] START  -> SANITY/Measure T
+[2026-03-14T08:55:14.039Z] [INFO ]   SANITY [OK] Non-empty model: 21 rows
+[2026-03-14T08:55:14.039Z] [STEP ] DONE   [OK] SANITY/Measure T (13.347s)
+[2026-03-14T08:55:14.039Z] [STEP ] START  -> BUILD_MODEL/Measure T
+[2026-03-14T08:55:14.061Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure T (13.369s)
+[2026-03-14T08:55:14.061Z] [INFO ]   Sheet 'Measure U': 101 precincts, type=ballot_measure
+[2026-03-14T08:55:14.061Z] [INFO ]     Allocation: area_weighted_fallback, 101 target precincts
+[2026-03-14T08:55:14.061Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure U
+[2026-03-14T08:55:14.062Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:14.062Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:14.063Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:14.063Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:14.064Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:14.071Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure U (13.379s)
+[2026-03-14T08:55:14.071Z] [STEP ] START  -> SANITY/Measure U
+[2026-03-14T08:55:14.071Z] [INFO ]   SANITY [OK] Non-empty model: 101 rows
+[2026-03-14T08:55:14.071Z] [STEP ] DONE   [OK] SANITY/Measure U (13.379s)
+[2026-03-14T08:55:14.071Z] [STEP ] START  -> BUILD_MODEL/Measure U
+[2026-03-14T08:55:14.084Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure U (13.392s)
+[2026-03-14T08:55:14.084Z] [INFO ]   Sheet 'Measure V': 73 precincts, type=ballot_measure
+[2026-03-14T08:55:14.085Z] [INFO ]     Allocation: area_weighted_fallback, 73 target precincts
+[2026-03-14T08:55:14.085Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure V
+[2026-03-14T08:55:14.085Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:14.086Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:14.086Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:14.086Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:14.087Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:14.106Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure V (13.414s)
+[2026-03-14T08:55:14.106Z] [STEP ] START  -> SANITY/Measure V
+[2026-03-14T08:55:14.106Z] [INFO ]   SANITY [OK] Non-empty model: 73 rows
+[2026-03-14T08:55:14.106Z] [STEP ] DONE   [OK] SANITY/Measure V (13.414s)
+[2026-03-14T08:55:14.107Z] [STEP ] START  -> BUILD_MODEL/Measure V
+[2026-03-14T08:55:14.130Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure V (13.438s)
+[2026-03-14T08:55:14.130Z] [INFO ]   Sheet 'Measure W': 73 precincts, type=ballot_measure
+[2026-03-14T08:55:14.130Z] [INFO ]     Allocation: area_weighted_fallback, 73 target precincts
+[2026-03-14T08:55:14.130Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure W
+[2026-03-14T08:55:14.131Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:14.131Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:14.132Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:14.132Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:14.133Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:14.141Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure W (13.449s)
+[2026-03-14T08:55:14.141Z] [STEP ] START  -> SANITY/Measure W
+[2026-03-14T08:55:14.141Z] [INFO ]   SANITY [OK] Non-empty model: 73 rows
+[2026-03-14T08:55:14.141Z] [STEP ] DONE   [OK] SANITY/Measure W (13.449s)
+[2026-03-14T08:55:14.141Z] [STEP ] START  -> BUILD_MODEL/Measure W
+[2026-03-14T08:55:14.151Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure W (13.459s)
+[2026-03-14T08:55:14.151Z] [INFO ]   Sheet 'Measure X': 73 precincts, type=ballot_measure
+[2026-03-14T08:55:14.151Z] [INFO ]     Allocation: area_weighted_fallback, 73 target precincts
+[2026-03-14T08:55:14.151Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure X
+[2026-03-14T08:55:14.152Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:14.152Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:14.152Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:14.153Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:14.153Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:14.157Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure X (13.465s)
+[2026-03-14T08:55:14.157Z] [STEP ] START  -> SANITY/Measure X
+[2026-03-14T08:55:14.158Z] [INFO ]   SANITY [OK] Non-empty model: 73 rows
+[2026-03-14T08:55:14.158Z] [STEP ] DONE   [OK] SANITY/Measure X (13.466s)
+[2026-03-14T08:55:14.158Z] [STEP ] START  -> BUILD_MODEL/Measure X
+[2026-03-14T08:55:14.168Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure X (13.476s)
+[2026-03-14T08:55:14.168Z] [INFO ]   Sheet 'Measure Y': 73 precincts, type=ballot_measure
+[2026-03-14T08:55:14.168Z] [INFO ]     Allocation: area_weighted_fallback, 73 target precincts
+[2026-03-14T08:55:14.168Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure Y
+[2026-03-14T08:55:14.169Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:14.169Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:14.170Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:14.170Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:14.171Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:14.178Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure Y (13.486s)
+[2026-03-14T08:55:14.178Z] [STEP ] START  -> SANITY/Measure Y
+[2026-03-14T08:55:14.178Z] [INFO ]   SANITY [OK] Non-empty model: 73 rows
+[2026-03-14T08:55:14.178Z] [STEP ] DONE   [OK] SANITY/Measure Y (13.486s)
+[2026-03-14T08:55:14.178Z] [STEP ] START  -> BUILD_MODEL/Measure Y
+[2026-03-14T08:55:14.197Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure Y (13.505s)
+[2026-03-14T08:55:14.197Z] [INFO ]   Sheet 'Measure Z': 33 precincts, type=ballot_measure
+[2026-03-14T08:55:14.198Z] [INFO ]     Allocation: area_weighted_fallback, 33 target precincts
+[2026-03-14T08:55:14.198Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure Z
+[2026-03-14T08:55:14.199Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:14.200Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:14.201Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:14.201Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:14.202Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:14.211Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure Z (13.519s)
+[2026-03-14T08:55:14.211Z] [STEP ] START  -> SANITY/Measure Z
+[2026-03-14T08:55:14.211Z] [INFO ]   SANITY [OK] Non-empty model: 33 rows
+[2026-03-14T08:55:14.211Z] [STEP ] DONE   [OK] SANITY/Measure Z (13.519s)
+[2026-03-14T08:55:14.211Z] [STEP ] START  -> BUILD_MODEL/Measure Z
+[2026-03-14T08:55:14.231Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure Z (13.539s)
+[2026-03-14T08:55:14.231Z] [INFO ]   Sheet 'Measure AA': 13 precincts, type=ballot_measure
+[2026-03-14T08:55:14.232Z] [INFO ]     Allocation: area_weighted_fallback, 13 target precincts
+[2026-03-14T08:55:14.232Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure AA
+[2026-03-14T08:55:14.232Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:14.233Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:14.233Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:14.234Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:14.234Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:14.241Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure AA (13.549s)
+[2026-03-14T08:55:14.241Z] [STEP ] START  -> SANITY/Measure AA
+[2026-03-14T08:55:14.241Z] [INFO ]   SANITY [OK] Non-empty model: 13 rows
+[2026-03-14T08:55:14.241Z] [STEP ] DONE   [OK] SANITY/Measure AA (13.549s)
+[2026-03-14T08:55:14.241Z] [STEP ] START  -> BUILD_MODEL/Measure AA
+[2026-03-14T08:55:14.254Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure AA (13.562s)
+[2026-03-14T08:55:14.254Z] [INFO ]   Sheet 'Measure BB': 317 precincts, type=ballot_measure
+[2026-03-14T08:55:14.254Z] [INFO ]     Allocation: area_weighted_fallback, 317 target precincts
+[2026-03-14T08:55:14.254Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure BB
+[2026-03-14T08:55:14.254Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:14.255Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:14.255Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:14.255Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:14.256Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:14.262Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure BB (13.57s)
+[2026-03-14T08:55:14.262Z] [STEP ] START  -> SANITY/Measure BB
+[2026-03-14T08:55:14.262Z] [INFO ]   SANITY [OK] Non-empty model: 317 rows
+[2026-03-14T08:55:14.262Z] [STEP ] DONE   [OK] SANITY/Measure BB (13.57s)
+[2026-03-14T08:55:14.262Z] [STEP ] START  -> BUILD_MODEL/Measure BB
+[2026-03-14T08:55:14.273Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure BB (13.581s)
+[2026-03-14T08:55:14.274Z] [INFO ]   Sheet 'Measure CC': 277 precincts, type=ballot_measure
+[2026-03-14T08:55:14.274Z] [INFO ]     Allocation: area_weighted_fallback, 277 target precincts
+[2026-03-14T08:55:14.274Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure CC
+[2026-03-14T08:55:14.275Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:14.276Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:14.277Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:14.278Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:14.278Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:14.283Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure CC (13.591s)
+[2026-03-14T08:55:14.283Z] [STEP ] START  -> SANITY/Measure CC
+[2026-03-14T08:55:14.283Z] [INFO ]   SANITY [OK] Non-empty model: 277 rows
+[2026-03-14T08:55:14.283Z] [STEP ] DONE   [OK] SANITY/Measure CC (13.591s)
+[2026-03-14T08:55:14.283Z] [STEP ] START  -> BUILD_MODEL/Measure CC
+[2026-03-14T08:55:14.294Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure CC (13.602s)
+[2026-03-14T08:55:14.294Z] [INFO ]   Sheet 'Measure DD': 2673 precincts, type=ballot_measure
+[2026-03-14T08:55:14.295Z] [INFO ]     Allocation: area_weighted_fallback, 2673 target precincts
+[2026-03-14T08:55:14.295Z] [STEP ] START  -> NORMALIZE_SCHEMA/Measure DD
+[2026-03-14T08:55:14.295Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:14.296Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:14.296Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:14.297Z] [INFO ]   [SCHEMA] 'YES' → 'yes_votes'
+[2026-03-14T08:55:14.297Z] [INFO ]   [SCHEMA] 'NO' → 'no_votes'
+[2026-03-14T08:55:14.304Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/Measure DD (13.612s)
+[2026-03-14T08:55:14.304Z] [STEP ] START  -> SANITY/Measure DD
+[2026-03-14T08:55:14.304Z] [INFO ]   SANITY [OK] Non-empty model: 2673 rows
+[2026-03-14T08:55:14.304Z] [STEP ] DONE   [OK] SANITY/Measure DD (13.612s)
+[2026-03-14T08:55:14.304Z] [STEP ] START  -> BUILD_MODEL/Measure DD
+[2026-03-14T08:55:14.330Z] [STEP ] DONE   [OK] BUILD_MODEL/Measure DD (13.637s)
+[2026-03-14T08:55:14.330Z] [INFO ]   Sheet 'PrecinctOverview': 2676 precincts, type=candidate_race
+[2026-03-14T08:55:14.330Z] [INFO ]     Allocation: area_weighted_fallback, 2676 target precincts
+[2026-03-14T08:55:14.330Z] [STEP ] START  -> NORMALIZE_SCHEMA/PrecinctOverview
+[2026-03-14T08:55:14.331Z] [INFO ]   [SCHEMA] 'MPREC_ID' → 'canonical_precinct_id'
+[2026-03-14T08:55:14.331Z] [INFO ]   [SCHEMA] 'Registered' → 'registered'
+[2026-03-14T08:55:14.332Z] [INFO ]   [SCHEMA] 'BallotsCast' → 'ballots_cast'
+[2026-03-14T08:55:14.335Z] [STEP ] DONE   [OK] NORMALIZE_SCHEMA/PrecinctOverview (13.643s)
+[2026-03-14T08:55:14.335Z] [STEP ] START  -> SANITY/PrecinctOverview
+[2026-03-14T08:55:14.335Z] [INFO ]   SANITY [OK] Non-empty model: 2676 rows
+[2026-03-14T08:55:14.335Z] [STEP ] DONE   [OK] SANITY/PrecinctOverview (13.643s)
+[2026-03-14T08:55:14.336Z] [STEP ] START  -> BUILD_MODEL/PrecinctOverview
+[2026-03-14T08:55:14.359Z] [STEP ] DONE   [OK] BUILD_MODEL/PrecinctOverview (13.667s)
+[2026-03-14T08:55:14.359Z] [STEP ] DONE   [OK] ALLOCATE_VOTES (13.667s)
+[2026-03-14T08:55:14.359Z] [STEP ] START  -> INTEGRITY_ENFORCEMENT
+[2026-03-14T08:55:14.683Z] [WARN ]   [INTEGRITY] 1889 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:14.807Z] [WARN ]   [INTEGRITY] 722 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:14.979Z] [WARN ]   [INTEGRITY] 1168 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.063Z] [WARN ]   [INTEGRITY] 460 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.197Z] [WARN ]   [INTEGRITY] 881 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.275Z] [WARN ]   [INTEGRITY] 367 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.377Z] [WARN ]   [INTEGRITY] 643 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.447Z] [WARN ]   [INTEGRITY] 460 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.550Z] [WARN ]   [INTEGRITY] 755 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.557Z] [WARN ]   [INTEGRITY] 22 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.564Z] [WARN ]   [INTEGRITY] 22 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.574Z] [WARN ]   [INTEGRITY] 43 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.582Z] [WARN ]   [INTEGRITY] 34 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.595Z] [WARN ]   [INTEGRITY] 61 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.623Z] [WARN ]   [INTEGRITY] 184 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.629Z] [WARN ]   [INTEGRITY] 10 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.641Z] [WARN ]   [INTEGRITY] 73 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.690Z] [WARN ]   [INTEGRITY] 274 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.699Z] [WARN ]   [INTEGRITY] 22 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.706Z] [WARN ]   [INTEGRITY] 19 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.715Z] [WARN ]   [INTEGRITY] 19 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.750Z] [WARN ]   [INTEGRITY] 196 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.757Z] [WARN ]   [INTEGRITY] 19 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.767Z] [WARN ]   [INTEGRITY] 40 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.786Z] [WARN ]   [INTEGRITY] 76 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.801Z] [WARN ]   [INTEGRITY] 43 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.816Z] [WARN ]   [INTEGRITY] 61 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.822Z] [WARN ]   [INTEGRITY] 10 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.836Z] [WARN ]   [INTEGRITY] 37 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.846Z] [WARN ]   [INTEGRITY] 13 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.864Z] [WARN ]   [INTEGRITY] 76 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.871Z] [WARN ]   [INTEGRITY] 19 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.885Z] [WARN ]   [INTEGRITY] 37 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.898Z] [WARN ]   [INTEGRITY] 25 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.905Z] [WARN ]   [INTEGRITY] 16 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.920Z] [WARN ]   [INTEGRITY] 49 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.946Z] [WARN ]   [INTEGRITY] 103 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.954Z] [WARN ]   [INTEGRITY] 16 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:15.968Z] [WARN ]   [INTEGRITY] 40 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:16.487Z] [WARN ]   [INTEGRITY] 1723 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:16.907Z] [WARN ]   [INTEGRITY] 1726 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:17.336Z] [WARN ]   [INTEGRITY] 1724 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:17.748Z] [WARN ]   [INTEGRITY] 1726 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:18.175Z] [WARN ]   [INTEGRITY] 1727 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:18.591Z] [WARN ]   [INTEGRITY] 1725 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:19.007Z] [WARN ]   [INTEGRITY] 1722 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:19.462Z] [WARN ]   [INTEGRITY] 1723 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:19.885Z] [WARN ]   [INTEGRITY] 1723 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:20.314Z] [WARN ]   [INTEGRITY] 1720 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:20.750Z] [WARN ]   [INTEGRITY] 1716 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:21.200Z] [WARN ]   [INTEGRITY] 1715 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:21.214Z] [WARN ]   [INTEGRITY] 26 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:21.223Z] [WARN ]   [INTEGRITY] 15 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:21.244Z] [WARN ]   [INTEGRITY] 47 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:21.660Z] [WARN ]   [INTEGRITY] 1727 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:22.144Z] [WARN ]   [INTEGRITY] 1724 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:22.258Z] [WARN ]   [INTEGRITY] 438 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:22.268Z] [WARN ]   [INTEGRITY] 10 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:22.282Z] [WARN ]   [INTEGRITY] 35 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:22.293Z] [WARN ]   [INTEGRITY] 13 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:22.317Z] [WARN ]   [INTEGRITY] 76 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:22.334Z] [WARN ]   [INTEGRITY] 49 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:22.354Z] [WARN ]   [INTEGRITY] 49 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:22.372Z] [WARN ]   [INTEGRITY] 49 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:22.388Z] [WARN ]   [INTEGRITY] 49 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:22.409Z] [WARN ]   [INTEGRITY] 18 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:22.420Z] [WARN ]   [INTEGRITY] 8 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:22.484Z] [WARN ]   [INTEGRITY] 205 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:22.533Z] [WARN ]   [INTEGRITY] 184 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:22.962Z] [WARN ]   [INTEGRITY] 1723 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:23.290Z] [WARN ]   [INTEGRITY] 1892 precinct(s) CRITICAL — registered=0 but ballots>0. Indicates data extraction issue.
+[2026-03-14T08:55:23.296Z] [STEP ] DONE   [OK] INTEGRITY_ENFORCEMENT (22.604s)
+[2026-03-14T08:55:23.296Z] [STEP ] START  -> FEATURE_ENGINEERING
+[2026-03-14T08:55:23.296Z] [WARN ] Voter file not found at C:\Users\Mathew C\Campaign In A Box\voters\CA\Sonoma\voters.csv
+[2026-03-14T08:55:23.983Z] [STEP ] DONE   [OK] FEATURE_ENGINEERING (23.291s)
+[2026-03-14T08:55:23.983Z] [STEP ] START  -> UNIVERSE_BUILDING
+[2026-03-14T08:55:25.667Z] [STEP ] DONE   [OK] UNIVERSE_BUILDING (24.974s)
+[2026-03-14T08:55:25.667Z] [STEP ] START  -> SCORING_V2
+[2026-03-14T08:55:25.673Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:26.215Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:26.308Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:26.487Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:26.524Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:26.642Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:26.666Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:26.718Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:26.756Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:26.820Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:26.828Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:26.837Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:26.846Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:26.857Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:26.866Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:26.878Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:26.886Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:26.894Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:26.911Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:26.920Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:26.929Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:26.938Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:26.950Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:26.958Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:26.967Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:26.977Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:26.986Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:26.995Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:27.004Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:27.013Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:27.022Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:27.031Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:27.041Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:27.050Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:27.060Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:27.069Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:27.084Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:27.094Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:27.111Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:27.122Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:27.641Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:28.083Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:28.655Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:29.170Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:29.824Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:30.657Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:31.297Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:31.794Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:32.317Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:32.911Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:33.454Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:34.033Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:34.048Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:34.061Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:34.076Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:34.664Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:35.418Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:35.480Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:35.497Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:35.511Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:35.527Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:35.543Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:35.567Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:35.586Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:35.604Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:35.620Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:35.637Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:35.652Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:35.677Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:35.693Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:36.415Z] [INFO ] [Scoring] Computing v2 scores...
+[2026-03-14T08:55:37.098Z] [STEP ] DONE   [OK] SCORING_V2 (36.405s)
+[2026-03-14T08:55:37.121Z] [STEP ] START  -> REGION_CLUSTERING
+[2026-03-14T08:55:37.121Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:40.454Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:40.838Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:41.815Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:41.955Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:42.519Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:42.641Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:42.918Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.068Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.527Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.536Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.546Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.557Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.565Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.574Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.597Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.603Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.611Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.662Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.669Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.675Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.686Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.737Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.748Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.761Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.781Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.797Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.808Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.817Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.826Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.835Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.849Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.856Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.865Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.874Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.881Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.897Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.909Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.916Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:43.924Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:55:57.489Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:56:10.769Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:56:21.816Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:56:32.916Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:56:46.420Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:56:57.362Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:57:09.932Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:57:21.575Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:57:33.578Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:57:46.600Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:57:57.150Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:58:08.286Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:58:08.311Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:58:08.323Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:58:08.343Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:58:20.979Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:58:35.446Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:58:36.484Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:58:36.498Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:58:36.515Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:58:36.529Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:58:36.553Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:58:36.572Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:58:36.588Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:58:36.614Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:58:36.640Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:58:36.656Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:58:36.669Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:58:36.902Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:58:37.055Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:58:47.564Z] [WARN ]   Centroids missing; fallback to political-only clustering
+[2026-03-14T08:58:50.036Z] [STEP ] DONE   [OK] REGION_CLUSTERING (229.343s)
+[2026-03-14T08:58:50.037Z] [STEP ] START  -> FIELD_PLANNING

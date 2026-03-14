@@ -136,3 +136,60 @@ timestamp,user,page_opened,category
 2026-03-14T07:41:19.605377,mcallaway,🎯 Targeting,🗺️ Geography
 2026-03-14T07:41:29.268525,mcallaway,📋 Strategy,📈 Strategy & Modeling
 2026-03-14T07:41:38.073311,mcallaway,🩺 Diagnostics,🛠 System
+2026-03-14T08:34:09.515102,mcallaway,📂 Data Manager,📂 Data
+2026-03-14T08:35:38.532110,mcallaway,📂 Data Manager,📂 Data
+2026-03-14T08:36:25.274755,mcallaway,📂 Data Manager,📂 Data
+2026-03-14T08:37:37.304161,mcallaway,📂 Data Manager,📂 Data
+2026-03-14T08:38:24.264576,mcallaway,🗄️ Data Explorer,📂 Data
+2026-03-14T08:38:26.133992,mcallaway,📂 Data Manager,📂 Data
+2026-03-14T08:39:05.635566,mcallaway,🗄️ Data Explorer,📂 Data
+2026-03-14T08:39:09.926565,mcallaway,📂 Data Manager,📂 Data
+2026-03-14T08:42:18.189553,mcallaway,🗂️ Source Registry,📂 Data
+2026-03-14T08:42:21.519058,mcallaway,📂 Data Manager,📂 Data
+2026-03-14T08:43:06.139920,mcallaway,▶️ Pipeline Runner,🛠 System
+2026-03-14T08:45:07.638657,mcallaway,📂 Data Manager,📂 Data
+2026-03-14T08:47:47.232334,mcallaway,▶️ Pipeline Runner,🛠 System
+2026-03-14T08:49:48.972858,mcallaway,▶️ Pipeline Runner,🛠 System
+2026-03-14T08:50:41.706101,mcallaway,📂 Data Manager,📂 Data
+2026-03-14T08:51:03.378861,mcallaway,🗄️ Data Explorer,📂 Data
+2026-03-14T08:51:08.199307,mcallaway,📂 Data Manager,📂 Data
+2026-03-14T08:54:04.648290,mcallaway,▶️ Pipeline Runner,🛠 System
+2026-03-14T09:00:19.836293,mcallaway,📂 Data Manager,📂 Data
+2026-03-14T09:00:21.891220,mcallaway,🗄️ Data Explorer,📂 Data
+2026-03-14T09:00:23.469152,mcallaway,📂 Data Manager,📂 Data
+2026-03-14T09:00:28.074702,mcallaway,▶️ Pipeline Runner,🛠 System
+2026-03-14T09:00:45.376730,mcallaway,🏠 Overview,🏠 Campaign Command
+2026-03-14T09:00:47.581999,mcallaway,🪖 War Room,🏠 Campaign Command
+2026-03-14T09:00:54.374534,mcallaway,🧭 Political Intelligence,📊 Intelligence
+2026-03-14T09:06:20.498424,mcallaway,▶️ Pipeline Runner,🛠 System
+2026-03-14T09:11:20.555957,mcallaway,🗺️ Precinct Map,🗺️ Geography
+2026-03-14T09:12:07.282995,mcallaway,🪖 War Room,🏠 Campaign Command
+2026-03-14T09:12:14.537282,mcallaway,🏠 Overview,🏠 Campaign Command
+2026-03-14T09:12:23.245488,mcallaway,🗺️ Precinct Map,🗺️ Geography
+2026-03-14T09:12:42.055064,mcallaway,🗳️ Campaign Setup,🗳️ Campaign Setup
+2026-03-14T09:12:59.949403,mcallaway,🔬 Simulations,📈 Strategy & Modeling
+2026-03-14T09:13:16.344357,mcallaway,🏠 Overview,🏠 Campaign Command
+2026-03-14T09:13:34.173888,mcallaway,📐 Calibration,📈 Strategy & Modeling
+2026-03-14T09:14:01.142249,mcallaway,🗳️ Campaign Setup,🗳️ Campaign Setup
+2026-03-14T09:14:14.314444,mcallaway,🏛️ Campaign Admin,⚙️ Administration
+2026-03-14T09:15:08.037357,mcallaway,▶️ Pipeline Runner,🛠 System
+2026-03-14T09:19:34.087342,mcallaway,📋 Strategy,📈 Strategy & Modeling
+2026-03-14T09:19:44.073999,mcallaway,🔬 Simulations,📈 Strategy & Modeling
+2026-03-14T09:19:51.586443,mcallaway,🏛️ Historical Archive,📈 Strategy & Modeling
+2026-03-14T09:20:02.888979,mcallaway,⚡ Advanced Modeling,📈 Strategy & Modeling
+2026-03-14T09:20:24.099464,mcallaway,📐 Calibration,📈 Strategy & Modeling
+2026-03-14T09:20:40.643135,mcallaway,🗺️ Precinct Map,🗺️ Geography
+2026-03-14T09:21:36.394877,mcallaway,🗺️ Precinct Map,🗺️ Geography
+2026-03-14T09:21:55.869989,mcallaway,🎯 Targeting,🗺️ Geography
+2026-03-14T09:22:04.852408,mcallaway,🗂️ Source Registry,📂 Data
+2026-03-14T09:22:08.200556,mcallaway,📋 Strategy,📈 Strategy & Modeling
+2026-03-14T09:22:17.966626,mcallaway,🔬 Simulations,📈 Strategy & Modeling
+2026-03-14T09:22:27.632807,mcallaway,📋 Strategy,📈 Strategy & Modeling
+2026-03-14T09:22:33.854504,mcallaway,🏛️ Historical Archive,📈 Strategy & Modeling
+2026-03-14T09:23:14.728837,mcallaway,🗺️ Precinct Map,🗺️ Geography
+2026-03-14T09:25:18.445353,mcallaway,📋 Strategy,📈 Strategy & Modeling
+2026-03-14T09:25:29.211590,mcallaway,🔬 Simulations,📈 Strategy & Modeling
+2026-03-14T09:25:30.997549,mcallaway,🏛️ Historical Archive,📈 Strategy & Modeling
+2026-03-14T09:25:33.429687,mcallaway,⚡ Advanced Modeling,📈 Strategy & Modeling
+2026-03-14T09:25:41.435503,mcallaway,📐 Calibration,📈 Strategy & Modeling
+2026-03-14T09:26:56.711000,mcallaway,🪖 War Room,🏠 Campaign Command

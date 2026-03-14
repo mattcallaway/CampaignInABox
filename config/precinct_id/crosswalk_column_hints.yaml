@@ -1,0 +1,148 @@
+# config/precinct_id/crosswalk_column_hints.yaml — Prompt 29
+#
+# Explicit per-file and per-alias column hints for crosswalk detection.
+# Used by scripts/geography/crosswalk_resolver.detect_crosswalk_columns()
+#
+# Priority: per-file override > alias table > filename heuristic
+#
+# Format for per_file_hints:
+#   <filename>:
+#     source_col: <column name in file>
+#     target_col: <column name in file>
+#     weight_col: <column name in file | null>
+#     notes: <free text for audit trail>
+
+# ── Per-file explicit overrides (Sonoma, g24 vintage) ────────────────────────
+
+per_file_hints:
+
+  # Block → MPREC mapping
+  blk_mprec_097_g24_v01.csv:
+    source_col: block
+    target_col: mprec
+    weight_col: pct_block
+    notes: "CA Sonoma 2024 geography vintage. block=Census2020 GEOID, mprec=master precinct ID"
+
+  # MPREC → SRPREC mapping
+  mprec_srprec_097_g24.csv:
+    source_col: mprec
+    target_col: srprec
+    weight_col: null
+    notes: "Direct MPREC to SRPREC crosswalk, no weights needed (1:1)"
+
+  # SRPREC → City mapping
+  c097_g24_srprec_to_city.csv:
+    source_col: srprec
+    target_col: city
+    weight_col: null
+    notes: "SRPREC to City jurisdiction mapping. county column = county name (Sonoma)"
+
+  # SRPREC → Block mapping (area-weighted)
+  c097_g24_sr_blk_map.csv:
+    source_col: srprec
+    target_col: block
+    weight_col: pctsrprec
+    notes: "SRPREC to 2020 Census block. pctsrprec = % of SRPREC in that block"
+
+  # RG precinct chain
+  c097_rg_rr_sr_svprec_g24.csv:
+    source_col: rgprec
+    target_col: svprec
+    weight_col: null
+    notes: "RG→RR→SR→SVPREC chain. rgprec is source, svprec is terminal target"
+
+  # RGPREC → Block mapping (area-weighted)
+  c097_g24_rg_blk_map.csv:
+    source_col: rgprec
+    target_col: block
+    weight_col: pctrgprec
+    notes: "RGPREC to 2020 Census block. pctrgprec = % of RGPREC in that block"
+
+
+# ── Generic alias table (applied when no per-file override exists) ───────────
+# Expanded lowercase + uppercase aliases for common crosswalk column names
+# Order matters — first match wins within each list.
+
+column_aliases:
+
+  source_candidates:
+    # Lowercase (actual files)
+    - block
+    - mprec
+    - srprec
+    - rgprec
+    - svprec
+    - rrprec
+    # Uppercase / formal schemas
+    - BLOCK20
+    - MPREC_ID
+    - SRPREC_ID
+    - RGPREC_ID
+    - SVPREC_ID
+    # Generic
+    - SOURCE
+    - FROM_ID
+    - SRC
+    - source_id
+    - from_precinct
+
+  target_candidates:
+    # Lowercase (actual files)
+    - mprec
+    - srprec
+    - svprec
+    - city
+    - block
+    # Uppercase / formal schemas
+    - MPREC_ID
+    - SRPREC_ID
+    - SVPREC_ID
+    - BLOCK20
+    - City
+    # Generic
+    - TARGET
+    - TO_ID
+    - DST
+    - DEST
+    - target_id
+    - to_precinct
+
+  weight_candidates:
+    - pct_block
+    - pctsrprec
+    - pctrgprec
+    - pct_blk
+    - weight
+    - WEIGHT
+    - PCT
+    - FRACTION
+    - AREA_PCT
+    - PROPORTION
+    - proportion
+    - area_pct
+    - fraction
+
+
+# ── Filename heuristics (applied when alias table also fails) ─────────────────
+# If filename contains the key string, use the corresponding source/target fields
+# as first-priority lookups within the alias table above.
+
+filename_heuristics:
+  blk_mprec:
+    prefer_source: [block, BLOCK20]
+    prefer_target: [mprec, MPREC_ID]
+  mprec_srprec:
+    prefer_source: [mprec, MPREC_ID]
+    prefer_target: [srprec, SRPREC_ID]
+  srprec_to_city:
+    prefer_source: [srprec, SRPREC_ID]
+    prefer_target: [city, City]
+  sr_blk:
+    prefer_source: [srprec, SRPREC_ID]
+    prefer_target: [block, BLOCK20]
+  rg_blk:
+    prefer_source: [rgprec, RGPREC_ID]
+    prefer_target: [block, BLOCK20]
+  rg_rr_sr_svprec:
+    prefer_source: [rgprec, RGPREC_ID]
+    prefer_target: [svprec, SVPREC_ID]

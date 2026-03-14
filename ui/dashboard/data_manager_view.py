@@ -392,47 +392,85 @@ def render_data_manager(data: dict):
             # ── End defensive normalization ───────────────────────────────────
 
             view_status = st.radio("View", ["ACTIVE", "ARCHIVED", "ALL"], horizontal=True)
+            # ── Normalise records for display (handles both old and new schemas) ──
+            def _norm(r: dict) -> dict:
+                """Return a display-friendly dict that works for both registry schemas."""
+                is_canonical = bool(r.get("contest_slug") or r.get("canonical_path"))
+                return {
+                    "file_id":            r.get("file_id", "?"),
+                    "filename":           r.get("current_filename") or r.get("canonical_filename") or r.get("original_filename", "?"),
+                    "campaign_data_type": r.get("campaign_data_type") or ("election_results" if is_canonical else "unknown"),
+                    "state":              r.get("state", ""),
+                    "county":             r.get("county", ""),
+                    "contest":            r.get("contest_id") or r.get("contest_slug", ""),
+                    "year":               r.get("year", ""),
+                    "provenance":         r.get("provenance", ""),
+                    "status":             r.get("status") or r.get("archive_status", "ACTIVE"),
+                    "last_modified":      r.get("last_modified", ""),
+                    "is_canonical":       is_canonical,
+                }
+
+            norm_rows = [_norm(r) for r in registry]
+
             if view_status != "ALL":
                 if view_status == "ACTIVE":
-                    df_reg = df_reg[df_reg["status"].isin(["ACTIVE", "REGISTERED"])]
+                    norm_rows = [r for r in norm_rows if r["status"] in ("ACTIVE", "REGISTERED")]
                 else:
-                    df_reg = df_reg[df_reg["status"] == view_status]
+                    norm_rows = [r for r in norm_rows if r["status"] == view_status]
 
-            if df_reg.empty:
+            if not norm_rows:
                 render_empty_state("No Files Found", f"No {view_status.lower()} files currently exist.")
             else:
-                # Only show columns that actually exist in the DataFrame
-                _display_cols = ["file_id", "current_filename", "campaign_data_type",
-                                 "state", "county", "contest_id", "provenance",
-                                 "status", "last_modified"]
-                disp_cols = [c for c in _display_cols if c in df_reg.columns]
-                disp_df = df_reg[disp_cols]
-                st.dataframe(disp_df, use_container_width=True, hide_index=True)
+                import pandas as _pd
+                disp_df = _pd.DataFrame(norm_rows)
+                _display_cols = ["file_id", "filename", "campaign_data_type", "state",
+                                  "county", "contest", "year", "provenance", "status", "is_canonical"]
+                disp_cols = [c for c in _display_cols if c in disp_df.columns]
+                st.dataframe(disp_df[disp_cols], use_container_width=True, hide_index=True)
 
                 st.markdown("#### Manage Existing Files")
                 edit_id = st.selectbox("Select File ID to Edit/Archive", disp_df["file_id"].tolist())
                 if edit_id:
-                    rec = next(r for r in registry if r["file_id"] == edit_id)
-                    st.write(f"**Selected:** `{rec['current_filename']}` ({rec['campaign_data_type']})")
+                    rec      = next(r for r in registry if r.get("file_id") == edit_id)
+                    norm_rec = _norm(rec)
+                    is_canonical = norm_rec["is_canonical"]
+
+                    st.write(f"**Selected:** `{norm_rec['filename']}` ({norm_rec['campaign_data_type']})")
+                    if is_canonical:
+                        st.caption("ℹ️ This is a **canonical contest** record (P28). Only notes and archive status can be edited here.")
 
                     ecol1, ecol2 = st.columns(2)
                     with ecol1:
-                        new_cat = st.selectbox("Change Category", list(manager._DESTINATION_RULES.keys()), index=list(manager._DESTINATION_RULES.keys()).index(rec["campaign_data_type"]))
-                        new_name = st.text_input("Rename File", rec["current_filename"], key=f"rename_{edit_id}")
-                        if st.button("Update Metadata"):
+                        _cat_keys = list(manager._DESTINATION_RULES.keys())
+                        _cur_cat  = norm_rec["campaign_data_type"]
+                        _cat_idx  = _cat_keys.index(_cur_cat) if _cur_cat in _cat_keys else 0
+                        new_cat   = st.selectbox("Change Category", _cat_keys, index=_cat_idx,
+                                                  disabled=is_canonical)
+                        new_name  = st.text_input("Rename File", norm_rec["filename"],
+                                                   key=f"rename_{edit_id}", disabled=is_canonical)
+                        if st.button("Update Metadata", disabled=is_canonical):
                             manager.update_file(file_id=edit_id, new_name=new_name, new_category=new_cat)
                             st.success("File updated successfully.")
                             st.rerun()
+                        if is_canonical:
+                            st.caption("Rename/category changes are managed in `data/contests/` manifests.")
 
                     with ecol2:
                         st.markdown("<br><br>", unsafe_allow_html=True)
-                        if rec["status"] != "ARCHIVED":
+                        if norm_rec["status"] != "ARCHIVED":
                             if st.button("🚨 Archive File", type="primary"):
-                                manager.archive_file(edit_id)
+                                if is_canonical:
+                                    # For canonical records: update archive_status in canonical registry
+                                    from engine.contest_data.contest_intake import ContestIntake
+                                    ci = ContestIntake(root_path)
+                                    ci._update_registry_record(edit_id, {"archive_status": "ARCHIVED"})
+                                else:
+                                    manager.archive_file(edit_id)
                                 st.success("File archived safely.")
                                 st.rerun()
                         else:
                             render_alert("warning", "File is already archived.")
+
 
     with tab_missing:
         st.subheader("Missing Data & Source Finder")

@@ -579,3 +579,204 @@ data/contests/
 3. Fill in **State**, **County**, **Contest Slug**, **Year**
 4. Click Confirm & Save ? file lands in `data/contests/{state}/{county}/{year}/{slug}/raw/`
 5. Run pipeline from Pipeline Runner ? contest appears in dropdown from canonical path
+
+---
+
+## v1.9 — Prompt 29: Precinct Normalization & Crosswalk Repair (2026-03-14)
+
+### Changelog
+
+| Change | File(s) |
+|---|---|
+| `detect_crosswalk_columns()` upgraded to 3-tier resolution (config ? alias ? heuristic) | `scripts/geography/crosswalk_resolver.py` |
+| `CROSSWALK_REGISTRY` required_cols fixed to match actual lowercase Sonoma column names | `scripts/lib/crosswalks.py` |
+| `load_crosswalk_from_category()` now emits explicit `IDENTITY_FALLBACK_USED` diagnostic | `scripts/geography/crosswalk_resolver.py` |
+| New per-file column hint config created for all 5 Sonoma crosswalk files | `config/precinct_id/crosswalk_column_hints.yaml` |
+| Manual override config skeleton created | `config/precinct_id/manual_mapping_overrides.yaml` |
+| Join outcome taxonomy (10 standardized constants) | `engine/precinct_ids/join_outcomes.py` |
+| Deep crosswalk introspector | `engine/precinct_ids/crosswalk_introspector.py` |
+| Per-row ID trace logger | `engine/precinct_ids/id_trace.py` |
+| Join quality metrics module | `engine/precinct_ids/join_quality.py` |
+| Human review queue writer | `engine/precinct_ids/review_queue.py` |
+| 5-file diagnostic bundle writer | `engine/precinct_ids/diagnostic_bundle.py` |
+| LOAD_CROSSWALKS pipeline step wired to P29 introspection + review queue | `scripts/run_pipeline.py` |
+
+---
+
+## P. Contest ? Crosswalk ? Geometry ? UI: Full Data Flow (Prompt 29)
+
+### P.1 How a Contest File Is Uploaded and Registered
+
+1. **User uploads** via UI: `ui/dashboard/data_manager_view.py` ? Data Manager tab
+2. File is written to `data/contests/{state}/{county}/{year}/{contest_slug}/raw/`
+3. `engine/contest_data/contest_intake.py` ? `ContestIntake.register_file()` writes metadata to `data/contests/{state}/{county}/{year}/{contest_slug}/registry.json`
+4. `engine/contest_data/contest_resolver.py` ? `ContestResolver.resolve_primary_result_file()` — the canonical path lookup used by the pipeline
+
+### P.2 How the Pipeline Selects a Contest File
+
+**Step: VALIDATE_VOTES** in `scripts/run_pipeline.py`:
+
+1. `ContestResolver.resolve_primary_result_file(state, county, year, contest_slug)` is tried first
+2. If found in canonical path ? logs `[VALIDATE_VOTES] Found votes via canonical path`
+3. If not found ? falls back to legacy path check under `votes/raw/`
+4. If still not found ? step SKIPS with reason logged
+
+The contest file path is passed downstream to PARSE_CONTEST_SHEETS.
+
+### P.3 How Sheets Are Parsed and Precinct Columns Identified
+
+**Step: PARSE_CONTEST_SHEETS**:
+
+1. File opened by `scripts/loaders/contest_registry.py`
+2. For XLS/XLSX: `engine/contest_data/contest_intake.py` parses sheets
+3. Precinct column detection: looks for columns matching `precinct`, `pct`, `Precinct`, `PCT Number` etc.
+4. Each row's precinct value becomes `raw_precinct_value`
+5. `engine/precinct_ids/id_schema_detector.py` ? `detect_schema()` classifies: `mprec` | `mprec_unpadded` | `short_precinct` | `srprec` | etc.
+
+### P.4 How Crosswalks Are Chosen and Loaded
+
+**Step: LOAD_CROSSWALKS** in `scripts/run_pipeline.py`:
+
+1. `scripts/geography/crosswalk_resolver.load_crosswalk_from_category()` searches `data/{state}/counties/{county}/geography/crosswalks/`
+2. Calls `detect_crosswalk_columns(headers, filename=...)` — **3-tier resolution (P29)**:
+   - Tier 1: `config/precinct_id/crosswalk_column_hints.yaml` per-file override
+   - Tier 2: Expanded alias table (lowercase + uppercase column names)
+   - Tier 3: Filename heuristic (e.g. file contains `blk_mprec` ? prefer `block`,`mprec`)
+3. If detection fails ? `IDENTITY_FALLBACK_USED` logged explicitly; `return {}, False`
+4. `engine/precinct_ids/crosswalk_introspector.py` runs deep inspection of all crosswalk files
+5. Any failures written to `derived/precinct_id_review/{run_id}__crosswalk_review.csv`
+
+**Sonoma crosswalk files and their columns:**
+
+| File | Source col | Target col | Weight col | Purpose |
+|---|---|---|---|---|
+| `blk_mprec_097_g24_v01.csv` | `block` | `mprec` | `pct_block` | Census block ? MPREC |
+| `mprec_srprec_097_g24.csv` | `mprec` | `srprec` | none | MPREC ? SRPREC |
+| `c097_g24_srprec_to_city.csv` | `srprec` | `city` | none | SRPREC ? City |
+| `c097_g24_sr_blk_map.csv` | `srprec` | `block` | `pctsrprec` | SRPREC ? Block |
+| `c097_rg_rr_sr_svprec_g24.csv` | `rgprec` | `svprec` | none | RG?RR?SR?SVPREC chain |
+
+### P.5 How Raw Precinct IDs Become Canonical IDs
+
+1. `engine/precinct_ids/id_normalizer.py` ? `normalize_id(raw_id, schema_key, state, county, boundary_type)`
+   - `mprec`: zero-pad to 7 digits
+   - `mprec_unpadded`: left-pad to 7 digits
+   - `short_precinct`, `srprec`, `city_precinct`: **fail closed** — require explicit crosswalk
+   - `unknown_schema`: fail closed, review required
+2. `engine/precinct_ids/id_crosswalk_resolver.py` ? `resolve_via_crosswalk()`: searches all crosswalk files for a match
+3. Result: canonical key `{STATE}|{COUNTY}|{BOUNDARY_TYPE}|{CANONICAL_ID}`
+
+### P.6 How Geometry Joins Happen
+
+1. Geometry loaded from `data/{state}/counties/{county}/geography/precinct_shapes/`
+2. Join key in geometry file identified (MPREC or SRPREC field)
+3. Contest canonical keys matched against geometry IDs
+4. Outcome recorded using join outcome taxonomy from `engine/precinct_ids/join_outcomes.py`:
+   - `EXACT_GEOMETRY_MATCH` — raw ID matched directly
+   - `EXACT_CROSSWALK_MATCH` — crosswalk resolved it
+   - `NORMALIZED_MATCH` — zero-padding resolved it
+   - `IDENTITY_FALLBACK_USED` — crosswalk failed; raw ID used as-is ??
+   - `NO_MATCH_AFTER_NORMALIZATION` — ID couldn't be resolved
+5. Join quality computed by `engine/precinct_ids/join_quality.py` ? `JoinQualityReport`
+
+### P.7 How Map Data Is Produced
+
+1. Joined GeoDataFrame emitted after geometry join step
+2. Exported as GeoJSON to `derived/maps/{run_id}_{contest_slug}.geojson`
+3. `scripts/geo/kepler_export.py` produces Kepler.gl config + data layer
+4. Map page reads from `derived/maps/` — if join coverage poor, sparse map appears
+
+### P.8 How Archive Outputs Are Produced
+
+1. `engine/archive_builder/archive_ingestor.py` ingests normalized contest rows
+2. Requires geometry join to have succeeded — empty join ? empty archive profiles
+3. `engine/archive/precinct_profiles.py` builds per-precinct turnout/support statistics
+4. `engine/archive/trend_analysis.py` adds OLS trend slopes
+5. Archive outputs written to `derived/archive/{state}/{county}/{year}/{contest_slug}/`
+
+---
+
+## Q. File-by-File Subsystem Map: engine/precinct_ids/
+
+| File | Purpose | Inputs | Outputs | Common failures |
+|---|---|---|---|---|
+| `id_schema_detector.py` | Classify raw precinct ID schema | raw string | schema key (`mprec`, `srprec`, ...) | `unknown_schema` if unexpected format |
+| `id_normalizer.py` | Normalize to canonical 7-digit or scoped ID | raw_id, schema_key, state, county | `NormalizationResult` | Fails closed for `short_precinct`/`srprec` — requires crosswalk |
+| `id_crosswalk_resolver.py` | Resolve via crosswalk files | raw_id, state, county, boundary | `CrosswalkResolutionResult` | `NO_MATCH` if crosswalk files missing/wrong columns |
+| `id_rules.yaml` | Schema detection regex rules | — | loaded by `id_schema_detector.py` | — |
+| `safe_join_engine.py` | Jurisdiction-safe join engine | normalized IDs, geometry index | joined GDF | `BLOCKED_CROSS_JURISDICTION` if county mismatch |
+| **NEW: P29** | | | | |
+| `join_outcomes.py` | Standardized outcome constants | — | 10 outcome strings | — |
+| `crosswalk_introspector.py` | Deep per-file crosswalk inspection | crosswalk directory | list of `CrosswalkFileReport` | import error if pandas not installed |
+| `id_trace.py` | Per-row join trace logger | PrecincIDTracer calls | `{run_id}__id_trace.csv`, `__id_trace_summary.json` | Large CSV if not sampled |
+| `join_quality.py` | Join quality metrics | outcome_counts dict | `JoinQualityReport` | verdict FAILED if 0% joined |
+| `review_queue.py` | Human review CSV writer | crosswalk/join issues | `derived/precinct_id_review/*.csv` | Empty CSVs if no failures |
+| `diagnostic_bundle.py` | 5-file repairdiagnostic bundle | introspect reports + join quality + trace | `reports/crosswalk_repair/{run_id}/*.{md,json,csv}` | — |
+
+---
+
+## R. Crosswalk & Geometry Data Inventory (Sonoma, CA, g24 vintage)
+
+All files at: `data/CA/counties/Sonoma/geography/crosswalks/`
+
+| File | Maps | Source col | Target col | Weight | Code that uses it |
+|---|---|---|---|---|---|
+| `blk_mprec_097_g24_v01.csv` | Census Block ? MPREC | `block` | `mprec` | `pct_block` | `scripts/geography/crosswalk_resolver.load_crosswalk_from_category()` |
+| `mprec_srprec_097_g24.csv` | MPREC ? SRPREC | `mprec` | `srprec` | none | same |
+| `c097_g24_srprec_to_city.csv` | SRPREC ? City | `srprec` | `city` | none | `scripts/aggregation/vote_allocator.py` |
+| `c097_g24_sr_blk_map.csv` | SRPREC ? Block (weighted) | `srprec` | `block` | `pctsrprec` | block-level allocation |
+| `c097_rg_rr_sr_svprec_g24.csv` | RG?RR?SR?SVPREC chain | `rgprec` | `svprec` | none | RG-prec analysis |
+
+Geometry file: `data/CA/counties/Sonoma/geography/precinct_shapes/`
+  - Contains MPREC geometry (primary) and SRPREC geometry (fallback)
+  - Expected ID column: `MPREC` or `mprec` (case-insensitive match in join engine)
+
+---
+
+## S. Join Logic Narrative
+
+### How raw precinct IDs become canonical IDs
+
+1. Contest sheet parsed ? raw string extracted from precinct column (e.g. `"127"`, `"PCT 0127"`, `"0400127"`)
+2. `id_schema_detector.py` classifies the string: `mprec` (7 digits), `mprec_unpadded` (6 digits), `short_precinct` (1-3 digits), `srprec`, etc.
+3. For `mprec`/`mprec_unpadded`: `id_normalizer.py` zero-pads to 7 digits ? canonical ID `0400127`
+4. For `short_precinct`/`srprec`: normalizer **fails closed** — crosswalk required
+5. Crosswalk used: `engine/precinct_ids/id_crosswalk_resolver.py` searches `data/crosswalks/{state}/{county}/`
+6. Cross-jurisdiction check: if state or county doesn't match the contest's scope ? `BLOCKED_CROSS_JURISDICTION`
+7. Final output: canonical scoped key `CA|Sonoma|MPREC|0400127`
+
+### When identity fallback is dangerous
+
+Identity fallback (`IDENTITY_FALLBACK_USED`) means the crosswalk detector could not identify source and target columns, so the raw precinct string is used directly as the geometry join key. This produces:
+- Map points only where the raw string accidentally matches a geometry ID
+- "Scattered" or "sparse" map with no interpretable pattern
+- Empty archive profiles
+- **Fix**: add entry to `config/precinct_id/crosswalk_column_hints.yaml`
+
+---
+
+## T. UI Data Lineage
+
+| Page | Files read | Derived outputs expected | If join poor |
+|---|---|---|---|
+| Precinct Map | `derived/maps/{run_id}*.geojson` | Geometry-joined GeoJSON | Blank or scattered points |
+| Archive / Precinct Profiles | `derived/archive/{state}/{county}/{year}/{slug}/` | precinct_profiles.json | Empty profiles |
+| Pipeline Runner | pipeline stdout + `reports/pipeline_logs/{run_id}.log` | — | Download buttons show raw log |
+| Data Manager | `data/contests/{state}/{county}/{year}/{slug}/registry.json` | — | "No files" if registry missing |
+| Source Registry | `config/source_registry/*.yaml` | — | Empty registry |
+
+---
+
+## U. How the System Can Fail (Known Failure Patterns)
+
+| Failure | Symptom | Root cause | Fix |
+|---|---|---|---|
+| File uploaded but not selected by pipeline | VALIDATE_VOTES skips | `ContestResolver.resolve_primary_result_file()` returns None | Ensure file is in correct canonical path `data/contests/{state}/{county}/{year}/{slug}/raw/` |
+| Crosswalk columns not detected | IDENTITY_FALLBACK_USED; map scattered | `detect_crosswalk_columns()` alias mismatch | Add `per_file_hints` to `config/precinct_id/crosswalk_column_hints.yaml` |
+| Stub contest file used instead of real file | 0 votes found | Pipeline resolves placeholder file | Upload real result file via Data Manager ? canonical path |
+| Archive outputs synthetic/empty | Profiles page blank | Geometry join had 0% coverage (identity fallback) | Fix crosswalk detection; re-run pipeline |
+| Map join sparse (random precincts) | Only 2-5 precincts on map | Identity fallback: raw precinct strings randomly match geometry IDs | Fix crosswalk; run introspector; check `crosswalk_repair_summary.md` |
+| Schema `short_precinct` fails closed | `requires_crosswalk` in trace | 1-3 digit raw IDs need crosswalk to map to 7-digit MPREC | Verify crosswalk file is present and columns detected |
+| Archive ingest empty | Blank `precinct_profiles.json` | Archive ingest requires geometry join rows | Fix upstream join; geometry must match before archive runs |
+| `KeyError: 'current_filename'` in UI | Data Manager crash | Old schema field in registry | Fixed by `_norm()` in `data_manager_view.py` |
+

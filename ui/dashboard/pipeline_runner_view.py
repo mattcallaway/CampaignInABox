@@ -119,9 +119,8 @@ def _discover_contests() -> list[dict]:
     return sorted(contests, key=lambda c: (c["county"], c["year"], c["slug"]))
 
 
-def _stream_process(cmd: list[str], log_box, stop_event: threading.Event) -> int:
-
-    """Run a subprocess and write output to a Streamlit text area line by line."""
+def _stream_process(cmd: list[str], log_box, stop_event: threading.Event) -> tuple[int, str]:
+    """Run a subprocess, stream output to a Streamlit code block, and return (returncode, full_output)."""
     lines: list[str] = []
     proc = subprocess.Popen(
         cmd,
@@ -143,7 +142,7 @@ def _stream_process(cmd: list[str], log_box, stop_event: threading.Event) -> int
         proc.wait()
     except Exception:
         proc.kill()
-    return proc.returncode
+    return proc.returncode, "\n".join(lines)
 
 
 def _latest_run_log() -> str:
@@ -218,11 +217,21 @@ def render_pipeline_runner(data: dict) -> None:
 
         st.divider()
 
-        # Build command
-        state  = pl_state  or (chosen["state"]  if chosen else "CA")
-        county = pl_county or (chosen["county"] if chosen else "")
-        year   = pl_year   or (chosen["year"]   if chosen else "")
-        slug   = pl_slug   or (chosen["slug"]   if chosen else "")
+        # ── Build command ─────────────────────────────────────────────────────
+        # IMPORTANT: when a contest is selected from the dropdown, its values
+        # ALWAYS win over the override text_input fields (which hold stale
+        # Streamlit widget state from previous runs).
+        # Only use the text_input override values in pure manual mode (no contest chosen).
+        if chosen:
+            state  = chosen["state"]
+            county = chosen["county"]
+            year   = chosen["year"]
+            slug   = chosen["slug"]
+        else:
+            state  = pl_state  or "CA"
+            county = pl_county or ""
+            year   = pl_year   or ""
+            slug   = pl_slug   or ""
 
         cmd = [sys.executable, "scripts/run_pipeline.py"]
         if pl_check_only:
@@ -252,6 +261,13 @@ def render_pipeline_runner(data: dict) -> None:
 
         st.code(" ".join(cmd), language="bash")
 
+        # ── Summary banner: show EXACTLY what will be passed to the pipeline ─
+        if not pl_check_only and not pl_ingest_only and (state and county and year and slug):
+            st.success(
+                f"**Pipeline will run with:**  "
+                f"state=`{state}`  county=`{county}`  year=`{year}`  slug=`{slug}`"
+            )
+
         run_btn = st.button("▶️ Run Modeling Pipeline", type="primary",
                             use_container_width=True, key="pl_run_btn")
 
@@ -267,16 +283,58 @@ def render_pipeline_runner(data: dict) -> None:
 
             start_ts = datetime.now()
             with st.spinner("Pipeline running…"):
-                rc = _stream_process(cmd, log_placeholder, stop_event)
+                rc, captured_output = _stream_process(cmd, log_placeholder, stop_event)
             elapsed = (datetime.now() - start_ts).seconds
 
-            if stop_event.is_set():
-                st.warning(f"⚠️ Pipeline was stopped after {elapsed}s.")
-            elif rc == 0:
-                st.success(f"✅ Pipeline completed in {elapsed}s.")
-                st.cache_data.clear()
+            # Persist results so download buttons survive re-renders
+            st.session_state["pl_last_output"] = captured_output
+            st.session_state["pl_last_rc"]     = rc
+            st.session_state["pl_last_elapsed"] = elapsed
+            # Remember the newest run log at time of completion
+            _run_logs = sorted(
+                list((BASE_DIR / "logs" / "runs").glob("*__run.log")),
+                key=lambda p: p.stat().st_mtime, reverse=True,
+            ) if (BASE_DIR / "logs" / "runs").exists() else []
+            st.session_state["pl_last_logpath"] = str(_run_logs[0]) if _run_logs else ""
+
+        # ── Post-run status + downloads (persisted in session_state) ─────────
+        if "pl_last_rc" in st.session_state:
+            _rc      = st.session_state["pl_last_rc"]
+            _elapsed = st.session_state["pl_last_elapsed"]
+            _output  = st.session_state["pl_last_output"]
+            _logpath = st.session_state.get("pl_last_logpath", "")
+
+            if _rc == 0:
+                st.success(f"✅ Last pipeline run completed in {_elapsed}s.")
+                if not run_btn:
+                    st.cache_data.clear()
             else:
-                st.error(f"❌ Pipeline exited with code {rc} after {elapsed}s. Check log below.")
+                st.error(f"❌ Last pipeline run exited with code {_rc} after {_elapsed}s.")
+
+            st.markdown("#### 📥 Download Run Artifacts")
+            dl_col1, dl_col2 = st.columns(2)
+            with dl_col1:
+                st.download_button(
+                    label="⬇️ Download Captured Output",
+                    data=_output.encode("utf-8"),
+                    file_name=f"pipeline_output_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
+                    mime="text/plain",
+                    use_container_width=True,
+                    key="dl_captured",
+                )
+            with dl_col2:
+                if _logpath and Path(_logpath).exists():
+                    _log_text = Path(_logpath).read_text(encoding="utf-8", errors="replace")
+                    st.download_button(
+                        label=f"⬇️ Download Run Log ({Path(_logpath).name[:24]}…)",
+                        data=_log_text.encode("utf-8"),
+                        file_name=Path(_logpath).name,
+                        mime="text/plain",
+                        use_container_width=True,
+                        key="dl_runlog",
+                    )
+                else:
+                    st.caption("No run log found.")
 
     # ─── TAB 2: Archive Builder ───────────────────────────────────────────────
     with tab_archive:

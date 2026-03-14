@@ -32,18 +32,11 @@ geopandas_library:
   status: missing
 jurisdictions:
   CA/Sonoma:
-    last_run_id: 2026-03-14__003909__b9fa0fa3__msi
-    needs:
-    - category: detail.xlsx
-      status: missing
-      blocks:
-      - parse_contest
-      - allocate_votes
-      - export_model
-      expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\votes\2024\2020_general\detail.xlsx
+    last_run_id: 2026-03-14__020637__116b2740__msi
+    needs: []
 meta:
-  last_run_id: 2026-03-14__003909__b9fa0fa3__msi
-  last_updated: '2026-03-14T07:39:09.308Z'
+  last_run_id: 2026-03-14__020637__116b2740__msi
+  last_updated: '2026-03-14T09:09:07.506Z'
 runs:
 - artifacts:
     needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-05__035835__0e0e8b52__msi__needs_snapshot.yaml
@@ -221,56 +214,128 @@ runs:
   state: CA
   status: partial
   timestamp: '2026-03-11T04:11:26.913Z'
-- run_id: 2026-03-14__000846__25f8d317__msi
+- artifacts:
+    needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-14__000846__25f8d317__msi__needs_snapshot.yaml
+    pathway_json: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__000846__25f8d317__msi__pathway.json
+    qa_report: C:\Users\Mathew C\Campaign In A Box\reports\qa\2026-03-14__000846__25f8d317__msi__qa_sanity_checks.md
+    run_log: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__000846__25f8d317__msi__run.log
+    validation_report: C:\Users\Mathew C\Campaign In A Box\reports\validation\2026-03-14__000846__25f8d317__msi__validation_report.md
+  county: Sonoma
+  run_id: 2026-03-14__000846__25f8d317__msi
+  state: CA
+  status: success
   timestamp: '2026-03-14T07:11:59.153Z'
+- artifacts:
+    needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-14__001450__25f8d317__msi__needs_snapshot.yaml
+    pathway_json: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__001450__25f8d317__msi__pathway.json
+    qa_report: C:\Users\Mathew C\Campaign In A Box\reports\qa\2026-03-14__001450__25f8d317__msi__qa_sanity_checks.md
+    run_log: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__001450__25f8d317__msi__run.log
+    validation_report: C:\Users\Mathew C\Campaign In A Box\reports\validation\2026-03-14__001450__25f8d317__msi__validation_report.md
+  county: Sonoma
+  run_id: 2026-03-14__001450__25f8d317__msi
+  state: CA
+  status: partial
+  timestamp: '2026-03-14T07:14:50.693Z'
+- artifacts:
+    needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-14__003635__b9fa0fa3__msi__needs_snapshot.yaml
+    pathway_json: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__003635__b9fa0fa3__msi__pathway.json
+    qa_report: C:\Users\Mathew C\Campaign In A Box\reports\qa\2026-03-14__003635__b9fa0fa3__msi__qa_sanity_checks.md
+    run_log: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__003635__b9fa0fa3__msi__run.log
+    validation_report: C:\Users\Mathew C\Campaign In A Box\reports\validation\2026-03-14__003635__b9fa0fa3__msi__validation_report.md
+  county: Sonoma
+  run_id: 2026-03-14__003635__b9fa0fa3__msi
+  state: CA
+  status: partial
+  timestamp: '2026-03-14T07:36:35.484Z'
+- artifacts:
+    needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-14__003909__b9fa0fa3__msi__needs_snapshot.yaml
+    pathway_json: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__003909__b9fa0fa3__msi__pathway.json
+    qa_report: C:\Users\Mathew C\Campaign In A Box\reports\qa\2026-03-14__003909__b9fa0fa3__msi__qa_sanity_checks.md
+    run_log: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__003909__b9fa0fa3__msi__run.log
+    validation_report: C:\Users\Mathew C\Campaign In A Box\reports\validation\2026-03-14__003909__b9fa0fa3__msi__validation_report.md
+  county: Sonoma
+  run_id: 2026-03-14__003909__b9fa0fa3__msi
+  state: CA
+  status: partial
+  timestamp: '2026-03-14T07:39:09.308Z'
+- artifacts:
+    needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-14__014322__116b2740__msi__needs_snapshot.yaml
+    pathway_json: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__014322__116b2740__msi__pathway.json
+    qa_report: C:\Users\Mathew C\Campaign In A Box\reports\qa\2026-03-14__014322__116b2740__msi__qa_sanity_checks.md
+    run_log: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__014322__116b2740__msi__run.log
+    validation_report: C:\Users\Mathew C\Campaign In A Box\reports\validation\2026-03-14__014322__116b2740__msi__validation_report.md
+  county: Sonoma
+  run_id: 2026-03-14__014322__116b2740__msi
+  state: CA
+  status: partial
+  timestamp: '2026-03-14T08:43:22.569Z'
+- artifacts:
+    needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-14__014805__116b2740__msi__needs_snapshot.yaml
+    pathway_json: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__014805__116b2740__msi__pathway.json
+    qa_report: C:\Users\Mathew C\Campaign In A Box\reports\qa\2026-03-14__014805__116b2740__msi__qa_sanity_checks.md
+    run_log: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__014805__116b2740__msi__run.log
+    validation_report: C:\Users\Mathew C\Campaign In A Box\reports\validation\2026-03-14__014805__116b2740__msi__validation_report.md
+  county: Sonoma
+  run_id: 2026-03-14__014805__116b2740__msi
+  state: CA
+  status: partial
+  timestamp: '2026-03-14T08:48:05.200Z'
+- artifacts:
+    needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-14__014817__116b2740__msi__needs_snapshot.yaml
+    pathway_json: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__014817__116b2740__msi__pathway.json
+    qa_report: C:\Users\Mathew C\Campaign In A Box\reports\qa\2026-03-14__014817__116b2740__msi__qa_sanity_checks.md
+    run_log: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__014817__116b2740__msi__run.log
+    validation_report: C:\Users\Mathew C\Campaign In A Box\reports\validation\2026-03-14__014817__116b2740__msi__validation_report.md
+  county: Sonoma
+  run_id: 2026-03-14__014817__116b2740__msi
+  state: CA
+  status: partial
+  timestamp: '2026-03-14T08:48:17.609Z'
+- artifacts:
+    needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-14__014957__116b2740__msi__needs_snapshot.yaml
+    pathway_json: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__014957__116b2740__msi__pathway.json
+    qa_report: C:\Users\Mathew C\Campaign In A Box\reports\qa\2026-03-14__014957__116b2740__msi__qa_sanity_checks.md
+    run_log: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__014957__116b2740__msi__run.log
+    validation_report: C:\Users\Mathew C\Campaign In A Box\reports\validation\2026-03-14__014957__116b2740__msi__validation_report.md
+  county: Sonoma
+  run_id: 2026-03-14__014957__116b2740__msi
+  state: CA
+  status: partial
+  timestamp: '2026-03-14T08:49:57.459Z'
+- artifacts:
+    needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-14__015010__116b2740__msi__needs_snapshot.yaml
+    pathway_json: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__015010__116b2740__msi__pathway.json
+    qa_report: C:\Users\Mathew C\Campaign In A Box\reports\qa\2026-03-14__015010__116b2740__msi__qa_sanity_checks.md
+    run_log: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__015010__116b2740__msi__run.log
+    validation_report: C:\Users\Mathew C\Campaign In A Box\reports\validation\2026-03-14__015010__116b2740__msi__validation_report.md
+  county: Sonoma
+  run_id: 2026-03-14__015010__116b2740__msi
+  state: CA
+  status: partial
+  timestamp: '2026-03-14T08:50:10.761Z'
+- run_id: 2026-03-14__020637__116b2740__msi
+  timestamp: '2026-03-14T09:09:07.506Z'
   state: CA
   county: Sonoma
   status: success
   artifacts:
-    run_log: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__000846__25f8d317__msi__run.log
-    pathway_json: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__000846__25f8d317__msi__pathway.json
-    validation_report: C:\Users\Mathew C\Campaign In A Box\reports\validation\2026-03-14__000846__25f8d317__msi__validation_report.md
-    qa_report: C:\Users\Mathew C\Campaign In A Box\reports\qa\2026-03-14__000846__25f8d317__msi__qa_sanity_checks.md
-    needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-14__000846__25f8d317__msi__needs_snapshot.yaml
-- run_id: 2026-03-14__001450__25f8d317__msi
-  timestamp: '2026-03-14T07:14:50.693Z'
-  state: CA
-  county: Sonoma
-  status: partial
-  artifacts:
-    run_log: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__001450__25f8d317__msi__run.log
-    pathway_json: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__001450__25f8d317__msi__pathway.json
-    validation_report: C:\Users\Mathew C\Campaign In A Box\reports\validation\2026-03-14__001450__25f8d317__msi__validation_report.md
-    qa_report: C:\Users\Mathew C\Campaign In A Box\reports\qa\2026-03-14__001450__25f8d317__msi__qa_sanity_checks.md
-    needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-14__001450__25f8d317__msi__needs_snapshot.yaml
-- run_id: 2026-03-14__003635__b9fa0fa3__msi
-  timestamp: '2026-03-14T07:36:35.484Z'
-  state: CA
-  county: Sonoma
-  status: partial
-  artifacts:
-    run_log: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__003635__b9fa0fa3__msi__run.log
-    pathway_json: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__003635__b9fa0fa3__msi__pathway.json
-    validation_report: C:\Users\Mathew C\Campaign In A Box\reports\validation\2026-03-14__003635__b9fa0fa3__msi__validation_report.md
-    qa_report: C:\Users\Mathew C\Campaign In A Box\reports\qa\2026-03-14__003635__b9fa0fa3__msi__qa_sanity_checks.md
-    needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-14__003635__b9fa0fa3__msi__needs_snapshot.yaml
-- run_id: 2026-03-14__003909__b9fa0fa3__msi
-  timestamp: '2026-03-14T07:39:09.308Z'
-  state: CA
-  county: Sonoma
-  status: partial
-  artifacts:
-    run_log: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__003909__b9fa0fa3__msi__run.log
-    pathway_json: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__003909__b9fa0fa3__msi__pathway.json
-    validation_report: C:\Users\Mathew C\Campaign In A Box\reports\validation\2026-03-14__003909__b9fa0fa3__msi__validation_report.md
-    qa_report: C:\Users\Mathew C\Campaign In A Box\reports\qa\2026-03-14__003909__b9fa0fa3__msi__qa_sanity_checks.md
-    needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-14__003909__b9fa0fa3__msi__needs_snapshot.yaml
+    run_log: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__020637__116b2740__msi__run.log
+    pathway_json: C:\Users\Mathew C\Campaign In A Box\logs\runs\2026-03-14__020637__116b2740__msi__pathway.json
+    validation_report: C:\Users\Mathew C\Campaign In A Box\reports\validation\2026-03-14__020637__116b2740__msi__validation_report.md
+    qa_report: C:\Users\Mathew C\Campaign In A Box\reports\qa\2026-03-14__020637__116b2740__msi__qa_sanity_checks.md
+    needs_snapshot: C:\Users\Mathew C\Campaign In A Box\needs\history\2026-03-14__020637__116b2740__msi__needs_snapshot.yaml
 strategy_generator:
   2024_CA_sonoma_nov2024_general:
     derived_mode: full
     last_run_id: 2026-03-14__000846__25f8d317__msi
     missing_inputs: []
     notes: Generated at 2026-03-14T00:10:02.305017
+    status: complete
+  2025_CA_sonoma_nov2025_special:
+    derived_mode: full
+    last_run_id: 2026-03-14__020637__116b2740__msi
+    missing_inputs: []
+    notes: Generated at 2026-03-14T02:07:59.289163
     status: complete
   2025_CA_sonoma_prop_50_special:
     derived_mode: full

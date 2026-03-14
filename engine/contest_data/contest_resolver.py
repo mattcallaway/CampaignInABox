@@ -115,32 +115,46 @@ class ContestResolver:
         contest_slug: str,
     ) -> Optional[Path]:
         """
-        Return the chosen primary result file for this contest.
+        Return the chosen primary result file for this contest, or None.
         Preference order:
-          1. Explicit selection in primary_result_file.json
+          1. Explicit selection in manifests/primary_result_file.json
           2. Largest .xlsx / .xls / .csv in raw/
+
+        NOTE: This method does NOT create directories.
         """
-        manifest = self.resolve_contest_manifest(
-            state, county, year, contest_slug, "primary_result_file.json"
-        )
-        if manifest and manifest.get("primary_file"):
-            raw_dir = self.get_contest_raw_dir(state, county, year, contest_slug)
-            p = raw_dir / manifest["primary_file"]
-            if p.exists():
-                return p
-            log.warning(f"primary_result_file.json points to missing file: {p}")
+        # Build paths without triggering mkdir
+        contest_dir = self.contests_root / state / county / str(year) / contest_slug
+        if not contest_dir.exists():
+            return None
+
+        raw_dir      = contest_dir / "raw"
+        manifests_dir = contest_dir / "manifests"
+
+        # Check explicit manifest first
+        manifest_path = manifests_dir / "primary_result_file.json"
+        if manifest_path.exists():
+            try:
+                manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+                if manifest.get("primary_file"):
+                    p = raw_dir / manifest["primary_file"]
+                    if p.exists():
+                        return p
+                    log.warning(f"primary_result_file.json points to missing file: {p}")
+            except Exception as e:
+                log.warning(f"Could not parse manifest {manifest_path}: {e}")
 
         # Fallback: largest result file in raw/
-        raw_dir = self.get_contest_raw_dir(state, county, year, contest_slug)
-        candidates = sorted(
-            [f for f in raw_dir.iterdir() if f.suffix.lower() in (".xlsx", ".xls", ".csv")],
-            key=lambda f: f.stat().st_size,
-            reverse=True,
-        )
-        if candidates:
-            log.info(f"Auto-selected primary result file: {candidates[0].name}")
-            return candidates[0]
+        if raw_dir.exists():
+            candidates = sorted(
+                [f for f in raw_dir.iterdir() if f.is_file() and f.suffix.lower() in (".xlsx", ".xls", ".csv")],
+                key=lambda f: f.stat().st_size,
+                reverse=True,
+            )
+            if candidates:
+                log.info(f"Auto-selected primary result file: {candidates[0].name}")
+                return candidates[0]
         return None
+
 
     def set_primary_result_file(
         self,

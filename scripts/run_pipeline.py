@@ -354,7 +354,8 @@ def run_pipeline(
 
         # ── Step 4: Validate votes ────────────────────────────────────────────
         logger.step_start("VALIDATE_VOTES", expected=[
-            f"votes/{year}/CA/{loop_county}/{contest_slug}/detail.xlsx"
+            f"data/contests/{state}/{loop_county}/{year}/{contest_slug}/raw/<file>  (canonical, P28)",
+            f"votes/{year}/CA/{loop_county}/{contest_slug}/detail.xlsx              (legacy fallback)",
         ])
 
         if detail_path_override:
@@ -363,11 +364,33 @@ def run_pipeline(
                 detail_path = BASE_DIR / detail_path_override
             votes_valid = detail_path.exists()
             votes_need  = None
+            if votes_valid:
+                logger.info(f"  [VOTES] Using explicit --detail-path override: {detail_path}")
         else:
-            votes_result = validate_votes_present(votes_root, year, loop_county, contest_slug, log=logger)
-            votes_valid  = votes_result["valid"]
-            detail_path  = votes_result.get("path")
-            votes_need   = votes_result.get("needs_entry")
+            # ── P28: Try canonical ContestResolver first ───────────────────
+            detail_path  = None
+            votes_valid  = False
+            try:
+                from engine.contest_data.contest_resolver import ContestResolver
+                _resolver = ContestResolver(BASE_DIR)
+                _canonical = _resolver.resolve_primary_result_file(state, loop_county, year, contest_slug)
+                if _canonical and _canonical.exists():
+                    detail_path  = _canonical
+                    votes_valid  = True
+                    logger.info(f"  [VOTES] Found via ContestResolver (canonical P28): {_canonical.relative_to(BASE_DIR)}")
+            except Exception as _r_err:
+                logger.warn(f"  [VOTES] ContestResolver lookup failed (will try legacy path): {_r_err}")
+
+            # ── Legacy fallback ────────────────────────────────────────────
+            if not votes_valid:
+                votes_result = validate_votes_present(votes_root, year, loop_county, contest_slug, log=logger)
+                votes_valid  = votes_result["valid"]
+                detail_path  = votes_result.get("path")
+                votes_need   = votes_result.get("needs_entry")
+                if votes_valid:
+                    logger.info(f"  [VOTES] Found at legacy path: {detail_path}")
+            else:
+                votes_need = None
 
         if not votes_valid:
             if votes_need:
@@ -375,7 +398,7 @@ def run_pipeline(
                     votes_need["category"], votes_need["status"],
                     votes_need["blocks"], path=votes_need.get("expected_path"),
                 )
-            logger.step_skip("VALIDATE_VOTES", reason="blocked: missing votes — detail.xlsx not found")
+            logger.step_skip("VALIDATE_VOTES", reason="blocked: missing votes — no result file found in canonical or legacy paths")
             # Still run ingestion/validation; just skip modeling steps
             logger.finalize(state, loop_county, contest_slug, run_status="partial")
             if commit:
@@ -389,6 +412,7 @@ def run_pipeline(
         else:
             logger.register_input("detail.xlsx", detail_path)
             logger.step_done("VALIDATE_VOTES")
+
 
         # ── Step 5: Load geometry ─────────────────────────────────────────────
         logger.step_start("LOAD_GEOMETRY", expected=["MPREC preferred; SRPREC fallback"])
@@ -431,6 +455,44 @@ def run_pipeline(
         update_needs_crosswalks(_xwalk_full, BASE_DIR)
         _n_xw_found = sum(1 for v in _xwalk_full.values() if v.get("status") in ("found", "fallback"))
         logger.info(f"  [CROSSWALKS] Discovered {_n_xw_found}/{len(_xwalk_full)} crosswalks")
+
+        # ── Prompt 29: Deep crosswalk introspection + review queue ────────────
+        try:
+            from engine.precinct_ids.crosswalk_introspector import (
+                introspect_crosswalk_directory, reports_to_trace_json
+            )
+            from engine.precinct_ids.review_queue import ReviewQueueWriter
+
+            _xwalk_dir = county_geo_dir / "crosswalks"
+            _introspect_reports = introspect_crosswalk_directory(state, loop_county, _xwalk_dir)
+            _ok_count   = sum(1 for r in _introspect_reports if r.detection_ok)
+            _fail_count = len(_introspect_reports) - _ok_count
+            logger.info(
+                f"  [P29-INTROSPECT] {len(_introspect_reports)} crosswalk files — "
+                f"{_ok_count} detection OK, {_fail_count} detection failed"
+            )
+
+            # Write review queue for any detection failures
+            _rq = ReviewQueueWriter(run_id, state, loop_county, contest_slug)
+            for _r in _introspect_reports:
+                if not _r.detection_ok:
+                    logger.warn(
+                        f"  [P29] ⚠️  IDENTITY_FALLBACK_RISK: {_r.filename} — "
+                        f"{_r.detection_failure_reason}"
+                    )
+                    _rq.add_crosswalk_issue(
+                        file=_r.filename, filepath=_r.filepath,
+                        detected_source_col=_r.source_col or "",
+                        detected_target_col=_r.target_col or "",
+                        candidate_sources=_r.candidate_sources,
+                        candidate_targets=_r.candidate_targets,
+                        ambiguity_reason=_r.detection_failure_reason or "unknown",
+                        detection_status="failed",
+                    )
+            _rq.write()
+
+        except Exception as _e:
+            logger.warn(f"  [P29-INTROSPECT] Introspection failed (non-fatal): {_e}")
 
         if not crosswalks:
             logger.step_skip("LOAD_CROSSWALKS", reason="No crosswalk files; using identity mapping")

@@ -1,6 +1,17 @@
 {
-  "run_id": "2026-03-14__003909__b9fa0fa3__msi",
+  "run_id": "2026-03-14__021518__116b2740__msi",
   "recommendations": [
+    {
+      "likely_source_type": "Official County Registrar or Secretary of State",
+      "search_keywords": "[County Name] statement of vote results csv xlsx",
+      "actionable_steps": [
+        "Check your county Registrar of Voters website for past election results.",
+        "Look for 'Statement of Vote' (SOV) download links.",
+        "Prefer machine-readable formats like CSV or Excel over PDFs."
+      ],
+      "data_type": "election_results",
+      "why_needed": "Essential for establishing baseline precinct model turning and calibrating assumptions."
+    },
     {
       "likely_source_type": "County Registrar or Third-Party Data Vendor",
       "search_keywords": "[State Name] voter file request forms",

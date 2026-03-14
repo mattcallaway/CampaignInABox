@@ -1,7 +1,7 @@
 # Post-Prompt-8.6 Audit ✅
-**Run:** `2026-03-14__000846__25f8d317__msi`
-**Contest:** `2024_CA_sonoma_nov2024_general`  **State:** CA  **County:** Sonoma
-**Timestamp:** 2026-03-14T00:10:02.985540
+**Run:** `2026-03-14__020637__116b2740__msi`
+**Contest:** `2025_CA_sonoma_nov2025_special`  **State:** CA  **County:** Sonoma
+**Timestamp:** 2026-03-14T02:07:59.681774
 **System Health:** `HEALTHY` ✅
 
 ## Artifact Status
