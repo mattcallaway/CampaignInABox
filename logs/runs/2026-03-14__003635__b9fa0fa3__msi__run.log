@@ -1,0 +1,42 @@
+[2026-03-14T07:36:35.382Z] [INFO] ========================================================================
+  Campaign In A Box — Pipeline Run
+  RUN_ID  : 2026-03-14__003635__b9fa0fa3__msi
+  Started : 2026-03-14T07:36:35.381386+00:00
+========================================================================
+[2026-03-14T07:36:35.382Z] [INFO ] Pipeline v2 starting
+[2026-03-14T07:36:35.382Z] [INFO ]   state=CA  county=Sonoma  year=2020  contest_slug=2020_general
+[2026-03-14T07:36:35.382Z] [INFO ]   membership_method=auto  log_level=verbose
+[2026-03-14T07:36:35.443Z] [STEP ] START  -> DATA_INTAKE_ANALYSIS
+[2026-03-14T07:36:35.452Z] [STEP ] DONE   [OK] DATA_INTAKE_ANALYSIS (0.072s)
+[2026-03-14T07:36:35.453Z] [STEP ] SKIP   [SKIP] INGEST_STAGING -- No --staging-dir provided; skipping ingestion
+[2026-03-14T07:36:35.453Z] [INFO ] === Processing County: Sonoma ===
+[2026-03-14T07:36:35.453Z] [STEP ] START  -> SCAFFOLD_BOUNDARY_INDEX_Sonoma
+[2026-03-14T07:36:35.453Z] [INFO ]   Boundary index exists: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\boundary_index\boundaries_index.csv
+[2026-03-14T07:36:35.455Z] [WARN ]   Boundary index scaffolded (no boundary files found yet)
+[2026-03-14T07:36:35.455Z] [INFO ]   output: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\boundary_index\boundaries_index.csv  [sha256:b4dff0e71c42...]
+[2026-03-14T07:36:35.455Z] [STEP ] DONE   [OK] SCAFFOLD_BOUNDARY_INDEX_Sonoma (0.074s)
+[2026-03-14T07:36:35.455Z] [STEP ] START  -> VALIDATE_GEOGRAPHY
+[2026-03-14T07:36:35.455Z] [INFO ]   expected: data/CA/counties/Sonoma/geography/precinct_shapes/
+[2026-03-14T07:36:35.455Z] [INFO ]   expected: data/CA/counties/Sonoma/geography/crosswalks/
+[2026-03-14T07:36:35.456Z] [INFO ]   [present] MPREC GeoJSON
+[2026-03-14T07:36:35.456Z] [INFO ]   [present] MPREC GeoPackage
+[2026-03-14T07:36:35.458Z] [INFO ]   [present] MPREC Shapefile
+[2026-03-14T07:36:35.459Z] [INFO ]   [present] SRPREC GeoJSON
+[2026-03-14T07:36:35.459Z] [INFO ]   [present] SRPREC GeoPackage
+[2026-03-14T07:36:35.461Z] [INFO ]   [present] SRPREC Shapefile
+[2026-03-14T07:36:35.461Z] [INFO ]   [present] 2020 BLK TO MPREC
+[2026-03-14T07:36:35.461Z] [INFO ]   [present] RGPREC TO 2020 BLK
+[2026-03-14T07:36:35.462Z] [INFO ]   [present] SRPREC TO 2020 BLK
+[2026-03-14T07:36:35.462Z] [INFO ]   [present] RG to RR to SR to SVPREC
+[2026-03-14T07:36:35.462Z] [INFO ]   [present] MPREC to SRPREC
+[2026-03-14T07:36:35.462Z] [INFO ]   [present] SRPREC to CITY
+[2026-03-14T07:36:35.462Z] [INFO ] Geography validation: 12/12 present, canonical=MPREC
+[2026-03-14T07:36:35.462Z] [STEP ] DONE   [OK] VALIDATE_GEOGRAPHY (0.082s)
+[2026-03-14T07:36:35.462Z] [STEP ] START  -> VALIDATE_VOTES
+[2026-03-14T07:36:35.462Z] [INFO ]   expected: votes/2020/CA/Sonoma/2020_general/detail.xlsx
+[2026-03-14T07:36:35.463Z] [WARN ]   [missing] votes: no detail.xlsx/xls in any of: ['C:\\Users\\Mathew C\\Campaign In A Box\\data\\CA\\counties\\Sonoma\\votes\\2020\\2020_general', 'C:\\Users\\Mathew C\\Campaign In A Box\\votes\\2020\\CA\\Sonoma\\2020_general']
+[2026-03-14T07:36:35.463Z] [WARN ]   NEED: detail.xlsx [missing] -- blocks: parse_contest, allocate_votes, export_model
+[2026-03-14T07:36:35.463Z] [STEP ] SKIP   [SKIP] VALIDATE_VOTES -- blocked: missing votes — detail.xlsx not found
+[2026-03-14T07:36:35.463Z] [INFO ] ========================================================================
+  Run complete — PARTIAL  elapsed: 0.082s
+========================================================================

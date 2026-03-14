@@ -1,0 +1,290 @@
+{
+  "run_id": "2026-03-14__011318__p28",
+  "executed_at": "2026-03-14T08:22:58.508143",
+  "total_deleted": 31,
+  "total_kept": 0,
+  "total_errors": 0,
+  "deleted": [
+    {
+      "path": "data/elections/CA/Sonoma/.gitkeep",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 0,
+      "decision": "DELETE",
+      "reason": "Contest/result file outside canonical contest structure",
+      "note": "deleted"
+    },
+    {
+      "path": "data/elections/CA/Sonoma/2020_general/StatementOfVotesCast-Webnov32020 (1).xlsx",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 4049704,
+      "decision": "DELETE",
+      "reason": "Contest/result file outside canonical contest structure",
+      "note": "deleted"
+    },
+    {
+      "path": "data/elections/CA/Sonoma/2020_general/StatementOfVotesCast-Webnov32020.xlsx",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 4049704,
+      "decision": "DELETE",
+      "reason": "Contest/result file outside canonical contest structure",
+      "note": "deleted"
+    },
+    {
+      "path": "data/elections/CA/Sonoma/download_status.json",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 893,
+      "decision": "DELETE",
+      "reason": "Contest/result file outside canonical contest structure",
+      "note": "deleted"
+    },
+    {
+      "path": "data/election_archive/normalized/normalized_elections.csv",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 237,
+      "decision": "DELETE",
+      "reason": "Contest/result file outside canonical contest structure",
+      "note": "deleted"
+    },
+    {
+      "path": "derived/archive/normalized_elections.csv",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 321176,
+      "decision": "DELETE",
+      "reason": "Contest-result derived output outside canonical structure",
+      "note": "deleted"
+    },
+    {
+      "path": "derived/archive/precinct_profiles.csv",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 87,
+      "decision": "DELETE",
+      "reason": "Contest-result derived output outside canonical structure",
+      "note": "deleted"
+    },
+    {
+      "path": "derived/archive/precinct_trends.csv",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 115,
+      "decision": "DELETE",
+      "reason": "Contest-result derived output outside canonical structure",
+      "note": "deleted"
+    },
+    {
+      "path": "derived/archive/similar_elections.csv",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 150,
+      "decision": "DELETE",
+      "reason": "Contest-result derived output outside canonical structure",
+      "note": "deleted"
+    },
+    {
+      "path": "data/uploads/temp/prop_50_detail.xlsx",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 48573,
+      "decision": "DELETE",
+      "reason": "Contest/result file outside canonical contest structure",
+      "note": "deleted"
+    },
+    {
+      "path": "data/uploads/temp/StatementOfVotesCast-Webnov32020 (1).xlsx",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 4049704,
+      "decision": "DELETE",
+      "reason": "Contest/result file outside canonical contest structure",
+      "note": "deleted"
+    },
+    {
+      "path": "data/uploads/temp/StatementOfVotesCast-Webnov32020.xlsx",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 4049704,
+      "decision": "DELETE",
+      "reason": "Contest/result file outside canonical contest structure",
+      "note": "deleted"
+    },
+    {
+      "path": "votes/.gitkeep",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 0,
+      "decision": "DELETE",
+      "reason": "Contest/result file outside canonical contest structure",
+      "note": "deleted"
+    },
+    {
+      "path": "votes/2024/CA/SAMPLE_COUNTY/MEASURE_A/.gitkeep",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 0,
+      "decision": "DELETE",
+      "reason": "Contest/result file outside canonical contest structure",
+      "note": "deleted"
+    },
+    {
+      "path": "votes/2024/CA/SAMPLE_COUNTY/MEASURE_A/contest.json",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 590,
+      "decision": "DELETE",
+      "reason": "Contest/result file outside canonical contest structure",
+      "note": "deleted"
+    },
+    {
+      "path": "votes/2024/CA/SAMPLE_COUNTY/MEASURE_A/detail.xlsx",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 6642,
+      "decision": "DELETE",
+      "reason": "Contest/result file outside canonical contest structure",
+      "note": "deleted"
+    },
+    {
+      "path": "votes/2024/CA/Sonoma/nov2024_general/contest.json",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 520,
+      "decision": "DELETE",
+      "reason": "Contest/result file outside canonical contest structure",
+      "note": "deleted"
+    },
+    {
+      "path": "votes/2024/CA/Sonoma/nov2024_general/detail.xlsx",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 5420,
+      "decision": "DELETE",
+      "reason": "Contest/result file outside canonical contest structure",
+      "note": "deleted"
+    },
+    {
+      "path": "votes/2025/CA/Sonoma/prop_50_special/contest.json",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 703,
+      "decision": "DELETE",
+      "reason": "Contest/result file outside canonical contest structure",
+      "note": "deleted"
+    },
+    {
+      "path": "data/CA/counties/Sonoma/votes/2024/2024_general/data_config.json",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 273,
+      "decision": "DELETE",
+      "reason": "Contest/result file outside canonical contest structure",
+      "note": "deleted"
+    },
+    {
+      "path": "data/CA/counties/Sonoma/votes/2024/2024_general/detail.xlsx",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 13521601,
+      "decision": "DELETE",
+      "reason": "Contest/result file outside canonical contest structure",
+      "note": "deleted"
+    },
+    {
+      "path": "data/CA/counties/Sonoma/votes/2024/2025_general/data_config.json",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 178,
+      "decision": "DELETE",
+      "reason": "Contest/result file outside canonical contest structure",
+      "note": "deleted"
+    },
+    {
+      "path": "data/CA/counties/Sonoma/votes/2024/nov2024_general/data_config.json",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 800,
+      "decision": "DELETE",
+      "reason": "Contest/result file outside canonical contest structure",
+      "note": "deleted"
+    },
+    {
+      "path": "data/CA/counties/Sonoma/votes/2024/nov2024_general/detail.xlsx",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 5687,
+      "decision": "DELETE",
+      "reason": "Contest/result file outside canonical contest structure",
+      "note": "deleted"
+    },
+    {
+      "path": "data/CA/counties/Sonoma/votes/2024/nov2024_general/detail_old.xls",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 13521601,
+      "decision": "DELETE",
+      "reason": "Contest/result file outside canonical contest structure",
+      "note": "deleted"
+    },
+    {
+      "path": "data/CA/counties/Sonoma/votes/2025/2025_general/data_config.json",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 273,
+      "decision": "DELETE",
+      "reason": "Contest/result file outside canonical contest structure",
+      "note": "deleted"
+    },
+    {
+      "path": "data/CA/counties/Sonoma/votes/2025/2025_general/detail.xlsx",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 36802,
+      "decision": "DELETE",
+      "reason": "Contest/result file outside canonical contest structure",
+      "note": "deleted"
+    },
+    {
+      "path": "data/CA/counties/Sonoma/votes/2025/nov2024_general/data_config.json",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 178,
+      "decision": "DELETE",
+      "reason": "Contest/result file outside canonical contest structure",
+      "note": "deleted"
+    },
+    {
+      "path": "data/CA/counties/Sonoma/votes/2025/nov2025_special/detail.xlsx",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 36802,
+      "decision": "DELETE",
+      "reason": "Contest/result file outside canonical contest structure",
+      "note": "deleted"
+    },
+    {
+      "path": "data/CA/counties/Sonoma/votes/2025/prop_50_special/data_config.json",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 273,
+      "decision": "DELETE",
+      "reason": "Contest/result file outside canonical contest structure",
+      "note": "deleted"
+    },
+    {
+      "path": "data/CA/counties/Sonoma/votes/2025/prop_50_special/detail.xlsx",
+      "classification": "CONTEST_DATA",
+      "type": "file",
+      "size_bytes": 36802,
+      "decision": "DELETE",
+      "reason": "Contest/result file outside canonical contest structure",
+      "note": "deleted"
+    }
+  ],
+  "kept": [],
+  "errors": []
+}

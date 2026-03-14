@@ -1,12 +1,48 @@
 {
-  "run_id": "20260312__p24",
-  "generated_at": "2026-03-12T23:05:25.590216",
-  "missing_files": [
+  "run_id": "2026-03-14__003909__b9fa0fa3__msi",
+  "missing_count": 6,
+  "requests": [
     {
-      "file_type": "voter_file",
-      "status": "MISSING",
-      "recommendation": "Obtain from County Registrar of Voters (VAN export) or NGP VAN / TargetSmart"
+      "data_type": "voter_file",
+      "priority": "critical",
+      "why_needed": "Required for building the initial targeting universe and simulating specific voter turnout scores.",
+      "recommended_destination": "data/voters/CA/Sonoma/",
+      "example_filename": "county_voter_file_extract_2026.csv"
+    },
+    {
+      "data_type": "precinct_geometry",
+      "priority": "medium",
+      "why_needed": "Necessary for generating the interactive map dashboard and cutting field canvassing turfs.",
+      "recommended_destination": "data/geography/CA/Sonoma/",
+      "example_filename": "county_precincts.geojson"
+    },
+    {
+      "data_type": "crosswalk",
+      "priority": "medium",
+      "why_needed": "Provides block-to-precinct mapping so geographic allocation is more accurate.",
+      "recommended_destination": "data/crosswalks/CA/Sonoma/",
+      "example_filename": "block_to_precinct_xwalk.csv"
+    },
+    {
+      "data_type": "polling",
+      "priority": "high",
+      "why_needed": "Crucial external signal for the Intelligence Fusion layer. Without it, the model relies on baselines only.",
+      "recommended_destination": "data/intelligence/polling/",
+      "example_filename": "latest_benchmark_poll.xlsx"
+    },
+    {
+      "data_type": "ballot_returns",
+      "priority": "medium",
+      "why_needed": "Allows the war room to project early voting pace and adjust GOTV targets daily.",
+      "recommended_destination": "data/intelligence/ballot_returns/",
+      "example_filename": "daily_return_report_aggregate.csv"
+    },
+    {
+      "data_type": "demographics",
+      "priority": "low",
+      "why_needed": "Can adjust support models (via education/income indexes) if polling is sparse.",
+      "recommended_destination": "data/intelligence/demographics/",
+      "example_filename": "census_acs_precincts.csv"
     }
-  ],
-  "missing_count": 1
+  ]
 }

@@ -1,0 +1,5 @@
+canonical_precinct_id,region_id,region_rank,region_name,precinct_count,registered_total,avg_target_score
+001,REGION_01,1,Region 01,4,0,0.0
+002,REGION_01,1,Region 01,4,0,0.0
+003,REGION_01,1,Region 01,4,0,0.0
+004,REGION_01,1,Region 01,4,0,0.0

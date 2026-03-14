@@ -1,5 +1,5 @@
-ballots_cast,note,precinct_id,registered,rule
-750,Likely join/extraction error — registered not mapped from workbook,001,0,REG_ZERO_BALLOTS_NONZERO
-1050,Likely join/extraction error — registered not mapped from workbook,002,0,REG_ZERO_BALLOTS_NONZERO
-1350,Likely join/extraction error — registered not mapped from workbook,003,0,REG_ZERO_BALLOTS_NONZERO
-1650,Likely join/extraction error — registered not mapped from workbook,004,0,REG_ZERO_BALLOTS_NONZERO
+repair_type,dataset,field,original_value,new_value,reason,timestamp,precinct_id
+CRITICAL_NO_REPAIR,precinct_model,registered,0,0,Likely join/extraction error — registered not mapped from workbook,2026-03-14T00:10:02.957876,001
+CRITICAL_NO_REPAIR,precinct_model,registered,0,0,Likely join/extraction error — registered not mapped from workbook,2026-03-14T00:10:02.957876,002
+CRITICAL_NO_REPAIR,precinct_model,registered,0,0,Likely join/extraction error — registered not mapped from workbook,2026-03-14T00:10:02.957876,003
+CRITICAL_NO_REPAIR,precinct_model,registered,0,0,Likely join/extraction error — registered not mapped from workbook,2026-03-14T00:10:02.957876,004

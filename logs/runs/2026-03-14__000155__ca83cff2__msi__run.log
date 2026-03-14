@@ -1,0 +1,51 @@
+[2026-03-14T07:01:55.375Z] [INFO] ========================================================================
+  Campaign In A Box — Pipeline Run
+  RUN_ID  : 2026-03-14__000155__ca83cff2__msi
+  Started : 2026-03-14T07:01:55.374730+00:00
+========================================================================
+[2026-03-14T07:01:55.375Z] [INFO ] Pipeline v2 starting
+[2026-03-14T07:01:55.375Z] [INFO ]   state=CA  county=Sonoma  year=2024  contest_slug=nov2024_general
+[2026-03-14T07:01:55.375Z] [INFO ]   membership_method=auto  log_level=verbose
+[2026-03-14T07:01:55.451Z] [STEP ] START  -> DATA_INTAKE_ANALYSIS
+[2026-03-14T07:01:55.473Z] [WARN ] DATA_INTAKE_ANALYSIS error: 'str' object has no attribute 'get'
+[2026-03-14T07:01:55.473Z] [STEP ] SKIP   [SKIP] DATA_INTAKE_ANALYSIS -- 'str' object has no attribute 'get'
+[2026-03-14T07:01:55.474Z] [STEP ] SKIP   [SKIP] INGEST_STAGING -- No --staging-dir provided; skipping ingestion
+[2026-03-14T07:01:55.474Z] [INFO ] === Processing County: Sonoma ===
+[2026-03-14T07:01:55.474Z] [STEP ] START  -> SCAFFOLD_BOUNDARY_INDEX_Sonoma
+[2026-03-14T07:01:55.474Z] [INFO ]   Boundary index exists: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\boundary_index\boundaries_index.csv
+[2026-03-14T07:01:55.476Z] [WARN ]   Boundary index scaffolded (no boundary files found yet)
+[2026-03-14T07:01:55.477Z] [INFO ]   output: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\boundary_index\boundaries_index.csv  [sha256:b4dff0e71c42...]
+[2026-03-14T07:01:55.477Z] [STEP ] DONE   [OK] SCAFFOLD_BOUNDARY_INDEX_Sonoma (0.102s)
+[2026-03-14T07:01:55.477Z] [STEP ] START  -> VALIDATE_GEOGRAPHY
+[2026-03-14T07:01:55.477Z] [INFO ]   expected: data/CA/counties/Sonoma/geography/precinct_shapes/
+[2026-03-14T07:01:55.477Z] [INFO ]   expected: data/CA/counties/Sonoma/geography/crosswalks/
+[2026-03-14T07:01:55.477Z] [INFO ]   [present] MPREC GeoJSON
+[2026-03-14T07:01:55.478Z] [INFO ]   [present] MPREC GeoPackage
+[2026-03-14T07:01:55.481Z] [INFO ]   [present] MPREC Shapefile
+[2026-03-14T07:01:55.481Z] [INFO ]   [present] SRPREC GeoJSON
+[2026-03-14T07:01:55.482Z] [INFO ]   [present] SRPREC GeoPackage
+[2026-03-14T07:01:55.484Z] [INFO ]   [present] SRPREC Shapefile
+[2026-03-14T07:01:55.485Z] [INFO ]   [present] 2020 BLK TO MPREC
+[2026-03-14T07:01:55.485Z] [INFO ]   [present] RGPREC TO 2020 BLK
+[2026-03-14T07:01:55.485Z] [INFO ]   [present] SRPREC TO 2020 BLK
+[2026-03-14T07:01:55.485Z] [INFO ]   [present] RG to RR to SR to SVPREC
+[2026-03-14T07:01:55.486Z] [INFO ]   [present] MPREC to SRPREC
+[2026-03-14T07:01:55.486Z] [INFO ]   [present] SRPREC to CITY
+[2026-03-14T07:01:55.486Z] [INFO ] Geography validation: 12/12 present, canonical=MPREC
+[2026-03-14T07:01:55.486Z] [STEP ] DONE   [OK] VALIDATE_GEOGRAPHY (0.112s)
+[2026-03-14T07:01:55.486Z] [STEP ] START  -> VALIDATE_VOTES
+[2026-03-14T07:01:55.486Z] [INFO ]   expected: votes/2024/CA/Sonoma/nov2024_general/detail.xlsx
+[2026-03-14T07:01:55.487Z] [INFO ]   input: detail.xlsx -> C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\votes\2024\nov2024_general\detail.xlsx  [sha256:f61ad621d92d]
+[2026-03-14T07:01:55.487Z] [INFO ]   input: detail.xlsx -> C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\votes\2024\nov2024_general\detail.xlsx  [sha256:f61ad621d92d...]
+[2026-03-14T07:01:55.487Z] [STEP ] DONE   [OK] VALIDATE_VOTES (0.113s)
+[2026-03-14T07:01:55.487Z] [STEP ] START  -> LOAD_GEOMETRY
+[2026-03-14T07:01:55.487Z] [INFO ]   expected: MPREC preferred; SRPREC fallback
+[2026-03-14T07:01:55.488Z] [INFO ] Loading MPREC geometry from: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\MPREC_GeoJSON\mprec_097_g24_v01.geojson
+[2026-03-14T07:01:58.278Z] [INFO ] Loaded 1405 features from mprec_097_g24_v01.geojson
+[2026-03-14T07:01:58.278Z] [STEP ] DONE   [OK] LOAD_GEOMETRY (2.904s)
+[2026-03-14T07:01:58.278Z] [STEP ] START  -> LOAD_CROSSWALKS
+[2026-03-14T07:01:58.310Z] [WARN ] Cannot detect source/target columns in blk_mprec_097_g24_v01.csv: ['block', 'mprec', 'pct_block']
+[2026-03-14T07:01:58.331Z] [WARN ] Cannot detect source/target columns in blk_mprec_097_g24_v01.csv: ['block', 'mprec', 'pct_block']
+[2026-03-14T07:01:58.540Z] [INFO ]   [CROSSWALKS] Discovered 4/6 crosswalks
+[2026-03-14T07:01:58.540Z] [STEP ] SKIP   [SKIP] LOAD_CROSSWALKS -- No crosswalk files; using identity mapping
+[2026-03-14T07:01:58.541Z] [STEP ] START  -> SCAFFOLD_CONTEST_JSON

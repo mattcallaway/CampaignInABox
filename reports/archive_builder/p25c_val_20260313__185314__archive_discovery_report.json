@@ -1,0 +1,12 @@
+{
+  "run_id": "p25c_val_20260313__185314",
+  "state": "CA",
+  "county": "Sonoma",
+  "predicted_directories": 34,
+  "directories_confirmed": 0,
+  "files_found": 0,
+  "files_ingested": 0,
+  "archive_ready": 0,
+  "review_required": 0,
+  "errors_count": 0
+}

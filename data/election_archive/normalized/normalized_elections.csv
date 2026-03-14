@@ -1,1 +1,0 @@
-election_id,state,county,year,election_type,fingerprint_type,fingerprint_display,fingerprint_confidence,precinct_schema,overall_confidence,archive_status,archive_ready_fraction,rows,archive_dir,run_id,campaign_id,contest_id,ingested_at

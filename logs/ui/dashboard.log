@@ -116,3 +116,79 @@
 2026-03-11 16:04:38,554 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.09s
 2026-03-11 16:08:44,912 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
 2026-03-11 16:08:45,009 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.10s
+2026-03-13 00:04:52,284 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-13 00:04:52,782 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.50s
+2026-03-13 00:07:38,610 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-13 00:07:38,673 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.06s
+2026-03-13 00:10:30,688 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-13 00:10:30,747 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.06s
+2026-03-13 00:39:14,121 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-13 00:39:14,206 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.09s
+2026-03-13 00:44:41,998 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-13 00:44:42,268 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.27s
+2026-03-13 01:04:14,588 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-13 01:04:14,817 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.23s
+2026-03-13 01:07:17,404 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-13 01:07:17,511 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.11s
+2026-03-13 01:09:17,600 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-13 01:09:17,646 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.05s
+2026-03-13 01:20:41,274 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-13 01:20:41,385 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.11s
+2026-03-13 02:30:14,760 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-13 02:30:15,682 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.93s
+2026-03-13 02:32:27,275 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-13 02:32:28,166 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.92s
+2026-03-13 02:35:09,938 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-13 02:35:10,912 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.98s
+2026-03-13 02:37:41,966 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-13 02:37:42,154 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.19s
+2026-03-13 13:09:52,114 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-13 13:09:52,397 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.28s
+2026-03-13 22:00:56,268 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-13 22:00:56,456 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.19s
+2026-03-13 22:05:44,768 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-13 22:05:44,828 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.06s
+2026-03-13 23:39:50,321 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-13 23:39:50,620 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.30s
+2026-03-13 23:46:19,000 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-13 23:46:19,151 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.17s
+2026-03-13 23:52:45,881 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-13 23:52:46,040 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.16s
+2026-03-13 23:54:48,206 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-13 23:54:48,259 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.05s
+2026-03-14 00:01:20,138 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-14 00:01:20,239 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.10s
+2026-03-14 00:03:30,562 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-14 00:03:30,689 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.13s
+2026-03-14 00:06:18,779 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-14 00:06:18,850 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.07s
+2026-03-14 00:08:44,663 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-14 00:08:44,790 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.13s
+2026-03-14 00:12:30,178 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-14 00:12:30,326 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.15s
+2026-03-14 00:14:41,535 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-14 00:14:41,624 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.09s
+2026-03-14 00:15:03,896 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-14 00:15:03,964 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.07s
+2026-03-14 00:17:09,520 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-14 00:17:09,770 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.25s
+2026-03-14 00:19:27,074 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-14 00:19:27,167 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.09s
+2026-03-14 00:23:24,982 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-14 00:23:25,123 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.15s
+2026-03-14 00:25:27,138 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-14 00:25:27,187 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.05s
+2026-03-14 00:27:04,928 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-14 00:27:05,070 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.14s
+2026-03-14 00:29:50,593 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-14 00:29:50,737 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.14s
+2026-03-14 00:32:11,299 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-14 00:32:11,378 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.08s
+2026-03-14 00:36:04,101 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-14 00:36:04,185 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.09s
+2026-03-14 00:36:52,895 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-14 00:36:52,966 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.07s
+2026-03-14 00:38:56,204 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-14 00:38:56,310 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.11s
+2026-03-14 00:40:07,509 | INFO | State store loaded: run_id=2026-03-10__152246__e84498d7__msi
+2026-03-14 00:40:07,598 | INFO | Dashboard loaded | run_id=2026-03-10__152246__e84498d7__msi | state_store=yes | datasets=['precinct_model', 'top_targets', 'simulation_results', 'precinct_universes'] | elapsed=0.09s

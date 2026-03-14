@@ -158,33 +158,65 @@ def render_data_manager(data: dict):
             with col1:
                 form_cat  = st.selectbox("Campaign Data Type", list(manager._DESTINATION_RULES.keys()), index=list(manager._DESTINATION_RULES.keys()).index(cat) if cat in manager._DESTINATION_RULES else 0)
                 form_name = st.text_input("Filename", uploaded_file.name, key="upload_filename")
-            
+
             with col2:
                 opts = ["REAL", "EXTERNAL", "ESTIMATED", "SIMULATED"]
-                form_prov = st.selectbox("Provenance", opts, index=opts.index(prov) if prov in opts else 1)
-                form_state = st.text_input("State Code (e.g. CA)", "CA", key="upload_state")
+                form_prov   = st.selectbox("Provenance", opts, index=opts.index(prov) if prov in opts else 1)
+                form_state  = st.text_input("State Code (e.g. CA)", "CA", key="upload_state")
                 form_county = st.text_input("County", "Sonoma", key="upload_county")
-                form_contest = st.text_input("Contest ID", "2025_prop50_special", key="upload_contest")
+                form_contest = st.text_input("Contest Slug (e.g. nov2020_general)", "nov2020_general", key="upload_contest")
+                form_year   = st.text_input("Year", "2020", key="upload_year")
 
-            proposed_dest = manager.propose_destination(form_name, form_cat, form_state, form_county, form_contest)
-            render_alert("info", f"**Proposed Destination:** `{proposed_dest}`")
+            is_election_result = form_cat == "election_results"
+            if is_election_result:
+                canonical_dest = f"data/contests/{form_state}/{form_county}/{form_year}/{form_contest}/raw/{form_name}"
+                render_alert("info", f"**Canonical Destination (P28):** `{canonical_dest}`")
+                st.caption("Election result files are stored in the canonical contest structure and registered through ContestIntake.")
+            else:
+                proposed_dest = manager.propose_destination(form_name, form_cat, form_state, form_county, form_contest)
+                render_alert("info", f"**Proposed Destination:** `{proposed_dest}`")
 
             form_notes = st.text_area("Notes (Optional)")
 
             if st.button("Confirm & Save File", type="primary"):
                 try:
                     raw = st.session_state.get("_upload_raw_bytes")
-                    record = manager.register_new_file(
-                        source_file=temp_path, category=form_cat, provenance=form_prov,
-                        state=form_state, county=form_county, contest_id=form_contest,
-                        notes=form_notes, proposed_name=form_name,
-                        raw_bytes=raw,
-                    )
-                    if temp_path.exists(): temp_path.unlink()
-                    st.success(f"File saved to `{record['current_path']}` and registered!")
+                    if is_election_result:
+                        # ── Canonical contest intake (P28) ──────────────────
+                        from engine.contest_data.contest_intake import ContestIntake
+                        intake = ContestIntake(PROJECT_ROOT)
+                        record = intake.ingest(
+                            source_file=temp_path,
+                            state=form_state,
+                            county=form_county,
+                            year=form_year,
+                            contest_slug=form_contest,
+                            provenance=form_prov,
+                            notes=form_notes,
+                            raw_bytes=raw,
+                            uploaded_by="ui_upload",
+                            ingest_source="data_manager_ui",
+                        )
+                        dest_display = record.get("canonical_path", "")
+                    else:
+                        # ── Non-contest files: use legacy FileRegistryManager ─
+                        record = manager.register_new_file(
+                            source_file=temp_path, category=form_cat, provenance=form_prov,
+                            state=form_state, county=form_county, contest_id=form_contest,
+                            notes=form_notes, proposed_name=form_name,
+                            raw_bytes=raw,
+                        )
+                        dest_display = record.get("current_path", "")
+                    try:
+                        if temp_path.exists():
+                            temp_path.unlink()
+                    except PermissionError:
+                        pass
+                    st.success(f"File saved to `{dest_display}` and registered!")
                     st.rerun()
                 except Exception as e:
                     render_alert("critical", f"Error saving file: {e}")
+
 
     with tab_precinct:
         st.subheader("Precinct ID Review")

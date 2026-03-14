@@ -1,0 +1,24 @@
+{
+  "file_path": "C:\\Users\\Mathew C\\Campaign In A Box\\data\\uploads\\temp\\StatementOfVotesCast-Webnov32020.xlsx",
+  "file_name": "StatementOfVotesCast-Webnov32020.xlsx",
+  "file_hash": "b30198f23933a31aeea541b92b70b790",
+  "file_type": "precinct_results",
+  "display_name": "Precinct Contest Results",
+  "confidence": 0.74,
+  "matching_headers": [
+    "precinct",
+    "votes"
+  ],
+  "optional_hits": [
+    "candidate",
+    "total votes"
+  ],
+  "precinct_format": null,
+  "precinct_level": true,
+  "contest_level": true,
+  "sheet_name": "President",
+  "row_count": 50,
+  "col_count": 28,
+  "source_url": "",
+  "classified_at": "2026-03-14T00:31:43.459347"
+}

@@ -1,0 +1,272 @@
+{
+  "generated_at": "2026-03-14T08:28:24.836250",
+  "canonical_contests": 0,
+  "contests": [],
+  "legacy_files_remaining": [],
+  "legacy_file_count": 0,
+  "registry_duplicates": [],
+  "duplicate_count": 0,
+  "manifest_issues": [],
+  "legacy_code_references": [
+    {
+      "file": "scripts\\ingest.py",
+      "line": 11,
+      "pattern": "data/CA/counties",
+      "text": "      data/CA/counties/<CountyName>/geography/<category_subfolder>/"
+    },
+    {
+      "file": "scripts\\refresh_manifests.py",
+      "line": 5,
+      "pattern": "data/CA/counties",
+      "text": "Crawl the data/CA/counties/ directory and generate or refresh manifest.json "
+    },
+    {
+      "file": "scripts\\run_pipeline.py",
+      "line": 174,
+      "pattern": "data/CA/counties",
+      "text": "    \"data/CA/counties/Sonoma/geography/precinct_shapes/MPREC_GeoJSON\","
+    },
+    {
+      "file": "scripts\\run_pipeline.py",
+      "line": 175,
+      "pattern": "data/CA/counties",
+      "text": "    \"data/CA/counties/Sonoma/geography/precinct_shapes/MPREC_GeoPackage\","
+    },
+    {
+      "file": "scripts\\run_pipeline.py",
+      "line": 176,
+      "pattern": "data/CA/counties",
+      "text": "    \"data/CA/counties/Sonoma/geography/precinct_shapes/MPREC_Shapefile\","
+    },
+    {
+      "file": "scripts\\run_pipeline.py",
+      "line": 177,
+      "pattern": "data/CA/counties",
+      "text": "    \"data/CA/counties/Sonoma/geography/precinct_shapes/SRPREC_GeoJSON\","
+    },
+    {
+      "file": "scripts\\run_pipeline.py",
+      "line": 178,
+      "pattern": "data/CA/counties",
+      "text": "    \"data/CA/counties/Sonoma/geography/precinct_shapes/SRPREC_GeoPackage\","
+    },
+    {
+      "file": "scripts\\run_pipeline.py",
+      "line": 179,
+      "pattern": "data/CA/counties",
+      "text": "    \"data/CA/counties/Sonoma/geography/precinct_shapes/SRPREC_Shapefile\","
+    },
+    {
+      "file": "scripts\\run_pipeline.py",
+      "line": 180,
+      "pattern": "data/CA/counties",
+      "text": "    \"data/CA/counties/Sonoma/geography/crosswalks\","
+    },
+    {
+      "file": "scripts\\run_pipeline.py",
+      "line": 181,
+      "pattern": "data/CA/counties",
+      "text": "    \"data/CA/counties/Sonoma/geography/boundary_index\","
+    },
+    {
+      "file": "scripts\\run_pipeline.py",
+      "line": 341,
+      "pattern": "data/CA/counties",
+      "text": "            f\"data/CA/counties/{loop_county}/geography/precinct_shapes/\","
+    },
+    {
+      "file": "scripts\\run_pipeline.py",
+      "line": 342,
+      "pattern": "data/CA/counties",
+      "text": "            f\"data/CA/counties/{loop_county}/geography/crosswalks/\","
+    },
+    {
+      "file": "scripts\\run_pipeline.py",
+      "line": 357,
+      "pattern": "votes/{year}",
+      "text": "            f\"votes/{year}/CA/{loop_county}/{contest_slug}/detail.xlsx\""
+    },
+    {
+      "file": "scripts\\run_pipeline.py",
+      "line": 861,
+      "pattern": "data/elections",
+      "text": "                           f\"{_n_failed} require manual download (see data/elections/{state}/{county}/download_status.json)\"])"
+    },
+    {
+      "file": "scripts\\geography\\boundary_loader.py",
+      "line": 113,
+      "pattern": "data/CA/counties",
+      "text": "      A) New:  county_geo_dir_or_data_root = data/CA/counties (parent of county)"
+    },
+    {
+      "file": "scripts\\tools\\run_audit_discovery.py",
+      "line": 276,
+      "pattern": "data/elections",
+      "text": "    \"data/elections\":        [\"SOV or election results CSVs\"],"
+    },
+    {
+      "file": "scripts\\validation\\geography_validator.py",
+      "line": 162,
+      "pattern": "data/CA/counties",
+      "text": "      1. data/CA/counties/<county>/votes/<year>/<slug>/   (canonical new path)"
+    },
+    {
+      "file": "scripts\\validation\\geography_validator.py",
+      "line": 162,
+      "pattern": "/votes/",
+      "text": "      1. data/CA/counties/<county>/votes/<year>/<slug>/   (canonical new path)"
+    },
+    {
+      "file": "engine\\calibration\\calibration_engine.py",
+      "line": 505,
+      "pattern": "data/elections",
+      "text": "        lines.append(\"- \u274c Add historical election files to `data/elections/CA/<county>/<year>/detail.xls`\")"
+    },
+    {
+      "file": "engine\\calibration\\election_downloader.py",
+      "line": 12,
+      "pattern": "data/elections",
+      "text": "  data/elections/CA/Sonoma/<year>/detail.xls"
+    },
+    {
+      "file": "engine\\calibration\\election_downloader.py",
+      "line": 89,
+      "pattern": "data/elections",
+      "text": "    Writes: data/elections/CA/<county>/<year>/detail.xls"
+    },
+    {
+      "file": "engine\\calibration\\election_downloader.py",
+      "line": 90,
+      "pattern": "data/elections",
+      "text": "    Writes: data/elections/CA/<county>/download_status.json"
+    },
+    {
+      "file": "engine\\calibration\\election_downloader.py",
+      "line": 110,
+      "pattern": "data/elections",
+      "text": "            f\"data/elections/{state}/{county}/<year>/detail.xls\""
+    },
+    {
+      "file": "engine\\calibration\\historical_parser.py",
+      "line": 100,
+      "pattern": "data/elections",
+      "text": "    Iterate all years in data/elections/CA/Sonoma/ and parse each detail.xls."
+    },
+    {
+      "file": "engine\\calibration\\model_calibrator.py",
+      "line": 233,
+      "pattern": "data/elections",
+      "text": "                    \"Place detail.xls files in data/elections/CA/Sonoma/<year>/ \""
+    },
+    {
+      "file": "engine\\contest_data\\contest_health.py",
+      "line": 34,
+      "pattern": "data/elections",
+      "text": "        \"data/elections\","
+    },
+    {
+      "file": "engine\\contest_data\\contest_health.py",
+      "line": 41,
+      "pattern": "data/elections",
+      "text": "        \"data/elections\","
+    },
+    {
+      "file": "engine\\contest_data\\contest_health.py",
+      "line": 42,
+      "pattern": "data/CA/counties",
+      "text": "        \"data/CA/counties\","
+    },
+    {
+      "file": "engine\\contest_data\\contest_health.py",
+      "line": 43,
+      "pattern": "votes/{year}",
+      "text": "        \"votes/{year}\","
+    },
+    {
+      "file": "engine\\contest_data\\contest_health.py",
+      "line": 44,
+      "pattern": "/votes/",
+      "text": "        \"/votes/\","
+    },
+    {
+      "file": "engine\\contest_data\\contest_resolver.py",
+      "line": 13,
+      "pattern": "data/elections",
+      "text": "  data/elections/...           (old Data Manager upload path)"
+    },
+    {
+      "file": "engine\\contest_data\\contest_resolver.py",
+      "line": 14,
+      "pattern": "data/CA/counties",
+      "text": "  data/CA/counties/.../votes/  (old pipeline native path)"
+    },
+    {
+      "file": "engine\\contest_data\\contest_resolver.py",
+      "line": 14,
+      "pattern": "/votes/",
+      "text": "  data/CA/counties/.../votes/  (old pipeline native path)"
+    },
+    {
+      "file": "engine\\data_intake\\data_intake_manager.py",
+      "line": 28,
+      "pattern": "data/elections",
+      "text": "    \"election_results\":          \"data/elections/{state}/{county}/{contest_id}/\","
+    },
+    {
+      "file": "engine\\data_intake\\missing_data_assistant.py",
+      "line": 22,
+      "pattern": "data/elections",
+      "text": "        \"recommended_destination\": \"data/elections/{state}/{county}/{contest_id}/\""
+    },
+    {
+      "file": "engine\\setup\\setup_wizard.py",
+      "line": 36,
+      "pattern": "data/elections",
+      "text": "        \"data\", \"data/elections\", \"data/voters\", \"data/intelligence\", "
+    },
+    {
+      "file": "engine\\swing_modeling\\backtester.py",
+      "line": 446,
+      "pattern": "data/elections",
+      "text": "        lines.append(\"> Add these election years to `data/elections/CA/Sonoma/` and re-run archive build.\")"
+    },
+    {
+      "file": "ui\\dashboard\\calibration_view.py",
+      "line": 89,
+      "pattern": "data/elections",
+      "text": "            \"`data/elections/CA/<county>/<year>/detail.xls` for best accuracy.\""
+    },
+    {
+      "file": "ui\\dashboard\\calibration_view.py",
+      "line": 158,
+      "pattern": "data/elections",
+      "text": "| Historical Elections | `data/elections/CA/<county>/<year>/detail.xls` | Parsed on pipeline run |"
+    },
+    {
+      "file": "ui\\dashboard\\calibration_view.py",
+      "line": 284,
+      "pattern": "data/elections",
+      "text": "            \"Add `detail.xls` files to `data/elections/CA/<county>/<year>/` and rerun.\""
+    },
+    {
+      "file": "ui\\dashboard\\data_upload_view.py",
+      "line": 122,
+      "pattern": "/votes/",
+      "text": "        f\"\ud83d\udcca Election Results  (`\u2026/votes/{contest_dir.parent.name}/{contest_dir.name}/`)\" +"
+    },
+    {
+      "file": "ui\\dashboard\\data_upload_view.py",
+      "line": 443,
+      "pattern": "data/CA/counties",
+      "text": "      1. contest_dir itself (data/CA/counties/<county>/votes/<year>/<slug>/)"
+    },
+    {
+      "file": "ui\\dashboard\\data_upload_view.py",
+      "line": 443,
+      "pattern": "/votes/",
+      "text": "      1. contest_dir itself (data/CA/counties/<county>/votes/<year>/<slug>/)"
+    }
+  ],
+  "contests_with_multiple_primaries": [],
+  "health_score": 10.0
+}

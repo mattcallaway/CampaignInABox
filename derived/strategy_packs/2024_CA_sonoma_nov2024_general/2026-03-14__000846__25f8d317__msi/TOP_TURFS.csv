@@ -1,0 +1,2 @@
+turf_id,precinct_ids,sum_registered,turf_purpose
+TURF_001,"001,002,003,004",0,turnout

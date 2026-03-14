@@ -22,43 +22,105 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 def _discover_contests() -> list[dict]:
-    """Return list of contests with votes present."""
-    contests = []
+    """
+    Return list of contests discoverable in the system.
+
+    Priority:
+      1. Canonical contest structure (data/contests/) via ContestResolver — P28
+      2. Legacy trees as read-only fallback (labelled with LEGACY PATH warning)
+    """
+    contests: list[dict] = []
+    seen: set[str] = set()
+
+    def _add(county, state, year, slug, has_votes, label_suffix=""):
+        key = f"{state}/{county}/{year}/{slug}"
+        if key in seen:
+            return
+        seen.add(key)
+        label = f"{county} / {year} / {slug}" + ("" if has_votes else " ⚠️ no votes") + label_suffix
+        contests.append({"label": label, "county": county, "state": state,
+                          "year": year, "slug": slug, "has_votes": has_votes})
+
+    # ── 1. Canonical path (ContestResolver, P28) ─────────────────────────────
+    try:
+        from engine.contest_data.contest_resolver import ContestResolver
+        resolver = ContestResolver(BASE_DIR)
+        for c in resolver.list_all_contests():
+            _add(c["county"], c["state"], c["year"], c["contest_slug"],
+                 has_votes=c["has_primary"])
+    except Exception:
+        pass  # resolver not yet importable — fall through
+
+    # ── 2. Legacy fallback: votes/{year}/{state}/{county}/{slug}/ ─────────────
     votes_root = BASE_DIR / "votes"
-    if not votes_root.exists():
-        return contests
-    for year_dir in sorted(votes_root.iterdir(), reverse=True):
-        if not year_dir.is_dir():
-            continue
-        year = year_dir.name
-        for state_dir in year_dir.iterdir():
-            if not state_dir.is_dir():
-                continue
+    if votes_root.exists():
+        for year_dir in sorted(votes_root.iterdir(), reverse=True):
+            if not year_dir.is_dir(): continue
+            year = year_dir.name
+            for state_dir in year_dir.iterdir():
+                if not state_dir.is_dir(): continue
+                state = state_dir.name
+                for county_dir in state_dir.iterdir():
+                    if not county_dir.is_dir(): continue
+                    county = county_dir.name
+                    for contest_dir in county_dir.iterdir():
+                        if not contest_dir.is_dir(): continue
+                        slug = contest_dir.name
+                        has_votes = any((contest_dir / f).exists()
+                                        for f in ["detail.xlsx", "detail.xls", "detail.csv"])
+                        _add(county, state, year, slug, has_votes,
+                             " ⚠️ LEGACY — re-upload via Data Manager")
+
+    # ── 3. Legacy fallback: data/elections/{state}/{county}/{slug}/ ───────────
+    elections_root = BASE_DIR / "data" / "elections"
+    if elections_root.exists():
+        for state_dir in elections_root.iterdir():
+            if not state_dir.is_dir(): continue
             state = state_dir.name
             for county_dir in state_dir.iterdir():
-                if not county_dir.is_dir():
-                    continue
+                if not county_dir.is_dir(): continue
                 county = county_dir.name
                 for contest_dir in county_dir.iterdir():
-                    if not contest_dir.is_dir():
-                        continue
+                    if not contest_dir.is_dir(): continue
                     slug = contest_dir.name
-                    has_votes = any(
-                        (contest_dir / f).exists()
-                        for f in ["detail.xlsx", "detail.xls"]
-                    )
-                    contests.append({
-                        "label": f"{county} / {year} / {slug}" + ("" if has_votes else " ⚠️ no votes"),
-                        "county": county,
-                        "state": state,
-                        "year": year,
-                        "slug": slug,
-                        "has_votes": has_votes,
-                    })
-    return contests
+                    xlsx = list(contest_dir.glob("*.xlsx")) + list(contest_dir.glob("*.xls"))
+                    year = "unknown"
+                    for x in xlsx:
+                        import re as _re
+                        m = _re.search(r"(20\d{2})", x.name)
+                        if m: year = m.group(1); break
+                    _add(county, state, year, slug, bool(xlsx),
+                         " ⚠️ LEGACY — re-upload via Data Manager")
+
+    # ── 4. Legacy fallback: data/{state}/counties/{county}/votes/ ────────────
+    data_root = BASE_DIR / "data"
+    if data_root.exists():
+        for state_dir in data_root.iterdir():
+            if not state_dir.is_dir() or state_dir.name in ("contests", "elections", "uploads"): continue
+            state = state_dir.name
+            counties_dir = state_dir / "counties"
+            if not counties_dir.exists(): continue
+            for county_dir in counties_dir.iterdir():
+                if not county_dir.is_dir(): continue
+                county = county_dir.name
+                votes_dir = county_dir / "votes"
+                if not votes_dir.exists(): continue
+                for year_dir in votes_dir.iterdir():
+                    if not year_dir.is_dir(): continue
+                    year = year_dir.name
+                    for contest_dir in year_dir.iterdir():
+                        if not contest_dir.is_dir(): continue
+                        slug = contest_dir.name
+                        has_votes = any((contest_dir / f).exists()
+                                        for f in ["detail.xlsx", "detail.xls", "detail.csv"])
+                        _add(county, state, year, slug, has_votes,
+                             " ⚠️ LEGACY — re-upload via Data Manager")
+
+    return sorted(contests, key=lambda c: (c["county"], c["year"], c["slug"]))
 
 
 def _stream_process(cmd: list[str], log_box, stop_event: threading.Event) -> int:
+
     """Run a subprocess and write output to a Streamlit text area line by line."""
     lines: list[str] = []
     proc = subprocess.Popen(

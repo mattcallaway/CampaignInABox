@@ -1,0 +1,16 @@
+run_id: 2026-03-14__003909__b9fa0fa3__msi
+timestamp: '2026-03-14T07:39:09.338Z'
+state: CA
+county: Sonoma
+needs:
+- category: detail.xlsx
+  status: missing
+  blocks:
+  - parse_contest
+  - allocate_votes
+  - export_model
+  expected_path: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\votes\2024\2020_general\detail.xlsx
+coverage:
+  canonical_geometry: MPREC
+  categories_present: 12
+  categories_missing: 0

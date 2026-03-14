@@ -1,7 +1,7 @@
 {
   "context": "Registration",
   "contest_id": "2024_CA_sonoma_nov2024_general",
-  "run_id": "2026-03-10__202144__e45d5118__msi",
+  "run_id": "2026-03-14__000846__25f8d317__msi",
   "original_columns": [
     "PrecinctID_Raw",
     "MPREC_ID",
@@ -37,5 +37,5 @@
     "turnout_pct"
   ],
   "status": "ok",
-  "timestamp": "2026-03-10T20:21:46.982830"
+  "timestamp": "2026-03-14T00:08:49.695376"
 }
