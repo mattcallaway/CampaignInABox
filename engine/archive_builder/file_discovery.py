@@ -38,11 +38,11 @@ BASE_DIR    = Path(__file__).resolve().parent.parent.parent
 STAGING_DIR = BASE_DIR / "derived" / "archive_staging"
 STAGING_DIR.mkdir(parents=True, exist_ok=True)
 
-# Accepted file extensions for election data
-ACCEPTED_EXTENSIONS = {".xlsx", ".xls", ".csv", ".tsv", ".zip"}
+# Accepted file extensions for election data (Prompt 25B: .pdf added)
+ACCEPTED_EXTENSIONS = {".xlsx", ".xls", ".csv", ".tsv", ".zip", ".pdf"}
 
-# Rejected types (non-tabular)
-REJECTED_EXTENSIONS = {".pdf", ".png", ".jpg", ".jpeg", ".gif", ".docx", ".doc", ".pptx"}
+# Rejected types (non-tabular) — .pdf removed in Prompt 25B (now accepted but scored lower)
+REJECTED_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".docx", ".doc", ".pptx"}
 
 # Filename keywords that signal high-value election files
 PRIORITY_KEYWORDS = [
@@ -69,6 +69,7 @@ class CandidateFile:
     election_type: Optional[str]
     priority_score: int             # legacy 0–10 keyword count (kept for compat)
     candidate_score: float          # Prompt 25: 0.0–1.0 five-factor score
+    page_depth: int                 # Prompt 25B: depth at which file link was found (0–3)
     download_status: str            # "staged" | "pending" | "failed" | "skipped"
     download_error: Optional[str]
 
@@ -205,6 +206,7 @@ def discover_files_from_page(
     source: dict,
     download: bool = False,
     staging_subdir: Optional[str] = None,
+    page_depth: int = 0,
 ) -> list[CandidateFile]:
     """
     Discover candidate election files from a single election page URL.
@@ -217,6 +219,7 @@ def discover_files_from_page(
         source:        source registry dict (for metadata)
         download:      if True, download candidate files to staging area
         staging_subdir: subdirectory within STAGING_DIR (e.g. 'Sonoma/2024_general')
+        page_depth:    depth of this page in the exploration tree (0–3)
 
     Returns:
         list[CandidateFile]
@@ -292,6 +295,7 @@ def discover_files_from_page(
             extension=ext, source_id=source_id,
             state=state, county=county, year=year, election_type=etype,
             priority_score=score, candidate_score=cscore,
+            page_depth=page_depth,
             download_status=dl_status, download_error=dl_error,
         ))
 
@@ -353,6 +357,7 @@ def discover_from_local_staging(
             year=year, election_type=etype,
             priority_score=_keyword_priority_score(p.name),
             candidate_score=cscore,
+            page_depth=0,
             download_status="staged", download_error=None,
         ))
 

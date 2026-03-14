@@ -1,5 +1,5 @@
 """
-engine/archive_builder/page_discovery.py — Prompt 25
+engine/archive_builder/page_discovery.py — Prompt 25 / Prompt 25B
 
 Election page discovery engine.
 
@@ -59,7 +59,18 @@ ELECTION_PATH_PATTERNS = [
     "*canvass*",
 ]
 
-# ── Keywords in page HTML that signal a result page ───────────────────────────
+# ── Prompt 25B: 4-factor page scoring ─────────────────────────────────────────
+# Signal                           Weight   Condition
+# URL contains election/results    +0.30    path match against ELECTION_PATH_PATTERNS
+# "Statement of Vote" in content   +0.30    exact phrase in HTML text
+# "Precinct Results" in content    +0.20    exact phrase in HTML text
+# "Detailed Results" in content    +0.20    exact phrase in HTML text
+# file-signal bonus (any ext link) +0.10    capped additive
+
+MIN_PAGE_SCORE = 0.20   # pages below this score are discarded
+
+# ── Keyword scoring (REPLACED by Prompt 25B 4-factor scoring below) ──────────
+# Legacy list kept for page_links scoring heuristic only
 ELECTION_CONTENT_KEYWORDS = [
     "statement of votes cast",
     "statement of vote",
@@ -188,20 +199,33 @@ def _extract_all_links(html: str, base_url: str) -> list[str]:
 
 
 def _url_path_score(url: str) -> float:
-    """Score a URL path for election-result relevance using path patterns."""
+    """Prompt 25B: URL contains election/results — +0.30."""
     path = urlparse(url).path.lower()
     for pat in ELECTION_PATH_PATTERNS:
         if fnmatch.fnmatch(path, pat):
-            return 0.6
+            return 0.30
     return 0.0
 
 
 def _content_keyword_score(html: str) -> float:
-    """Score a page's HTML content for election result keywords."""
+    """
+    Prompt 25B: 4-factor content scoring.
+    - "Statement of Vote" in HTML  → +0.30
+    - "Precinct Results" in HTML   → +0.20
+    - "Detailed Results" in HTML   → +0.20
+    Max from content alone: 0.70
+    """
+    if not html:
+        return 0.0
     html_lower = html.lower()
-    total_weight = len(ELECTION_CONTENT_KEYWORDS)
-    hits = sum(1 for kw in ELECTION_CONTENT_KEYWORDS if kw in html_lower)
-    return min(hits / max(total_weight * 0.25, 1), 1.0)  # saturates at 25% keyword hit rate
+    score = 0.0
+    if "statement of vote" in html_lower:
+        score += 0.30
+    if "precinct results" in html_lower:
+        score += 0.20
+    if "detailed results" in html_lower:
+        score += 0.20
+    return min(score, 0.70)
 
 
 def _file_signal_score(html: str) -> float:
@@ -213,26 +237,31 @@ def _file_signal_score(html: str) -> float:
 
 def score_page(url: str, html: str) -> tuple[float, str]:
     """
-    Compute overall election-result-page relevance score (0.0–1.0).
+    Prompt 25B: compute overall election-result-page relevance score.
 
-    Returns (score, discovery_method).
+    Scoring:
+      URL contains election/results   +0.30  (_url_path_score)
+      "Statement of Vote" in content  +0.30  (content term)
+      "Precinct Results" in content   +0.20  (content term)
+      "Detailed Results" in content   +0.20  (content term)
+      File-link signal bonus          +0.10  (capped additive)
+
+    Returns (score: float, discovery_method: str).
+    Min useful score: 0.20 (MIN_PAGE_SCORE).
     """
-    url_score  = _url_path_score(url)
-    kw_score   = _content_keyword_score(html)
-    file_score = _file_signal_score(html)
+    url_score    = _url_path_score(url)
+    kw_score     = _content_keyword_score(html)
+    file_score   = min(_file_signal_score(html) * 0.10, 0.10)  # capped bonus
 
-    combined = round(
-        (url_score * 0.35) + (kw_score * 0.40) + (file_score * 0.25),
-        4,
-    )
+    combined = round(min(url_score + kw_score + file_score, 1.0), 4)
 
-    if url_score > 0 and file_score > 0:
+    if url_score > 0 and (kw_score > 0 or file_score > 0):
         method = "combined"
     elif url_score > 0:
         method = "url_pattern"
-    elif file_score > 0:
+    elif file_score > 0.05:
         method = "file_signal"
-    elif kw_score > 0.1:
+    elif kw_score > 0:
         method = "content_keyword"
     else:
         method = "none"
