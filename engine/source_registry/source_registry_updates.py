@@ -58,7 +58,11 @@ def approve_source(source_id: str, notes: Optional[str] = None) -> bool:
         True on success
     """
     data = _load_overrides()
-    updates = data.setdefault("approved_updates", []) or []
+    # Safe pattern: ensure the key exists as a real list, then use data[key] directly.
+    # NEVER do `data.setdefault(k, []) or []` — `or []` detaches when existing value is [].
+    if not isinstance(data.get("approved_updates"), list):
+        data["approved_updates"] = []
+    updates = data["approved_updates"]
 
     # Check if already exists
     for entry in updates:
@@ -90,7 +94,9 @@ def reject_source(source_id: str, notes: Optional[str] = None) -> bool:
     Mark a seeded source as user-rejected (will not be surfaced in recommendations).
     """
     data = _load_overrides()
-    updates = data.setdefault("approved_updates", []) or []
+    if not isinstance(data.get("approved_updates"), list):
+        data["approved_updates"] = []
+    updates = data["approved_updates"]
 
     for entry in updates:
         if entry.get("source_id") == source_id:
@@ -115,7 +121,9 @@ def reject_source(source_id: str, notes: Optional[str] = None) -> bool:
 def mark_preferred(source_id: str) -> bool:
     """Mark a geometry source as the preferred source for its boundary_type."""
     data = _load_overrides()
-    updates = data.setdefault("approved_updates", []) or []
+    if not isinstance(data.get("approved_updates"), list):
+        data["approved_updates"] = []
+    updates = data["approved_updates"]
 
     for entry in updates:
         if entry.get("source_id") == source_id:
@@ -135,7 +143,9 @@ def add_alias(source_id: str, alias: str) -> bool:
     Aliases allow future contest_name searches to match this source.
     """
     data = _load_overrides()
-    updates = data.setdefault("approved_updates", []) or []
+    if not isinstance(data.get("approved_updates"), list):
+        data["approved_updates"] = []
+    updates = data["approved_updates"]
 
     for entry in updates:
         if entry.get("source_id") == source_id:
@@ -207,7 +217,9 @@ def add_manual_geometry_source(entry: dict) -> bool:
 def add_notes(source_id: str, notes: str, source_type: str = "contest") -> bool:
     """Append a note to an existing registry entry override."""
     data = _load_overrides()
-    updates = data.setdefault("approved_updates", []) or []
+    if not isinstance(data.get("approved_updates"), list):
+        data["approved_updates"] = []
+    updates = data["approved_updates"]
 
     for entry in updates:
         if entry.get("source_id") == source_id:
