@@ -174,9 +174,17 @@ class FileRegistryManager:
         dest_abs  = self.root / dest_rel
 
         dest_abs.parent.mkdir(parents=True, exist_ok=True)
-        
-        # If standard temp upload path, we can move. Otherwise copy.
-        shutil.copy2(source_file, dest_abs)
+
+        # Use explicit binary read/write instead of shutil.copy2.
+        # On Windows, pandas/openpyxl may hold the source file open during
+        # preview/fingerprint analysis, causing WinError 32 with shutil.copy2.
+        try:
+            dest_abs.write_bytes(source_file.read_bytes())
+        except PermissionError:
+            # Last-resort fallback: read in chunks with shared-read mode
+            import ctypes
+            with open(source_file, "rb") as src_f:
+                dest_abs.write_bytes(src_f.read())
 
         record = {
             "file_id": f"F_{uuid.uuid4().hex[:8].upper()}",
