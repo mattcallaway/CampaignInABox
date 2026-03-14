@@ -197,6 +197,9 @@ class FileRegistryManager:
         }
 
         registry = self.load_registry()
+        if not isinstance(registry, list):
+            log.warning("register_new_file: registry was not a list, resetting.")
+            registry = []
         registry.append(record)
         self._save_registry(registry)
 
