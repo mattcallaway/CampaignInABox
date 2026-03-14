@@ -1,2 +1,3 @@
 run_id,contest_id,state,county,generated_at,election_date,target_vote_share,total_budget,precinct_count,win_probability,expected_margin,baseline_support,baseline_turnout,win_number,vote_path_coverage,field_pace_doors_wk,war_room_ready,real_metrics,simulated_metrics,estimated_metrics,missing_metrics,data_requests,voter_file_loaded,gotv_universe,persuasion_universe
 2026-03-14__020637__116b2740__msi,2025_CA_sonoma_nov2025_special,CA,Sonoma,2026-03-14T09:07:59.727225,2025-06-03,0.52,150000,0,,,,,,,,False,0,3,6,1,4,False,,
+2026-03-14__044900__9b7d76d6__msi,2025_CA_sonoma_nov2025_special,CA,Sonoma,2026-03-14T11:50:20.347433,2025-06-03,0.52,150000,0,,,,,,,,False,0,3,6,1,4,False,,

@@ -1,0 +1,133 @@
+[2026-03-14T11:39:10.972Z] [INFO] ========================================================================
+  Campaign In A Box — Pipeline Run
+  RUN_ID  : 2026-03-14__043910__1a81ad05__msi
+  Started : 2026-03-14T11:39:10.972044+00:00
+========================================================================
+[2026-03-14T11:39:10.972Z] [INFO ] Pipeline v2 starting
+[2026-03-14T11:39:10.972Z] [INFO ]   state=CA  county=Sonoma  year=2020  contest_slug=nov2025_special
+[2026-03-14T11:39:10.972Z] [INFO ]   membership_method=auto  log_level=verbose
+[2026-03-14T11:39:11.024Z] [STEP ] START  -> DATA_INTAKE_ANALYSIS
+[2026-03-14T11:39:11.033Z] [STEP ] DONE   [OK] DATA_INTAKE_ANALYSIS (0.062s)
+[2026-03-14T11:39:11.033Z] [STEP ] SKIP   [SKIP] INGEST_STAGING -- No --staging-dir provided; skipping ingestion
+[2026-03-14T11:39:11.033Z] [INFO ] === Processing County: Sonoma ===
+[2026-03-14T11:39:11.033Z] [STEP ] START  -> SCAFFOLD_BOUNDARY_INDEX_Sonoma
+[2026-03-14T11:39:11.033Z] [INFO ]   Boundary index exists: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\boundary_index\boundaries_index.csv
+[2026-03-14T11:39:11.035Z] [WARN ]   Boundary index scaffolded (no boundary files found yet)
+[2026-03-14T11:39:11.035Z] [INFO ]   output: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\boundary_index\boundaries_index.csv  [sha256:b4dff0e71c42...]
+[2026-03-14T11:39:11.035Z] [STEP ] DONE   [OK] SCAFFOLD_BOUNDARY_INDEX_Sonoma (0.063s)
+[2026-03-14T11:39:11.035Z] [STEP ] START  -> VALIDATE_GEOGRAPHY
+[2026-03-14T11:39:11.035Z] [INFO ]   expected: data/CA/counties/Sonoma/geography/precinct_shapes/
+[2026-03-14T11:39:11.035Z] [INFO ]   expected: data/CA/counties/Sonoma/geography/crosswalks/
+[2026-03-14T11:39:11.035Z] [INFO ]   [present] MPREC GeoJSON
+[2026-03-14T11:39:11.036Z] [INFO ]   [present] MPREC GeoPackage
+[2026-03-14T11:39:11.036Z] [INFO ]   [present] MPREC Shapefile
+[2026-03-14T11:39:11.036Z] [INFO ]   [present] SRPREC GeoJSON
+[2026-03-14T11:39:11.036Z] [INFO ]   [present] SRPREC GeoPackage
+[2026-03-14T11:39:11.037Z] [INFO ]   [present] SRPREC Shapefile
+[2026-03-14T11:39:11.037Z] [INFO ]   [present] 2020 BLK TO MPREC
+[2026-03-14T11:39:11.037Z] [INFO ]   [present] RGPREC TO 2020 BLK
+[2026-03-14T11:39:11.037Z] [INFO ]   [present] SRPREC TO 2020 BLK
+[2026-03-14T11:39:11.038Z] [INFO ]   [present] RG to RR to SR to SVPREC
+[2026-03-14T11:39:11.038Z] [INFO ]   [present] MPREC to SRPREC
+[2026-03-14T11:39:11.038Z] [INFO ]   [present] SRPREC to CITY
+[2026-03-14T11:39:11.038Z] [INFO ] Geography validation: 12/12 present, canonical=MPREC
+[2026-03-14T11:39:11.038Z] [STEP ] DONE   [OK] VALIDATE_GEOGRAPHY (0.067s)
+[2026-03-14T11:39:11.038Z] [STEP ] START  -> VALIDATE_VOTES
+[2026-03-14T11:39:11.038Z] [INFO ]   expected: data/contests/CA/Sonoma/2020/nov2025_special/raw/<file>  (canonical, P28)
+[2026-03-14T11:39:11.038Z] [INFO ]   expected: votes/2020/CA/Sonoma/nov2025_special/detail.xlsx              (legacy fallback)
+[2026-03-14T11:39:11.041Z] [INFO ]   [VOTES] Found via ContestResolver (canonical P28): data\contests\CA\Sonoma\2020\nov2025_special\raw\detail.xlsx
+[2026-03-14T11:39:11.041Z] [INFO ]   input: detail.xlsx -> C:\Users\Mathew C\Campaign In A Box\data\contests\CA\Sonoma\2020\nov2025_special\raw\detail.xlsx  [sha256:a17c2a257524...]
+[2026-03-14T11:39:11.043Z] [STEP ] DONE   [OK] VALIDATE_VOTES (0.071s)
+[2026-03-14T11:39:11.043Z] [STEP ] START  -> LOAD_GEOMETRY
+[2026-03-14T11:39:11.043Z] [INFO ]   expected: MPREC preferred; SRPREC fallback
+[2026-03-14T11:39:11.044Z] [INFO ] Loading MPREC geometry from: C:\Users\Mathew C\Campaign In A Box\data\CA\counties\Sonoma\geography\precinct_shapes\MPREC_GeoJSON\mprec_097_g24_v01.geojson
+[2026-03-14T11:39:13.134Z] [INFO ] Loaded 1405 features from mprec_097_g24_v01.geojson
+[2026-03-14T11:39:13.134Z] [STEP ] DONE   [OK] LOAD_GEOMETRY (2.163s)
+[2026-03-14T11:39:13.134Z] [STEP ] START  -> LOAD_CROSSWALKS
+[2026-03-14T11:39:13.203Z] [WARN ]   crosswalk warning: Source precinct '060971502062002': weights sum to 0.996867 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.203Z] [WARN ]   crosswalk warning: Source precinct '060971503063000': weights sum to 0.994863 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.203Z] [WARN ]   crosswalk warning: Source precinct '060971505022016': weights sum to 0.998417 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.203Z] [WARN ]   crosswalk warning: Source precinct '060971505022004': weights sum to 0.981481 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.203Z] [WARN ]   crosswalk warning: Source precinct '060971505022018': weights sum to 0.989644 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.203Z] [WARN ]   crosswalk warning: Source precinct '060971505022019': weights sum to 0.951394 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.203Z] [WARN ]   crosswalk warning: Source precinct '060971501003054': weights sum to 0.892498 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.203Z] [WARN ]   crosswalk warning: Source precinct '060971501003055': weights sum to 0.874043 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.203Z] [WARN ]   crosswalk warning: Source precinct '060971535024025': weights sum to 0.998974 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971541003007': weights sum to 0.998845 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971502052006': weights sum to 1.001625 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971501003056': weights sum to 0.994914 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971501003042': weights sum to 0.998813 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971501003027': weights sum to 0.997993 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971501003021': weights sum to 0.998859 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971501003040': weights sum to 0.996408 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971541004063': weights sum to 0.992273 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971541004009': weights sum to 0.997554 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971541004000': weights sum to 0.998641 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971541003045': weights sum to 0.997268 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971541003046': weights sum to 0.528088 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971541003043': weights sum to 0.998298 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971541003044': weights sum to 0.969116 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971506122052': weights sum to 0.996519 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971506122048': weights sum to 0.998826 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971507023006': weights sum to 0.997727 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971506122024': weights sum to 0.927860 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971526021000': weights sum to 0.998171 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971535024006': weights sum to 0.981596 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971535024012': weights sum to 0.990210 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971535024010': weights sum to 0.993908 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971535024011': weights sum to 0.993709 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971543081006': weights sum to 0.998454 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971516012006': weights sum to 0.997678 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971526021040': weights sum to 0.986180 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971526021065': weights sum to 0.991842 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971526021068': weights sum to 0.990418 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971526021051': weights sum to 0.977816 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971526021052': weights sum to 0.630230 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971526021042': weights sum to 0.998371 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971506092018': weights sum to 1.001461 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971526021038': weights sum to 0.969775 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971506122025': weights sum to 0.997043 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971506123067': weights sum to 0.996731 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971506123066': weights sum to 0.978822 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971507023007': weights sum to 0.995257 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.204Z] [WARN ]   crosswalk warning: Source precinct '060971507023008': weights sum to 0.992713 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.205Z] [WARN ]   crosswalk warning: Source precinct '060971516012000': weights sum to 0.996871 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.205Z] [WARN ]   crosswalk warning: Source precinct '060971516012028': weights sum to 0.988650 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.205Z] [WARN ]   crosswalk warning: Source precinct '060971526021066': weights sum to 0.960402 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.205Z] [WARN ]   crosswalk warning: Source precinct '060971508004024': weights sum to 0.998485 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.205Z] [WARN ]   crosswalk warning: Source precinct '060971511003009': weights sum to 0.997536 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.205Z] [WARN ]   crosswalk warning: Source precinct '060971508004025': weights sum to 0.997804 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.205Z] [WARN ]   crosswalk warning: Source precinct '060971501001000': weights sum to 0.995501 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.205Z] [WARN ]   crosswalk warning: Source precinct '060971541003000': weights sum to 0.993792 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.205Z] [WARN ]   crosswalk warning: Source precinct '060971541003031': weights sum to 0.996955 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.205Z] [WARN ]   crosswalk warning: Source precinct '060971541003032': weights sum to 0.997974 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.205Z] [WARN ]   crosswalk warning: Source precinct '060971541003054': weights sum to 0.987447 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.205Z] [WARN ]   crosswalk warning: Source precinct '060971541003030': weights sum to 0.926757 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.205Z] [WARN ]   crosswalk warning: Source precinct '060971543051029': weights sum to 0.993373 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.205Z] [WARN ]   crosswalk warning: Source precinct '060971543051004': weights sum to 0.998497 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.205Z] [WARN ]   crosswalk warning: Source precinct '060971543051026': weights sum to 0.913292 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.205Z] [WARN ]   crosswalk warning: Source precinct '060971543051025': weights sum to 0.990442 (expected 1.0 ± 0.001)
+[2026-03-14T11:39:13.221Z] [INFO ] Loaded crosswalk crosswalks: 7563 source precincts
+[2026-03-14T11:39:13.468Z] [INFO ]   [CROSSWALKS] Discovered 6/6 crosswalks
+[2026-03-14T11:39:13.554Z] [INFO ]   [P29-INTROSPECT] 6 crosswalk files — 6 detection OK, 0 detection failed
+[2026-03-14T11:39:13.554Z] [STEP ] DONE   [OK] LOAD_CROSSWALKS (2.583s)
+[2026-03-14T11:39:13.554Z] [STEP ] START  -> SCAFFOLD_CONTEST_JSON
+[2026-03-14T11:39:13.556Z] [INFO ]   output: C:\Users\Mathew C\Campaign In A Box\votes\2020\CA\Sonoma\nov2025_special\contest.json  [sha256:334d661e0118...]
+[2026-03-14T11:39:13.556Z] [STEP ] DONE   [OK] SCAFFOLD_CONTEST_JSON (2.585s)
+[2026-03-14T11:39:13.556Z] [STEP ] START  -> PARSE_CONTEST
+[2026-03-14T11:39:13.556Z] [INFO ]   expected: Detect sheet types; aggregate vote methods
+[2026-03-14T11:39:13.606Z] [INFO ] Extracted registration for 390 precincts
+[2026-03-14T11:39:13.714Z] [INFO ] Parsing sheet: '2'
+[2026-03-14T11:39:13.716Z] [INFO ]   parse_contest_sheet: title='Timber Cove County Water District ( 3)' type=candidate_race prec_col='unnamed_0' choice_cols=['JOHN D. REA', 'JOHN F. GRAY', 'JESS WEBER', 'ROBERT LEICHTNER', 'Write-in'] rows=3
+[2026-03-14T11:39:13.729Z] [INFO ]   -> 2 precincts, type=candidate_race
+[2026-03-14T11:39:13.729Z] [INFO ] Parsing sheet: '3'
+[2026-03-14T11:39:13.733Z] [INFO ]   parse_contest_sheet: title='Proposition 50 - Special State Measure Redistricting ( 1)' type=ballot_measure prec_col='Precinct' choice_cols=['yes_votes', 'no_votes'] rows=391
+[2026-03-14T11:39:13.742Z] [INFO ]   -> 390 precincts, type=ballot_measure
+[2026-03-14T11:39:13.742Z] [INFO ] Parsing sheet: '4'
+[2026-03-14T11:39:13.745Z] [INFO ]   parse_contest_sheet: title='Measure I - Petaluma Joint Union High School District Parcel Tax - 2/3 Vote To Pass ( 1)' type=ballot_measure prec_col='Precinct' choice_cols=['yes_votes', 'no_votes'] rows=56
+[2026-03-14T11:39:13.752Z] [INFO ]   -> 55 precincts, type=ballot_measure
+[2026-03-14T11:39:13.753Z] [STEP ] DONE   [OK] PARSE_CONTEST (2.782s)
+[2026-03-14T11:39:13.753Z] [INFO ] Contest Mode: CANDIDATE (Inferred CANDIDATE (found candidate_race headers))
+[2026-03-14T11:39:13.753Z] [INFO ] [PATHWAY] contest_mode=candidate  contest_mode_reason=Inferred CANDIDATE (found candidate_race headers)
+[2026-03-14T11:39:13.753Z] [STEP ] START  -> ALLOCATE_VOTES
+[2026-03-14T11:39:13.753Z] [INFO ]   Sheet '2': 2 precincts, type=candidate_race

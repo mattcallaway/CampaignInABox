@@ -1083,3 +1083,116 @@ Mission Control includes a UX Insights section that surfaces the top 3 friction 
 **Example insight displayed:**
 
 > Upload Contest Data and Data Manager appear in separate menus. Users may not realize they are related.
+
+
+---
+
+## Section V -- User Guidance Layer (Prompt 31)
+
+The User Guidance Layer (`engine/ui/user_guidance.py`) acts as a system co-pilot, inspecting
+the current state of the campaign and generating prioritized, human-readable guidance items.
+
+### evaluate_guidance(base_dir) -> GuidanceResult
+
+**Returns:** `GuidanceResult` dataclass with:
+- `overall_status`: READY | NEEDS_ACTION | CRITICAL
+- `summary`: one-line human description
+- `items`: list of `GuidanceItem` (priority, title, detail, action, where_in_ui)
+
+**Checks performed (in priority order):**
+1. Contest data present?
+2. Pipeline run log exists?
+3. Archive built (derived/archive/ populated)?
+4. Crosswalk join rate above threshold?
+5. Geometry coverage OK?
+6. Modeling readiness (derived/calibration/ populated)?
+
+**Priority levels:** CRITICAL > IMPORTANT > INFO > OK
+
+**Integration:** Consumed by Mission Control (Prompt 31.5) Next Recommended Action banner.
+
+---
+
+## Section W -- Auto Pipeline System (Prompt 31)
+
+The Auto Pipeline System (`engine/ingestion/auto_pipeline_runner.py`) evaluates detected
+contest files and suggests or triggers pipeline runs.
+
+### suggest_pipeline_runs(base_dir) -> list[PipelineRunSuggestion]
+
+**Suggestion values:**
+- `ALREADY_RUN` -- archive outputs exist for this contest slug
+- `RUN_PIPELINE` -- precinct column detected, no archive yet
+- `REVIEW_FIRST` -- file present but precinct column not quickly detected
+
+Each suggestion includes `suggested_command` (full CLI string) and `auto_run_eligible` (bool).
+
+### run_pipeline_for_contest(suggestion, dry_run=True)
+
+Triggers pipeline via subprocess with --state, --county, --year, --contest-slug flags.
+When `dry_run=True` only logs the command without running it.
+
+---
+
+## Section X -- UI Workflow Map (Prompt 31)
+
+The UI Workflow Mapper (`engine/ui/ui_workflow_mapper.py`) scans the UI source tree and
+generates a markdown navigation map.
+
+**Output:** `docs/UI_WORKFLOW_MAP.md`
+
+`write_workflow_map(root_dir)` scans `ui/dashboard/*.py` and `config/ui_pages.yaml` to
+produce a grouped navigation map with page descriptions and critical user flows observed
+during the Prompt 30 live audit.
+
+**UX Flow Analyzer (`engine/ui/user_flow_analyzer.py`):**
+
+`write_flow_analysis(root_dir)` identifies friction points and redundant navigation patterns.
+Output: `reports/ui_analysis/user_flow_analysis.md`
+
+The top 3 friction findings are consumed by Mission Control's UX Insights section.
+
+---
+
+## Section Y -- System Readiness Diagnostics (Prompt 31)
+
+The System Readiness module (`engine/diagnostics/system_readiness.py`) evaluates overall
+system state and generates a human-readable report.
+
+### evaluate_system_state(base_dir) -> ReadinessResult
+
+| Check Name        | What It Tests                           |
+|-------------------|-----------------------------------------|
+| Contest Data      | canonical files in data/contests/       |
+| Pipeline Run      | logs/runs/*.log present                 |
+| Archive           | derived/archive/ has content            |
+| Crosswalks        | county crosswalk files present          |
+| Geometry          | precinct shape files present            |
+| Model Calibration | derived/calibration/ has content        |
+
+Overall values: READY | PARTIAL | NOT_READY
+
+**Output file:** `reports/system_readiness.md`
+
+**Integration:** Right-column System Readiness panel in Mission Control.
+
+---
+
+## Section Z -- Pipeline Run Observer (Prompt 31)
+
+The Pipeline Observer (`engine/diagnostics/pipeline_observer.py`) parses pipeline run log
+files and produces concise summaries after every successful pipeline execution.
+
+**Wired at:** end of `run_pipeline()` in `scripts/run_pipeline.py` (success path, ~line 1629).
+
+**Output:** `reports/pipeline_runs/{run_id}/pipeline_summary.md` + `pipeline_summary.json`
+
+**Parses log lines for:**
+- Step status: DONE [OK] STEP_NAME / FAIL STEP_NAME / SKIP STEP_NAME
+- Row count: "Rows loaded: N"
+- Precinct join rate: "Precinct join rate: N%"
+
+**JSON fields:** run_id, contest_slug, overall, rows_loaded, precinct_join_rate,
+archive_built, steps dict.
+
+**Consumed by:** Mission Control Latest Pipeline Run panel (right column of dashboard).

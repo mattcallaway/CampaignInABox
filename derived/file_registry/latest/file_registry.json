@@ -57,21 +57,22 @@
     "contest_root": "data\\contests\\CA\\Sonoma\\2020\\nov2025_special",
     "state": "CA",
     "county": "Sonoma",
-    "year": "2020",
+    "year": "2025",
     "contest_slug": "nov2025_special",
     "sha256": "a17c2a257524c0839ca66946b541ef7abdc2f6a8b3b0ff7c1c5d2dffc7bfabb2",
     "size_bytes": 48567,
     "file_type": "xlsx",
     "fingerprint_type": "unknown",
     "fingerprint_confidence": 0.0,
-    "provenance": "EXTERNAL",
+    "provenance": "REAL",
     "is_primary": true,
     "normalization_status": "PENDING",
-    "archive_status": "REGISTERED",
+    "archive_status": "ACTIVE",
     "uploaded_by": "ui_upload",
     "ingest_source": "data_manager_ui",
     "ingested_at": "2026-03-14T08:47:30.716119",
     "last_modified": "2026-03-14T08:47:30.716119",
-    "notes": ""
+    "notes": "",
+    "status": "REGISTERED"
   }
 ]

@@ -1,5 +1,5 @@
 join_name,left_rows,right_rows,matched_rows,left_unmatched,right_unmatched,duplicate_keys,missing_keys,unmatched_pct,status,timestamp
-precinct_model↔universes,3,81,1,0,0,82,0,0.0,PASS,2026-03-14T02:07:59.653972
-precinct_model↔geometry,0,0,0,0,0,0,0,0.0,PASS,2026-03-14T02:07:59.653994
-universes↔voter_file,0,0,0,0,0,0,0,0.0,PASS,2026-03-14T02:07:59.654001
-universes↔results,0,0,0,0,0,0,0,0.0,PASS,2026-03-14T02:07:59.654007
+precinct_model↔universes,3,81,1,0,0,82,0,0.0,PASS,2026-03-14T04:50:20.292592
+precinct_model↔geometry,0,0,0,0,0,0,0,0.0,PASS,2026-03-14T04:50:20.292607
+universes↔voter_file,0,0,0,0,0,0,0,0.0,PASS,2026-03-14T04:50:20.292613
+universes↔results,0,0,0,0,0,0,0,0.0,PASS,2026-03-14T04:50:20.292618

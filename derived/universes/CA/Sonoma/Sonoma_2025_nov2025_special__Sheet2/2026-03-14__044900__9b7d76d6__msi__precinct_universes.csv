@@ -1,0 +1,5 @@
+canonical_precinct_id,universe_name,universe_reason,key_metrics_snapshot
+None,Other / Unassigned,Does not meet specific targeting criteria,"{""registered"": 0, ""turnout_pct"": 0.0, ""support_pct"": 0.0}"
+0500274,Other / Unassigned,Does not meet specific targeting criteria,"{""registered"": 0, ""turnout_pct"": 0.0, ""support_pct"": 0.0}"
+Contest Total,Other / Unassigned,Does not meet specific targeting criteria,"{""registered"": 0, ""turnout_pct"": 0.0, ""support_pct"": 0.0}"
+*** Indicates vote data was suppressed due to voter privacy settings.,Other / Unassigned,Does not meet specific targeting criteria,"{""registered"": 0, ""turnout_pct"": 0.0, ""support_pct"": 0.0}"
