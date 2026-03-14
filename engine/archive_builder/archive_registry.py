@@ -1,5 +1,5 @@
 """
-engine/archive_builder/archive_registry.py — Prompt 25
+engine/archive_builder/archive_registry.py — Prompt 25 / Prompt 27
 
 Archive registry manager.
 
@@ -48,6 +48,10 @@ def register_election(
     source_url: str, files_ingested: int, confidence_score: float,
     fingerprint_type: str, precinct_schema: Optional[str],
     normalization_method: str, join_confidence: float, archive_dir: str,
+    # Prompt 27 / Prompt 25 additions
+    archive_status: str = "ARCHIVE_READY",
+    run_id: Optional[str] = None,
+    file_path: Optional[str] = None,
 ) -> dict:
     """Register or update an ingested election in the archive registry."""
     registry = _load_registry()
@@ -62,6 +66,10 @@ def register_election(
         "normalization_method": normalization_method,
         "join_confidence": round(join_confidence, 4),
         "archive_dir": archive_dir,
+        # Prompt 27 / Prompt 25 additions
+        "archive_status":   archive_status,
+        "run_id":           run_id or "",
+        "file_path":        file_path or "",
         "ingestion_date": datetime.now().strftime("%Y-%m-%d"),
         "last_updated": datetime.now().isoformat(),
     }

@@ -1,0 +1,335 @@
+{
+  "run_id": "20260313__170333",
+  "summary": {
+    "total": 54,
+    "passed": 54,
+    "failed": 0,
+    "pass_rate": 100.0
+  },
+  "results": [
+    {
+      "phase": "Phase 1: Required systems",
+      "name": "source_scanner importable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 1: Required systems",
+      "name": "page_discovery importable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 1: Required systems",
+      "name": "file_discovery importable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 1: Required systems",
+      "name": "file_downloader importable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 1: Required systems",
+      "name": "archive_classifier importable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 1: Required systems",
+      "name": "archive_ingestor importable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 1: Required systems",
+      "name": "archive_registry importable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 1: Required systems",
+      "name": "archive_output_writer importable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 1: Required systems",
+      "name": "campaign_state_resolver importable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 1: Required systems",
+      "name": "archive_builder importable",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 2: Source registry",
+      "name": "All sources are CA state",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 2: Source registry",
+      "name": ">=6 Sonoma county sources exist",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 2: Source registry",
+      "name": "socoe.us removed from all sources",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 2: Source registry",
+      "name": "Per-year entries for 2020/2022/2024",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 2: Source registry",
+      "name": "discovery_page sources present",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 3: Domain allowlist",
+      "name": "official_domain_allowlist.yaml exists",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 3: Domain allowlist",
+      "name": "gov_tier includes sonomacounty.gov",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 3: Domain allowlist",
+      "name": "socoe.us not in allowlist",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 3: Domain allowlist",
+      "name": "All three tiers present",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 3: Domain allowlist",
+      "name": "gov_tier confidence > official_tier",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 4: file_discovery 5-factor scoring",
+      "name": "structured extension scores >=0.3",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 4: file_discovery 5-factor scoring",
+      "name": "precinct+xlsx scores >=0.6",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 4: file_discovery 5-factor scoring",
+      "name": "detail+csv scores >=0.5",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 4: file_discovery 5-factor scoring",
+      "name": "precinct+detail+xlsx scores >=0.8",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 4: file_discovery 5-factor scoring",
+      "name": "gov_tier domain gives +0.1 bonus",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 4: file_discovery 5-factor scoring",
+      "name": "MIN_CANDIDATE_SCORE is 0.5",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 4: file_discovery 5-factor scoring",
+      "name": "non-tabular file scores <0.5",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 4: file_discovery 5-factor scoring",
+      "name": ">50KB file gets size bonus",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 4: file_discovery 5-factor scoring",
+      "name": "CandidateFile has candidate_score field",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 5: page_discovery module",
+      "name": "score_page returns float in [0,1]",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 5: page_discovery module",
+      "name": "election URL+content scores >0.2",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 5: page_discovery module",
+      "name": "discover_election_pages returns list",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 5: page_discovery module",
+      "name": "ElectionPage dataclass has required fields",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 6: file_downloader",
+      "name": "file registry loads (empty or populated)",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 6: file_downloader",
+      "name": "registry_summary has required keys",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 6: file_downloader",
+      "name": "RAW_DIR created at data/election_archive/raw/",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 6: file_downloader",
+      "name": "ACCEPTED_EXTENSIONS includes all 5 types",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 6: file_downloader",
+      "name": "MIN_FILE_SIZE is 50 KB",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 7: archive_output_writer",
+      "name": "output dirs created",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 7: archive_output_writer",
+      "name": "write_archive_outputs runs without error",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 7: archive_output_writer",
+      "name": "write_archive_outputs returns all 4 keys",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 7: archive_output_writer",
+      "name": "all 4 CSV output files exist on disk",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 8: archive_registry new fields",
+      "name": "register_election has archive_status param",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 8: archive_registry new fields",
+      "name": "register_election has run_id param",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 8: archive_registry new fields",
+      "name": "register_election has file_path param",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 8: archive_registry new fields",
+      "name": "archive_status defaults to ARCHIVE_READY",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 9: archive_builder orchestrator",
+      "name": ">=8 required systems registered",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 9: archive_builder orchestrator",
+      "name": "check_preconditions() runs without error",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 9: archive_builder orchestrator",
+      "name": "all required systems importable (pass)",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 9: archive_builder orchestrator",
+      "name": "run_archive_build offline returns result",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 9: archive_builder orchestrator",
+      "name": "ArchiveBuildResult has archive_outputs",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 9: archive_builder orchestrator",
+      "name": "ArchiveBuildResult has preconditions_ok",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 10: Report generation",
+      "name": "build report written",
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "phase": "Phase 10: Report generation",
+      "name": "file classification report written",
+      "status": "PASS",
+      "error": null
+    }
+  ]
+}

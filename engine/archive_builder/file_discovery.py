@@ -8,11 +8,18 @@ election data files by:
   - Fetching HTML (online mode) or using configured file_patterns (offline)
   - Filtering by accepted extensions: xlsx, xls, csv, tsv, zip
   - Rejecting PDF, images, and non-tabular documents
-  - Ranking candidates by filename signals (statement, vote, precinct, contest)
+  - Scoring candidates with the 5-factor rubric (Prompt 25):
+      +0.3 structured extension (.csv/.xls/.xlsx)
+      +0.3 filename contains 'precinct'
+      +0.2 filename contains 'detail'
+      +0.1 file size > 50 KB (checked post-download)
+      +0.1 page source is official election site (gov_tier domain)
+  - Files scoring < 0.5 are ignored (not returned)
+  - Ranking candidates by candidate_score descending
   - Downloading candidate files to a staging area for fingerprinting
 
 Classification relies on fingerprinting, NOT filenames alone.
-Filename signals only affect download priority/ranking.
+Filename/domain signals only affect download priority/ranking.
 """
 from __future__ import annotations
 
@@ -60,19 +67,84 @@ class CandidateFile:
     county: str
     year: Optional[int]
     election_type: Optional[str]
-    priority_score: int             # 0–10 based on filename signals
+    priority_score: int             # legacy 0–10 keyword count (kept for compat)
+    candidate_score: float          # Prompt 25: 0.0–1.0 five-factor score
     download_status: str            # "staged" | "pending" | "failed" | "skipped"
     download_error: Optional[str]
 
 
-def _priority_score(filename: str) -> int:
-    """Rank a filename 0–10 by election-relevance keywords."""
+MIN_CANDIDATE_SCORE    = 0.5     # files below this are not returned
+STRUCTURED_EXTS        = {".csv", ".xlsx", ".xls"}
+GOV_TIER_DOMAINS: set[str] = set()   # populated lazily from allowlist
+
+
+def _load_gov_tier_domains() -> set[str]:
+    """Load gov_tier domains from official_domain_allowlist.yaml."""
+    global GOV_TIER_DOMAINS
+    if GOV_TIER_DOMAINS:
+        return GOV_TIER_DOMAINS
+    allowlist_path = BASE_DIR / "config" / "source_registry" / "official_domain_allowlist.yaml"
+    try:
+        import yaml
+        data = yaml.safe_load(allowlist_path.read_text(encoding="utf-8")) or {}
+        for d in data.get("gov_tier", {}).get("domains", []):
+            GOV_TIER_DOMAINS.add(d.lower().lstrip("www."))
+    except Exception:
+        pass
+    return GOV_TIER_DOMAINS
+
+
+def _is_gov_tier_source(url: str) -> bool:
+    """Return True if the URL's domain is in the gov_tier of the allowlist."""
+    from urllib.parse import urlparse as _up
+    host = _up(url).netloc.lower().lstrip("www.")
+    return any(host == d or host.endswith("." + d) for d in _load_gov_tier_domains())
+
+
+def _keyword_priority_score(filename: str) -> int:
+    """Legacy: rank a filename 0–10 by election-relevance keywords."""
     lower = filename.lower()
     score = 0
     for kw in PRIORITY_KEYWORDS:
         if kw in lower:
             score += 1
     return min(score, 10)
+
+
+def score_candidate_file(
+    filename: str,
+    extension: str,
+    source_url: str = "",
+    file_size_bytes: int = 0,
+) -> float:
+    """
+    5-factor candidate file scoring (Prompt 25).
+
+    Returns score in [0.0, 1.0]. Score < 0.5 = ignored.
+
+    Factors:
+      +0.3  structured extension (.csv / .xls / .xlsx)
+      +0.3  filename contains 'precinct'
+      +0.2  filename contains 'detail'
+      +0.1  file size > 50 KB
+      +0.1  page/source URL is a gov_tier domain
+    """
+    score = 0.0
+    lower = filename.lower()
+    ext   = extension.lower()
+
+    if ext in STRUCTURED_EXTS:
+        score += 0.3
+    if "precinct" in lower:
+        score += 0.3
+    if "detail" in lower:
+        score += 0.2
+    if file_size_bytes > 50 * 1024:
+        score += 0.1
+    if source_url and _is_gov_tier_source(source_url):
+        score += 0.1
+
+    return round(min(score, 1.0), 3)
 
 
 def _extract_file_links(html: str, base_url: str) -> list[str]:
@@ -187,33 +259,44 @@ def discover_files_from_page(
         if ext in REJECTED_EXTENSIONS:
             continue
 
-        score = _priority_score(filename)
+        score = _keyword_priority_score(filename)
+        cscore = score_candidate_file(filename, ext, page_url)
+
+        # Skip files that score below the minimum threshold
+        if cscore < MIN_CANDIDATE_SCORE:
+            log.debug(f"[DISCOVERY] Skipping low-score file: {filename} (score={cscore:.2f})")
+            continue
 
         # Download if requested
         local_path: Optional[str] = None
         dl_status = "pending"
         dl_error: Optional[str] = None
+        file_size = 0
 
         if download:
             lpath, err = _download_file(url, stage_dir)
             if lpath:
                 local_path = str(lpath)
-                dl_status = "staged"
-                log.info(f"[DISCOVERY] Downloaded: {filename} → {lpath}")
+                dl_status  = "staged"
+                file_size  = lpath.stat().st_size
+                # Re-score with actual file size
+                cscore = score_candidate_file(filename, ext, page_url, file_size)
+                log.info(f"[DISCOVERY] Downloaded: {filename} ({file_size:,} bytes) score={cscore:.2f}")
             else:
                 dl_status = "failed"
-                dl_error = err
+                dl_error  = err
                 log.warning(f"[DISCOVERY] Download failed {url}: {err}")
 
         candidates.append(CandidateFile(
             url=url, filename=filename, local_path=local_path,
             extension=ext, source_id=source_id,
             state=state, county=county, year=year, election_type=etype,
-            priority_score=score, download_status=dl_status, download_error=dl_error,
+            priority_score=score, candidate_score=cscore,
+            download_status=dl_status, download_error=dl_error,
         ))
 
-    # Sort by priority score descending
-    candidates.sort(key=lambda c: c.priority_score, reverse=True)
+    # Sort by candidate_score (5-factor) descending
+    candidates.sort(key=lambda c: c.candidate_score, reverse=True)
     log.info(f"[DISCOVERY] {source_id}: found {len(candidates)} candidate files from {page_url}")
     return candidates
 
@@ -252,12 +335,26 @@ def discover_from_local_staging(
         if ext in REJECTED_EXTENSIONS:
             continue
 
+        file_size = p.stat().st_size
+        cscore = score_candidate_file(
+            p.name, ext,
+            source_url=source.get("base_url", ""),
+            file_size_bytes=file_size,
+        )
+        # Offline staged files: lower threshold since they were already manually placed
+        effective_min = MIN_CANDIDATE_SCORE * 0.6
+        if cscore < effective_min:
+            log.debug(f"[DISCOVERY] Staged file too low score: {p.name} ({cscore:.2f})")
+            continue
+
         candidates.append(CandidateFile(
             url="file://" + str(p), filename=p.name, local_path=str(p),
             extension=ext, source_id=source_id, state=state, county=county,
-            year=year, election_type=etype, priority_score=_priority_score(p.name),
+            year=year, election_type=etype,
+            priority_score=_keyword_priority_score(p.name),
+            candidate_score=cscore,
             download_status="staged", download_error=None,
         ))
 
-    candidates.sort(key=lambda c: c.priority_score, reverse=True)
+    candidates.sort(key=lambda c: c.candidate_score, reverse=True)
     return candidates

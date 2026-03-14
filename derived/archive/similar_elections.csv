@@ -1,2 +1,1 @@
-contest,year,county,state,contest_type,hist_turnout_mean,hist_turnout_sd,hist_support_mean,hist_support_sd,precincts,provenance,similarity_score,rank
-voter file synthetic,2024,Sonoma,CA,local_general,,0.0,,0.0,55,REAL,0.755,1
+election_id_a,election_id_b,similarity_score,same_county,same_election_type,year_delta,state_a,county_a,year_a,type_a,state_b,county_b,year_b,type_b
