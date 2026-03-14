@@ -180,11 +180,17 @@ def render_source_registry(data: dict) -> None:
                         if st.button("✅ Approve", key=f"approve_{sid}", use_container_width=True):
                             if approve_source(sid, notes="Approved via Source Registry UI"):
                                 st.success(f"Approved: {sid}")
+                                from engine.source_registry import source_registry as sr
+                                sr._contest_registry  = None
+                                sr._geometry_registry = None
                                 st.rerun()
                     else:
                         if st.button("❌ Reject", key=f"reject_{sid}", use_container_width=True):
                             if reject_source(sid, notes="Rejected via Source Registry UI"):
                                 st.warning(f"Rejected: {sid}")
+                                from engine.source_registry import source_registry as sr
+                                sr._contest_registry  = None
+                                sr._geometry_registry = None
                                 st.rerun()
 
                     # Add alias
@@ -273,17 +279,26 @@ def render_source_registry(data: dict) -> None:
                         if st.button("⭐ Set Preferred", key=f"pref_{sid}", use_container_width=True):
                             mark_preferred(sid)
                             st.success("Marked preferred")
+                            from engine.source_registry import source_registry as sr
+                            sr._contest_registry  = None
+                            sr._geometry_registry = None
                             st.rerun()
 
                     if not approved:
                         if st.button("✅ Approve", key=f"geo_approve_{sid}", use_container_width=True):
                             approve_source(sid, notes="Approved via Source Registry UI")
                             st.success("Approved")
+                            from engine.source_registry import source_registry as sr
+                            sr._contest_registry  = None
+                            sr._geometry_registry = None
                             st.rerun()
                     else:
                         if st.button("❌ Reject", key=f"geo_reject_{sid}", use_container_width=True):
                             reject_source(sid, notes="Rejected via Source Registry UI")
                             st.warning("Rejected")
+                            from engine.source_registry import source_registry as sr
+                            sr._contest_registry  = None
+                            sr._geometry_registry = None
                             st.rerun()
 
     # ─── Add Manual Source Tab ────────────────────────────────────────────────
