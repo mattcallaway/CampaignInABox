@@ -25,6 +25,12 @@ def build_precinct_base_features(model_df: pd.DataFrame, contest_id: str) -> pd.
     
     # 1. Canonicalize
     df = canonicalize_df(model_df.copy())
+
+    # 1b. Deduplicate columns — canonicalize_df can rename registered_voters→registered
+    #     while registered already exists, producing two 'registered' columns.
+    #     Keep the LAST occurrence (the canonical/renamed one) and drop earlier dupes.
+    if df.columns.duplicated().any():
+        df = df.loc[:, ~df.columns.duplicated(keep="last")]
     
     # 2. Extract core metrics
     # After canonicalize_df, columns like "yes_pct" or "SupportPct" should already be "support_pct"
@@ -40,23 +46,28 @@ def build_precinct_base_features(model_df: pd.DataFrame, contest_id: str) -> pd.
             print(f"[Features] [WARN] Expected column {c} missing, filling with zeros")
             df[c] = 0.0
             
-    # Subset to usable columns
+    # Subset to usable columns — guaranteed no dupes at this point
     feature_df = df[target_cols].copy()
     
+    # Helper: ensure a column is always a 1-D Series even if somehow still a DataFrame
+    def _col(name: str) -> pd.Series:
+        col = feature_df[name]
+        if isinstance(col, pd.DataFrame):
+            col = col.iloc[:, -1]  # take last/canonical column
+        return col.astype(float)
+
     # 3. Compute derived growth/stability features
     # Log transform for scale-invariant modeling
-    feature_df["log_registered"] = np.log1p(feature_df["registered"].astype(float))
-    feature_df["sqrt_registered"] = np.sqrt(feature_df["registered"].astype(float))
+    feature_df["log_registered"]  = np.log1p(_col("registered"))
+    feature_df["sqrt_registered"] = np.sqrt(_col("registered"))
     
     # Ratio: ballots cast per registered (same as turnout but explicit and raw)
-    # Handle division by zero
     feature_df["ballots_cast_per_registered"] = (
-        feature_df["ballots_cast"].astype(float) / 
-        feature_df["registered"].astype(float).replace(0, np.nan)
+        _col("ballots_cast") / _col("registered").replace(0, np.nan)
     ).fillna(0.0)
     
     # Support density: registered * support_pct
-    feature_df["support_density"] = feature_df["registered"] * feature_df["support_pct"]
+    feature_df["support_density"] = _col("registered") * _col("support_pct")
     
     validate_schema(feature_df)
     
