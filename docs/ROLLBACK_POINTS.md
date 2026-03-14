@@ -438,3 +438,9 @@ git checkout tags/v_pre_prompt28_contest_reset
 - **Tag:** `v_pre_prompt30_live_verification`
 - **Reason:** Live end-to-end verification audit (Prompt 30).
 - **Note:** This prompt may perform targeted debugging after observing live behavior.
+
+## 2026-03-14T05:22:41-07:00 — pre-Prompt-31 User Guidance Layer
+- **Branch:** `rollback/prompt31_pre_user_guidance`
+- **Tag:** `v_pre_prompt31_user_guidance`
+- **Reason:** User guidance layer, auto-pipeline detection, ops playbook, diagnostics.
+- **Note:** No UI layout changes, no data deletion, observation/automation only.

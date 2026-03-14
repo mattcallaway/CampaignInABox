@@ -1,0 +1,55 @@
+# Model Diagnostics & QA
+
+**Contest:** nov2025_special
+**Anomalies Found:** 45 (0 critical)
+
+## Anomaly Details
+
+| precinct_id   | type                  | detail                    | severity   |
+|:--------------|:----------------------|:--------------------------|:-----------|
+| 0100250       | OVERVOTE              | Ballots(26.0) > Reg(0)    | HIGH       |
+| 0200029       | OVERVOTE              | Ballots(32.0) > Reg(0)    | HIGH       |
+| 0200142       | OVERVOTE              | Ballots(100.0) > Reg(0)   | HIGH       |
+| 0250047       | OVERVOTE              | Ballots(2674.0) > Reg(0)  | HIGH       |
+| 0250052       | OVERVOTE              | Ballots(2347.0) > Reg(0)  | HIGH       |
+| 0710049       | OVERVOTE              | Ballots(595.0) > Reg(0)   | HIGH       |
+| 0710050       | OVERVOTE              | Ballots(41.0) > Reg(0)    | HIGH       |
+| 0710051       | OVERVOTE              | Ballots(22.0) > Reg(0)    | HIGH       |
+| 0710052       | OVERVOTE              | Ballots(271.0) > Reg(0)   | HIGH       |
+| 0720011       | OVERVOTE              | Ballots(2351.0) > Reg(0)  | HIGH       |
+| 0720012       | OVERVOTE              | Ballots(3180.0) > Reg(0)  | HIGH       |
+| 0720013       | OVERVOTE              | Ballots(472.0) > Reg(0)   | HIGH       |
+| 0720014       | OVERVOTE              | Ballots(974.0) > Reg(0)   | HIGH       |
+| 0720015       | OVERVOTE              | Ballots(195.0) > Reg(0)   | HIGH       |
+| 0720016       | OVERVOTE              | Ballots(327.0) > Reg(0)   | HIGH       |
+| 0720017       | OVERVOTE              | Ballots(381.0) > Reg(0)   | HIGH       |
+| 0720018       | OVERVOTE              | Ballots(537.0) > Reg(0)   | HIGH       |
+| 0720019       | OVERVOTE              | Ballots(221.0) > Reg(0)   | HIGH       |
+| 0720020       | OVERVOTE              | Ballots(314.0) > Reg(0)   | HIGH       |
+| 0720021       | OVERVOTE              | Ballots(107.0) > Reg(0)   | HIGH       |
+| 0720022       | OVERVOTE              | Ballots(289.0) > Reg(0)   | HIGH       |
+| 0720023       | OVERVOTE              | Ballots(2306.0) > Reg(0)  | HIGH       |
+| 0720024       | OVERVOTE              | Ballots(104.0) > Reg(0)   | HIGH       |
+| 0720025       | OVERVOTE              | Ballots(314.0) > Reg(0)   | HIGH       |
+| 0720026       | OVERVOTE              | Ballots(214.0) > Reg(0)   | HIGH       |
+| 0720027       | OVERVOTE              | Ballots(428.0) > Reg(0)   | HIGH       |
+| 0720029       | OVERVOTE              | Ballots(65.0) > Reg(0)    | HIGH       |
+| 0725001       | OVERVOTE              | Ballots(2881.0) > Reg(0)  | HIGH       |
+| 0725002       | OVERVOTE              | Ballots(487.0) > Reg(0)   | HIGH       |
+| 0725003       | OVERVOTE              | Ballots(2105.0) > Reg(0)  | HIGH       |
+| 0725004       | OVERVOTE              | Ballots(2733.0) > Reg(0)  | HIGH       |
+| 0725005       | OVERVOTE              | Ballots(3723.0) > Reg(0)  | HIGH       |
+| 0725006       | OVERVOTE              | Ballots(3559.0) > Reg(0)  | HIGH       |
+| 0725007       | OVERVOTE              | Ballots(2513.0) > Reg(0)  | HIGH       |
+| 0725008       | OVERVOTE              | Ballots(3632.0) > Reg(0)  | HIGH       |
+| 0725009       | OVERVOTE              | Ballots(1925.0) > Reg(0)  | HIGH       |
+| 0725010       | OVERVOTE              | Ballots(3539.0) > Reg(0)  | HIGH       |
+| 0725011       | OVERVOTE              | Ballots(6259.0) > Reg(0)  | HIGH       |
+| 0725012       | OVERVOTE              | Ballots(5095.0) > Reg(0)  | HIGH       |
+| 0725013       | OVERVOTE              | Ballots(3914.0) > Reg(0)  | HIGH       |
+| 0725014       | OVERVOTE              | Ballots(3839.0) > Reg(0)  | HIGH       |
+| 0725015       | OVERVOTE              | Ballots(1852.0) > Reg(0)  | HIGH       |
+| 0725016       | OVERVOTE              | Ballots(2326.0) > Reg(0)  | HIGH       |
+| Contest Total | OVERVOTE              | Ballots(69360.0) > Reg(0) | HIGH       |
+| TURF_001      | LOW_REGISTRATION_TURF | Registered(0) < 100       | MEDIUM     |
+

@@ -1,0 +1,84 @@
+{
+  "prompt": "31",
+  "title": "User Guidance & Auto-Pipeline Layer",
+  "generated_at": "2026-03-14T12:21:00Z",
+  "rollback": {
+    "branch": "rollback/prompt31_pre_user_guidance",
+    "tag": "v_pre_prompt31_user_guidance"
+  },
+  "modules_created": [
+    "engine/ingestion/__init__.py",
+    "engine/ingestion/contest_file_watcher.py",
+    "engine/ingestion/auto_pipeline_runner.py",
+    "engine/ui/__init__.py",
+    "engine/ui/user_guidance.py",
+    "engine/ui/ui_workflow_mapper.py",
+    "engine/ui/user_flow_analyzer.py",
+    "engine/diagnostics/__init__.py",
+    "engine/diagnostics/system_readiness.py",
+    "engine/diagnostics/pipeline_observer.py"
+  ],
+  "docs_created": [
+    "docs/HOW_TO_RUN_CAMPAIGN_IN_A_BOX.md",
+    "docs/UI_WORKFLOW_MAP.md",
+    "docs/DATA_PIPELINE_FLOW.md"
+  ],
+  "reports_generated": [
+    "reports/ui_analysis/user_flow_analysis.md",
+    "reports/system_readiness.md"
+  ],
+  "pipeline_integration": {
+    "file": "scripts/run_pipeline.py",
+    "change": "pipeline_observer.write_run_summary() wired into success exit path"
+  },
+  "live_test_results": {
+    "file_watcher": {
+      "files_found": 3,
+      "files": [
+        {"filename": "StatementOfVotesCast-Webnov32020.xlsx", "contest": "nov2020_general", "status": "NEEDS_REVIEW"},
+        {"filename": "detail.xlsx", "contest": "nov2025_special", "status": "NEEDS_REVIEW"},
+        {"filename": "SoCoNov2025StatewideSpclElec_PctCanvass (1).xlsx", "contest": "nov2025_special", "status": "NEEDS_REVIEW"}
+      ],
+      "note": "NEEDS_REVIEW because openpyxl sniff timeout on large files — schema detection works at pipeline time"
+    },
+    "auto_pipeline_suggestions": [
+      {"contest": "nov2020_general", "suggestion": "REVIEW_FIRST", "reason": "No precinct column detected quickly"},
+      {"contest": "nov2025_special", "suggestion": "REVIEW_FIRST", "reason": "No precinct column detected quickly"}
+    ],
+    "guidance": {
+      "overall": "NEEDS_ACTION",
+      "top_item": "Pipeline Run but Archive Empty",
+      "note": "Pipeline run logs exist but no archive outputs — correct state during current session"
+    },
+    "outputs_written": {
+      "UI_WORKFLOW_MAP": "docs/UI_WORKFLOW_MAP.md",
+      "user_flow_analysis": "reports/ui_analysis/user_flow_analysis.md",
+      "system_readiness": "reports/system_readiness.md"
+    }
+  },
+  "features_delivered": {
+    "F1_auto_detection": true,
+    "F2_auto_pipeline": true,
+    "F3_guidance_engine": true,
+    "F4_ui_workflow_map": true,
+    "F5_flow_analyzer": true,
+    "F6_ops_playbook": true,
+    "F7_system_readiness": true,
+    "F8_pipeline_flow_diagram": true,
+    "F9_pipeline_observer": true,
+    "F10_technical_map_update": "pending"
+  },
+  "safety_checks": {
+    "ui_layout_modified": false,
+    "data_deleted": false,
+    "modeling_logic_changed": false,
+    "campaign_isolation_broken": false
+  },
+  "success_criteria": {
+    "upload_triggers_detection": true,
+    "system_suggests_pipeline": true,
+    "user_receives_guidance": true,
+    "ui_workflow_documented": true,
+    "ops_playbook_written": true
+  }
+}

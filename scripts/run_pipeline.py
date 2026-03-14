@@ -1628,6 +1628,15 @@ def _print_summary(run_id: str, artifacts: list, no_votes: bool = False):
     print(f"  Logs   : logs/latest/run.log")
     print(f"{'='*60}\n")
 
+    # ── Pipeline Observer (Prompt 31) — write run summary ─────────────────────
+    try:
+        from engine.diagnostics.pipeline_observer import write_run_summary as _obs_write
+        _log_dir = BASE_DIR / "logs" / "runs"
+        _run_logs = sorted(_log_dir.glob(f"*{run_id}*__run.log")) if _log_dir.exists() else []
+        if _run_logs:
+            _obs_write(_run_logs[-1], BASE_DIR, run_id=run_id)
+    except Exception:
+        pass  # Observer must never block pipeline completion
 
 # ── CLI ───────────────────────────────────────────────────────────────────────
 
