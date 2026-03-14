@@ -519,3 +519,63 @@ Cloud: generic Linux server supported. See `deployment/cloud/`.
 **Who updates it:** The prompt engineer or developer completing the change, as part of the commit that introduces the change.
 
 **Format:** Keep all tables, keep all section headers. Use clear changelog notes at the top of the file when making updates.
+
+
+---
+
+## v1.8 — Prompt 28: Canonical Contest Data Architecture (2026-03-14)
+
+### Problem Solved
+
+The system had two independent operational paths for contest/election-result data:
+
+- **UI/Data Manager uploads** ? `data/elections/{state}/{county}/{contest_id}/`
+- **Modeling pipeline reads** ? `data/CA/counties/{county}/votes/{year}/{slug}/detail.xlsx`
+- **Archive builder** ? saw yet another path
+
+This caused: P28 pre-audit found **7 failure points** including 2020 data never reaching modeling and 2024 real data blocked by a slug mismatch.
+
+### New Canonical Contest Data Architecture
+
+```
+data/contests/
+  {state}/
+    {county}/
+      {year}/
+        {contest_slug}/
+          raw/          <- original uploaded files
+          normalized/   <- cleaned result tables
+          manifests/    <- contest_metadata.json, ingest_manifest.json, primary_result_file.json
+```
+
+### New Engine Modules
+
+| Module | Location | Purpose |
+|---|---|---|
+| `ContestResolver` | `engine/contest_data/contest_resolver.py` | Canonical path resolver; replaces all hardcoded legacy paths |
+| `ContestIntake` | `engine/contest_data/contest_intake.py` | Unified intake workflow (hash, dedup, fingerprint, manifest, register) |
+| `ContestHealthChecker` | `engine/contest_data/contest_health.py` | Detects legacy files, registry dupes, broken manifests, legacy code refs |
+
+### Invariants Enforced
+
+- **One canonical path:** all contest result files live at `data/contests/{state}/{county}/{year}/{slug}/raw/`
+- **One registry entry per unique file** (SHA-256 dedup in ContestIntake)
+- **One primary result file per contest** (`primary_result_file.json` manifest)
+- **No new writes** to `data/elections/`, `votes/`, `data/CA/counties/*/votes/`
+- **Data Manager** routes `election_results` type through `ContestIntake`
+- **Pipeline Runner** uses `ContestResolver` as primary contest discovery source
+
+### Purge Executed (P28 Contest Data Reset)
+
+- 31 contest/result files deleted from legacy paths
+- Geography, crosswalk, source registry, campaign config, users — **all preserved**
+- `file_registry.json` rebuilt (5 contest entries removed)
+- Reports: `reports/contest_reset/2026-03-14__011318__p28/`
+
+### Re-Upload Procedure
+
+1. Open Data Manager ? Upload tab
+2. Select file ? set **Campaign Data Type = election_results**
+3. Fill in **State**, **County**, **Contest Slug**, **Year**
+4. Click Confirm & Save ? file lands in `data/contests/{state}/{county}/{year}/{slug}/raw/`
+5. Run pipeline from Pipeline Runner ? contest appears in dropdown from canonical path
