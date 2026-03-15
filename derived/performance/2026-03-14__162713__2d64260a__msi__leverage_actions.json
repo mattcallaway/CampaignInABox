@@ -1,0 +1,14 @@
+{
+  "actions": [
+    {
+      "program": "Field / Canvass",
+      "issue": "Behind door knocking targets",
+      "recommendation": "Shift weekend budget to paid canvassers or run emergency GOTV volunteer surge in high-density precincts."
+    },
+    {
+      "program": "Phones",
+      "issue": "Behind phone targets",
+      "recommendation": "Purchase automated ID texts to offset lost phone volume."
+    }
+  ]
+}

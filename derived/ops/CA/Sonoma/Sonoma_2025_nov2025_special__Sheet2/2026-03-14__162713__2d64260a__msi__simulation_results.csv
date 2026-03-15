@@ -1,0 +1,5 @@
+jurisdiction,scenario_id,scenario_name,effort_level,net_vote_gain,projected_support_votes,win_margin_estimate
+All,baseline,Baseline (No Field),0.0,0,0,0
+All,field_light,Field Light (30% Capacity),0.3,0,0,0
+All,field_medium,Field Medium (70% Capacity),0.7,0,0,0
+All,field_heavy,Field Heavy (100% Capacity),1.0,0,0,0
