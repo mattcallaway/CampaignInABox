@@ -1,0 +1,36 @@
+﻿{
+  "run_id": "2026-03-14__P32_registered_fix",
+  "timestamp": "2026-03-14T20:05:00-07:00",
+  "workbook_file": "SoCoNov2025StatewideSpclElec_PctCanvass (1).xlsx",
+  "sheets_parsed": ["Document map", "Sheet2", "Sheet3", "Sheet4"],
+  "registered_source_column": "unnamed_2 (position index 2, label: Registered Voters)",
+  "registered_source_method": "preamble-label detection (Prompt 32 fix, contest_parser.py step 6.5)",
+  "pre_fix": {
+    "registered_zero_count": 366,
+    "registered_nonzero_count": 0,
+    "integrity_critical_rows": 366,
+    "turnout_pct": "0.0 for all precincts"
+  },
+  "post_fix": {
+    "registered_zero_count": 21,
+    "registered_nonzero_count": 371,
+    "integrity_critical_rows": 0,
+    "turnout_pct": "real values 0.45-0.89",
+    "diagnostics_integrity": "PASS",
+    "no_integrity_repairs_needed": true
+  },
+  "pipeline_run_post_fix": {
+    "contest": "nov2025_special",
+    "overall": "SUCCESS",
+    "duration_seconds": 201,
+    "rows_loaded": 57,
+    "crosswalk_errors": 0
+  },
+  "downstream_visibility": {
+    "data_explorer": "registered values visible (e.g. 16, 11, 23, 4, 10)",
+    "turnout_pct_in_data_explorer": "real values (e.g. 0.8125, 0.4545, 0.7391)",
+    "mission_control": "SUCCESS",
+    "diagnostics": "HEALTHY / PASS",
+    "data_quality_warning": false
+  }
+}

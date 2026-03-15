@@ -1308,3 +1308,164 @@ The archive_summary.json (612 bytes) present is from a previous p24 run.
 
 3. **NEEDS_REVIEW on contest files** — file_watcher fix (skiprows 0-5 + prefix matching) is in place.
    Hot-reload or app restart needed for it to take effect for existing running app.
+
+---
+
+## Prompt 32 — Registered Voter Extraction Repair
+
+**Date:** 2026-03-14
+
+### A. Root Cause Summary
+
+The primary contest file for nov2025_special is SoCoNov2025StatewideSpclElec_PctCanvass (1).xlsx.
+This format (Sonoma County's standard output) has a **6-row preamble per contest sheet**:
+
+Row 0: 'Sonoma' / 'Precinct Canvass' (sparse header)
+Row 1: 'Sonoma Statewide Special Election' / date (sparse)
+Row 2: blank
+Row 3: blank
+Row 4: contest name
+Row 5: candidate/option labels (YES/NO positions)
+Row 6: **actual column headers** (Registered Voters, Voters Cast, Turnout %, YES, NO, ...)
+Row 7+: precinct data rows
+
+parse_contest_sheet() was designed to find the "first row with ≥3 non-null values" as the header row.
+In the canvass format, Row 0 (or an early row) was sparse enough to cause header_idx = 0.
+This resulted in:
+- All column names being unnamed_0, unnamed_1, unnamed_2... instead of real names
+- Row 6 (the actual column label row) becoming **data row 0** inside the DataFrame
+- No Registered* column name found → no Registered column created
+- extract_registered_voters() also returned 0 because canvass has no dedicated 'Registered Voters' sheet
+
+Result: 366 precincts had registered=0 with ballots_cast>0 = CRITICAL integrity violations.
+
+### B. Registered Voter Extraction Flow (As Fixed)
+
+#### Input: Workbook → parse_contest_sheet() → Step 6.5 → Registered column
+
+**1. parse_contest_workbook() in scripts/aggregation/vote_allocator.py:**
+- Calls extract_registered_voters(workbook_path) — looks for dedicated 'Registered Voters' sheet
+  - Works for detail.xlsx (has dedicated sheet with 391 rows)
+  - Returns 0 for canvass (no such sheet)
+- Calls parse_contest_sheet(sheet_name, rows) per contest sheet
+
+**2. parse_contest_sheet() in scripts/loaders/contest_parser.py:**
+- Step 1-4: Extract title, find header_idx, build column names
+- Step 5: handle compound header (YES/NO spans)
+- Step 6: Build DataFrame from rows[header_idx+1:]
+- **Step 6.5 (Prompt 32 NEW):** Preamble-label detection
+  - If df.iloc[0] contains recognized label strings ('Registered Voters', 'Voters Cast', etc.)
+  - Build position→label map from that row
+  - Strip the label row from data
+  - Create Registered column from column at label position
+  - Create BallotsCast column from column at label position
+- Step 7+: identify precinct column, choice columns, contest type
+
+**3. ggregate_to_precinct_totals() in scripts/aggregation/vote_allocator.py:**
+- Reads Registered from df.columns (now populated by step 6.5)
+- Creates esult['Registered'] from that column
+
+**4. Back in parse_contest_workbook():**
+- Line 245-246: if reg_voters: totals['Registered'] = totals['PrecinctID'].map(reg_voters)...
+- For detail.xlsx: overwrites Registered with lookup from dedicated sheet (always correct)
+- For canvass: reg_voters is empty → retains the step 6.5 value
+
+**5. 
+ormalize_precinct_columns() in scripts/lib/schema_normalize.py:**
+- Maps 'Registered' → 'registered' via CANONICAL_MAP
+- All downstream uses egistered (canonical form)
+
+### C. Workbook Layout Handling
+
+#### Detail.xlsx (simple compound header, correct)
+- Sheets: 'Table of Contents', 'Registered Voters', '2', '3', '4'
+- Contest sheets 2/3/4: header_idx detects **row 2** (first row with ≥3 non-null)
+- Row 2 contains real column names: ['Precinct', 'Registered Voters', 'Election Day', ...]
+- Compound header mode sets df['Registered'] from 'Registered Voters' column
+- Additionally, dedicated 'Registered Voters' sheet provides a lookup backup
+
+#### Canvass format (previously broken, now fixed)
+- Sheets: 'Document map', 'Sheet2', 'Sheet3', 'Sheet4'
+- Each contest sheet has 6+ sparse rows before data
+- header_idx = 0 (or early sparse row)
+- Column headers appear as **data row 0** after header_idx
+- Step 6.5 detects and extracts Registered from column position
+
+#### How to identify which detection path fired in logs
+- detail.xlsx: log shows 'Registered Voters' found in compound header
+- canvass: log shows '[REGISTERED] Preamble-label row detected in Sheet3.'
+- If neither fires: log shows 'Registered' column missing → INTEGRITY will warn
+
+### D. Data-Quality Guardrails
+
+#### Automatic DATA_QUALITY_WARNING (Prompt 32)
+In scripts/run_pipeline.py after INTEGRITY_ENFORCEMENT:
+
+If registered=0 AND ballots_cast>0 for >10% of rows:
+  → Emit [DATA_QUALITY] DATA_QUALITY_WARNING: X/Y rows (Z%) have registered=0 but ballots_cast>0
+  → Threshold configurable: data_quality.max_registered_zero_pct in model_parameters.yaml
+
+If registered=0 for 1-10% of rows:
+  → Emit [DATA_QUALITY] registered=0 count: X/Y — within threshold
+
+If registered>0 for all rows:
+  → Emit [DATA_QUALITY] registered: all N rows have registered>0 ✓
+
+#### INTEGRITY_ENFORCEMENT (existing)
+- enforce_precinct_constraints() flags individual rows where registered=0 but ballots>0
+- Logged as CRITICAL, counted in pipeline summary
+- Post-fix: 0 CRITICAL rows logged
+
+### E. Operational Meaning
+
+#### Pipeline SUCCESS with good registered
+- registered column populated → accurate turnout ratios
+- turnout_pct = 0.45-0.89 range (was 0.0 pre-fix)
+- Strategy recommendations are turnout-weighted (meaningful)
+
+#### Pipeline SUCCESS but registered=0 warnings in log
+- Look for [DATA_QUALITY] DATA_QUALITY_WARNING in log
+- Check [REGISTERED] lines to see which sheet/column was detected
+- Run the parser diagnostic script: python C:\Temp\trace_canvass.py
+
+#### After adding voter file
+- support_pct and target_score will populate
+- Campaign Health Index warning will resolve
+- Turnout-based scoring will work correctly (registered now reliable)
+
+### F. Debugging Checklist for Registered Voter Issues
+
+**Q: Why are registered values all zero for a new contest?**
+1. Check the primary_result_file.json for which xlsx is being parsed
+2. Check if the workbook has a dedicated 'Registered Voters' sheet
+   - If yes: extract_registered_voters() should work
+   - If no: sheet-level parsing must detect column
+3. Open the xlsx and look at each contest sheet's first 10 rows (raw)
+4. Check if Registered Voters label appears in data row 0 vs an actual header
+5. If in data row 0: Step 6.5 should detect it — check [REGISTERED] log line
+6. If not detected: add the label string to the preamble-label detection set in contest_parser.py
+
+**Q: Why is turnout_pct still zero after registered fix?**
+- registered=0 for that precinct (legitimate — not a bug)
+- schema_normalize uses safe_reg = registered.replace(0, NaN) so division returns NaN → 0
+
+**Q: What if registered column name is different in a future workbook?**
+- Add variant to REGISTRATION_COL_ALIASES set in contest_parser.py
+- Also add to CANONICAL_MAP registered variants in schema_normalize.py
+
+### G. Validated Acceptance Criteria (Prompt 32)
+
+| Criterion | Status |
+|---|---|
+| Rollback point created | ✅ v_pre_prompt32_registered_fix |
+| Root cause diagnosed | ✅ canvass preamble-label layout |
+| registered extraction repaired | ✅ Step 6.5 in contest_parser.py |
+| Diagnostics added | ✅ DATA_QUALITY_WARNING guardrail |
+| Git pushed | ✅ SHA 50f7b2b master |
+| App hard restarted | ✅ port 8501 PID 14268 |
+| Automated in-app test run | ✅ 201s pipeline SUCCESS |
+| Output bundle generated | ✅ 7 files in reports/registered_fix/ |
+| Technical map expanded | ✅ this section |
+| registered=0 CRITICAL rows | ✅ 0 post-fix (was 366) |
+| turnout_pct values | ✅ 0.45-0.89 range (was 0.0) |
+| Diagnostics: Data Integrity | ✅ PASS (was FAIL + 366 CRITICAL) |

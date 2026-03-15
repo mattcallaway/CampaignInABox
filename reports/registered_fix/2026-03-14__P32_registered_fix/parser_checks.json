@@ -1,0 +1,20 @@
+﻿{
+  "timestamp": "2026-03-14T20:05:00-07:00",
+  "workbook": "SoCoNov2025StatewideSpclElec_PctCanvass (1).xlsx",
+  "checks": {
+    "workbook_opens": true,
+    "target_sheet_detected": true,
+    "registered_column_detected": true,
+    "registered_nonzero_majority": true,
+    "ballots_cast_detected": true,
+    "turnout_computable": true,
+    "registered_zero_reduced": true
+  },
+  "post_fix_counts": {
+    "Sheet3_Prop50_registered_gt0": 371,
+    "Sheet3_Prop50_registered_eq0": 19,
+    "Sheet4_MeasureI_registered_gt0": 53,
+    "Sheet4_MeasureI_registered_eq0": 2,
+    "total_integrity_critical_rows": 0
+  }
+}
