@@ -462,3 +462,14 @@ git checkout tags/v_pre_prompt28_contest_reset
 - **Commits at rollback:** bdf943a (latest)
 - **Note:** This prompt may apply narrow post-run fixes if live testing reveals specific issues.
   All changes are logged in repair_actions_taken.md under reports/live_repair_verification/.
+
+---
+
+## Prompt 32 Pre-Registered-Fix Rollback Point
+
+- **Timestamp:** 2026-03-14T19:51:39-07:00
+- **Branch:** rollback/prompt32_pre_registered_fix
+- **Tag:** v_pre_prompt32_registered_fix
+- **Reason:** Registered voter extraction repair (Prompt 32)
+- **Commits at rollback:** 5ce6ecd (latest — P30.5 merge)
+- **Note:** This prompt includes a hard app restart and fully automated post-fix verification.

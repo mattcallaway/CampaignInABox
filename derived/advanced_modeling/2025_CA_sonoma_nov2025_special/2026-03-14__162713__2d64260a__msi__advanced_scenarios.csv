@@ -1,0 +1,5 @@
+scenario,max_shifts_budget,shifts_assigned,contacts_estimated,expected_net_gain_votes,expected_added_yes_votes,generated_at
+baseline,0,0,0,0.0,0.0,2026-03-14T16:28:55.446272
+lite,20,0,0,0.0,0.0,2026-03-14T16:29:14.873654
+medium,50,0,0,0.0,0.0,2026-03-14T16:29:34.235754
+heavy,100,0,0,0.0,0.0,2026-03-14T16:29:52.467729

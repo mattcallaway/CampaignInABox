@@ -1,0 +1,30 @@
+{
+  "contest_slug": "nov2025_special",
+  "contest_id": "2025_CA_sonoma_nov2025_special",
+  "contest_name": "unknown",
+  "contest_type": "candidate_race",
+  "jurisdiction_scope": "unknown",
+  "year": "2025",
+  "state": "CA",
+  "county": "Sonoma",
+  "source_notes": "",
+  "last_updated": "2026-03-14T23:27:26.637114+00:00",
+  "sheets_detected": [
+    "Document map",
+    "Sheet2",
+    "Sheet3",
+    "Sheet4"
+  ],
+  "candidates": [
+    "PrecinctCanvass",
+    "1",
+    "1_1",
+    "1_2",
+    "1_3",
+    "1_4",
+    "1_5",
+    "1_6",
+    "1_7"
+  ],
+  "measures": []
+}
