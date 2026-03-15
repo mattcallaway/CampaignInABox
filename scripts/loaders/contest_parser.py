@@ -220,6 +220,75 @@ def parse_contest_sheet(sheet_name: str, rows: list[list], logger=None) -> dict[
     df = pd.DataFrame(rows[header_idx + 1:], columns=headers)
     df = df.dropna(how="all").reset_index(drop=True)
 
+    # 6.5. Preamble-label detection (Prompt 32 fix)
+    # ─────────────────────────────────────────────────────────────────────────
+    # Canvass-format workbooks have a 6+ row preamble per sheet, with all
+    # column-label text ("Registered Voters", "Voters Cast", "YES", "NO", etc.)
+    # appearing in the first non-null data row after header_idx instead of in
+    # the header row.  When detected, use that label row to identify the column
+    # index of "Registered Voters" and "Voters Cast", strip the label row, and
+    # create proper Registered / BallotsCast columns from the numeric rows.
+    # ─────────────────────────────────────────────────────────────────────────
+    _registered_source_col = None   # diagnostic: which column name was used
+    _registered_label_col_idx = None  # diagnostic: 0-based column index
+
+    if not df.empty:
+        # Check if any value in the first data row looks like a column label
+        _first_row = df.iloc[0]
+        _is_label_row = any(
+            isinstance(v, str) and v.strip().lower() in {
+                "registered voters", "voters cast", "turnout (%)", "total votes",
+                "election day", "vote by mail", "yes", "no", "over votes",
+                "under votes", "total", "precinct", "registered"
+            }
+            for v in _first_row
+        )
+
+        if _is_label_row:
+            # Build a position→label map from the label row
+            _pos_label: dict[int, str] = {}
+            for _col_pos, _col_name in enumerate(df.columns):
+                _val = _first_row[_col_name]
+                if isinstance(_val, str) and _val.strip():
+                    _pos_label[_col_pos] = _val.strip()
+
+            # Log what we found
+            if logger:
+                logger.info(
+                    f"  [REGISTERED] Preamble-label row detected in {sheet_name!r}. "
+                    f"Column labels: {_pos_label}"
+                )
+
+            # Find the Registered Voters column by label
+            _reg_idx = next(
+                (_pos for _pos, _lbl in _pos_label.items()
+                 if "registered" in _lbl.lower()),
+                None
+            )
+            # Find the Ballots Cast / Voters Cast / Total Votes column
+            _ballots_idx = next(
+                (_pos for _pos, _lbl in _pos_label.items()
+                 if _lbl.lower() in {"voters cast", "ballots cast", "total votes", "total ballots"}),
+                None
+            )
+
+            # Strip the label row from data
+            df = df.iloc[1:].reset_index(drop=True)
+
+            # Extract Registered from its positional column
+            if _reg_idx is not None:
+                _reg_col_name = df.columns[_reg_idx] if _reg_idx < len(df.columns) else None
+                if _reg_col_name is not None:
+                    df["Registered"] = pd.to_numeric(df[_reg_col_name], errors="coerce").fillna(0).astype(int)
+                    _registered_source_col = _reg_col_name
+                    _registered_label_col_idx = _reg_idx
+
+            # Extract BallotsCast from its positional column (if not already set)
+            if _ballots_idx is not None and "BallotsCast" not in df.columns:
+                _bc_col_name = df.columns[_ballots_idx] if _ballots_idx < len(df.columns) else None
+                if _bc_col_name is not None:
+                    df["BallotsCast"] = pd.to_numeric(df[_bc_col_name], errors="coerce").fillna(0).astype(int)
+
     # 7. Identify key columns
     prec_col = next((h for h in headers if h.lower() in PRECINCT_COL_ALIASES), None)
     if not prec_col:
@@ -242,15 +311,19 @@ def parse_contest_sheet(sheet_name: str, rows: list[list], logger=None) -> dict[
         if no_col and no_col in df.columns:
             df["no_votes"] = pd.to_numeric(df[no_col], errors="coerce").fillna(0).astype(int)
 
-        # Registered Voters
-        reg_col = next((h for h in headers if "registered" in h.lower() and "__" not in h), None)
-        if reg_col and reg_col in df.columns:
-            df["Registered"] = pd.to_numeric(df[reg_col], errors="coerce").fillna(0).astype(int)
+        # Registered Voters (standard compound header — e.g. detail.xlsx sheets 2/3/4)
+        # Only set if not already set by the preamble-label path above
+        if "Registered" not in df.columns:
+            reg_col = next((h for h in headers if "registered" in h.lower() and "__" not in h), None)
+            if reg_col and reg_col in df.columns:
+                df["Registered"] = pd.to_numeric(df[reg_col], errors="coerce").fillna(0).astype(int)
+                _registered_source_col = reg_col
 
-        # Total ballots cast — "Total" column
-        total_col = next((h for h in headers if h.lower() == "total"), None)
-        if total_col and total_col in df.columns:
-            df["BallotsCast"] = pd.to_numeric(df[total_col], errors="coerce").fillna(0).astype(int)
+        # Total ballots cast — "Total" column (only if not set by preamble-label path)
+        if "BallotsCast" not in df.columns:
+            total_col = next((h for h in headers if h.lower() == "total"), None)
+            if total_col and total_col in df.columns:
+                df["BallotsCast"] = pd.to_numeric(df[total_col], errors="coerce").fillna(0).astype(int)
 
     # 8. Determine contest type
     type_guess = detect_contest_type(headers)

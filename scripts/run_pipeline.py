@@ -683,6 +683,44 @@ def run_pipeline(
         notes = [f"{_n_repaired} repair(s), {_n_critical} CRITICAL (registered=0) row(s)"]
         logger.step_done("INTEGRITY_ENFORCEMENT", notes=notes)
 
+        # ── Prompt 32: DATA_QUALITY_WARNING for registered=0 anomaly ─────────
+        # Count rows where registered=0 but ballots_cast>0.  If above threshold,
+        # emit a loud WARN that Mission Control and future audits can detect.
+        _dq_registered_zero = 0
+        _dq_total_rows = 0
+        for _mdf in all_model_dfs:
+            _reg_col  = "registered"  if "registered"  in _mdf.columns else None
+            _bc_col   = "ballots_cast" if "ballots_cast" in _mdf.columns else None
+            if _reg_col and _bc_col:
+                _zero_mask = (
+                    pd.to_numeric(_mdf[_reg_col],  errors="coerce").fillna(0) == 0
+                ) & (
+                    pd.to_numeric(_mdf[_bc_col],   errors="coerce").fillna(0) > 0
+                )
+                _dq_registered_zero += int(_zero_mask.sum())
+                _dq_total_rows += len(_mdf)
+
+        _max_reg_zero_pct = float(
+            config.get("data_quality", {}).get("max_registered_zero_pct", 0.10)
+        )
+        _dq_pct = _dq_registered_zero / _dq_total_rows if _dq_total_rows > 0 else 0.0
+        _dq_warning = _dq_pct > _max_reg_zero_pct
+
+        if _dq_warning:
+            logger.warn(
+                f"[DATA_QUALITY] DATA_QUALITY_WARNING: {_dq_registered_zero}/{_dq_total_rows} "
+                f"precinct rows ({_dq_pct:.1%}) have registered=0 but ballots_cast>0. "
+                f"Threshold is {_max_reg_zero_pct:.0%}. "
+                f"Check parse_contest_sheet Registered column extraction for this workbook layout."
+            )
+        elif _dq_registered_zero > 0:
+            logger.info(
+                f"  [DATA_QUALITY] registered=0 count: {_dq_registered_zero}/{_dq_total_rows} "
+                f"({_dq_pct:.1%}) — within threshold ({_max_reg_zero_pct:.0%})"
+            )
+        else:
+            logger.info(f"  [DATA_QUALITY] registered: all {_dq_total_rows} rows have registered>0 ✓")
+
         # ── Step 13: Feature Engineering ─────────────────────────────────────
         logger.step_start("FEATURE_ENGINEERING")
         all_combined_features = []
