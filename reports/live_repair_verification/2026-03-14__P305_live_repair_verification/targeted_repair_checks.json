@@ -1,0 +1,24 @@
+﻿{
+  "run_id": "2026-03-14__P305_live_repair_verification",
+  "timestamp": "2026-03-14T17:24:39-07:00",
+  "checks": {
+    "repair_detected": true,
+    "pipeline_success": true,
+    "mission_control_accurate": "PARTIAL",
+    "historical_archive_status_accurate": true,
+    "safe_merge_error_present_pre_fix": true,
+    "safe_merge_error_fixed": true,
+    "registered_0_issue_present": true,
+    "map_usable": true,
+    "strategy_populated": true,
+    "archive_shows_built_in_mc": true,
+    "needs_review_resolved": false
+  },
+  "notes": {
+    "safe_merge": "TypeError on left_on= kwarg — fixed in join_guard.py",
+    "registered_0": "366 precincts show registered=0 but ballots>0 — data extraction issue in parse_contest_workbook",
+    "needs_review": "3 of 3 files still NEEDS_REVIEW despite file_watcher fix — hot-reload may be required or scanner pattern not matching",
+    "system_readiness_archive": "Fixed: was checking non-existent derived/archive/CA/Sonoma/, now checks derived/archive/ flat dir",
+    "user_guidance": "Fixed: removed ARCHIVE_INGEST step reference from next-action message"
+  }
+}
