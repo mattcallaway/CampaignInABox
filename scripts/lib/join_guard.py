@@ -63,7 +63,9 @@ def assert_unique(
 def safe_merge(
     left: pd.DataFrame,
     right: pd.DataFrame,
-    on: str | list[str],
+    on: str | list[str] | None = None,
+    left_on: str | list[str] | None = None,
+    right_on: str | list[str] | None = None,
     how: str = "left",
     expect: ExpectMode = "one_to_many",
     name: str = "join",
@@ -78,16 +80,18 @@ def safe_merge(
 
     Parameters
     ----------
-    left, right : DataFrames to merge
-    on          : join key(s)
-    how         : left/inner/right/outer
-    expect      : expected cardinality relationship
-    name        : human label for diagnostics
-    log_ctx     : e.g. sheet name for log messages
-    contest_id  : used in diagnostic output filename
-    run_id      : used in diagnostic output filename
-    logger      : optional pipeline logger
-    threshold   : explosion factor triggering CRITICAL (default 1.05)
+    left, right  : DataFrames to merge
+    on           : join key(s) — used when left and right share the same column name
+    left_on      : join key(s) on the left DataFrame (use with right_on)
+    right_on     : join key(s) on the right DataFrame (use with left_on)
+    how          : left/inner/right/outer
+    expect       : expected cardinality relationship
+    name         : human label for diagnostics
+    log_ctx      : e.g. sheet name for log messages
+    contest_id   : used in diagnostic output filename
+    run_id       : used in diagnostic output filename
+    logger       : optional pipeline logger
+    threshold    : explosion factor triggering CRITICAL (default 1.05)
 
     Returns
     -------
@@ -98,22 +102,31 @@ def safe_merge(
     JoinExplosionError if expect=one_to_one or many_to_one and
     rows after / rows before > threshold.
     """
-    keys = [on] if isinstance(on, str) else on
+    if on is None and (left_on is None or right_on is None):
+        raise ValueError("safe_merge requires either 'on' or both 'left_on' and 'right_on'")
+
+    # Resolve key lists for uniqueness checks
+    left_keys  = ([left_on] if isinstance(left_on, str) else list(left_on)) if left_on else ([on] if isinstance(on, str) else list(on))
+    right_keys = ([right_on] if isinstance(right_on, str) else list(right_on)) if right_on else ([on] if isinstance(on, str) else list(on))
+
     n_left  = len(left)
     n_right = len(right)
 
     # Pre-merge uniqueness checks
-    left_unique  = assert_unique(left,  keys, name=f"{name}.left",  log_ctx=log_ctx)
-    right_unique = assert_unique(right, keys, name=f"{name}.right", log_ctx=log_ctx)
+    left_unique  = assert_unique(left,  left_keys,  name=f"{name}.left",  log_ctx=log_ctx)
+    right_unique = assert_unique(right, right_keys, name=f"{name}.right", log_ctx=log_ctx)
 
     if logger:
         if not left_unique["unique"]:
-            logger.warn(f"  [JOIN_GUARD] {name}: left side has {left_unique['dup_count']} duplicate key(s) on {keys}")
+            logger.warn(f"  [JOIN_GUARD] {name}: left side has {left_unique['dup_count']} duplicate key(s) on {left_keys}")
         if not right_unique["unique"]:
-            logger.warn(f"  [JOIN_GUARD] {name}: right side has {right_unique['dup_count']} duplicate key(s) on {keys}")
+            logger.warn(f"  [JOIN_GUARD] {name}: right side has {right_unique['dup_count']} duplicate key(s) on {right_keys}")
 
-    # Perform the merge
-    merged = pd.merge(left, right, on=on, how=how)
+    # Perform the merge — support both on= and left_on=/right_on=
+    if left_on is not None and right_on is not None:
+        merged = pd.merge(left, right, left_on=left_on, right_on=right_on, how=how)
+    else:
+        merged = pd.merge(left, right, on=on, how=how)
     n_merged = len(merged)
 
     # Post-merge explosion check

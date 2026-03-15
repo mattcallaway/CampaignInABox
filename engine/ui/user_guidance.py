@@ -1,5 +1,5 @@
 """
-engine/ui/user_guidance.py — Prompt 31 Feature 3
+engine/ui/user_guidance.py â€” Prompt 31 Feature 3
 
 Inspects the system state and produces human-readable guidance
 telling the user what to do next. Acts as the system co-pilot.
@@ -14,7 +14,7 @@ from typing import Optional
 
 logger = logging.getLogger(__name__)
 
-# ── Guidance action priorities ────────────────────────────────────────────────
+# â”€â”€ Guidance action priorities â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 PRIORITY_CRITICAL  = "CRITICAL"
 PRIORITY_IMPORTANT = "IMPORTANT"
 PRIORITY_INFO      = "INFO"
@@ -44,24 +44,24 @@ class SystemGuidance:
 
     def to_markdown(self) -> str:
         lines = [
-            f"# System Guidance — {self.overall_status}",
+            f"# System Guidance â€” {self.overall_status}",
             "",
             f"**Summary:** {self.summary}",
             "",
             "## System Status",
             f"| Check | Status |",
             f"|---|---|",
-            f"| Contest data present | {'✅ YES' if self.contest_data_present else '❌ NO'} |",
-            f"| Pipeline run | {'✅ YES' if self.pipeline_run else '⏳ NO'} |",
-            f"| Archive built | {'✅ YES' if self.archive_built else '⏳ NO'} |",
+            f"| Contest data present | {'âœ… YES' if self.contest_data_present else 'âŒ NO'} |",
+            f"| Pipeline run | {'âœ… YES' if self.pipeline_run else 'â³ NO'} |",
+            f"| Archive built | {'âœ… YES' if self.archive_built else 'â³ NO'} |",
             f"| Crosswalk join rate | {f'{self.crosswalk_join_rate:.1%}' if self.crosswalk_join_rate is not None else 'UNKNOWN'} |",
             f"| Geometry join coverage | {f'{self.geometry_join_coverage:.1%}' if self.geometry_join_coverage is not None else 'UNKNOWN'} |",
-            f"| Modeling ready | {'✅ YES' if self.modeling_ready else '⏳ NO'} |",
+            f"| Modeling ready | {'âœ… YES' if self.modeling_ready else 'â³ NO'} |",
             "",
             "## Recommended Actions",
         ]
         for item in self.items:
-            icon = {"CRITICAL": "🚨", "IMPORTANT": "⚠️", "INFO": "ℹ️", "OK": "✅"}.get(item.priority, "•")
+            icon = {"CRITICAL": "ðŸš¨", "IMPORTANT": "âš ï¸", "INFO": "â„¹ï¸", "OK": "âœ…"}.get(item.priority, "â€¢")
             lines += [
                 f"### {icon} {item.title}",
                 f"**Detail:** {item.detail}",
@@ -84,7 +84,7 @@ def evaluate_guidance(
     """
     items: list[GuidanceItem] = []
 
-    # ── 1. Contest data check ─────────────────────────────────────────────────
+    # â”€â”€ 1. Contest data check â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     contest_root = project_root / "data" / "contests" / state / county
     contest_files_found: list[Path] = []
     if contest_root.exists():
@@ -98,11 +98,11 @@ def evaluate_guidance(
             priority=PRIORITY_CRITICAL,
             title="No Contest Data Found",
             detail=f"No election result files found in data/contests/{state}/{county}/",
-            action="Upload an election results file (XLS/CSV) via Data Manager → Upload New File",
-            where_in_ui="Sidebar → Data → Data Manager → 📤 Upload New File",
+            action="Upload an election results file (XLS/CSV) via Data Manager â†’ Upload New File",
+            where_in_ui="Sidebar â†’ Data â†’ Data Manager â†’ ðŸ“¤ Upload New File",
         ))
 
-    # ── 2. Pipeline run check ─────────────────────────────────────────────────
+    # â”€â”€ 2. Pipeline run check â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     archive_root = project_root / "derived" / "archive" / state / county
     archive_files: list[Path] = []
     if archive_root.exists():
@@ -119,18 +119,18 @@ def evaluate_guidance(
             title="Pipeline Not Yet Run",
             detail="Contest data is present but the pipeline has not been executed.",
             action="Go to Pipeline Runner, select your contest, and click 'Run Modeling Pipeline'",
-            where_in_ui="Sidebar → System → 🛠️ Pipeline Runner",
+            where_in_ui="Sidebar â†’ System â†’ ðŸ› ï¸ Pipeline Runner",
         ))
     elif pipeline_run and not archive_built:
         items.append(GuidanceItem(
             priority=PRIORITY_IMPORTANT,
             title="Pipeline Run but Archive Empty",
             detail="A pipeline run was recorded but no archive outputs were found.",
-            action="Check the pipeline log for errors. Look for ARCHIVE_INGEST DONE in the log.",
-            where_in_ui="Sidebar → System → 🛠️ Pipeline Runner → Last Run Log",
+            action="Check the pipeline log for errors. Check the DOWNLOAD_HISTORICAL_ELECTIONS step completed. Archive files appear in derived/archive/ after a successful run.",
+            where_in_ui="Sidebar â†’ System â†’ ðŸ› ï¸ Pipeline Runner â†’ Last Run Log",
         ))
 
-    # ── 3. Crosswalk check ────────────────────────────────────────────────────
+    # â”€â”€ 3. Crosswalk check â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     xwalk_dir = project_root / "data" / state / "counties" / county / "geography" / "crosswalks"
     crosswalk_ok = xwalk_dir.exists() and any(xwalk_dir.iterdir())
     crosswalk_join_rate: Optional[float] = None
@@ -162,7 +162,7 @@ def evaluate_guidance(
             where_in_ui="Filesystem: reports/crosswalk_repair/ and config/precinct_id/crosswalk_column_hints.yaml",
         ))
 
-    # ── 4. Geometry check ─────────────────────────────────────────────────────
+    # â”€â”€ 4. Geometry check â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     geo_dir = project_root / "data" / state / "counties" / county / "geography" / "precinct_shapes"
     geometry_ok = geo_dir.exists() and any(geo_dir.iterdir())
     if not geometry_ok:
@@ -174,7 +174,7 @@ def evaluate_guidance(
             where_in_ui=f"Filesystem: data/{state}/counties/{county}/geography/precinct_shapes/",
         ))
 
-    # ── 5. Map check ─────────────────────────────────────────────────────────
+    # â”€â”€ 5. Map check â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     map_dir = project_root / "derived" / "maps"
     map_files = list(map_dir.glob("*.geojson")) if map_dir.exists() else []
     if archive_built and not map_files:
@@ -182,11 +182,11 @@ def evaluate_guidance(
             priority=PRIORITY_INFO,
             title="Map Not Generated",
             detail="Archive is built but no GeoJSON map files found in derived/maps/",
-            action="Re-run the pipeline — the geometry join step produces the map output.",
-            where_in_ui="Sidebar → System → 🛠️ Pipeline Runner",
+            action="Re-run the pipeline â€” the geometry join step produces the map output.",
+            where_in_ui="Sidebar â†’ System â†’ ðŸ› ï¸ Pipeline Runner",
         ))
 
-    # ── 6. Modeling readiness ─────────────────────────────────────────────────
+    # â”€â”€ 6. Modeling readiness â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     model_dir = project_root / "derived" / "models"
     modeling_ready = model_dir.exists() and any(model_dir.rglob("*.json"))
     if archive_built and not modeling_ready:
@@ -195,27 +195,27 @@ def evaluate_guidance(
             title="Model Calibration Not Run",
             detail="Archive is built but no calibration model outputs found.",
             action="Ensure MODEL_CALIBRATION step completed in the pipeline run.",
-            where_in_ui="Sidebar → System → 🛠️ Pipeline Runner → run log",
+            where_in_ui="Sidebar â†’ System â†’ ðŸ› ï¸ Pipeline Runner â†’ run log",
         ))
 
-    # ── 7. All good ───────────────────────────────────────────────────────────
+    # â”€â”€ 7. All good â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     if not items:
         items.append(GuidanceItem(
             priority=PRIORITY_OK,
             title="System Ready",
             detail="Contest data present, pipeline run, archive built, geometry available.",
             action="Review the Precinct Map and Historical Archive pages for results.",
-            where_in_ui="Sidebar → Geography → 🗺️ Precinct Map | Sidebar → Intelligence → 🗃️ Historical Archive",
+            where_in_ui="Sidebar â†’ Geography â†’ ðŸ—ºï¸ Precinct Map | Sidebar â†’ Intelligence â†’ ðŸ—ƒï¸ Historical Archive",
         ))
 
-    # ── Determine overall status ──────────────────────────────────────────────
+    # â”€â”€ Determine overall status â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     priorities = [i.priority for i in items]
     if PRIORITY_CRITICAL in priorities:
         overall_status = "CRITICAL"
-        summary = "System cannot run — critical configuration missing."
+        summary = "System cannot run â€” critical configuration missing."
     elif PRIORITY_IMPORTANT in priorities:
         overall_status = "NEEDS_ACTION"
-        summary = "System partially configured — action required before full operation."
+        summary = "System partially configured â€” action required before full operation."
     else:
         overall_status = "READY"
         summary = "System appears ready for normal operation."

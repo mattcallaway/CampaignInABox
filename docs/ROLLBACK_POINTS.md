@@ -450,3 +450,15 @@ git checkout tags/v_pre_prompt28_contest_reset
 - **Tag:** `v_pre_prompt315_mission_control`
 - **Reason:** Adding Campaign Mission Control UI orchestration layer
 - **Note:** UI overlay only — no modeling changes, no page removals, built on Prompt 31 diagnostics
+
+---
+
+## Prompt 30.5 Pre-Live Repair Verification Rollback Point
+
+- **Timestamp:** 2026-03-14T17:24:39-07:00
+- **Branch:** rollback/prompt305_pre_live_repair_verification
+- **Tag:** v_pre_prompt305_live_repair_verification
+- **Reason:** Live repair verification and Mission Control status audit (Prompt 30.5)
+- **Commits at rollback:** bdf943a (latest)
+- **Note:** This prompt may apply narrow post-run fixes if live testing reveals specific issues.
+  All changes are logged in repair_actions_taken.md under reports/live_repair_verification/.
